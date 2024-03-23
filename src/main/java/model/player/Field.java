@@ -10,8 +10,11 @@ import model.commonItem.Resource;
 import java.util.Map;
 
 public class Field {
+    private Player player;
     private Card[][] matrix;
     private Map<ItemBox, Integer> totalResources;
+
+    public Player getPlayer() { return player; }
     public Card[][] getMatrix() {
         return matrix;
     }
