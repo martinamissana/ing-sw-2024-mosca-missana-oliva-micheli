@@ -1,6 +1,7 @@
 package model.card;
 
 import model.commonItem.ItemBox;
+import model.commonItem.Kingdom;
 
 import java.util.Map;
 
@@ -34,5 +35,9 @@ public abstract class Card  {
         } else {
             return backCorner.get(cornerType);
         }
+    }
+
+    public Kingdom getKingdom(){
+      return null;
     }
 }
