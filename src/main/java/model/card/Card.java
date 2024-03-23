@@ -1,26 +1,38 @@
 package model.card;
 
+import model.commonItem.ItemBox;
+
 import java.util.Map;
 
 public abstract class Card  {
-    private int CardID;
+    private int cardID;
     private CardSide side;
-    private Map<CornerType,Corner> corner;
+    private Map<CornerType,Corner> frontCorner;
+    private Map<CornerType,Corner> backCorner;
 
+  public Card(){
+      //robe che dipendono dal json
+  }
     public int getCardID() {
-        return CardID;
+        return this.cardID;
     }
-
     public CardSide getSide() {
-        return side;
+        return this.side;
     }
 
     public void flip (Card card){
         if (side == CardSide.FRONT) {
-            side= CardSide.BACK;
+            this.side= CardSide.BACK;
         }else{
-            side = CardSide.FRONT;
+            this.side = CardSide.FRONT;
         }
-        return;
+    }
+
+    public Corner getCorner(CornerType cornerType){
+        if(side==CardSide.FRONT){
+            return frontCorner.get(cornerType);
+        } else {
+            return backCorner.get(cornerType);
+        }
     }
 }

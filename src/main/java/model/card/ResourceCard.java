@@ -1,14 +1,20 @@
 package model.card;
 
+import model.commonItem.Kingdom;
+
 public class ResourceCard extends Card  {
     private int points;
-    //private Kingdom kingdom;
+    private Kingdom kingdom;
 
-    public int getPoints() {
-        return points;
+    public ResourceCard(){
+        //robe che dipendono dal json
     }
 
-    /*public Kingdom getKingdom() {
-        return kingdom;
-    }*/
+    public int getPoints() {
+        return this.points;
+    }
+
+    public Kingdom getKingdom() {
+        return this.kingdom;
+    }
 }
