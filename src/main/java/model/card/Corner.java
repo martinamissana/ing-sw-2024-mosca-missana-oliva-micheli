@@ -1,16 +1,16 @@
 package model.card;
 
+import model.commonItem.ItemBox;
+
 public class Corner {
-    private CornerType position;
-    private CardSide side;
-    private Card card;
-    //private ItemBox item;
+    private ItemBox item;
 
-    /*public ItemBox getItem() {
-        return item;
-    }*/
 
-    public CornerType getPosition() {
-        return position;
+    public Corner(ItemBox item){
+        this.item=item;
     }
+    public ItemBox getItem() {
+        return this.item;
+    }
+
 }
