@@ -2,15 +2,16 @@ package model.card;
 
 import model.commonItem.Kingdom;
 
+import java.util.HashMap;
 import java.util.Map;
 
 public class StarterCard extends Card{
-    private Map<Kingdom, Integer> permanentRes;
+    private HashMap<Kingdom, Integer> permanentRes;
 
     public StarterCard(){
         //robe che dipendono dal json
     }
-    public Map<Kingdom, Integer> getPermanentRes() {
+    public HashMap<Kingdom, Integer> getPermanentRes() {
         return this.permanentRes;
     }
 }

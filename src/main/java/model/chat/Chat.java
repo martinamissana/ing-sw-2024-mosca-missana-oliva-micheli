@@ -9,17 +9,18 @@ import java.util.List;
 import java.util.Map;
 
 public class Chat {
-    private Player nickname;
+    private final Player player;
     private HashMap<Player, List<Message>> directMessages;
     private ArrayList<Message> globalMessages;
     private Game game;
 
 
-    public Chat(){
+    public Chat(Player player){
         for (Map.Entry<Integer, Player> entry : game.getPlayers().entrySet()) {
             Player K = entry.getValue();
             directMessages.put(K, null);
         }
+        this.player=player;
     }
 
     public HashMap<Player, List<Message>> getDirectMessages() {

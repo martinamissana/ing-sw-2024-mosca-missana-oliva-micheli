@@ -3,10 +3,11 @@ package model.card;
 import model.commonItem.Kingdom;
 import model.commonItem.Resource;
 
+import java.util.HashMap;
 import java.util.Map;
 
 public class GoldenCard extends ResourceCard{
-    private Map<Kingdom,Integer> requirements;
+    private HashMap<Kingdom,Integer> requirements;
     private GoldenCardType type;
     private Resource pointResource; //is null if type!=RESOURCE
 
@@ -14,7 +15,7 @@ public class GoldenCard extends ResourceCard{
         //robe che dipendono dal json
     }
 
-    public Map<Kingdom, Integer> getRequirements() {
+    public HashMap<Kingdom, Integer> getRequirements() {
         return this.requirements;
     }
 
@@ -25,4 +26,5 @@ public class GoldenCard extends ResourceCard{
     public Resource getPointResource() {
         return this.pointResource;
     }
+
 }

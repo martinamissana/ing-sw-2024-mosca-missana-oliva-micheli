@@ -3,13 +3,14 @@ package model.card;
 import model.commonItem.ItemBox;
 import model.commonItem.Kingdom;
 
+import java.util.HashMap;
 import java.util.Map;
 
 public abstract class Card  {
     private int cardID;
     private CardSide side;
-    private Map<CornerType,Corner> frontCorner;
-    private Map<CornerType,Corner> backCorner;
+    private HashMap<CornerType,Corner> frontCorner;
+    private HashMap<CornerType,Corner> backCorner;
 
   public Card(){
       //robe che dipendono dal json
@@ -40,4 +41,6 @@ public abstract class Card  {
     public Kingdom getKingdom(){
       return null;
     }
+
+
 }
