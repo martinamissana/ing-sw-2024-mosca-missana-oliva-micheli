@@ -2,6 +2,9 @@ package model.chat;
 
 import model.player.Player;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class Message {
     private final String text;
     private final Player sender;
@@ -27,7 +30,7 @@ public class Message {
 
     public void sendMessage(Player player){
         if(player==null){
-            for(player : player.getGame().getPlayers(){
+            for( HashMap.Entry<Integer, Player> entry: player.getGame().getPlayers().entrySet()){
                 player.getPlayerChat().addMessage(this.sender,this,true);
             }
         } else{
