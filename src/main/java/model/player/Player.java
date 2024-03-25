@@ -26,15 +26,15 @@ public class Player {
     public Field getPlayerField() { return playerField; }
     public Chat getPlayerChat() { return playerChat; }
 
-    public boolean playCard(int handPos) {
-        StarterCard card = (StarterCard) playerHand.getCard(handPos);
+    public boolean playCard() {
+        StarterCard card = (StarterCard) playerHand.getCard(0);
         playerField.addCard(card);
         playerHand.removeCard(card);
         return true;
     }
-    public boolean playCard(int handPos, int row, int col) {
+    public boolean playCard(int handPos, Coords coords) {
         ResourceCard card = (ResourceCard) playerHand.getCard(handPos);
-        boolean cardWasAdded = playerField.addCard((ResourceCard) card, row, col);
+        boolean cardWasAdded = playerField.addCard((ResourceCard) card, coords);
         if (!cardWasAdded)
             return false;
         return playerHand.removeCard(card);
