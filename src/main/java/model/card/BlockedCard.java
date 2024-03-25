@@ -1,4 +1,4 @@
 package model.card;
 
-public class BlockedCard {
+public class BlockedCard extends Card {
 }
