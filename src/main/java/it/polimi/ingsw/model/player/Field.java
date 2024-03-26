@@ -3,21 +3,19 @@ package it.polimi.ingsw.model.player;
 import it.polimi.ingsw.model.card.*;
 import it.polimi.ingsw.model.commonItem.ItemBox;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Field {
-    private final Player player;
     private final HashMap<Coords, Card> matrix;
     private final HashMap<ItemBox, Integer> totalResources;
     private final BlockedCard blockedCard;
-    public Player getPlayer() { return player; }
     public HashMap<Coords, Card> getMatrix() { return matrix; }
     public HashMap<ItemBox, Integer> getTotalResources() { return totalResources; }
-    public Field(Player p, BlockedCard blockedCard) {
-        this.player = p;
+    public Field() {
         this.matrix = new HashMap<Coords, Card>();
         this.totalResources = new HashMap<ItemBox, Integer>();
-        this.blockedCard = blockedCard;
+        this.blockedCard = new BlockedCard(-1, CardSide.FRONT, null, null);
     }
 
     // adds a starter card at the origin, with no checks whatsoever.
@@ -52,7 +50,7 @@ public class Field {
         blockCardSpaces(card, coords);
         updateTotalRes(card, coords);
         // a golden card only adds at most one special resource, but never any of the kingdom resources
-        // might be an useful observation to optimize this, maybe using card.getClass()
+        // might be a useful observation to optimize this, maybe using card.getClass()
         int addPts = evaluatePoints(card, coords);
         if (addPts > 0) {
             //int oldScore = player.get
@@ -100,11 +98,27 @@ public class Field {
         return;
     }
 
-    // should return a card to neighboring cards map
-    private HashMap<CornerType, Card> getFreeNeighbours(Coords coords) {
-        HashMap<CornerType, Card> map = new HashMap<>();
-        // stuff
-        return map;
+    // returns a list of all free coordinates near a specified one
+    private ArrayList<Coords> getFreeNeighbours(Coords coords) {
+        ArrayList<Coords> list = new ArrayList<>();
+        if (coords == null) return list;
+
+        int Xin = coords.getX();
+        int Yin = coords.getY();
+        Coords northCoords = new Coords(Xin,Yin+1);
+        Coords eastCoords = new Coords(Xin+1,Yin);
+        Coords southCoords = new Coords(Xin,Yin-1);
+        Coords westCoords = new Coords(Xin-1,Yin);
+
+        if (!matrix.containsKey(northCoords))
+            list.add(northCoords);
+        if (!matrix.containsKey(eastCoords))
+            list.add(eastCoords);
+        if (!matrix.containsKey(southCoords))
+            list.add(southCoords);
+        if (!matrix.containsKey(westCoords))
+            list.add(westCoords);
+        return list;
     }
     private int evaluatePoints(ResourceCard card) { return card.getPoints(); } //returns direct points from res card
 
