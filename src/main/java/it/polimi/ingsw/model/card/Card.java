@@ -1,5 +1,6 @@
 package it.polimi.ingsw.model.card;
 
+import it.polimi.ingsw.model.commonItem.ItemBox;
 import it.polimi.ingsw.model.commonItem.Kingdom;
 
 import java.util.HashMap;
@@ -32,11 +33,20 @@ public abstract class Card  {
         }
     }
 
-    public Corner getCorner(CornerType cornerType){
+    public ItemBox getCorner(CornerType cornerType){
         if(side==CardSide.FRONT){
-            return frontCorner.get(cornerType);
-        } else {
-            return backCorner.get(cornerType);
+            if(frontCorner.containsKey(cornerType)) {
+                return frontCorner.get(cornerType).getItem();
+            } else {
+                return null;
+            }
+
+            } else {
+                if(backCorner.containsKey(cornerType)) {
+                    return backCorner.get(cornerType).getItem();
+            } else {
+                return null;
+            }
         }
     }
 
