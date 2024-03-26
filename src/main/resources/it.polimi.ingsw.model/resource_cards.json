@@ -1,0 +1,722 @@
+[
+    {
+        "cardId": "1",
+        "side": "FRONT",
+        "frontCorner": {
+            "NORTH": "FUNGI",
+            "EAST": "EMPTY",
+            "WEST": "FUNGI",
+            "SOUTH": "NONE"
+        },
+        "backCorner": {
+            "NORTH": "EMPTY",
+            "EAST": "EMPTY",
+            "WEST": "EMPTY",
+            "SOUTH": "EMPTY"
+        },
+        "kingdom": "FUNGI",
+        "points": 0
+    },
+    {
+        "cardId": "2",
+        "side": "FRONT",
+        "frontCorner": {
+            "NORTH": "FUNGI",
+            "EAST": "FUNGI",
+            "WEST": "NONE",
+            "SOUTH": "EMPTY"
+        },
+        "backCorner": {
+            "NORTH": "EMPTY",
+            "EAST": "EMPTY",
+            "WEST": "EMPTY",
+            "SOUTH": "EMPTY"
+        },
+        "kingdom": "FUNGI",
+        "points": 0
+    },
+    {
+        "cardId": "3",
+        "side": "FRONT",
+        "frontCorner": {
+            "NORTH": "EMPTY",
+            "EAST": "NONE",
+            "WEST": "FUNGI",
+            "SOUTH": "FUNGI"
+        },
+        "backCorner": {
+            "NORTH": "EMPTY",
+            "EAST": "EMPTY",
+            "WEST": "EMPTY",
+            "SOUTH": "EMPTY"
+        },
+        "kingdom": "FUNGI",
+        "points": 0
+    },
+    {
+        "cardId": "4",
+        "side": "FRONT",
+        "frontCorner": {
+            "NORTH": "NONE",
+            "EAST": "FUNGI",
+            "WEST": "EMPTY",
+            "SOUTH": "FUNGI"
+        },
+        "backCorner": {
+            "NORTH": "EMPTY",
+            "EAST": "EMPTY",
+            "WEST": "EMPTY",
+            "SOUTH": "EMPTY"
+        },
+        "kingdom": "FUNGI",
+        "points": 0
+    },
+    {
+        "cardId": "5",
+        "side": "FRONT",
+        "frontCorner": {
+            "NORTH": "NONE",
+            "EAST": "QUILL",
+            "WEST": "PLANT",
+            "SOUTH": "FUNGI"
+        },
+        "backCorner": {
+            "NORTH": "EMPTY",
+            "EAST": "EMPTY",
+            "WEST": "EMPTY",
+            "SOUTH": "EMPTY"
+        },
+        "kingdom": "FUNGI",
+        "points": 0
+    },
+    {
+        "cardId": "6",
+        "side": "FRONT",
+        "frontCorner": {
+            "NORTH": "INKWELL",
+            "EAST": "FUNGI",
+            "WEST": "NONE",
+            "SOUTH": "ANIMAL"
+        },
+        "backCorner": {
+            "NORTH": "EMPTY",
+            "EAST": "EMPTY",
+            "WEST": "EMPTY",
+            "SOUTH": "EMPTY"
+        },
+        "kingdom": "FUNGI",
+        "points": 0
+    },
+    {
+        "cardId": "7",
+        "side": "FRONT",
+        "frontCorner": {
+            "NORTH": "FUNGI",
+            "EAST": "INSECT",
+            "WEST": "MANUSCRIPT",
+            "SOUTH": "EMPTY"
+        },
+        "backCorner": {
+            "NORTH": "EMPTY",
+            "EAST": "EMPTY",
+            "WEST": "EMPTY",
+            "SOUTH": "EMPTY"
+        },
+        "kingdom": "FUNGI",
+        "points": 0
+    },
+    {
+        "cardId": "8",
+        "side": "FRONT",
+        "frontCorner": {
+            "NORTH": "EMPTY",
+            "EAST": "FUNGI",
+            "WEST": "EMPTY",
+            "SOUTH": "NONE"
+        },
+        "backCorner": {
+            "NORTH": "EMPTY",
+            "EAST": "EMPTY",
+            "WEST": "EMPTY",
+            "SOUTH": "EMPTY"
+        },
+        "kingdom": "FUNGI",
+        "points": 1
+    },
+    {
+        "cardId": "9",
+        "side": "FRONT",
+        "frontCorner": {
+            "NORTH": "FUNGI",
+            "EAST": "NONE",
+            "WEST": "EMPTY",
+            "SOUTH": "EMPTY"
+        },
+        "backCorner": {
+            "NORTH": "EMPTY",
+            "EAST": "EMPTY",
+            "WEST": "EMPTY",
+            "SOUTH": "EMPTY"
+        },
+        "kingdom": "FUNGI",
+        "points": 1
+    },
+    {
+        "cardId": "10",
+        "side": "FRONT",
+        "frontCorner": {
+            "NORTH": "NONE",
+            "EAST": "EMPTY",
+            "WEST": "FUNGI",
+            "SOUTH": "EMPTY"
+        },
+        "backCorner": {
+            "NORTH": "EMPTY",
+            "EAST": "EMPTY",
+            "WEST": "EMPTY",
+            "SOUTH": "EMPTY"
+        },
+        "kingdom": "FUNGI",
+        "points": 1
+    },
+    {
+        "cardId": "11",
+        "side": "FRONT",
+        "frontCorner": {
+            "NORTH": "PLANT",
+            "EAST": "EMPTY",
+            "WEST": "PLANT",
+            "SOUTH": "NONE"
+        },
+        "backCorner": {
+            "NORTH": "EMPTY",
+            "EAST": "EMPTY",
+            "WEST": "EMPTY",
+            "SOUTH": "EMPTY"
+        },
+        "kingdom": "PLANT",
+        "points": 0
+    },
+    {
+        "cardId": "12",
+        "side": "FRONT",
+        "frontCorner": {
+            "NORTH": "PLANT",
+            "EAST": "PLANT",
+            "WEST": "NONE",
+            "SOUTH": "EMPTY"
+        },
+        "backCorner": {
+            "NORTH": "EMPTY",
+            "EAST": "EMPTY",
+            "WEST": "EMPTY",
+            "SOUTH": "EMPTY"
+        },
+        "kingdom": "PLANT",
+        "points": 0
+    },
+    {
+        "cardId": "13",
+        "side": "FRONT",
+        "frontCorner": {
+            "NORTH": "EMPTY",
+            "EAST": "NONE",
+            "WEST": "PLANT",
+            "SOUTH": "PLANT"
+        },
+        "backCorner": {
+            "NORTH": "EMPTY",
+            "EAST": "EMPTY",
+            "WEST": "EMPTY",
+            "SOUTH": "EMPTY"
+        },
+        "kingdom": "PLANT",
+        "points": 0
+    },
+    {
+        "cardId": "14",
+        "side": "FRONT",
+        "frontCorner": {
+            "NORTH": "NONE",
+            "EAST": "PLANT",
+            "WEST": "EMPTY",
+            "SOUTH": "PLANT"
+        },
+        "backCorner": {
+            "NORTH": "EMPTY",
+            "EAST": "EMPTY",
+            "WEST": "EMPTY",
+            "SOUTH": "EMPTY"
+        },
+        "kingdom": "PLANT",
+        "points": 0
+    },
+    {
+        "cardId": "15",
+        "side": "FRONT",
+        "frontCorner": {
+            "NORTH": "NONE",
+            "EAST": "INSECT",
+            "WEST": "QUILL",
+            "SOUTH": "PLANT"
+        },
+        "backCorner": {
+            "NORTH": "EMPTY",
+            "EAST": "EMPTY",
+            "WEST": "EMPTY",
+            "SOUTH": "EMPTY"
+        },
+        "kingdom": "PLANT",
+        "points": 0
+    },
+    {
+        "cardId": "16",
+        "side": "FRONT",
+        "frontCorner": {
+            "NORTH": "FUNGI",
+            "EAST": "PLANT",
+            "WEST": "NONE",
+            "SOUTH": "INKWELL"
+        },
+        "backCorner": {
+            "NORTH": "EMPTY",
+            "EAST": "EMPTY",
+            "WEST": "EMPTY",
+            "SOUTH": "EMPTY"
+        },
+        "kingdom": "PLANT",
+        "points": 0
+    },
+    {
+        "cardId": "17",
+        "side": "FRONT",
+        "frontCorner": {
+            "NORTH": "MANUSCRIPT",
+            "EAST": "NONE",
+            "WEST": "PLANT",
+            "SOUTH": "ANIMAL"
+        },
+        "backCorner": {
+            "NORTH": "EMPTY",
+            "EAST": "EMPTY",
+            "WEST": "EMPTY",
+            "SOUTH": "EMPTY"
+        },
+        "kingdom": "PLANT",
+        "points": 0
+    },
+    {
+        "cardId": "18",
+        "side": "FRONT",
+        "frontCorner": {
+            "NORTH": "EMPTY",
+            "EAST": "EMPTY",
+            "WEST": "PLANT",
+            "SOUTH": "NONE"
+        },
+        "backCorner": {
+            "NORTH": "EMPTY",
+            "EAST": "EMPTY",
+            "WEST": "EMPTY",
+            "SOUTH": "EMPTY"
+        },
+        "kingdom": "PLANT",
+        "points": 1
+    },
+    {
+        "cardId": "19",
+        "side": "FRONT",
+        "frontCorner": {
+            "NORTH": "EMPTY",
+            "EAST": "EMPTY",
+            "WEST": "NONE",
+            "SOUTH": "PLANT"
+        },
+        "backCorner": {
+            "NORTH": "EMPTY",
+            "EAST": "EMPTY",
+            "WEST": "EMPTY",
+            "SOUTH": "EMPTY"
+        },
+        "kingdom": "PLANT",
+        "points": 1
+    },
+    {
+        "cardId": "20",
+        "side": "FRONT",
+        "frontCorner": {
+            "NORTH": "NONE",
+            "EAST": "PLANT",
+            "WEST": "EMPTY",
+            "SOUTH": "EMPTY"
+        },
+        "backCorner": {
+            "NORTH": "EMPTY",
+            "EAST": "EMPTY",
+            "WEST": "EMPTY",
+            "SOUTH": "EMPTY"
+        },
+        "kingdom": "PLANT",
+        "points": 1
+    },
+    {
+        "cardId": "21",
+        "side": "FRONT",
+        "frontCorner": {
+            "NORTH": "ANIMAL",
+            "EAST": "ANIMAL",
+            "WEST": "EMPTY",
+            "SOUTH": "NONE"
+        },
+        "backCorner": {
+            "NORTH": "EMPTY",
+            "EAST": "EMPTY",
+            "WEST": "EMPTY",
+            "SOUTH": "EMPTY"
+        },
+        "kingdom": "ANIMAL",
+        "points": 0
+    },
+    {
+        "cardId": "22",
+        "side": "FRONT",
+        "frontCorner": {
+            "NORTH": "NONE",
+            "EAST": "EMPTY",
+            "WEST": "ANIMAL",
+            "SOUTH": "ANIMAL"
+        },
+        "backCorner": {
+            "NORTH": "EMPTY",
+            "EAST": "EMPTY",
+            "WEST": "EMPTY",
+            "SOUTH": "EMPTY"
+        },
+        "kingdom": "ANIMAL",
+        "points": 0
+    },
+    {
+        "cardId": "23",
+        "side": "FRONT",
+        "frontCorner": {
+            "NORTH": "ANIMAL",
+            "EAST": "NONE",
+            "WEST": "ANIMAL",
+            "SOUTH": "EMPTY"
+        },
+        "backCorner": {
+            "NORTH": "EMPTY",
+            "EAST": "EMPTY",
+            "WEST": "EMPTY",
+            "SOUTH": "EMPTY"
+        },
+        "kingdom": "ANIMAL",
+        "points": 0
+    },
+    {
+        "cardId": "24",
+        "side": "FRONT",
+        "frontCorner": {
+            "NORTH": "EMPTY",
+            "EAST": "ANIMAL",
+            "WEST": "NONE",
+            "SOUTH": "ANIMAL"
+        },
+        "backCorner": {
+            "NORTH": "EMPTY",
+            "EAST": "EMPTY",
+            "WEST": "EMPTY",
+            "SOUTH": "EMPTY"
+        },
+        "kingdom": "ANIMAL",
+        "points": 0
+    },
+    {
+        "cardId": "25",
+        "side": "FRONT",
+        "frontCorner": {
+            "NORTH": "NONE",
+            "EAST": "INSECT",
+            "WEST": "INKWELL",
+            "SOUTH": "ANIMAL"
+        },
+        "backCorner": {
+            "NORTH": "EMPTY",
+            "EAST": "EMPTY",
+            "WEST": "EMPTY",
+            "SOUTH": "EMPTY"
+        },
+        "kingdom": "ANIMAL",
+        "points": 0
+    },
+    {
+        "cardId": "26",
+        "side": "FRONT",
+        "frontCorner": {
+            "NORTH": "PLANT",
+            "EAST": "ANIMAL",
+            "WEST": "NONE",
+            "SOUTH": "MANUSCRIPT"
+        },
+        "backCorner": {
+            "NORTH": "EMPTY",
+            "EAST": "EMPTY",
+            "WEST": "EMPTY",
+            "SOUTH": "EMPTY"
+        },
+        "kingdom": "ANIMAL",
+        "points": 0
+    },
+    {
+        "cardId": "27",
+        "side": "FRONT",
+        "frontCorner": {
+            "NORTH": "QUILL",
+            "EAST": "NONE",
+            "WEST": "ANIMAL",
+            "SOUTH": "FUNGI"
+        },
+        "backCorner": {
+            "NORTH": "EMPTY",
+            "EAST": "EMPTY",
+            "WEST": "EMPTY",
+            "SOUTH": "EMPTY"
+        },
+        "kingdom": "ANIMAL",
+        "points": 0
+    },
+    {
+        "cardId": "28",
+        "side": "FRONT",
+        "frontCorner": {
+            "NORTH": "NONE",
+            "EAST": "EMPTY",
+            "WEST": "ANIMAL",
+            "SOUTH": "EMPTY"
+        },
+        "backCorner": {
+            "NORTH": "EMPTY",
+            "EAST": "EMPTY",
+            "WEST": "EMPTY",
+            "SOUTH": "EMPTY"
+        },
+        "kingdom": "ANIMAL",
+        "points": 1
+    },
+    {
+        "cardId": "29",
+        "side": "FRONT",
+        "frontCorner": {
+            "NORTH": "EMPTY",
+            "EAST": "NONE",
+            "WEST": "EMPTY",
+            "SOUTH": "ANIMAL"
+        },
+        "backCorner": {
+            "NORTH": "EMPTY",
+            "EAST": "EMPTY",
+            "WEST": "EMPTY",
+            "SOUTH": "EMPTY"
+        },
+        "kingdom": "ANIMAL",
+        "points": 1
+    },
+    {
+        "cardId": "30",
+        "side": "FRONT",
+        "frontCorner": {
+            "NORTH": "EMPTY",
+            "EAST": "ANIMAL",
+            "WEST": "EMPTY",
+            "SOUTH": "NONE"
+        },
+        "backCorner": {
+            "NORTH": "EMPTY",
+            "EAST": "EMPTY",
+            "WEST": "EMPTY",
+            "SOUTH": "EMPTY"
+        },
+        "kingdom": "ANIMAL",
+        "points": 1
+    },
+    {
+        "cardId": "31",
+        "side": "FRONT",
+        "frontCorner": {
+            "NORTH": "INSECT",
+            "EAST": "INSECT",
+            "WEST": "EMPTY",
+            "SOUTH": "NONE"
+        },
+        "backCorner": {
+            "NORTH": "EMPTY",
+            "EAST": "EMPTY",
+            "WEST": "EMPTY",
+            "SOUTH": "EMPTY"
+        },
+        "kingdom": "INSECT",
+        "points": 0
+    },
+    {
+        "cardId": "32",
+        "side": "FRONT",
+        "frontCorner": {
+            "NORTH": "NONE",
+            "EAST": "EMPTY",
+            "WEST": "INSECT",
+            "SOUTH": "INSECT"
+        },
+        "backCorner": {
+            "NORTH": "EMPTY",
+            "EAST": "EMPTY",
+            "WEST": "EMPTY",
+            "SOUTH": "EMPTY"
+        },
+        "kingdom": "INSECT",
+        "points": 0
+    },
+    {
+        "cardId": "33",
+        "side": "FRONT",
+        "frontCorner": {
+            "NORTH": "INSECT",
+            "EAST": "NONE",
+            "WEST": "INSECT",
+            "SOUTH": "EMPTY"
+        },
+        "backCorner": {
+            "NORTH": "EMPTY",
+            "EAST": "EMPTY",
+            "WEST": "EMPTY",
+            "SOUTH": "EMPTY"
+        },
+        "kingdom": "INSECT",
+        "points": 0
+    },
+    {
+        "cardId": "34",
+        "side": "FRONT",
+        "frontCorner": {
+            "NORTH": "EMPTY",
+            "EAST": "INSECT",
+            "WEST": "NONE",
+            "SOUTH": "INSECT"
+        },
+        "backCorner": {
+            "NORTH": "EMPTY",
+            "EAST": "EMPTY",
+            "WEST": "EMPTY",
+            "SOUTH": "EMPTY"
+        },
+        "kingdom": "INSECT",
+        "points": 0
+    },
+    {
+        "cardId": "35",
+        "side": "FRONT",
+        "frontCorner": {
+            "NORTH": "NONE",
+            "EAST": "QUILL",
+            "WEST": "ANIMAL",
+            "SOUTH": "INSECT"
+        },
+        "backCorner": {
+            "NORTH": "EMPTY",
+            "EAST": "EMPTY",
+            "WEST": "EMPTY",
+            "SOUTH": "EMPTY"
+        },
+        "kingdom": "INSECT",
+        "points": 0
+    },
+    {
+        "cardId": "36",
+        "side": "FRONT",
+        "frontCorner": {
+            "NORTH": "MANUSCRIPT",
+            "EAST": "INSECT",
+            "WEST": "NONE",
+            "SOUTH": "FUNGI"
+        },
+        "backCorner": {
+            "NORTH": "EMPTY",
+            "EAST": "EMPTY",
+            "WEST": "EMPTY",
+            "SOUTH": "EMPTY"
+        },
+        "kingdom": "INSECT",
+        "points": 0
+    },
+    {
+        "cardId": "37",
+        "side": "FRONT",
+        "frontCorner": {
+            "NORTH": "INSECT",
+            "EAST": "PLANT",
+            "WEST": "INKWELL",
+            "SOUTH": "NONE"
+        },
+        "backCorner": {
+            "NORTH": "EMPTY",
+            "EAST": "EMPTY",
+            "WEST": "EMPTY",
+            "SOUTH": "EMPTY"
+        },
+        "kingdom": "INSECT",
+        "points": 0
+    },
+    {
+        "cardId": "38",
+        "side": "FRONT",
+        "frontCorner": {
+            "NORTH": "INSECT",
+            "EAST": "NONE",
+            "WEST": "EMPTY",
+            "SOUTH": "EMPTY"
+        },
+        "backCorner": {
+            "NORTH": "EMPTY",
+            "EAST": "EMPTY",
+            "WEST": "EMPTY",
+            "SOUTH": "EMPTY"
+        },
+        "kingdom": "INSECT",
+        "points": 1
+    },
+    {
+        "cardId": "39",
+        "side": "FRONT",
+        "frontCorner": {
+            "NORTH": "EMPTY",
+            "EAST": "EMPTY",
+            "WEST": "NONE",
+            "SOUTH": "INSECT"
+        },
+        "backCorner": {
+            "NORTH": "EMPTY",
+            "EAST": "EMPTY",
+            "WEST": "EMPTY",
+            "SOUTH": "EMPTY"
+        },
+        "kingdom": "INSECT",
+        "points": 1
+    },
+    {
+        "cardId": "40",
+        "side": "FRONT",
+        "frontCorner": {
+            "NORTH": "NONE",
+            "EAST": "INSECT",
+            "WEST": "EMPTY",
+            "SOUTH": "EMPTY"
+        },
+        "backCorner": {
+            "NORTH": "EMPTY",
+            "EAST": "EMPTY",
+            "WEST": "EMPTY",
+            "SOUTH": "EMPTY"
+        },
+        "kingdom": "INSECT",
+        "points": 1
+    }
+]

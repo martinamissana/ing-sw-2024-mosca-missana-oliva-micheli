@@ -1,0 +1,122 @@
+[
+    {
+        "cardId": "81",
+        "side": "FRONT",
+        "frontCorner": {
+            "NORTH": "FUNGI",
+            "EAST": "PLANT",
+            "WEST": "INSECT",
+            "SOUTH": "ANIMAL"
+        },
+        "backCorner": {
+            "NORTH": "EMPTY",
+            "EAST": "PLANT",
+            "WEST": "INSECT",
+            "SOUTH": "EMPTY"
+        },
+        "permanentRes": {
+            "INSECT": "1"
+        }
+    },
+    {
+        "cardId": "82",
+        "side": "FRONT",
+        "frontCorner": {
+            "NORTH": "PLANT",
+            "EAST": "ANIMAL",
+            "WEST": "FUNGI",
+            "SOUTH": "INSECT"
+        },
+        "backCorner": {
+            "NORTH": "ANIMAL",
+            "EAST": "EMPTY",
+            "WEST": "EMPTY",
+            "SOUTH": "FUNGI"
+        },
+        "permanentRes": {
+            "FUNGI": "1"
+        }
+    },
+    {
+        "cardId": "83",
+        "side": "FRONT",
+        "frontCorner": {
+            "NORTH": "INSECT",
+            "EAST": "ANIMAL",
+            "WEST": "FUNGI",
+            "SOUTH": "PLANT"
+        },
+        "backCorner": {
+            "NORTH": "EMPTY",
+            "EAST": "EMPTY",
+            "WEST": "EMPTY",
+            "SOUTH": "EMPTY"
+        },
+        "permanentRes": {
+            "PLANT": "1",
+            "FUNGI": "1"
+        }
+    },
+    {
+        "cardId": "84",
+        "side": "FRONT",
+        "frontCorner": {
+            "NORTH": "PLANT",
+            "EAST": "INSECT",
+            "WEST": "ANIMAL",
+            "SOUTH": "FUNGI"
+        },
+        "backCorner": {
+            "NORTH": "EMPTY",
+            "EAST": "EMPTY",
+            "WEST": "EMPTY",
+            "SOUTH": "EMPTY"
+        },
+        "permanentRes": {
+            "ANIMAL": "1",
+            "INSECT": "1"
+        }
+    },
+    {
+        "cardId": "85",
+        "side": "FRONT",
+        "frontCorner": {
+            "NORTH": "INSECT",
+            "EAST": "FUNGI",
+            "WEST": "PLANT",
+            "SOUTH": "ANIMAL"
+        },
+        "backCorner": {
+            "NORTH": "EMPTY",
+            "EAST": "EMPTY",
+            "WEST": "NONE",
+            "SOUTH": "NONE"
+        },
+        "permanentRes": {
+            "PLANT": "1",
+            "ANIMAL": "1",
+            "INSECT": "1"
+        }
+    },
+    {
+        "cardId": "86",
+        "side": "FRONT",
+        "frontCorner": {
+            "NORTH": "FUNGI",
+            "EAST": "ANIMAL",
+            "WEST": "PLANT",
+            "SOUTH": "INSECT"
+        },
+        "backCorner": {
+            "NORTH": "EMPTY",
+            "EAST": "EMPTY",
+            "WEST": "NONE",
+            "SOUTH": "NONE"
+        },
+        "permanentRes": {
+            "PLANT": "1",
+            "ANIMAL": "1",
+            "FUNGI": "1"
+        }
+    }
+]
