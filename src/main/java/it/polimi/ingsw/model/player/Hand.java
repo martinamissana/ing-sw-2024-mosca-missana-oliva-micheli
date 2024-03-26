@@ -1,17 +1,13 @@
 package it.polimi.ingsw.model.player;
 
 import it.polimi.ingsw.model.card.Card;
-
 import java.util.ArrayList;
 
 public class Hand {
-    private final Player player;
     private final ArrayList<Card> handList;
     public Hand(Player p) {
-        this.player = p;
         this.handList = new ArrayList<Card>();
     }
-    public Player getPlayer() { return player; }
     public Card getCard(int pos) {
         return handList.get(pos);
     }
