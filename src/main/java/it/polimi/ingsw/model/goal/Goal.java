@@ -1,14 +1,23 @@
 package it.polimi.ingsw.model.goal;
 
+import it.polimi.ingsw.model.player.Player;
+
 public abstract class Goal {
-    int GoalID;
-    int owner;
+    private final int GoalID;
+    private final int points;
+
+    public Goal(int goalID,int points) {
+        this.GoalID = goalID;
+        this.points=points;
+    }
+
+    public int getPoints(){
+        return points;
+    }
     public int getId() {
         return GoalID;
     }
-    public int getOwner(){
-        return owner;
-    }
-    public void evaluate(){
+    public int evaluate(Player player){
+        return 0;
     }
 }
