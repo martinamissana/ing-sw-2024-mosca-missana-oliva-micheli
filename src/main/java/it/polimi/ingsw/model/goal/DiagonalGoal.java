@@ -1,6 +1,5 @@
 package it.polimi.ingsw.model.goal;
 import it.polimi.ingsw.model.commonItem.Kingdom;
-import it.polimi.ingsw.model.player.Player;
 
 public class DiagonalGoal extends Goal {
     private final Kingdom color;
@@ -19,8 +18,5 @@ public class DiagonalGoal extends Goal {
         return type;
     }
 
-    @Override
-    public int evaluate(Player player) {
-        return 0;
-    }
 }
+
