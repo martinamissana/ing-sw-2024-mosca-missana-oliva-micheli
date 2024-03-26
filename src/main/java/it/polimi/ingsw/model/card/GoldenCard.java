@@ -10,10 +10,12 @@ public class GoldenCard extends ResourceCard{
     private GoldenCardType type;
     private Resource pointResource; //is null if type!=RESOURCE
 
-    public GoldenCard(int cardID, CardSide side, HashMap<CornerType, Corner> frontCorner, HashMap<CornerType, Corner> backCorner) {
-        super(cardID, side, frontCorner, backCorner);
+    public GoldenCard(int cardID, CardSide side, HashMap<CornerType, Corner> frontCorner, HashMap<CornerType, Corner> backCorner, int points, Kingdom kingdom, HashMap<Kingdom, Integer> requirements, GoldenCardType type, Resource pointResource) {
+        super(cardID, side, frontCorner, backCorner, points, kingdom);
+        this.requirements = requirements;
+        this.type = type;
+        this.pointResource = pointResource;
     }
-
 
     public HashMap<Kingdom, Integer> getRequirements() {
         return this.requirements;
