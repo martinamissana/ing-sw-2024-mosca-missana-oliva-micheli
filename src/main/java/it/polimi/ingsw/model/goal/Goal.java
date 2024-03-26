@@ -1,7 +1,5 @@
 package it.polimi.ingsw.model.goal;
 
-import it.polimi.ingsw.model.player.Player;
-
 public abstract class Goal {
     private final int GoalID;
     private final int points;
@@ -14,10 +12,7 @@ public abstract class Goal {
     public int getPoints(){
         return points;
     }
-    public int getId() {
+    public int getGoalID() {
         return GoalID;
-    }
-    public int evaluate(Player player){
-        return 0;
     }
 }
