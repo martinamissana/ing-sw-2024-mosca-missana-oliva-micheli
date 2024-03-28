@@ -1,0 +1,26 @@
+[
+  {
+    "GoalID": "0",
+    "points": "2",
+    "color": "FUNGI",
+    "type": "UPWARD"
+  },
+  {
+    "GoalID": "1",
+    "points": "2",
+    "color": "PLANT",
+    "type": "DOWNWARD"
+  },
+  {
+    "GoalID": "2",
+    "points": "2",
+    "color": "ANIMAL",
+    "type": "UPWARD"
+  },
+  {
+    "GoalID": "3",
+    "points": "2",
+    "color": "INSECT",
+    "type": "DOWNWARD"
+  }
+]

@@ -1,0 +1,42 @@
+[
+  {
+    "goalID": "8",
+    "points": "2",
+    "resourceList": ["FUNGI","FUNGI","FUNGI"]
+  },
+  {
+  "goalID": "9",
+  "points": "2",
+  "resourceList": ["PLANT","PLANT","PLANT"]
+  },
+  {
+    "goalID": "10",
+    "points": "2",
+    "resourceList": ["ANIMAL","ANIMAL","ANIMAL"]
+  },
+  {
+    "goalID": "11",
+    "points": "2",
+    "resourceList": ["INSECT","INSECT","INSECT"]
+  },
+  {
+    "goalID": "12",
+    "points": "3",
+    "resourceList": ["QUILL","INKWELL","MANUSCRIPT"]
+  },
+  {
+    "goalID": "13",
+    "points": "2",
+    "resourceList": ["MANUSCRIPT","MANUSCRIPT"]
+  },
+  {
+    "goalID": "14",
+    "points": "2",
+    "resourceList": ["INKWELL","INKWELL"]
+  },
+  {
+    "goalID": "15",
+    "points": "2",
+    "resourceList": ["QUILL","QUILL"]
+  }
+]

@@ -1,0 +1,30 @@
+[
+  {
+    "goalID": "4",
+    "points": "3",
+    "mainColor": "FUNGI",
+    "secondaryColor": "PLANT",
+    "type": "DOWN_RIGHT"
+  },
+  {
+    "goalID": "5",
+    "points": "3",
+    "mainColor": "PLANT",
+    "secondaryColor": "INSECT",
+    "type": "DOWN_LEFT"
+  },
+  {
+    "goalID": "6",
+    "points": "3",
+    "mainColor": "ANIMAL",
+    "secondaryColor": "FUNGI",
+    "type": "UP_RIGHT"
+  },
+  {
+    "goalID": "7",
+    "points": "3",
+    "mainColor": "INSECT",
+    "secondaryColor": "ANIMAL",
+    "type": "UP_LEFT"
+  }
+]
