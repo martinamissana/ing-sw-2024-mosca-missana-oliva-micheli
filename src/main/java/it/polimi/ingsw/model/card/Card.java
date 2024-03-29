@@ -6,10 +6,10 @@ import it.polimi.ingsw.model.commonItem.Kingdom;
 import java.util.HashMap;
 
 public abstract class Card  {
-    private int cardID;
+    private final int cardID;
     private CardSide side;
-    private HashMap<CornerType,Corner> frontCorner;
-    private HashMap<CornerType,Corner> backCorner;
+    private final HashMap<CornerType,Corner> frontCorner;
+    private final HashMap<CornerType,Corner> backCorner;
 
     public Card(int cardID, CardSide side, HashMap<CornerType, Corner> frontCorner, HashMap<CornerType, Corner> backCorner) {
         this.cardID = cardID;
@@ -25,7 +25,7 @@ public abstract class Card  {
         return this.side;
     }
 
-    public void flip (Card card){
+    public void flip (){
         if (side == CardSide.FRONT) {
             this.side= CardSide.BACK;
         }else{
