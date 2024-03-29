@@ -1,7 +1,7 @@
 package it.polimi.ingsw.model.commonItem;
 
 public enum CornerStatus implements ItemBox {
-    EMPTY, NOCORNER;
+    EMPTY;
 
     @Override
     public String getType() {
