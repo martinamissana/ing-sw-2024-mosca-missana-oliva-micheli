@@ -2,32 +2,32 @@ package it.polimi.ingsw.model.game;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import it.polimi.ingsw.model.card.Card;
-import it.polimi.ingsw.model.card.Corner;
-import it.polimi.ingsw.model.card.GoldenCard;
-import it.polimi.ingsw.model.card.ResourceCard;
+import it.polimi.ingsw.model.card.*;
 import it.polimi.ingsw.model.serialization.CornerDeserializer;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.List;
+
 
 public class CardsPreset {
 
-    public static List<ResourceCard> getResourceCards(){
+
+    public static List<ResourceCard> getResourceCards() throws IOException {
         List<ResourceCard> result;
-        String json = """
-                [{
-                    "points" : 2,
-                    "kingdom" : "FUNGI",
-                    "cardID" : 0,
-                    "side" : "FRONT",
-                    "frontCorner" : {
-                        "NORTH" : "FUNGI",
-                        "SOUTH" : "FUNGI"
-                    },
-                    "backCorner" : {
-                        "SOUTH" : "FUNGI"
-                    }
-                }]""";
+
+
+        InputStream inputStream = CardsPreset.class.getClassLoader().getResourceAsStream("resource_cards.json");
+
+        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+        StringBuilder jsonBuilder = new StringBuilder();
+        String line;
+        while ((line = reader.readLine()) != null) {
+            jsonBuilder.append(line);
+        }
+        String json = jsonBuilder.toString();
 
         GsonBuilder builder = new GsonBuilder();
         builder.registerTypeAdapter(Corner.class, new CornerDeserializer());
@@ -42,28 +42,17 @@ public class CardsPreset {
     }
 
 
-    public static List<GoldenCard> getGoldenCards(){
+    public static List<GoldenCard> getGoldenCards() throws IOException {
         List<GoldenCard> result;
-        String json = """
-                [{
-                    "points" : 2,
-                    "kingdom" : "FUNGI",
-                    "cardID" : 0,
-                    "side" : "FRONT",
-                    "frontCorner" : {
-                        "NORTH" : "FUNGI",
-                        "SOUTH" : "FUNGI"
-                    },
-                    "backCorner" : {
-                        "SOUTH" : "FUNGI"
-                    },
-                    "type" : "RESOURCE",
-                    "requirements" : {
-                        "FUNGI" : 2,
-                        "ANIMAL" : 1
-                    },
-                    "pointResource" : "INKWELL"
-                }]""";
+        InputStream inputStream = CardsPreset.class.getClassLoader().getResourceAsStream("golden_cards.json");
+
+        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+        StringBuilder jsonBuilder = new StringBuilder();
+        String line;
+        while ((line = reader.readLine()) != null) {
+            jsonBuilder.append(line);
+        }
+        String json = jsonBuilder.toString();
 
         GsonBuilder builder = new GsonBuilder();
         builder.registerTypeAdapter(Corner.class, new CornerDeserializer());
@@ -71,6 +60,30 @@ public class CardsPreset {
         Gson gson = builder.create();
 
         GoldenCard[] arrayCard = gson.fromJson(json, GoldenCard[].class);
+
+        result = List.of(arrayCard);
+
+        return result;
+    }
+
+    public static List<StarterCard> getStarterCards() throws IOException {
+        List<StarterCard> result;
+        InputStream inputStream = CardsPreset.class.getClassLoader().getResourceAsStream("starter_cards.json");
+
+        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+        StringBuilder jsonBuilder = new StringBuilder();
+        String line;
+        while ((line = reader.readLine()) != null) {
+            jsonBuilder.append(line);
+        }
+        String json = jsonBuilder.toString();
+
+        GsonBuilder builder = new GsonBuilder();
+        builder.registerTypeAdapter(Corner.class, new CornerDeserializer());
+
+        Gson gson = builder.create();
+
+        StarterCard[] arrayCard = gson.fromJson(json, StarterCard[].class);
 
         result = List.of(arrayCard);
 
