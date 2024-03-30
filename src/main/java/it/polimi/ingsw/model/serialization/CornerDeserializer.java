@@ -12,7 +12,19 @@ import it.polimi.ingsw.model.commonItem.Resource;
 
 import java.lang.reflect.Type;
 
+/**
+ * Class CornerDeserializer
+ * used to help deserialize the json files
+ */
 public class CornerDeserializer implements JsonDeserializer<Corner> {
+    /**
+     * method called in CardsPreset to help with the deserialization and the instantiation of the corners associated to each card
+     * @param jsonElement
+     * @param type
+     * @param jsonDeserializationContext
+     * @return Corner with its associated item
+     * @throws JsonParseException
+     */
     @Override
     public Corner deserialize(JsonElement jsonElement, Type type, JsonDeserializationContext jsonDeserializationContext) throws JsonParseException {
         String value = jsonElement.getAsString();

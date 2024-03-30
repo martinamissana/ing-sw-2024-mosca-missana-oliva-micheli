@@ -1,7 +1,7 @@
 package it.polimi.ingsw.model.card;
 
 public enum GoldenCardType {
-    DIRECT,
+    DIRECT, //gives points directly
     RESOURCE,
     CORNER
 }
