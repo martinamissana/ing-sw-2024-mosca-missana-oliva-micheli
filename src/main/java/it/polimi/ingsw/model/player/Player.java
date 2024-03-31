@@ -9,19 +9,19 @@ import it.polimi.ingsw.model.deck.DeckBuffer;
 import it.polimi.ingsw.model.goal.Goal;
 
 public class Player {
-    private boolean isFirstPlayer;
+    private boolean goesFirst;
     private String nickname;
     private Pawn pawn;
     private Hand hand;
     private Field field;
     private Goal privateGoal;
     private Chat chat;
-    public boolean getFirstPlayer() { return isFirstPlayer; }
+    public boolean getGoesFirst() { return goesFirst; }
     public String getNickname() { return nickname; }
-    public Pawn getPlayerColor() { return pawn; }
-    public Hand getPlayerHand() { return hand; }
-    public Field getPlayerField() { return field; }
-    public Chat getPlayerChat() { return chat; }
+    public Pawn getColor() { return pawn; }
+    public Hand getHand() { return hand; }
+    public Field getField() { return field; }
+    public Chat getChat() { return chat; }
 
     public boolean playCard() {
         StarterCard card = (StarterCard) hand.getCard(0);
