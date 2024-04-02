@@ -5,7 +5,7 @@ import java.util.ArrayList;
 
 public class Hand {
     private final ArrayList<Card> handList;
-    public Hand(Player p) {
+    public Hand() {
         this.handList = new ArrayList<Card>();
     }
     public Card getCard(int pos) {
