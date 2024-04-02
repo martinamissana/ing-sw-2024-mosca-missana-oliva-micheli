@@ -8,6 +8,11 @@ public class Game {
    private int numOfPlayer;
    private HashMap<Integer, Player> players;
 
+    public Game(int numOfPlayer, HashMap<Integer, Player> players) {
+        this.numOfPlayer = numOfPlayer;
+        this.players = players;
+    }
+
     public int getNumOfPlayer() {
         return numOfPlayer;
     }

@@ -1,7 +1,5 @@
 package it.polimi.ingsw.model.deck;
 import it.polimi.ingsw.model.card.Card;
-import it.polimi.ingsw.model.card.GoldenCard;
-import it.polimi.ingsw.model.card.ResourceCard;
 
 public class DeckBuffer implements Drawable {
     private Card card;

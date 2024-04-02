@@ -58,18 +58,4 @@ public class Message {
         return isGlobal;
     }
 
-
-    /**
-     * sends the message  either to the specified receiver, or to every player in the global chat,
-     * adds the message in the list of sent messages of the sender too
-     */
-    public void send() {
-        if(!isGlobal) {
-            sender.getChat().getSentMessages().add(this);
-            receiver.getChat().getReceivedMessages().add(this);
-        }
-        else {
-            //che fare se global?
-        }
-    }
 }
