@@ -1,26 +1,22 @@
 package it.polimi.ingsw.model.deck;
 import it.polimi.ingsw.model.card.Card;
-import it.polimi.ingsw.model.card.GoldenCard;
-import it.polimi.ingsw.model.card.ResourceCard;
+import it.polimi.ingsw.model.game.CardsPreset;
+
+import java.io.IOException;
 import java.util.*;
 
+
 public class Deck implements Drawable {
-    private int num_cards;  // is needed?? (cards.size())
+    private int numCards;  // is needed?? (cards.size())
     private DeckType type;
     private ArrayList<Card> cards;
 
-    public Deck() {
-        this.num_cards = 40;
-        this.cards = new ArrayList<>(num_cards);
-    }
-    public void ResourceDeck() {
-        this.type = DeckType.RESOURCE;
-        // Collection cards queried
-    }
-
-    public void GoldenDeck() {
-        this.type = DeckType.GOLDEN;
-        // Collection cards queried
+    public Deck(DeckType type) throws IOException{
+        this.numCards = 40;
+        this.cards = new ArrayList<>(40);
+        this.type = type;
+        if (type == DeckType.RESOURCE) CardsPreset.getResourceCards();
+        else CardsPreset.getGoldenCards();
     }
 
     public ArrayList<Card> getDeck() {
@@ -29,21 +25,35 @@ public class Deck implements Drawable {
     public DeckType getType() {
         return this.type;
     }
+    public int getNumCards() {return numCards;}
+    public void setType(DeckType type) {
+        this.type = type;
+        return;
+    }
 
-    private void shuffle() {
+    public void shuffle() {
         Collections.shuffle(cards);
     }
 
     public boolean isEmpty() {
-       return num_cards == 0;
+       return numCards == 0;
     }
 
     @Override
     public Card draw() {
-        Card drawn = this.cards.get(this.num_cards - 1);
+        Card drawn = this.cards.get(this.numCards - 1);
         cards.remove(drawn);
-        num_cards--;
+        numCards--;
 
         return drawn;
+    }
+
+    public boolean equals(ArrayList<Card> resource) {
+        for(int i = 0; i < resource.size(); i++) {
+            if(resource.get(i) != this.getDeck().get(i)) {
+                return false;
+            }
+        }
+        return true;
     }
 }
