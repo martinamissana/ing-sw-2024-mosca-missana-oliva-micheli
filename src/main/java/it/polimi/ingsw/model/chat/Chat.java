@@ -12,17 +12,15 @@ import java.util.Map;
  * each Player has an associated chat with a list of sent messages and a list of received messages
  */
 public class Chat {
-    private ArrayList<Message> sentMessages;
-    private ArrayList<Message> receivedMessages;
+    private final ArrayList<Message> sentMessages;
+    private final ArrayList<Message> receivedMessages;
 
     /**
      * Class constructor
-     * @param sentMessages
-     * @param receivedMessages
      */
-    public Chat(ArrayList<Message> sentMessages,ArrayList<Message> receivedMessages){
-        this.sentMessages = sentMessages;
-        this.receivedMessages = receivedMessages;
+    public Chat(){
+        this.sentMessages = new ArrayList<Message>();
+        this.receivedMessages = new ArrayList<Message>();
     }
 
     /**
