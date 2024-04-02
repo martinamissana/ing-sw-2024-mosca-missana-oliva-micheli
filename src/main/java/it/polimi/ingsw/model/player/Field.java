@@ -6,20 +6,40 @@ import it.polimi.ingsw.model.commonItem.Kingdom;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Field Class
+ * each player has an associated field to play their cards onto
+ */
 public class Field {
     private final HashMap<Coords, Card> matrix;
     private final HashMap<ItemBox, Integer> totalResources;
-    private final BlockedCard blockedCard;
-    public HashMap<Coords, Card> getMatrix() { return matrix; }
-    public HashMap<ItemBox, Integer> getTotalResources() { return totalResources; }
+    private final CardBlock cardBlock;
+
+    /**
+     * Class constructor
+     */
     public Field() {
         this.matrix = new HashMap<Coords, Card>();
         this.totalResources = new HashMap<ItemBox, Integer>();
-        this.blockedCard = new BlockedCard();
+        this.cardBlock = new CardBlock();
     }
 
-    // adds a starter card at the origin, with no checks whatsoever.
-    // should only be called once per player, per game, at the start (might need to take precautions though)
+    /**
+     * gets the set of currently placed cards
+     * @return matrix
+     */
+    public HashMap<Coords, Card> getMatrix() { return matrix; }
+
+    /**
+     * gets each resource's total count
+     * @return totalResources
+     */
+    public HashMap<ItemBox, Integer> getTotalResources() { return totalResources; }
+
+    /**
+     * adds a starter card at the origin of the field (0,0) with no checks whatsoever
+     * @param card
+     */
     public void addCard(StarterCard card) {
         Coords coords = new Coords(0, 0);
         this.matrix.put(coords, card);
@@ -27,140 +47,189 @@ public class Field {
         updateTotalRes(card);
     }
 
-    // adds a card at a given position
-    public boolean addCard(ResourceCard card, Coords coords) {
-        if (!checkIfPlaceable(coords))
-            return false;
+    /**
+     * adds a card (Resource or Golden) to the field at the specified position.
+     * returns the number of points gained by the player by placing said card.
+     *
+     * if a card is not placeable or doesn't have its requirements met, the method returns -1.
+     * this value should not be added to the player's score, and should be interpreted as a flag.
+     * @param card
+     * @param coords
+     * @return int
+     */
+    public int addCard(ResourceCard card, Coords coords) {
+        if (!checkIfPlaceable(coords)) { return -1; }
+        if (!checkRequirements(card)) { return -1; }
         this.matrix.put(coords, card);
         blockCardSpaces(card, coords);
         updateTotalRes(card, coords);
-        int addPts = evaluatePoints(card);
-
-        return true;
+        return evaluatePoints(card, coords);
     }
 
-    // could maybe get absorbed by the ResourceCard override method
-    public boolean addCard(GoldenCard card, Coords coords) {
-        if (!checkIfPlaceable(coords) ||
-                !checkRequirements(card)) return false;
-        this.matrix.put(coords, card);
-        blockCardSpaces(card, coords);
-        updateTotalRes(card, coords);
-        // a golden card only adds at most one special resource, but never any of the kingdom resources
-        // might be a useful observation to optimize this, maybe using card.getClass()
-        int addPts = evaluatePoints(card, coords);
-        return true;
-    }
-
-    // checks if a position is already occupied by a card or blocked by a corner
+    /**
+     * checks if a position is already occupied by a card or blocked by a corner
+     * @param coords
+     * @return boolean
+     */
     public boolean checkIfPlaceable(Coords coords) {
 
-        // if there's already a card at that position (including a BlockedCard), return false
+        // if there's already a card at that position (including a CardBlock,
+        // meaning the position would be blocked by a corner), return false
         if (this.matrix.get(coords) != null)
             return false;
-        // if it's a reachable position (has to overlap at least one of its corners with another card's), return true
-        HashMap<CornerType, Coords> neighbours = getNeighbours(coords);
-        for (Map.Entry<CornerType, Coords> entry : neighbours.entrySet())
-            if (this.matrix.get(entry.getValue()).getCorner(opposite(entry.getKey())) != null)
-                return true;
+
+        // if any of the adjacent positions has a card with a non-blocking corner
+        // pointed towards the specified position, return true
+        for (Map.Entry<CornerType, Coords> entry : getNeighbours(coords).entrySet())            // iterate through neighboring cards
+            if (this.matrix.get(entry.getValue()).getCorner(opposite(entry.getKey())) != null)  // if any such card... (as before)
+                return true;                                                                    // a card can be placed at 'coords'
+
+        // unreachable position
         return false;
     }
 
-    // checks if a golden card's requirements are currently met
-    public boolean checkRequirements(GoldenCard card) {
+    /**
+     * checks if a card's requirements are currently met (any non-Golden card will always have its requirements met)
+     * @param card
+     * @return boolean
+     */
+    public boolean checkRequirements(ResourceCard card) {
+
+        // if it's not a Golden card it doesn't have requirements, so they're automatically met
+        if (card.getClass() != GoldenCard.class)
+            return true;
 
         // if any resource required is insufficient, return false
-        for (Map.Entry<Kingdom, Integer> entry : card.getRequirements().entrySet())
-            if (entry.getValue() > this.totalResources.get(entry.getKey()))
-                return false;
-        // else, return true
+        for (Map.Entry<Kingdom, Integer> entry : ((GoldenCard) card).getRequirements().entrySet())  // for each required resource's quantity
+            if (entry.getValue() > this.totalResources.get(entry.getKey()))                         // if it's greater than the corresponding total
+                return false;                                                                       // the card's requirements are not met
+
+        // else, requirements are met. return true
         return true;
     }
 
-    // looks at a card's blocking corners and adds blockedCard entries if there already isn't ANY Card
+    /**
+     * looks at a card's blocking corners and sets cardBlock entries if there already isn't any Card
+     * @param card
+     * @param coords
+     */
     private void blockCardSpaces(Card card, Coords coords) {
 
-        // if a free cell is covered by a blocking corner, put a BlockedCard in that cell
-        for (Map.Entry<CornerType, Coords> entry : getFreeNeighboursCoords(coords).entrySet())
-            if (card.getCorner(entry.getKey()) == null)
-                this.matrix.put(entry.getValue(), this.blockedCard);
+        // if a free adjacent position is covered by a blocking corner of
+        // the specified card, set a CardBlock at that position
+        for (Map.Entry<CornerType, Coords> entry : getFreeNeighboursCoords(coords).entrySet())  // iterate through free neighboring positions.
+            if (card.getCorner(entry.getKey()) == null)                                         // if no corner is instantiated for that direction,
+                this.matrix.put(entry.getValue(), this.cardBlock);                              // then set a CardBlock
     }
 
-    // updates totalResources when placing the starter card
+    /**
+     * updates each resource's total count, given the newly placed Starter card
+     * @param card
+     */
     private void updateTotalRes(StarterCard card) {
-        if (card.getSide() == CardSide.FRONT) // one resource per kingdom
-            for (Kingdom resource : Kingdom.values())
-                this.totalResources.put(resource, 1);
-        else {
-            // add center resource(s)
-            this.totalResources.putAll(card.getPermanentRes());
 
-            // two of the starter cards have resources on their corners
-            for (CornerType corner : CornerType.values()) {
+            // starter card is face up
+        if (card.getSide() == CardSide.FRONT)           // starter cards always have
+            for (Kingdom resource : Kingdom.values())   // one resource per kingdom
+                this.totalResources.put(resource, 1);   // on their front side
+        else {
+            // starter card is flipped
+            this.totalResources.putAll(card.getPermanentRes());     // get center resources first
+
+            // two of the starter cards have resources on their back corners
+            for (CornerType corner : CornerType.values()) {         // then check all corners
                 ItemBox resource = card.getCorner(corner);
                 Integer oldQty = 0;
-                if (resource != null) {
-                    oldQty = this.totalResources.get(resource);
-                    this.totalResources.put(resource, oldQty + 1);
+                if (resource != null) {                             // if there's a resource,
+                    oldQty = this.totalResources.get(resource);     // increment its count
+                    this.totalResources.put(resource, oldQty+1);    // by 1
                 }
             }
         }
     }
 
-    // updates totalResources when placing a new card
+    /**
+     * updates each resource's total count, given the newly placed card and its position
+     * @param card
+     * @param coords
+     */
     private void updateTotalRes(ResourceCard card, Coords coords) {
         int oldQty;
         ItemBox item;
 
+            // card is face up
         if (card.getSide() == CardSide.FRONT) {
-            // for each corner, get its resource and add 1 to its total count
-            for (CornerType corner : CornerType.values()) {
-                item = card.getCorner(corner);
-                if (item != null) {
-                    oldQty = this.totalResources.get(item);
-                    this.totalResources.put(item, oldQty+1);
+            for (CornerType corner : CornerType.values()) {     // check each corners'
+                item = card.getCorner(corner);                  // resources.
+                if (item != null) {                             // if there's any,
+                    oldQty = this.totalResources.get(item);     // increment the corresponding
+                    this.totalResources.put(item, oldQty+1);    // total count
                 }
             }
         } else {
-            // add 1 to the total count of the card's Kingdom resource
-            item = card.getKingdom();
-            oldQty = this.totalResources.get(item);
-            this.totalResources.put(item, oldQty + 1);
+            // card is face down
+            item = card.getKingdom();                   // get the card's Kingdom resource
+            oldQty = this.totalResources.get(item);     // add 1 to its
+            this.totalResources.put(item, oldQty+1);    // total count
         }
 
-        // subtracts 1 to a resource every time a corner that contains it gets covered
-        for (Map.Entry<CornerType, Coords> entry : getNeighbours(coords).entrySet()) {
-            item = this.matrix.get(entry.getValue()).getCorner(opposite(entry.getKey()));
-            oldQty = this.totalResources.get(item);
-            this.totalResources.put(item, oldQty - 1);
+        // subtract 1 to a resource's count every time an adjacent card's corner that contains it gets covered
+        for (Map.Entry<CornerType, Coords> entry : getNeighbours(coords).entrySet()) {      // iterate through neighboring cards
+            item = this.matrix.get(entry.getValue()).getCorner(opposite(entry.getKey()));   // get covered corner's resource
+            if (item != null) {                                                             // if there is
+                oldQty = this.totalResources.get(item);                                     // decrement its
+                this.totalResources.put(item, oldQty-1);                                    // total count
+            }
         }
     }
 
-    // returns direct points from resource cards
+    /**
+     * returns the number of points from Resource cards
+     * @param card
+     * @return int
+     */
     private int evaluatePoints(ResourceCard card) { return card.getPoints(); }
 
-    // evaluates golden card points given its position and GoldenCardType
-    private int evaluatePoints(GoldenCard card, Coords coords) {
+    /**
+     * evaluates and returns the number of points (given the card's position and GoldenCardType if it's a GoldenCard)
+     * @param card
+     * @param coords
+     * @return int
+     */
+    private int evaluatePoints(ResourceCard card, Coords coords) {
 
-        // read direct points from card
-        if (card.getType() == GoldenCardType.DIRECT)
+        // read direct points from ResourceCard
+        if (card.getClass() == ResourceCard.class)
             return card.getPoints();
 
-        // read total count of the corresponding resource
-        if (card.getType() == GoldenCardType.RESOURCE)
-            return totalResources.get(card.getPointResource());
+        GoldenCard goldenCard = (GoldenCard) card;
 
-        // get two points for each neighboring card
-        if (card.getType() == GoldenCardType.CORNER)
-            return getNeighbours(coords).size() * 2;
+        // read direct points from GoldenCard
+        if (goldenCard.getType() == GoldenCardType.DIRECT)
+            return goldenCard.getPoints();
+
+        // one point for each unit of specified resource
+        if (goldenCard.getType() == GoldenCardType.RESOURCE)
+            return totalResources.get(goldenCard.getPointResource()); // read total count of the corresponding resource
+
+        // two points for each neighboring card
+        if (goldenCard.getType() == GoldenCardType.CORNER)
+            return getNeighbours(coords).size() * 2; // get the number of adjacent cards and multiply by 2
         return 0;
     }
 
-    // returns a Corner (meaning direction) to Coords map, containing all coordinates with a Card in them (BlockedCard are NOT included)
+    /**
+     * returns all cards adjacent to the specified position.
+     * more formally, it returns a CornerType (meaning direction) to Coords map,
+     * containing all coordinates with a Card in them (CardBlock cards are NOT included)
+     * @param coords
+     * @return HashMap<CornerType, Coords>
+     */
     private HashMap<CornerType, Coords> getNeighbours(Coords coords) {
         HashMap<CornerType, Coords> map = new HashMap<>();
         if (coords == null) return map;
-
+        
+        // create neighboring coordinates
         int Xin = coords.getX();
         int Yin = coords.getY();
         Coords northCoords = new Coords(Xin,Yin+1);
@@ -168,23 +237,30 @@ public class Field {
         Coords southCoords = new Coords(Xin,Yin-1);
         Coords westCoords = new Coords(Xin-1,Yin);
 
-        // is checking != null needed?
-        if (this.matrix.get(northCoords) != null && this.matrix.get(northCoords).getClass() != BlockedCard.class)
+        // if there's a non-blocking Card, add that position to the map (is checking != null needed?)
+        if (this.matrix.get(northCoords) != null && this.matrix.get(northCoords).getClass() != CardBlock.class)
             map.put(CornerType.NORTH, northCoords);
-        if (this.matrix.get(eastCoords) != null && this.matrix.get(eastCoords).getClass() != BlockedCard.class)
+        if (this.matrix.get(eastCoords) != null && this.matrix.get(eastCoords).getClass() != CardBlock.class)
             map.put(CornerType.EAST, eastCoords);
-        if (this.matrix.get(southCoords) != null && this.matrix.get(southCoords).getClass() != BlockedCard.class)
+        if (this.matrix.get(southCoords) != null && this.matrix.get(southCoords).getClass() != CardBlock.class)
             map.put(CornerType.SOUTH, southCoords);
-        if (this.matrix.get(westCoords) != null && this.matrix.get(westCoords).getClass() != BlockedCard.class)
+        if (this.matrix.get(westCoords) != null && this.matrix.get(westCoords).getClass() != CardBlock.class)
             map.put(CornerType.WEST, westCoords);
         return map;
     }
 
-    // returns a Corner (meaning direction) to Coords map, which only includes coordinates without ANY Card in them (BlockedCard excluded too)
+    /**
+     * returns all non-blocked and empty locations near a specified position.
+     * more formally, it returns a CornerType (meaning direction) to Coords map,
+     * containing all coordinates without ANY Card in them (CardBlock cards are excluded too)
+     * @param coords
+     * @return HashMap<CornerType, Coords>
+     */
     private HashMap<CornerType, Coords> getFreeNeighboursCoords(Coords coords) {
         HashMap<CornerType, Coords> map = new HashMap<>();
         if (coords == null) return map;
 
+        // create neighboring coordinates
         int Xin = coords.getX();
         int Yin = coords.getY();
         Coords northCoords = new Coords(Xin,Yin+1);
@@ -192,6 +268,7 @@ public class Field {
         Coords southCoords = new Coords(Xin,Yin-1);
         Coords westCoords = new Coords(Xin-1,Yin);
 
+        // if there's no entry for that position, it is free. add it to the map
         if (!this.matrix.containsKey(northCoords))
             map.put(CornerType.NORTH, northCoords);
         if (!this.matrix.containsKey(eastCoords))
@@ -203,7 +280,11 @@ public class Field {
         return map;
     }
 
-    // returns the opposite corner
+    /**
+     * returns the CornerType opposite to the one specified
+     * @param corner
+     * @return CornerType
+     */
     private CornerType opposite(CornerType corner) {
         if (corner != null) {
             if (corner == CornerType.NORTH)
