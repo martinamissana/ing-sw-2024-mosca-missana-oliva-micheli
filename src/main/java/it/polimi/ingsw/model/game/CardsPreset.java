@@ -25,7 +25,7 @@ public class CardsPreset {
      * @return list<ResourceCard>
      * @throws IOException
      */
-    public static List<ResourceCard> getResourceCards() throws IOException {
+    public static ArrayList<ResourceCard> getResourceCards() throws IOException {
         InputStream inputStream = CardsPreset.class.getClassLoader().getResourceAsStream("resource_cards.json");
         BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
         StringBuilder jsonBuilder = new StringBuilder();
@@ -49,7 +49,7 @@ public class CardsPreset {
      * @return list<GoldenCard>
      * @throws IOException
      */
-    public static List<GoldenCard> getGoldenCards() throws IOException {
+    public static ArrayList<GoldenCard> getGoldenCards() throws IOException {
         InputStream inputStream = CardsPreset.class.getClassLoader().getResourceAsStream("golden_cards.json");
         BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
         StringBuilder jsonBuilder = new StringBuilder();
@@ -72,7 +72,7 @@ public class CardsPreset {
      * @return list<StarterCard>
      * @throws IOException
      */
-    public static List<StarterCard> getStarterCards() throws IOException {
+    public static ArrayList<StarterCard> getStarterCards() throws IOException {
         InputStream inputStream = CardsPreset.class.getClassLoader().getResourceAsStream("starter_cards.json");
         BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
         StringBuilder jsonBuilder = new StringBuilder();
