@@ -1,7 +1,10 @@
 package it.polimi.ingsw.model.commonItem;
 
+/**
+ * Enumeration of the kingdoms in the game
+ */
 public enum Kingdom implements ItemBox {
-    PLANT, ANIMAL, FUNGI, INSECT;
+    ANIMAL, FUNGI, INSECT, PLANT;
 
 
     @Override

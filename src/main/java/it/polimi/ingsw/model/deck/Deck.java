@@ -1,59 +1,64 @@
 package it.polimi.ingsw.model.deck;
-import it.polimi.ingsw.model.card.Card;
+import it.polimi.ingsw.model.card.*;
 import it.polimi.ingsw.model.game.CardsPreset;
 
 import java.io.IOException;
 import java.util.*;
 
 
+/**
+ * List of cards of type RESOURCE or GOLDEN
+ */
 public class Deck implements Drawable {
-    private int numCards;  // is needed?? (cards.size())
-    private DeckType type;
-    private ArrayList<Card> cards;
+    private final DeckType type;
+    private ArrayList<ResourceCard> cards;
 
-    public Deck(DeckType type) throws IOException{
-        this.numCards = 40;
-        this.cards = new ArrayList<>(40);
+    /**
+     * Class constructor
+     * @param type
+     * @throws IOException
+     */
+    public Deck(DeckType type) throws IOException {
         this.type = type;
-        if (type == DeckType.RESOURCE) CardsPreset.getResourceCards();
-        else CardsPreset.getGoldenCards();
+        this.cards = new ArrayList<>();
+
+        if (type == DeckType.RESOURCE) {
+            this.cards.addAll(CardsPreset.getResourceCards());
+        }
+        else {
+            this.cards.addAll(CardsPreset.getGoldenCards());
+        }
     }
 
-    public ArrayList<Card> getDeck() {
+    /**
+     * gets the list of cards in the deck
+     * @return cards
+     */
+    public ArrayList<ResourceCard> getDeck() {
         return this.cards;
     }
+
+    /**
+     * gets the type of the deck
+     * @return type
+     */
     public DeckType getType() {
         return this.type;
     }
-    public int getNumCards() {return numCards;}
-    public void setType(DeckType type) {
-        this.type = type;
-        return;
-    }
 
+    /**
+     * Shuffles the deck
+     */
     public void shuffle() {
         Collections.shuffle(cards);
     }
 
-    public boolean isEmpty() {
-       return numCards == 0;
-    }
-
+    /**
+     * Draws the last card from the deck list
+     */
     @Override
-    public Card draw() {
-        Card drawn = this.cards.get(this.numCards - 1);
-        cards.remove(drawn);
-        numCards--;
-
-        return drawn;
-    }
-
-    public boolean equals(ArrayList<Card> resource) {
-        for(int i = 0; i < resource.size(); i++) {
-            if(resource.get(i) != this.getDeck().get(i)) {
-                return false;
-            }
-        }
-        return true;
+    public ResourceCard draw() {
+        if(!cards.isEmpty()) return cards.removeLast();
+        else return null;
     }
 }
