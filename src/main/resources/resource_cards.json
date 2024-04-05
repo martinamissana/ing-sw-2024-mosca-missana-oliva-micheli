@@ -1,5 +1,5 @@
 [{
-        "cardId": "1",
+        "ID": "1",
         "side": "FRONT",
         "frontCorner": {
             "NORTH": "FUNGI",
@@ -16,7 +16,7 @@
         "points": 0
     },
     {
-        "cardId": "2",
+        "ID": "2",
         "side": "FRONT",
         "frontCorner": {
             "NORTH": "FUNGI",
@@ -33,7 +33,7 @@
         "points": 0
     },
     {
-        "cardId": "3",
+        "ID": "3",
         "side": "FRONT",
         "frontCorner": {
             "NORTH": "EMPTY",
@@ -50,7 +50,7 @@
         "points": 0
     },
     {
-        "cardId": "4",
+        "ID": "4",
         "side": "FRONT",
         "frontCorner": {
 
@@ -68,7 +68,7 @@
         "points": 0
     },
     {
-        "cardId": "5",
+        "ID": "5",
         "side": "FRONT",
         "frontCorner": {
 
@@ -86,7 +86,7 @@
         "points": 0
     },
     {
-        "cardId": "6",
+        "ID": "6",
         "side": "FRONT",
         "frontCorner": {
             "NORTH": "INKWELL",
@@ -103,7 +103,7 @@
         "points": 0
     },
     {
-        "cardId": "7",
+        "ID": "7",
         "side": "FRONT",
         "frontCorner": {
             "NORTH": "FUNGI",
@@ -121,7 +121,7 @@
         "points": 0
     },
     {
-        "cardId": "8",
+        "ID": "8",
         "side": "FRONT",
         "frontCorner": {
             "NORTH": "EMPTY",
@@ -138,7 +138,7 @@
         "points": 1
     },
     {
-        "cardId": "9",
+        "ID": "9",
         "side": "FRONT",
         "frontCorner": {
             "NORTH": "FUNGI",
@@ -155,7 +155,7 @@
         "points": 1
     },
     {
-        "cardId": "10",
+        "ID": "10",
         "side": "FRONT",
         "frontCorner": {
 
@@ -173,7 +173,7 @@
         "points": 1
     },
     {
-        "cardId": "11",
+        "ID": "11",
         "side": "FRONT",
         "frontCorner": {
             "NORTH": "PLANT",
@@ -190,7 +190,7 @@
         "points": 0
     },
     {
-        "cardId": "12",
+        "ID": "12",
         "side": "FRONT",
         "frontCorner": {
             "NORTH": "PLANT",
@@ -207,7 +207,7 @@
         "points": 0
     },
     {
-        "cardId": "13",
+        "ID": "13",
         "side": "FRONT",
         "frontCorner": {
             "NORTH": "EMPTY",
@@ -224,7 +224,7 @@
         "points": 0
     },
     {
-        "cardId": "14",
+        "ID": "14",
         "side": "FRONT",
         "frontCorner": {
 
@@ -242,7 +242,7 @@
         "points": 0
     },
     {
-        "cardId": "15",
+        "ID": "15",
         "side": "FRONT",
         "frontCorner": {
 
@@ -260,7 +260,7 @@
         "points": 0
     },
     {
-        "cardId": "16",
+        "ID": "16",
         "side": "FRONT",
         "frontCorner": {
             "NORTH": "FUNGI",
@@ -277,7 +277,7 @@
         "points": 0
     },
     {
-        "cardId": "17",
+        "ID": "17",
         "side": "FRONT",
         "frontCorner": {
             "NORTH": "MANUSCRIPT",
@@ -294,7 +294,7 @@
         "points": 0
     },
     {
-        "cardId": "18",
+        "ID": "18",
         "side": "FRONT",
         "frontCorner": {
             "NORTH": "EMPTY",
@@ -311,7 +311,7 @@
         "points": 1
     },
     {
-        "cardId": "19",
+        "ID": "19",
         "side": "FRONT",
         "frontCorner": {
             "NORTH": "EMPTY",
@@ -328,7 +328,7 @@
         "points": 1
     },
     {
-        "cardId": "20",
+        "ID": "20",
         "side": "FRONT",
         "frontCorner": {
 
@@ -346,7 +346,7 @@
         "points": 1
     },
     {
-        "cardId": "21",
+        "ID": "21",
         "side": "FRONT",
         "frontCorner": {
             "NORTH": "ANIMAL",
@@ -363,7 +363,7 @@
         "points": 0
     },
     {
-        "cardId": "22",
+        "ID": "22",
         "side": "FRONT",
         "frontCorner": {
 
@@ -381,7 +381,7 @@
         "points": 0
     },
     {
-        "cardId": "23",
+        "ID": "23",
         "side": "FRONT",
         "frontCorner": {
             "NORTH": "ANIMAL",
@@ -398,7 +398,7 @@
         "points": 0
     },
     {
-        "cardId": "24",
+        "ID": "24",
         "side": "FRONT",
         "frontCorner": {
             "NORTH": "EMPTY",
@@ -415,7 +415,7 @@
         "points": 0
     },
     {
-        "cardId": "25",
+        "ID": "25",
         "side": "FRONT",
         "frontCorner": {
 
@@ -433,7 +433,7 @@
         "points": 0
     },
     {
-        "cardId": "26",
+        "ID": "26",
         "side": "FRONT",
         "frontCorner": {
             "NORTH": "PLANT",
@@ -450,7 +450,7 @@
         "points": 0
     },
     {
-        "cardId": "27",
+        "ID": "27",
         "side": "FRONT",
         "frontCorner": {
             "NORTH": "QUILL",
@@ -467,7 +467,7 @@
         "points": 0
     },
     {
-        "cardId": "28",
+        "ID": "28",
         "side": "FRONT",
         "frontCorner": {
             "EAST": "EMPTY",
@@ -484,7 +484,7 @@
         "points": 1
     },
     {
-        "cardId": "29",
+        "ID": "29",
         "side": "FRONT",
         "frontCorner": {
             "NORTH": "EMPTY",
@@ -501,7 +501,7 @@
         "points": 1
     },
     {
-        "cardId": "30",
+        "ID": "30",
         "side": "FRONT",
         "frontCorner": {
             "NORTH": "EMPTY",
@@ -518,7 +518,7 @@
         "points": 1
     },
     {
-        "cardId": "31",
+        "ID": "31",
         "side": "FRONT",
         "frontCorner": {
             "NORTH": "INSECT",
@@ -535,7 +535,7 @@
         "points": 0
     },
     {
-        "cardId": "32",
+        "ID": "32",
         "side": "FRONT",
         "frontCorner": {
             "EAST": "EMPTY",
@@ -552,7 +552,7 @@
         "points": 0
     },
     {
-        "cardId": "33",
+        "ID": "33",
         "side": "FRONT",
         "frontCorner": {
             "NORTH": "INSECT",
@@ -569,7 +569,7 @@
         "points": 0
     },
     {
-        "cardId": "34",
+        "ID": "34",
         "side": "FRONT",
         "frontCorner": {
             "NORTH": "EMPTY",
@@ -586,7 +586,7 @@
         "points": 0
     },
     {
-        "cardId": "35",
+        "ID": "35",
         "side": "FRONT",
         "frontCorner": {
             "EAST": "QUILL",
@@ -603,7 +603,7 @@
         "points": 0
     },
     {
-        "cardId": "36",
+        "ID": "36",
         "side": "FRONT",
         "frontCorner": {
             "NORTH": "MANUSCRIPT",
@@ -620,7 +620,7 @@
         "points": 0
     },
     {
-        "cardId": "37",
+        "ID": "37",
         "side": "FRONT",
         "frontCorner": {
             "NORTH": "INSECT",
@@ -637,7 +637,7 @@
         "points": 0
     },
     {
-        "cardId": "38",
+        "ID": "38",
         "side": "FRONT",
         "frontCorner": {
             "NORTH": "INSECT",
@@ -654,7 +654,7 @@
         "points": 1
     },
     {
-        "cardId": "39",
+        "ID": "39",
         "side": "FRONT",
         "frontCorner": {
             "NORTH": "EMPTY",
@@ -671,7 +671,7 @@
         "points": 1
     },
     {
-        "cardId": "40",
+        "ID": "40",
         "side": "FRONT",
         "frontCorner": {
             "EAST": "INSECT",

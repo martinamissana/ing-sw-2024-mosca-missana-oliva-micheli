@@ -1,6 +1,6 @@
 [
     {
-        "cardId": "81",
+        "ID": "81",
         "side": "FRONT",
         "frontCorner": {
             "NORTH": "FUNGI",
@@ -19,7 +19,7 @@
         }
     },
     {
-        "cardId": "82",
+        "ID": "82",
         "side": "FRONT",
         "frontCorner": {
             "NORTH": "PLANT",
@@ -38,7 +38,7 @@
         }
     },
     {
-        "cardId": "83",
+        "ID": "83",
         "side": "FRONT",
         "frontCorner": {
             "NORTH": "INSECT",
@@ -58,7 +58,7 @@
         }
     },
     {
-        "cardId": "84",
+        "ID": "84",
         "side": "FRONT",
         "frontCorner": {
             "NORTH": "PLANT",
@@ -78,7 +78,7 @@
         }
     },
     {
-        "cardId": "85",
+        "ID": "85",
         "side": "FRONT",
         "frontCorner": {
             "NORTH": "INSECT",
@@ -97,7 +97,7 @@
         }
     },
     {
-        "cardId": "86",
+        "ID": "86",
         "side": "FRONT",
         "frontCorner": {
             "NORTH": "FUNGI",

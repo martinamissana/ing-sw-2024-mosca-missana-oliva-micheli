@@ -1,6 +1,6 @@
 [
     {
-        "cardId": "41",
+        "ID": "41",
         "side": "FRONT",
         "frontCorner": {
 
@@ -24,7 +24,7 @@
         "pointResource": "QUILL"
     },
     {
-        "cardId": "42",
+        "ID": "42",
         "side": "FRONT",
         "frontCorner": {
             "NORTH": "EMPTY",
@@ -48,7 +48,7 @@
         "pointResource": "INKWELL"
     },
     {
-        "cardId": "43",
+        "ID": "43",
         "side": "FRONT",
         "frontCorner": {
             "NORTH": "MANUSCRIPT",
@@ -72,7 +72,7 @@
         "pointResource": "MANUSCRIPT"
     },
     {
-        "cardId": "44",
+        "ID": "44",
         "side": "FRONT",
         "frontCorner": {
             "NORTH": "EMPTY",
@@ -95,7 +95,7 @@
         "type": "CORNER"
     },
     {
-        "cardId": "45",
+        "ID": "45",
         "side": "FRONT",
         "frontCorner": {
             "NORTH": "EMPTY",
@@ -118,7 +118,7 @@
         "type": "CORNER"
     },
     {
-        "cardId": "46",
+        "ID": "46",
         "side": "FRONT",
         "frontCorner": {
             "NORTH": "EMPTY",
@@ -141,7 +141,7 @@
         "type": "CORNER"
     },
     {
-        "cardId": "47",
+        "ID": "47",
         "side": "FRONT",
         "frontCorner": {
             "NORTH": "EMPTY",
@@ -163,7 +163,7 @@
         "type": "DIRECT"
     },
     {
-        "cardId": "48",
+        "ID": "48",
         "side": "FRONT",
         "frontCorner": {
             "NORTH": "QUILL",
@@ -185,7 +185,7 @@
         "type": "DIRECT"
     },
     {
-        "cardId": "49",
+        "ID": "49",
         "side": "FRONT",
         "frontCorner": {
 
@@ -207,7 +207,7 @@
         "type": "DIRECT"
     },
     {
-        "cardId": "50",
+        "ID": "50",
         "side": "FRONT",
         "frontCorner": {
             "NORTH": "EMPTY",
@@ -229,7 +229,7 @@
         "type": "DIRECT"
     },
     {
-        "cardId": "51",
+        "ID": "51",
         "side": "FRONT",
         "frontCorner": {
             "NORTH": "QUILL",
@@ -253,7 +253,7 @@
         "pointResource": "QUILL"
     },
     {
-        "cardId": "52",
+        "ID": "52",
         "side": "FRONT",
         "frontCorner": {
             "NORTH": "EMPTY",
@@ -277,7 +277,7 @@
         "pointResource": "MANUSCRIPT"
     },
     {
-        "cardId": "53",
+        "ID": "53",
         "side": "FRONT",
         "frontCorner": {
             "NORTH": "EMPTY",
@@ -301,7 +301,7 @@
         "pointResource": "INKWELL"
     },
     {
-        "cardId": "54",
+        "ID": "54",
         "side": "FRONT",
         "frontCorner": {
 
@@ -324,7 +324,7 @@
         "type": "CORNER"
     },
     {
-        "cardId": "55",
+        "ID": "55",
         "side": "FRONT",
         "frontCorner": {
             "NORTH": "EMPTY",
@@ -347,7 +347,7 @@
         "type": "CORNER"
     },
     {
-        "cardId": "56",
+        "ID": "56",
         "side": "FRONT",
         "frontCorner": {
             "NORTH": "EMPTY",
@@ -370,7 +370,7 @@
         "type": "CORNER"
     },
     {
-        "cardId": "57",
+        "ID": "57",
         "side": "FRONT",
         "frontCorner": {
             "NORTH": "EMPTY",
@@ -392,7 +392,7 @@
         "type": "DIRECT"
     },
     {
-        "cardId": "58",
+        "ID": "58",
         "side": "FRONT",
         "frontCorner": {
             "NORTH": "MANUSCRIPT",
@@ -414,7 +414,7 @@
         "type": "DIRECT"
     },
     {
-        "cardId": "59",
+        "ID": "59",
         "side": "FRONT",
         "frontCorner": {
 
@@ -436,7 +436,7 @@
         "type": "DIRECT"
     },
     {
-        "cardId": "60",
+        "ID": "60",
         "side": "FRONT",
         "frontCorner": {
             "NORTH": "EMPTY",
@@ -458,7 +458,7 @@
         "type": "DIRECT"
     },
     {
-        "cardId": "61",
+        "ID": "61",
         "side": "FRONT",
         "frontCorner": {
             "NORTH": "INKWELL",
@@ -482,7 +482,7 @@
         "pointResource": "INKWELL"
     },
     {
-        "cardId": "62",
+        "ID": "62",
         "side": "FRONT",
         "frontCorner": {
 
@@ -506,7 +506,7 @@
         "pointResource": "MANUSCRIPT"
     },
     {
-        "cardId": "63",
+        "ID": "63",
         "side": "FRONT",
         "frontCorner": {
             "NORTH": "EMPTY",
@@ -530,7 +530,7 @@
         "pointResource": "QUILL"
     },
     {
-        "cardId": "64",
+        "ID": "64",
         "side": "FRONT",
         "frontCorner": {
             "NORTH": "EMPTY",
@@ -553,7 +553,7 @@
         "type": "CORNER"
     },
     {
-        "cardId": "65",
+        "ID": "65",
         "side": "FRONT",
         "frontCorner": {
             "NORTH": "EMPTY",
@@ -576,7 +576,7 @@
         "type": "CORNER"
     },
     {
-        "cardId": "66",
+        "ID": "66",
         "side": "FRONT",
         "frontCorner": {
 
@@ -599,7 +599,7 @@
         "type": "CORNER"
     },
     {
-        "cardId": "67",
+        "ID": "67",
         "side": "FRONT",
         "frontCorner": {
             "NORTH": "EMPTY",
@@ -621,7 +621,7 @@
         "type": "DIRECT"
     },
     {
-        "cardId": "68",
+        "ID": "68",
         "side": "FRONT",
         "frontCorner": {
             "NORTH": "EMPTY",
@@ -643,7 +643,7 @@
         "type": "DIRECT"
     },
     {
-        "cardId": "69",
+        "ID": "69",
         "side": "FRONT",
         "frontCorner": {
 
@@ -665,7 +665,7 @@
         "type": "DIRECT"
     },
     {
-        "cardId": "70",
+        "ID": "70",
         "side": "FRONT",
         "frontCorner": {
 
@@ -687,7 +687,7 @@
         "type": "DIRECT"
     },
     {
-        "cardId": "71",
+        "ID": "71",
         "side": "FRONT",
         "frontCorner": {
             "NORTH": "EMPTY",
@@ -711,7 +711,7 @@
         "pointResource": "QUILL"
     },
     {
-        "cardId": "72",
+        "ID": "72",
         "side": "FRONT",
         "frontCorner": {
             "NORTH": "EMPTY",
@@ -735,7 +735,7 @@
         "pointResource": "MANUSCRIPT"
     },
     {
-        "cardId": "73",
+        "ID": "73",
         "side": "FRONT",
         "frontCorner": {
 
@@ -759,7 +759,7 @@
         "pointResource": "INKWELL"
     },
     {
-        "cardId": "74",
+        "ID": "74",
         "side": "FRONT",
         "frontCorner": {
             "NORTH": "EMPTY",
@@ -782,7 +782,7 @@
         "type": "CORNER"
     },
     {
-        "cardId": "75",
+        "ID": "75",
         "side": "FRONT",
         "frontCorner": {
             "NORTH": "EMPTY",
@@ -805,7 +805,7 @@
         "type": "CORNER"
     },
     {
-        "cardId": "76",
+        "ID": "76",
         "side": "FRONT",
         "frontCorner": {
             "NORTH": "EMPTY",
@@ -828,7 +828,7 @@
         "type": "CORNER"
     },
     {
-        "cardId": "77",
+        "ID": "77",
         "side": "FRONT",
         "frontCorner": {
             "NORTH": "INKWELL",
@@ -850,7 +850,7 @@
         "type": "DIRECT"
     },
     {
-        "cardId": "78",
+        "ID": "78",
         "side": "FRONT",
         "frontCorner": {
             "NORTH": "EMPTY",
@@ -872,7 +872,7 @@
         "type": "DIRECT"
     },
     {
-        "cardId": "79",
+        "ID": "79",
         "side": "FRONT",
         "frontCorner": {
 
@@ -894,7 +894,7 @@
         "type": "DIRECT"
     },
     {
-        "cardId": "80",
+        "ID": "80",
         "side": "FRONT",
         "frontCorner": {
             "NORTH": "EMPTY",
