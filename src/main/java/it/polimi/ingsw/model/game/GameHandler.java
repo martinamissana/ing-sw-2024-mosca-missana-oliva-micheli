@@ -20,6 +20,11 @@ public class GameHandler implements Serializable {
         return null;
     }
 
+    public GameHandler() {
+        lobbies=new ArrayList<>();
+        activeGames=new ArrayList<>();
+    }
+
     public void createGame(Lobby lobby){
         HashMap<Player,Integer> playerIntegerHashMap=new HashMap<>();
         HashSet<String> players=lobby.getPlayers();
@@ -35,4 +40,6 @@ public class GameHandler implements Serializable {
         }
         activeGames.add(new Game(activeGames.size(),lobby.getNumOfPlayers(),playerIntegerHashMap,scoreboard));
     }
+
+
 }
