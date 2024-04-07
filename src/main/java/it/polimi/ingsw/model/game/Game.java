@@ -7,25 +7,25 @@ import java.util.HashMap;
 public class Game {
 
     private final int gameID;
-   private final int numOfPlayer;
-   private final HashMap<Player, Integer> players;
-   private int whosTurn;
-   private HashMap<Player,Integer> scoreboard;
+    private final int numOfPlayer;
+    private final HashMap<Player, Integer> players;
+    private int whoseTurn;
+    private final HashMap<Player,Integer> scoreboard;
 
     public Game(int gameID,int numOfPlayer, HashMap<Player, Integer> players,HashMap<Player,Integer> scoreboard) {
         this.numOfPlayer = numOfPlayer;
         this.players = players;
         this.gameID=gameID;
-        this.whosTurn=0;
+        this.whoseTurn=0;
         this.scoreboard=scoreboard;
     }
 
-    public void setWhosTurn(int whosTurn) {
-        this.whosTurn = whosTurn;
+    public void setWhoseTurn(int whoseTurn) {
+        this.whoseTurn = whoseTurn;
     }
 
-    public int getWhosTurn() {
-        return whosTurn;
+    public int getWhoseTurn() {
+        return whoseTurn;
     }
 
     public int getGameID() {
@@ -44,7 +44,7 @@ public class Game {
 
     }
 
-    public void setPlayePoints(Player player,int points) {
+    public void setPlayerPoints(Player player,int points) {
         this.scoreboard.put(player,points);
     }
 
