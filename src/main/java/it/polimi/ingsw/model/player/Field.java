@@ -3,6 +3,8 @@ package it.polimi.ingsw.model.player;
 import it.polimi.ingsw.model.card.*;
 import it.polimi.ingsw.model.commonItem.ItemBox;
 import it.polimi.ingsw.model.commonItem.Kingdom;
+
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -10,7 +12,7 @@ import java.util.Map;
  * Field Class
  * each player has an associated field to play their cards onto
  */
-public class Field {
+public class Field implements Serializable {
     private final HashMap<Coords, Card> matrix;
     private final HashMap<ItemBox, Integer> totalResources;
     private final CardBlock cardBlock;

@@ -1,13 +1,15 @@
 package it.polimi.ingsw.model.player;
 
 import it.polimi.ingsw.model.card.Card;
+
+import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
  * Hand Class
  * each player has an associated hand containing all their available cards
  */
-public class Hand {
+public class Hand implements Serializable {
     private final ArrayList<Card> handList;
 
     /**

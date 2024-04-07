@@ -8,7 +8,9 @@ import it.polimi.ingsw.model.deck.Deck;
 import it.polimi.ingsw.model.deck.DeckBuffer;
 import it.polimi.ingsw.model.goal.Goal;
 
-public class Player {
+import java.io.Serializable;
+
+public class Player implements Serializable {
     private final String nickname;
     private final Hand hand;
     private final Field field;
@@ -95,7 +97,6 @@ public class Player {
      * @return boolean
      */
     public boolean getGoesFirst() { return goesFirst; }
-
 
     /**
      * returns the player's private goal
