@@ -3,6 +3,7 @@ package it.polimi.ingsw.model.player;
 import it.polimi.ingsw.model.card.*;
 import it.polimi.ingsw.model.commonItem.ItemBox;
 import it.polimi.ingsw.model.commonItem.Kingdom;
+import it.polimi.ingsw.model.commonItem.Resource;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -22,7 +23,15 @@ public class Field implements Serializable {
      */
     public Field() {
         this.matrix = new HashMap<Coords, Card>();
-        this.totalResources = new HashMap<ItemBox, Integer>();
+
+        HashMap<ItemBox, Integer> temp = new HashMap<ItemBox, Integer>();
+
+        for(Kingdom kingdom : Kingdom.values())
+            temp.put(kingdom, 0);
+        for(Resource resource : Resource.values())
+            temp.put(resource, 0);
+
+        this.totalResources = temp;
         this.cardBlock = new CardBlock();
     }
 
