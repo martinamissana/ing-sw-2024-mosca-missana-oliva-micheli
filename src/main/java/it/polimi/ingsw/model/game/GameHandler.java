@@ -2,11 +2,12 @@ package it.polimi.ingsw.model.game;
 
 import it.polimi.ingsw.model.player.Player;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 
-public class GameHandler {
+public class GameHandler implements Serializable {
 
     private ArrayList<Game> activeGames;
     private ArrayList<Lobby> lobbies;

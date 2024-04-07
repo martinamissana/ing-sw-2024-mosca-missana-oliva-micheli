@@ -1,10 +1,12 @@
 package it.polimi.ingsw.model.goal;
 
+import java.io.Serializable;
+
 /**
  * Abstract Class Goal
  * defines all the basic attributes and methods common to all the goals
  */
-public abstract class Goal {
+public abstract class Goal implements Serializable {
     private final int GoalID;
     private final int points;
 
