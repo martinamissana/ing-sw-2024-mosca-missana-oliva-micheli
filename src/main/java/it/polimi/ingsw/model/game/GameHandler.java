@@ -1,8 +1,9 @@
 package it.polimi.ingsw.model.game;
 
+import it.polimi.ingsw.model.chat.Chat;
 import it.polimi.ingsw.model.player.Player;
 
-import java.io.Serializable;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -20,11 +21,6 @@ public class GameHandler implements Serializable {
         return null;
     }
 
-    public GameHandler() {
-        lobbies=new ArrayList<>();
-        activeGames=new ArrayList<>();
-    }
-
     public void createGame(Lobby lobby){
         HashMap<Player,Integer> playerIntegerHashMap=new HashMap<>();
         HashSet<String> players=lobby.getPlayers();
@@ -40,6 +36,22 @@ public class GameHandler implements Serializable {
         }
         activeGames.add(new Game(activeGames.size(),lobby.getNumOfPlayers(),playerIntegerHashMap,scoreboard));
     }
+    public void save() throws IOException {
+        FileOutputStream fileOutputStream = new FileOutputStream("src/main/resources/data.ser");
+        ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream);
+        objectOutputStream.writeObject(this);
+        fileOutputStream.close();
+        objectOutputStream.close();
+    }
+    public void load() throws IOException, ClassNotFoundException {
+        FileInputStream fileInputStream = new FileInputStream("src/main/resources/data.ser");
+        ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
 
+        GameHandler deserialized = (GameHandler) objectInputStream.readObject();
+        this.activeGames=deserialized.activeGames;
+        this.lobbies=deserialized.lobbies;
+        //this.sentMessages = deserializedChat.sentMessages
+        //return deserializedChat;
 
+    }
 }
