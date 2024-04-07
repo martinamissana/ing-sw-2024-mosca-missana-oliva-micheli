@@ -3,9 +3,10 @@ package it.polimi.ingsw.model.game;
 import it.polimi.ingsw.model.exceptions.FullLobbyException;
 import it.polimi.ingsw.model.exceptions.NicknameAlreadyTakenException;
 
+import java.io.Serializable;
 import java.util.HashSet;
 
-public class Lobby {
+public class Lobby implements Serializable {
 
     private HashSet<String> players;
     private int numOfPlayers;
