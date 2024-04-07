@@ -3,19 +3,20 @@ package it.polimi.ingsw.model.game;
 import it.polimi.ingsw.model.goal.Goal;
 import it.polimi.ingsw.model.player.Player;
 
+import java.io.Serializable;
 import java.util.HashMap;
 
-public class Game {
+public class Game implements Serializable {
 
     private final int gameID;
     private final int numOfPlayer;
-    private final HashMap<Player, Integer> players;
+    private final HashMap<Integer,Player> players;
     private int whoseTurn;
     private final HashMap<Player,Integer> scoreboard;
     private Goal commonGoal1;
     private Goal commonGoal2;
 
-    public Game(int gameID,int numOfPlayer, HashMap<Player, Integer> players,HashMap<Player,Integer> scoreboard) {
+    public Game(int gameID,int numOfPlayer, HashMap<Integer,Player> players,HashMap<Player,Integer> scoreboard) {
         this.numOfPlayer = numOfPlayer;
         this.players = players;
         this.gameID=gameID;
@@ -41,7 +42,7 @@ public class Game {
         return numOfPlayer;
     }
 
-    public HashMap<Player, Integer> getPlayers() {
+    public HashMap<Integer,Player> getPlayers() {
         return players;
     }
 
@@ -64,12 +65,16 @@ public class Game {
     public void setCommonGoal2(Goal commonGoal2) {
         this.commonGoal2 = commonGoal2;
     }
-
-    public void setPlayerPoints(Player player,int points) {
+    public void addToScore(Player player,int points){
+        scoreboard.put(player,scoreboard.get(player)+points);
+    }
+    public void setPlayerScore(Player player,int points) {
         this.scoreboard.put(player,points);
     }
-
-    public int getScoreboard(Player player) {
+    public int getPlayerScore(Player player) {
         return scoreboard.get(player);
+    }
+    public Player getCurrPlayer(){
+        return players.get(whoseTurn);
     }
 }
