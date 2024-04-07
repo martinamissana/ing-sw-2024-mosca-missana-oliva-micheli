@@ -96,6 +96,15 @@ public class Player {
      */
     public boolean getGoesFirst() { return goesFirst; }
 
+
+    /**
+     * returns the player's private goal
+     * @return Goal
+     */
+    public Goal getPrivateGoal() {
+        return privateGoal;
+    }
+
     /**
      * returns the player's pawn
      * @return Pawn
