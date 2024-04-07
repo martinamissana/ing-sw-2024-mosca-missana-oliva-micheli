@@ -24,6 +24,16 @@ public class Chat {
     }
 
     /**
+     * Class constructor with attributes, used in case of server disconnection
+     * @param sentMessages
+     * @param receivedMessages
+     */
+    public Chat(ArrayList<Message> sentMessages, ArrayList<Message> receivedMessages) {
+        this.sentMessages = sentMessages;
+        this.receivedMessages = receivedMessages;
+    }
+
+    /**
      * gets the received messages
      * @return receivedMessages
      */
