@@ -69,7 +69,7 @@ public class FinalGameController {
     }
 
     /**
-     * checks the presence of the Diagonal goal in the field
+     * checks the presence of the Diagonal goal in the field and adds the points
      * @param game
      * @param goal
      * @param player
@@ -101,6 +101,13 @@ public class FinalGameController {
             }
         }
     }
+
+    /**
+     * checks the presence of the Resource goal in the field and adds the points
+     * @param game
+     * @param goal
+     * @param player
+     */
     private void resourceEvaluator(Game game,ResourceGoal goal,Player player){
             HashMap<ItemBox, Integer> totalResources = player.getField().getTotalResources();
             while(totalResources.values().stream().noneMatch(count -> count == 0)){
@@ -111,6 +118,12 @@ public class FinalGameController {
             }
     }
 
+    /**
+     * checks the presence of the L_Shape goal in the field and adds the points
+     * @param game
+     * @param goal
+     * @param player
+     */
     private void L_ShapeEvaluator(Game game,L_ShapeGoal goal,Player player){
         HashSet<Coords> done=new HashSet<>();
         HashMap<Coords, Card> field=player.getField().getMatrix();
@@ -146,6 +159,16 @@ public class FinalGameController {
         }
     }
 
+    /**
+     * useful method to avoid repetition of code based on the direction of L_Shape goal
+     * @param game
+     * @param goal
+     * @param player
+     * @param firstCard - coordinates of the card with a different color from the other two in the L_Shape
+     * @param secondCard - coordinates of one of the cards with the main L_Shape color
+     * @param thirdCard - coordinates of one of the cards with the main L_Shape color
+     * @param done - HashMap that maps the cards already used to complete the goal
+     */
     private void genericL_ShapeEvaluator(Game game,L_ShapeGoal goal,Player player,Coords firstCard,Coords secondCard,Coords thirdCard,HashSet<Coords> done){
         HashMap<Coords, Card> field=player.getField().getMatrix();
         if(!done.contains(firstCard)&&field.get(firstCard).getKingdom()==goal.getSecondaryColor()&&field.containsKey(secondCard)&&field.containsKey(thirdCard)&&field.get(secondCard).getKingdom()==goal.getMainColor()&&field.get(thirdCard).getKingdom()==goal.getMainColor()){
