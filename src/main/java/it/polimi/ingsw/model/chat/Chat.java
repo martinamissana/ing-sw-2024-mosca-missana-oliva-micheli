@@ -1,19 +1,25 @@
 package it.polimi.ingsw.model.chat;
-import it.polimi.ingsw.model.game.Game;
 import it.polimi.ingsw.model.player.Player;
 
+import java.io.*;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Class Chat
  * each Player has an associated chat with a list of sent messages and a list of received messages
  */
-public class Chat {
-    private final ArrayList<Message> sentMessages;
-    private final ArrayList<Message> receivedMessages;
+public class Chat implements Serializable {
+    private ArrayList<Message> sentMessages;
+
+    public void setSentMessages(ArrayList<Message> sentMessages) {
+        this.sentMessages = sentMessages;
+    }
+
+    public void setReceivedMessages(ArrayList<Message> receivedMessages) {
+        this.receivedMessages = receivedMessages;
+    }
+
+    private  ArrayList<Message> receivedMessages;
 
     /**
      * Class constructor
@@ -56,7 +62,7 @@ public class Chat {
     public ArrayList<Message> getReceivedMessagesFromPlayer(Player sender) {
         int i;
         ArrayList<Message> list= new ArrayList<Message>();
-        for(i=0;i<=receivedMessages.size();i++){
+        for(i=0;i<receivedMessages.size();i++){
             if(receivedMessages.get(i).getSender()==sender){
                 list.add(receivedMessages.get(i));
             }
@@ -72,7 +78,7 @@ public class Chat {
     public ArrayList<Message> getSentMessagesToPlayer(Player receiver) {
         int i;
         ArrayList<Message> list= new ArrayList<Message>();
-        for(i=0;i<=sentMessages.size();i++){
+        for(i=0;i<sentMessages.size();i++){
             if(sentMessages.get(i).getSender()==receiver){
                 list.add(sentMessages.get(i));
             }
@@ -87,7 +93,7 @@ public class Chat {
     public ArrayList<Message> getGlobalReceivedMessages() {
         int i;
         ArrayList<Message> list= new ArrayList<Message>();
-        for(i=0;i<=receivedMessages.size();i++){
+        for(i=0;i<receivedMessages.size();i++){
             if(receivedMessages.get(i).isGlobal()){
                 list.add(receivedMessages.get(i));
             }
@@ -109,4 +115,6 @@ public class Chat {
         }
         return list;
     }
+
+
 }

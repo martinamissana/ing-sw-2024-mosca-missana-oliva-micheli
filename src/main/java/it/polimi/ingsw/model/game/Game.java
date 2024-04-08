@@ -16,7 +16,7 @@ public class Game implements Serializable {
     private Goal commonGoal1;
     private Goal commonGoal2;
 
-    public Game(int gameID,int numOfPlayer, HashMap<Integer,Player> players,HashMap<Player,Integer> scoreboard) {
+    public Game(int gameID, int numOfPlayer, HashMap<Integer, Player> players, HashMap<Player,Integer> scoreboard) {
         this.numOfPlayer = numOfPlayer;
         this.players = players;
         this.gameID=gameID;

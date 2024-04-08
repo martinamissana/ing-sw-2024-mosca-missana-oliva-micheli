@@ -2,11 +2,13 @@ package it.polimi.ingsw.model.chat;
 
 import it.polimi.ingsw.model.player.Player;
 
+import java.io.Serializable;
+
 /**
  * Class Message
  * contains all the attributes associated to a message and the method to send it
  */
-public class Message {
+public class Message implements Serializable {
     private final String text;
     private final Player sender;
     private final Player receiver;

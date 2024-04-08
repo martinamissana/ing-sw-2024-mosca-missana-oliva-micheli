@@ -3,13 +3,14 @@ package it.polimi.ingsw.model.card;
 import it.polimi.ingsw.model.commonItem.ItemBox;
 import it.polimi.ingsw.model.commonItem.Kingdom;
 
+import java.io.Serializable;
 import java.util.HashMap;
 
 /**
  * Abstract Class Card
  * defines all the basic attributes and methods common to all the cards
  */
-public abstract class Card  {
+public abstract class Card implements Serializable {
     private final int ID;
     private CardSide side;
     private final HashMap<CornerType,Corner> frontCorner;
