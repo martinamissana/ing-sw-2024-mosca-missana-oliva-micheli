@@ -1,6 +1,7 @@
 package it.polimi.ingsw.model.player;
 
 import it.polimi.ingsw.model.card.Card;
+import it.polimi.ingsw.model.exceptions.HandIsFullException;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -23,8 +24,9 @@ public class Hand implements Serializable {
      * returns the card at the specified position in the hand
      * @param pos
      * @return Card
+     * @throws IndexOutOfBoundsException
      */
-    public Card getCard(int pos) {
+    public Card getCard(int pos) throws IndexOutOfBoundsException {
         return handList.get(pos);
     }
 
@@ -33,10 +35,11 @@ public class Hand implements Serializable {
      * returns false if the hand is full
      * @param card
      * @return boolean
+     * @throws  HandIsFullException
      */
-    public boolean addCard(Card card) {
-        if (this.handList.size() > 2) // does it need to check card == null?
-            return false;
+    public boolean addCard(Card card) throws HandIsFullException {
+        if (this.handList.size() > 2)
+            throw new HandIsFullException();
         return this.handList.add(card);
     }
 
@@ -46,7 +49,5 @@ public class Hand implements Serializable {
      * @param card
      * @return boolean
      */
-    public boolean removeCard(Card card) {
-        return this.handList.remove(card);
-    }
+    public boolean removeCard(Card card) { return this.handList.remove(card); }
 }

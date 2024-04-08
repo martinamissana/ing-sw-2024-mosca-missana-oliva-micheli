@@ -3,6 +3,8 @@ package it.polimi.ingsw.model.player;
 import it.polimi.ingsw.model.card.*;
 import it.polimi.ingsw.model.commonItem.ItemBox;
 import it.polimi.ingsw.model.commonItem.Kingdom;
+import it.polimi.ingsw.model.commonItem.Resource;
+import it.polimi.ingsw.model.exceptions.*;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -22,7 +24,15 @@ public class Field implements Serializable {
      */
     public Field() {
         this.matrix = new HashMap<Coords, Card>();
-        this.totalResources = new HashMap<ItemBox, Integer>();
+
+        HashMap<ItemBox, Integer> temp = new HashMap<ItemBox, Integer>();
+
+        for(Kingdom kingdom : Kingdom.values())
+            temp.put(kingdom, 0);
+        for(Resource resource : Resource.values())
+            temp.put(resource, 0);
+
+        this.totalResources = temp;
         this.cardBlock = new CardBlock();
     }
 
@@ -51,17 +61,15 @@ public class Field implements Serializable {
 
     /**
      * adds a card (Resource or Golden) to the field at the specified position.
-     * returns the number of points gained by the player by placing said card.
-     *
-     * if a card is not placeable or doesn't have its requirements met, the method returns -1.
-     * this value should not be added to the player's score, and should be interpreted as a flag.
+     * returns the number of points gained by the player after placing said card.
      * @param card
      * @param coords
      * @return int
+     * @throws IllegalMoveException
      */
-    public int addCard(ResourceCard card, Coords coords) {
-        if (!checkIfPlaceable(coords)) { return -1; }
-        if (!checkRequirements(card)) { return -1; }
+    public int addCard(ResourceCard card, Coords coords) throws IllegalMoveException {
+        if (!checkIfPlaceable(coords)) throw new IllegalCoordsException();              // or return 0; ?
+        if (!checkRequirements(card)) throw new RequirementsNotSatisfiedException();    // here too
         this.matrix.put(coords, card);
         blockCardSpaces(card, coords);
         updateTotalRes(card, coords);
@@ -69,16 +77,16 @@ public class Field implements Serializable {
     }
 
     /**
-     * checks if a position is already occupied by a card or blocked by a corner
+     * checks if a position is already occupied by a card, blocked by a corner or unreachable
      * @param coords
      * @return boolean
+     * @throws IllegalCoordsException
      */
-    public boolean checkIfPlaceable(Coords coords) {
+    public boolean checkIfPlaceable(Coords coords) throws IllegalCoordsException {
 
         // if there's already a card at that position (including a CardBlock,
-        // meaning the position would be blocked by a corner), return false
-        if (this.matrix.get(coords) != null)
-            return false;
+        // meaning the position would be blocked by a corner), throw an exception
+        if (this.matrix.get(coords) != null) throw new OccupiedCoordsException();
 
         // if any of the adjacent positions has a card with a non-blocking corner
         // pointed towards the specified position, return true
@@ -86,25 +94,26 @@ public class Field implements Serializable {
             if (this.matrix.get(entry.getValue()).getCorner(opposite(entry.getKey())) != null)  // if any such card... (as before)
                 return true;                                                                    // a card can be placed at 'coords'
 
-        // unreachable position
-        return false;
+        // unreachable position, throw exception
+        throw new UnreachablePositionException();
     }
 
     /**
-     * checks if a card's requirements are currently met (any non-Golden card will always have its requirements met)
+     * checks if a card's requirements are met (any non-Golden card will always have its requirements met)
      * @param card
      * @return boolean
+     * @throws RequirementsNotSatisfiedException
      */
-    public boolean checkRequirements(ResourceCard card) {
+    public boolean checkRequirements(ResourceCard card) throws RequirementsNotSatisfiedException {
 
         // if it's not a Golden card it doesn't have requirements, so they're automatically met
         if (card.getClass() != GoldenCard.class)
             return true;
 
-        // if any resource required is insufficient, return false
+        // if any resource required is insufficient, throw exception
         for (Map.Entry<Kingdom, Integer> entry : ((GoldenCard) card).getRequirements().entrySet())  // for each required resource's quantity
             if (entry.getValue() > this.totalResources.get(entry.getKey()))                         // if it's greater than the corresponding total
-                return false;                                                                       // the card's requirements are not met
+                throw new RequirementsNotSatisfiedException();                                      // the card's requirements are not met
 
         // else, requirements are met. return true
         return true;
