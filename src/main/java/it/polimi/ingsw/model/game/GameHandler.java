@@ -1,5 +1,6 @@
 package it.polimi.ingsw.model.game;
 
+import it.polimi.ingsw.model.exceptions.GameDoesNotExistException;
 import it.polimi.ingsw.model.player.Player;
 
 import java.io.*;
@@ -26,9 +27,14 @@ public class GameHandler implements Serializable {
         return lobbies;
     }
 
-    public Game getGame(int ID){
-        return activeGames.get(ID);
+    public Game getGame(int ID) throws GameDoesNotExistException {
+        if (activeGames.containsKey(ID)) {
+            return activeGames.get(ID);
+        } else {
+            throw new GameDoesNotExistException("Game with ID " + ID + " does not exist");
+        }
     }
+
 
     public static int getNumOfGames() {
         return numOfGames;
