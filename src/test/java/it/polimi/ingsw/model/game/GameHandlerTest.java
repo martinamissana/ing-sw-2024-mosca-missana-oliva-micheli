@@ -14,7 +14,7 @@ public class GameHandlerTest extends TestCase {
     Player eric;
     Player giorgio;
     @BeforeEach
-    public void setUp(){
+    public void setUp() throws IOException {
         anna=new Player("anna");
         eric=new Player("eric");
         giorgio=new Player("giorgio");
