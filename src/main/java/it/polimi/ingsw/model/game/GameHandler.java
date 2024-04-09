@@ -12,7 +12,7 @@ public class GameHandler implements Serializable {
 
     private HashMap<Integer,Game> activeGames;
     private ArrayList<Lobby> lobbies;
-    private static int numOfGames=0;
+    private int numOfGames=0;
 
     public GameHandler() {
         this.activeGames = new HashMap<>();
@@ -36,8 +36,12 @@ public class GameHandler implements Serializable {
     }
 
 
-    public static int getNumOfGames() {
+    public int getNumOfGames() {
         return numOfGames;
+    }
+
+    public void setNumOfGames(int numOfGames) {
+       this.numOfGames = numOfGames;
     }
 
 
@@ -46,7 +50,7 @@ public class GameHandler implements Serializable {
     }
 
 
-    public void createGame(Lobby lobby){
+    public void createGame(Lobby lobby) throws IOException {
         HashMap<Integer,Player> playerIntegerHashMap=new HashMap<>();
         HashSet<String> players=lobby.getPlayers();
         int i=0;
@@ -74,12 +78,9 @@ public class GameHandler implements Serializable {
     public void load() throws IOException, ClassNotFoundException {
         FileInputStream fileInputStream = new FileInputStream("./data.ser");
         ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
-
         GameHandler deserialized = (GameHandler) objectInputStream.readObject();
         this.activeGames=deserialized.activeGames;
         this.lobbies=deserialized.lobbies;
-        //this.sentMessages = deserializedChat.sentMessages
-        //return deserializedChat;
 
     }
 }
