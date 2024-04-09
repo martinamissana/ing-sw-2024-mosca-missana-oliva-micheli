@@ -3,20 +3,21 @@ import it.polimi.ingsw.model.card.*;
 import it.polimi.ingsw.model.game.CardsPreset;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.*;
 
 
 /**
  * List of cards of type RESOURCE or GOLDEN
  */
-public class Deck implements Drawable {
+public class Deck implements Drawable, Serializable {
     private final DeckType type;
-    private ArrayList<ResourceCard> cards;
+    private final ArrayList<ResourceCard> cards;
 
     /**
      * Class constructor
-     * @param type
-     * @throws IOException
+     * @param type of the deck (RESOURCE / GOLDEN)
+     * @throws IOException (for adding cards in the deck)
      */
     public Deck(DeckType type) throws IOException {
         this.type = type;
@@ -55,6 +56,7 @@ public class Deck implements Drawable {
 
     /**
      * Draws the last card from the deck list
+     * @return last card on cards ArrayList
      */
     @Override
     public ResourceCard draw() {

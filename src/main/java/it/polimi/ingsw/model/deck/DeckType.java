@@ -1,8 +1,8 @@
 package it.polimi.ingsw.model.deck;
 
+/**
+ * Enumeration of possible types of decks or deck buffers
+ */
 public enum DeckType {
-    RESOURCE, GOLDEN;
-    public String getType() {
-        return this.name();
-    }
+    RESOURCE, GOLDEN
 }
