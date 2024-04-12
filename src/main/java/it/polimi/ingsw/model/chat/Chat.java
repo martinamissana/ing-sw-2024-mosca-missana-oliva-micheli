@@ -10,16 +10,8 @@ import java.util.ArrayList;
  */
 public class Chat implements Serializable {
     private ArrayList<Message> sentMessages;
+    private ArrayList<Message> receivedMessages;
 
-    public void setSentMessages(ArrayList<Message> sentMessages) {
-        this.sentMessages = sentMessages;
-    }
-
-    public void setReceivedMessages(ArrayList<Message> receivedMessages) {
-        this.receivedMessages = receivedMessages;
-    }
-
-    private  ArrayList<Message> receivedMessages;
 
     /**
      * Class constructor
