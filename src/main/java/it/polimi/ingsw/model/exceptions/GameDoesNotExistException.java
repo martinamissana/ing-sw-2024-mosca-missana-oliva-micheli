@@ -1,5 +1,7 @@
 package it.polimi.ingsw.model.exceptions;
 
-public class GameDoesNotExistException extends Exception{
+import java.io.Serializable;
+
+public class GameDoesNotExistException extends Exception implements Serializable {
     public GameDoesNotExistException(String s){super();}
 }

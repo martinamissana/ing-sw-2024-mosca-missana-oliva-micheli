@@ -1,6 +1,8 @@
 package it.polimi.ingsw.model.exceptions;
 
-public class FullLobbyException extends Exception {
+import java.io.Serializable;
+
+public class FullLobbyException extends Exception implements Serializable {
     public FullLobbyException(){
         super();
     }

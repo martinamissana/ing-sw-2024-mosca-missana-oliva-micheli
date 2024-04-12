@@ -1,5 +1,7 @@
 package it.polimi.ingsw.model.exceptions;
 
-public class HandIsFullException extends Exception {
+import java.io.Serializable;
+
+public class HandIsFullException extends Exception implements Serializable {
     public HandIsFullException() { super(); }
 }

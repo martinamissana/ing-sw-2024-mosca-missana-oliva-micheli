@@ -24,7 +24,7 @@ public class Message implements Serializable {
     public Message(String text, Player sender, Player receiver, boolean global) {
         this.sender = sender;
         this.text = text;
-        this.receiver = receiver; //null if global
+        this.receiver = receiver; //null if global message
         this.isGlobal = global;
     }
 

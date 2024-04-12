@@ -2,11 +2,13 @@ package it.polimi.ingsw.model.card;
 
 import it.polimi.ingsw.model.commonItem.ItemBox;
 
+import java.io.Serializable;
+
 /**
  * Class Corner
  * instantiated when the corner is actually present on the card
  */
-public class Corner {
+public class Corner implements Serializable {
     private final ItemBox item;
 
     /**

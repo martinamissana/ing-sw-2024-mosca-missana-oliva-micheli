@@ -1,6 +1,8 @@
 package it.polimi.ingsw.model.exceptions;
 
-public class NicknameAlreadyTakenException extends Exception {
+import java.io.Serializable;
+
+public class NicknameAlreadyTakenException extends Exception implements Serializable {
     public NicknameAlreadyTakenException(){
         super();
     }
