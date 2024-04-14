@@ -1,6 +1,7 @@
 package it.polimi.ingsw.model.game;
 
 import it.polimi.ingsw.model.exceptions.GameDoesNotExistException;
+import it.polimi.ingsw.model.exceptions.LobbyDoesNotExistsException;
 import it.polimi.ingsw.model.player.Player;
 
 import java.io.*;
@@ -11,21 +12,20 @@ import java.util.HashSet;
 public class GameHandler implements Serializable {
 
     private HashMap<Integer,Game> activeGames;
-    private ArrayList<Lobby> lobbies;
+    private HashMap<Integer,Lobby> lobbies;
     private int numOfGames=0;
+    private int numOfLobbies=0;
 
     public GameHandler() {
         this.activeGames = new HashMap<>();
-        this.lobbies = new ArrayList<Lobby>();
+        this.lobbies = new HashMap<>();
     }
 
     public HashMap<Integer, Game> getActiveGames() {
         return activeGames;
     }
 
-    public ArrayList<Lobby> getLobbies() {
-        return lobbies;
-    }
+    public HashMap<Integer, Lobby> getLobbies() { return lobbies; }
 
     public Game getGame(int ID) throws GameDoesNotExistException {
         if (activeGames.containsKey(ID)) {
@@ -34,39 +34,25 @@ public class GameHandler implements Serializable {
             throw new GameDoesNotExistException("Game with ID " + ID + " does not exist");
         }
     }
-
-
+    public Lobby getLobby(Integer ID) throws LobbyDoesNotExistsException {
+        if (lobbies.containsKey(ID)) {
+            return lobbies.get(ID);
+        } else {
+            throw new LobbyDoesNotExistsException("Lobby with ID " + ID + " does not exist");
+        }
+    }
     public int getNumOfGames() {
         return numOfGames;
     }
+    public int getNumOfLobbies() { return numOfLobbies; }
 
     public void setNumOfGames(int numOfGames) {
        this.numOfGames = numOfGames;
     }
 
-
-    public void createLobby(int numOfPlayers){
-        lobbies.add(new Lobby(numOfPlayers));
+    public void setNumOfLobbies(int numOfLobbies) {
+        this.numOfLobbies = numOfLobbies;
     }
-
-
-    public void createGame(Lobby lobby) throws IOException {
-        HashMap<Integer,Player> playerIntegerHashMap=new HashMap<>();
-        HashSet<String> players=lobby.getPlayers();
-        int i=0;
-        for(String p:players) {
-            playerIntegerHashMap.put(i,new Player(p, false,null));
-            i++;
-        }
-        //scoreboard initialization->all values set at 0
-        HashMap<Player,Integer> scoreboard= new HashMap<>();
-        for(Integer key : playerIntegerHashMap.keySet()){
-            scoreboard.put(playerIntegerHashMap.get(key),0);
-        }
-        activeGames.put(numOfGames,new Game(numOfGames,lobby.getNumOfPlayers(),playerIntegerHashMap,scoreboard));
-        numOfGames++;
-    }
-
 
     public void save() throws IOException {
         FileOutputStream fileOutputStream = new FileOutputStream("./data.ser");
