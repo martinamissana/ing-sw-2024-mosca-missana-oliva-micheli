@@ -1,10 +1,12 @@
 package it.polimi.ingsw.model.player;
 
+import java.io.Serializable;
+
 /**
  * Coordinates Class
  * used as key for the position of a card in the Field matrix map
  */
-public class Coords {
+public class Coords implements Serializable {
     private final int x;
     private final int y;
 

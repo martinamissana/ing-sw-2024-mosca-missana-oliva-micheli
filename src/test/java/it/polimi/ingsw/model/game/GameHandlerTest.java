@@ -1,43 +1,56 @@
 package it.polimi.ingsw.model.game;
 
 import it.polimi.ingsw.controller.Controller;
-import it.polimi.ingsw.model.exceptions.FullLobbyException;
-import it.polimi.ingsw.model.exceptions.GameDoesNotExistException;
-import it.polimi.ingsw.model.exceptions.NicknameAlreadyTakenException;
+import it.polimi.ingsw.model.card.*;
+import it.polimi.ingsw.model.commonItem.CornerStatus;
+import it.polimi.ingsw.model.commonItem.Kingdom;
+import it.polimi.ingsw.model.commonItem.Resource;
+import it.polimi.ingsw.model.exceptions.*;
+import it.polimi.ingsw.model.player.Hand;
 import it.polimi.ingsw.model.player.Player;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.HashSet;
 import junit.framework.TestCase;
 import org.junit.jupiter.api.BeforeEach;
 
 public class GameHandlerTest extends TestCase {
-    GameHandler gameHandler;
+    GameHandler gameHandler=new GameHandler();
+    HashMap< CornerType, Corner > frontCorners;
+    HashMap< CornerType, Corner > backCorners;
+    Corner corner1=new Corner(CornerStatus.EMPTY);
+    Corner corner2=new Corner(Resource.INKWELL);
+    ResourceCard card= new ResourceCard(0, CardSide.FRONT, frontCorners,backCorners,0, Kingdom.FUNGI);
+
     Game game;
     Player anna;
     Player eric;
     Player giorgio;
     Player sara;
     Player paola;
-    @BeforeEach
-    public void setUp() throws IOException, FullLobbyException, NicknameAlreadyTakenException {
-        gameHandler= new GameHandler();
-        gameHandler.createLobby(3);
-        gameHandler.getLobbies().get(0).addPlayer("anna");
-        gameHandler.getLobbies().get(0).addPlayer("eric");
-        gameHandler.getLobbies().get(0).addPlayer("giorgio");
+    Controller c=new Controller(gameHandler);
+
+
+    public void setUp() throws IOException, FullLobbyException, NicknameAlreadyTakenException, LobbyDoesNotExistsException, HandIsFullException {
+        anna=new Player("anna");
+        eric=new Player("eric");
+        giorgio=new Player("giorgio");
+        gameHandler.setNumOfLobbies(0);
+        c.createLobby(3,anna);
+        c.joinLobby(eric,0);
+        c.joinLobby(giorgio,0);
         gameHandler.setNumOfGames(0);
-        gameHandler.createGame(gameHandler.getLobbies().get(0));
-        anna=gameHandler.getActiveGames().get(0).getPlayers().get("anna");
-        eric=gameHandler.getActiveGames().get(0).getPlayers().get("eric");
-        giorgio=gameHandler.getActiveGames().get(0).getPlayers().get("giorgio");
+        c.createGame(gameHandler.getLobbies().get(0));
+        anna.getHand().addCard(card);
     }
 
-    public void testLoad() throws IOException, ClassNotFoundException {
+    public void testSaveAndLoad() throws IOException, ClassNotFoundException {
         gameHandler.save();
         GameHandler gameHandler1=new GameHandler();
         gameHandler1.load();
         assertEquals(gameHandler.getActiveGames().get(0).getPlayers().get(anna),gameHandler1.getActiveGames().get(0).getPlayers().get(anna));
+        assertEquals(gameHandler.getActiveGames().get(0).getPlayers().get(anna).getHand().getCard(0),gameHandler1.getActiveGames().get(0).getPlayers().get(anna).getHand().getCard(0));
     }
 
     public void testCreateGame() throws IOException, GameDoesNotExistException, FullLobbyException, NicknameAlreadyTakenException {
