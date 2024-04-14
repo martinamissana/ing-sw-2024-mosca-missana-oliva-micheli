@@ -19,9 +19,16 @@ public class DeckBuffer implements Drawable, Serializable {
     }
 
     /**
+     * @return card
+     */
+    public Card getCard() {
+        return card;
+    }
+
+    /**
      * Put a card in the deck buffer (if empty)
      */
-    private void refill() {
+    public void refill() {
         if(!deck.getDeck().isEmpty()) {
             card = deck.draw();
         }
