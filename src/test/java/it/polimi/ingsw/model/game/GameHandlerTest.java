@@ -36,27 +36,26 @@ public class GameHandlerTest extends TestCase {
         anna=new Player("anna");
         eric=new Player("eric");
         giorgio=new Player("giorgio");
-        gameHandler.setNumOfLobbies(0);
         c.createLobby(3,anna);
         c.joinLobby(eric,0);
         c.joinLobby(giorgio,0);
-        gameHandler.setNumOfGames(0);
         c.createGame(gameHandler.getLobbies().get(0));
         anna.getHand().addCard(card);
     }
 
-    public void testSaveAndLoad() throws IOException, ClassNotFoundException {
+    public void testSaveAndLoad() throws IOException, ClassNotFoundException, GameDoesNotExistException {
         gameHandler.save();
         GameHandler gameHandler1=new GameHandler();
         gameHandler1.load();
-        assertEquals(gameHandler.getActiveGames().get(0).getPlayers().get(anna),gameHandler1.getActiveGames().get(0).getPlayers().get(anna));
-        assertEquals(gameHandler.getActiveGames().get(0).getPlayers().get(anna).getHand().getCard(0),gameHandler1.getActiveGames().get(0).getPlayers().get(anna).getHand().getCard(0));
-    }
+        assertEquals(gameHandler.getGame(0).getPlayers().get(0).getNickname(),gameHandler1.getActiveGames().get(0).getPlayers().get(0).getNickname());
+        assertEquals(gameHandler.getGame(0).getPlayers().get(0).getHand().getCard(0).getCardID(),gameHandler1.getActiveGames().get(0).getPlayers().get(0).getHand().getCard(0).getCardID());
+    }/**/
 
     public void testCreateGame() throws IOException, GameDoesNotExistException, FullLobbyException, NicknameAlreadyTakenException {
         assertTrue(gameHandler.getGame(0).getPlayers().containsValue(anna));
         assertTrue(gameHandler.getGame(0).getPlayers().containsValue(eric));
         assertTrue(gameHandler.getGame(0).getPlayers().containsValue(giorgio));
+        assertEquals(gameHandler.getGame(0).getPlayers().get(0).getNickname(),"anna");
         assertEquals(anna.getNickname(),"anna");
         assertEquals(eric.getNickname(),"eric");
         assertEquals(giorgio.getNickname(),"giorgio");
