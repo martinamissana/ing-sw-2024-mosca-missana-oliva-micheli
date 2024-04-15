@@ -55,6 +55,14 @@ public class Field implements Serializable {
      */
     public CardBlock getCardBlock() { return cardBlock; }
 
+    @Override
+    public String toString() {
+        String out = "Total Res:\n";
+        for (HashMap.Entry<ItemBox, Integer> entry : totalResources.entrySet())
+            out += "\t" + entry.getKey() + ": " + entry.getValue() + "\n";
+        return out;
+    }
+
     /**
      * adds a starter card at the origin of the field (0,0) with no checks whatsoever
      * @param card
