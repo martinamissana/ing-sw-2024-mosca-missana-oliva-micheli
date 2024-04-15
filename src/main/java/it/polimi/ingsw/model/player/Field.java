@@ -194,7 +194,7 @@ public class Field implements Serializable {
         // subtract 1 to a resource's count every time an adjacent card's corner that contains it gets covered
         for (Map.Entry<CornerType, Coords> entry : getNeighbours(coords).entrySet()) {      // iterate through neighboring cards
             item = this.matrix.get(entry.getValue()).getCorner(opposite(entry.getKey()));   // get covered corner's resource
-            if (item != null) {                                                             // if there is
+            if (item != null && item != CornerStatus.EMPTY) {                               // if there is
                 oldQty = this.totalResources.get(item);                                     // decrement its
                 this.totalResources.put(item, oldQty-1);                                    // total count
             }
