@@ -81,7 +81,7 @@ public class FinalGameController {
             for (Coords coords : field.keySet()) {
                 Coords secondCard = new Coords(coords.getX() + 1, coords.getY());
                 Coords thirdCard = new Coords(coords.getX() + 2, coords.getY());
-                if (!done.contains(coords) && field.get(coords).getKingdom() == goal.getColor()&&field.containsKey(secondCard) && field.containsKey(thirdCard) && field.get(secondCard).getKingdom() == goal.getColor() && field.get(thirdCard).getKingdom() == goal.getColor()) {
+                if (!done.contains(coords)&& !done.contains(secondCard)&&!done.contains(thirdCard) && field.get(coords).getKingdom() == goal.getColor()&&field.containsKey(secondCard) && field.containsKey(thirdCard) && field.get(secondCard).getKingdom() == goal.getColor() && field.get(thirdCard).getKingdom() == goal.getColor()) {
                     done.add(coords);
                     done.add(secondCard);
                     done.add(thirdCard);
@@ -92,7 +92,7 @@ public class FinalGameController {
             for (Coords coords : field.keySet()) {
                 Coords secondCard = new Coords(coords.getX(), coords.getY()+1);
                 Coords thirdCard = new Coords(coords.getX(),coords.getY()+2);
-                if (!done.contains(coords) && field.get(coords).getKingdom() == goal.getColor()&&field.containsKey(secondCard) && field.containsKey(thirdCard) && field.get(secondCard).getKingdom() == goal.getColor() && field.get(thirdCard).getKingdom() == goal.getColor()) {
+                if (!done.contains(coords)&&!done.contains(secondCard)&&!done.contains(thirdCard) && field.get(coords).getKingdom() == goal.getColor()&&field.containsKey(secondCard) && field.containsKey(thirdCard) && field.get(secondCard).getKingdom() == goal.getColor() && field.get(thirdCard).getKingdom() == goal.getColor()) {
                     done.add(coords);
                     done.add(secondCard);
                     done.add(thirdCard);
@@ -110,12 +110,11 @@ public class FinalGameController {
      */
     private void resourceEvaluator(Game game,ResourceGoal goal,Player player){
             HashMap<ItemBox, Integer> totalResources = player.getField().getTotalResources();
-            while(totalResources.values().stream().noneMatch(count -> count == 0)){
-                for (ItemBox item : goal.getResourceList()) {
-                    totalResources.put(item, totalResources.get(item)-1);
-                }
-                game.addToScore(player, goal.getPoints());
+            for (ItemBox item : goal.getResourceList()) {
+                if(totalResources.get(item)==0) return;
+                totalResources.replace(item,totalResources.get(item)-1);
             }
+            game.addToScore(player,goal.getPoints());
     }
 
     /**
@@ -130,29 +129,29 @@ public class FinalGameController {
         switch (goal.getType()){
             case UP_RIGHT -> {
                 for(Coords coords: field.keySet()){
-                       Coords secondCard=new Coords(coords.getX(),coords.getY()-1);
-                       Coords thirdCard=new Coords(coords.getX()+1,coords.getY()-2);
+                       Coords secondCard=new Coords(coords.getX()-1,coords.getY());
+                       Coords thirdCard=new Coords(coords.getX()-2,coords.getY()-1);
                        genericL_ShapeEvaluator(game,goal,player,coords,secondCard,thirdCard,done);
                 }
             }
             case UP_LEFT -> {
                 for(Coords coords: field.keySet()){
-                        Coords secondCard=new Coords(coords.getX()+1,coords.getY());
-                        Coords thirdCard=new Coords(coords.getX()+2,coords.getY()-1);
+                        Coords secondCard=new Coords(coords.getX(),coords.getY()-1);
+                        Coords thirdCard=new Coords(coords.getX()-1,coords.getY()-2);
                         genericL_ShapeEvaluator(game,goal,player,coords,secondCard,thirdCard,done);
                 }
             }
             case DOWN_LEFT -> {
                 for(Coords coords: field.keySet()){
-                    Coords secondCard=new Coords(coords.getX(),coords.getY()+1);
-                    Coords thirdCard=new Coords(coords.getX()-1,coords.getY()+2);
+                    Coords secondCard=new Coords(coords.getX()+1,coords.getY());
+                    Coords thirdCard=new Coords(coords.getX()+2,coords.getY()+1);
                     genericL_ShapeEvaluator(game,goal,player,coords,secondCard,thirdCard,done);
                 }
             }
             case DOWN_RIGHT -> {
                 for(Coords coords: field.keySet()){
-                    Coords secondCard=new Coords(coords.getX()-1,coords.getY());
-                    Coords thirdCard=new Coords(coords.getX()-2,coords.getY()+1);
+                    Coords secondCard=new Coords(coords.getX(),coords.getY()+1);
+                    Coords thirdCard=new Coords(coords.getX()+1,coords.getY()+2);
                     genericL_ShapeEvaluator(game,goal,player,coords,secondCard,thirdCard,done);
                 }
             }
@@ -171,7 +170,7 @@ public class FinalGameController {
      */
     private void genericL_ShapeEvaluator(Game game,L_ShapeGoal goal,Player player,Coords firstCard,Coords secondCard,Coords thirdCard,HashSet<Coords> done){
         HashMap<Coords, Card> field=player.getField().getMatrix();
-        if(!done.contains(firstCard)&&field.get(firstCard).getKingdom()==goal.getSecondaryColor()&&field.containsKey(secondCard)&&field.containsKey(thirdCard)&&field.get(secondCard).getKingdom()==goal.getMainColor()&&field.get(thirdCard).getKingdom()==goal.getMainColor()){
+        if(!done.contains(firstCard)&&!done.contains(secondCard)&&!done.contains(thirdCard)&&field.get(firstCard).getKingdom()==goal.getSecondaryColor()&&field.containsKey(secondCard)&&field.containsKey(thirdCard)&&field.get(secondCard).getKingdom()==goal.getMainColor()&&field.get(thirdCard).getKingdom()==goal.getMainColor()){
             done.add(firstCard);
             done.add(secondCard);
             done.add(thirdCard);
