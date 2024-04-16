@@ -1,6 +1,7 @@
 package it.polimi.ingsw.model.player;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 /**
  * Coordinates Class
@@ -34,5 +35,18 @@ public class Coords implements Serializable {
      */
     public int getY() {
         return y;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        var that = (Coords) o;
+        return this.x == that.x && this.y == that.y;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(x, y);
     }
 }

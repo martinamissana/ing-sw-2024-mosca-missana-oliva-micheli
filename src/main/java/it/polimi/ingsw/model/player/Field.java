@@ -1,6 +1,7 @@
 package it.polimi.ingsw.model.player;
 
 import it.polimi.ingsw.model.card.*;
+import it.polimi.ingsw.model.commonItem.CornerStatus;
 import it.polimi.ingsw.model.commonItem.ItemBox;
 import it.polimi.ingsw.model.commonItem.Kingdom;
 import it.polimi.ingsw.model.commonItem.Resource;
@@ -49,6 +50,20 @@ public class Field implements Serializable {
     public HashMap<ItemBox, Integer> getTotalResources() { return totalResources; }
 
     /**
+     * returns the field's CardBlock. should only be used for testing purposes
+     * @return CardBlock
+     */
+    public CardBlock getCardBlock() { return cardBlock; }
+
+    @Override
+    public String toString() {
+        String out = "Total Res:\n";
+        for (HashMap.Entry<ItemBox, Integer> entry : totalResources.entrySet())
+            out += "\t" + entry.getKey() + ": " + entry.getValue() + "\n";
+        return out;
+    }
+
+    /**
      * adds a starter card at the origin of the field (0,0) with no checks whatsoever
      * @param card
      */
@@ -68,8 +83,8 @@ public class Field implements Serializable {
      * @throws IllegalMoveException
      */
     public int addCard(ResourceCard card, Coords coords) throws IllegalMoveException {
-        if (!checkIfPlaceable(coords)) throw new IllegalCoordsException();              // or return 0; ?
-        if (!checkRequirements(card)) throw new RequirementsNotSatisfiedException();    // here too
+        if (!checkIfPlaceable(coords)) throw new IllegalCoordsException();
+        if (!checkRequirements(card)) throw new RequirementsNotSatisfiedException();
         this.matrix.put(coords, card);
         blockCardSpaces(card, coords);
         updateTotalRes(card, coords);
@@ -145,15 +160,15 @@ public class Field implements Serializable {
                 this.totalResources.put(resource, 1);   // on their front side
         else {
             // starter card is flipped
-            this.totalResources.putAll(card.getPermanentRes());     // get center resources first
+            this.totalResources.putAll(card.getPermanentRes());             // get center resources first
 
             // two of the starter cards have resources on their back corners
-            for (CornerType corner : CornerType.values()) {         // then check all corners
+            for (CornerType corner : CornerType.values()) {                 // then check all corners
                 ItemBox resource = card.getCorner(corner);
                 Integer oldQty = 0;
-                if (resource != null) {                             // if there's a resource,
-                    oldQty = this.totalResources.get(resource);     // increment its count
-                    this.totalResources.put(resource, oldQty+1);    // by 1
+                if (resource != null && resource != CornerStatus.EMPTY) {   // if there's a resource,
+                    oldQty = this.totalResources.get(resource);             // increment its count
+                    this.totalResources.put(resource, oldQty+1);            // by 1
                 }
             }
         }
@@ -170,11 +185,11 @@ public class Field implements Serializable {
 
             // card is face up
         if (card.getSide() == CardSide.FRONT) {
-            for (CornerType corner : CornerType.values()) {     // check each corners'
-                item = card.getCorner(corner);                  // resources.
-                if (item != null) {                             // if there's any,
-                    oldQty = this.totalResources.get(item);     // increment the corresponding
-                    this.totalResources.put(item, oldQty+1);    // total count
+            for (CornerType corner : CornerType.values()) {         // check each corners'
+                item = card.getCorner(corner);                      // resources.
+                if (item != null && item != CornerStatus.EMPTY) {   // if there's any,
+                    oldQty = this.totalResources.get(item);         // increment the corresponding
+                    this.totalResources.put(item, oldQty+1);        // total count
                 }
             }
         } else {
@@ -187,7 +202,7 @@ public class Field implements Serializable {
         // subtract 1 to a resource's count every time an adjacent card's corner that contains it gets covered
         for (Map.Entry<CornerType, Coords> entry : getNeighbours(coords).entrySet()) {      // iterate through neighboring cards
             item = this.matrix.get(entry.getValue()).getCorner(opposite(entry.getKey()));   // get covered corner's resource
-            if (item != null) {                                                             // if there is
+            if (item != null && item != CornerStatus.EMPTY) {                               // if there is
                 oldQty = this.totalResources.get(item);                                     // decrement its
                 this.totalResources.put(item, oldQty-1);                                    // total count
             }
