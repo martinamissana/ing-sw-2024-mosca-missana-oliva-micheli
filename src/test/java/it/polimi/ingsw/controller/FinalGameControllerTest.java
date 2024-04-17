@@ -23,7 +23,7 @@ public class FinalGameControllerTest extends TestCase {
 
     public void testEvaluatePrivateGoal() throws IOException, IllegalMoveException {
         FinalGameController controller=new FinalGameController();
-        HashMap<Integer, Player> players=new HashMap<>();
+        ArrayList<Player> players=new ArrayList<>();
         HashMap<Player,Integer> scoreboard=new HashMap<>();
         ArrayList<ItemBox> resourceList= new ArrayList<>();
         resourceList.add(Resource.QUILL);
@@ -58,9 +58,9 @@ public class FinalGameControllerTest extends TestCase {
         player2.getField().addCard(cards.get(6),new Coords(-1,-2));
         player2.getField().addCard(cards.get(15),new Coords(-1,-3));
         //game with the three players
-        players.put(0,player0);
-        players.put(1,player1);
-        players.put(2,player2);
+        players.add(player0);
+        players.add(player1);
+        players.add(player2);
         scoreboard.put(player0,0);
         scoreboard.put(player1,0);
         scoreboard.put(player2,0);
@@ -75,7 +75,7 @@ public class FinalGameControllerTest extends TestCase {
 
     public void testEvaluateCommonGoal() throws IOException, IllegalMoveException {
         FinalGameController controller=new FinalGameController();
-        HashMap<Integer, Player> players=new HashMap<>();
+        ArrayList<Player> players=new ArrayList<>();
         HashMap<Player,Integer> scoreboard=new HashMap<>();
         ArrayList<ItemBox> resourceList= new ArrayList<>();
         resourceList.add(Resource.QUILL);
@@ -106,9 +106,9 @@ public class FinalGameControllerTest extends TestCase {
         player2.getField().addCard(cards.get(6),new Coords(-1,-2));
         player2.getField().addCard(cards.get(15),new Coords(-1,-3));
         //initialize game
-        players.put(0,player0);
-        players.put(1,player1);
-        players.put(2,player2);
+        players.add(player0);
+        players.add(player1);
+        players.add(player2);
         scoreboard.put(player0,0);
         scoreboard.put(player1,0);
         scoreboard.put(player2,0);
@@ -132,14 +132,14 @@ public class FinalGameControllerTest extends TestCase {
 
     public void testWinner() throws IOException {
         FinalGameController controller=new FinalGameController();
-        HashMap<Integer, Player> players=new HashMap<>();
+        ArrayList<Player> players=new ArrayList<>();
         HashMap<Player,Integer> scoreboard=new HashMap<>();
         Player player0=new Player("giorgio",true, Pawn.BLUE);
         Player player1=new Player("anna",false,Pawn.GREEN);
         Player player2=new Player("elisa",false,Pawn.YELLOW);
-        players.put(0,player0);
-        players.put(1,player1);
-        players.put(2,player2);
+        players.add(player0);
+        players.add(player1);
+        players.add(player2);
         scoreboard.put(player0,10);
         scoreboard.put(player1,3);
         scoreboard.put(player2,0);
