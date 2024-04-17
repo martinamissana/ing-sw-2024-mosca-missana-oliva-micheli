@@ -46,8 +46,8 @@ public class DeckBuffer implements Drawable, Serializable {
      * @return drawn
      */
     @Override
-    public Card draw() {
-        Card drawn = card;
+    public ResourceCard draw() {
+        ResourceCard drawn = card;
         card = null;
         this.refill();
 
