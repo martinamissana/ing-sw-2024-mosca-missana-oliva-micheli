@@ -8,6 +8,7 @@ import it.polimi.ingsw.model.player.Player;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
@@ -17,7 +18,7 @@ public class Game implements Serializable {
 
     private final int gameID;
     private final int numOfPlayers;
-    private final HashMap<Integer,Player> players;
+    private final ArrayList<Player> players;
     private int whoseTurn;
     private Action action= Action.PLAY;
     private boolean lastRound;//set to true afterward someone reached 20 points in a round and that same round has finished
@@ -37,7 +38,7 @@ public class Game implements Serializable {
      * @param scoreboard - HashMap<Player,Integer> maps the player to his points
      * @throws IOException
      */
-    public Game(int gameID, int numOfPlayers, HashMap<Integer, Player> players, HashMap<Player,Integer> scoreboard) throws IOException {
+    public Game(int gameID, int numOfPlayers, ArrayList<Player> players, HashMap<Player,Integer> scoreboard) throws IOException {
         this.numOfPlayers = numOfPlayers;
         this.players = players;
         this.gameID=gameID;
@@ -96,7 +97,7 @@ public class Game implements Serializable {
      * getter
      * @return HashMap<Integer,Player> - players
      */
-    public HashMap<Integer,Player> getPlayers() {
+    public ArrayList<Player> getPlayers() {
         return players;
     }
 
