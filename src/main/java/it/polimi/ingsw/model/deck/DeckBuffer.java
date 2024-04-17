@@ -1,13 +1,13 @@
 package it.polimi.ingsw.model.deck;
-import it.polimi.ingsw.model.card.Card;
 
+import it.polimi.ingsw.model.card.*;
 import java.io.Serializable;
 
 /**
  * Visible drawable card on the board
  */
 public class DeckBuffer implements Drawable, Serializable {
-    private Card card;
+    private ResourceCard card;
     private final Deck deck;
 
     /**
@@ -21,7 +21,7 @@ public class DeckBuffer implements Drawable, Serializable {
     /**
      * @return card
      */
-    public Card getCard() {
+    public ResourceCard getCard() {
         return card;
     }
 
