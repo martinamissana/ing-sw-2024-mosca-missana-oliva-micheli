@@ -19,6 +19,8 @@ public class Game implements Serializable {
     private final int numOfPlayers;
     private final HashMap<Integer,Player> players;
     private int whoseTurn;
+    private Action action= Action.PLAY;
+    private boolean lastRound;//set to true afterward someone reached 20 points in a round and that same round has finished
     private final HashMap<Player,Integer> scoreboard;
     private Goal commonGoal1;
     private Goal commonGoal2;
@@ -96,6 +98,38 @@ public class Game implements Serializable {
      */
     public HashMap<Integer,Player> getPlayers() {
         return players;
+    }
+
+    /**
+     * gets action
+     * @return the action the player is allowed to do at that moment
+     */
+    public Action getAction() {
+        return action;
+    }
+
+    /**
+     * sets action
+     * @param action the action the player is allowed to do at that moment
+     */
+    public void setAction(Action action) {
+        this.action = action;
+    }
+
+    /**
+     * gets the boolean that specify if it is the last round of the game
+     * @return boolean isLastRound
+     */
+    public boolean isLastRound() {
+        return lastRound;
+    }
+
+    /**
+     * sets the boolean that specify if it is the last round of the game
+     * @param lastRound
+     */
+    public void setLastRound(boolean lastRound) {
+        this.lastRound = lastRound;
     }
 
     /**
