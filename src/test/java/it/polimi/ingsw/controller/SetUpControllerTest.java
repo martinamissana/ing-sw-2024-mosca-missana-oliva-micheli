@@ -1,6 +1,5 @@
 package it.polimi.ingsw.controller;
 
-import it.polimi.ingsw.model.commonItem.*;
 import it.polimi.ingsw.model.exceptions.*;
 import it.polimi.ingsw.model.game.*;
 import it.polimi.ingsw.model.player.*;
@@ -8,6 +7,7 @@ import it.polimi.ingsw.model.player.*;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 
@@ -15,11 +15,11 @@ public class SetUpControllerTest {
     @Test
     public void SetUpTest() throws IOException, HandIsFullException {
         // Game creation + SetUp:
-        HashMap<Integer, Player> players = new HashMap<>();
+        ArrayList<Player> players = new ArrayList<>();
         HashMap<Player, Integer> scoreboard = new HashMap<>();
         for (int i = 0; i < 4; i++) {
             Player p = new Player("Player" + (i+1));
-            players.put(i, p);
+            players.add(p);
             scoreboard.put(p, 0);
         }
         Game game = new Game(0, 4, players, scoreboard);
@@ -32,7 +32,7 @@ public class SetUpControllerTest {
         c.setGameArea();
 
         // Player + Pawn + Hand printing:
-        for (Player p : players.values()) {
+        for (Player p : players) {
             System.out.print(p.getNickname() + " (" + p.getPawn().name() + " - " + game.getScoreboard().get(p) + "): ");
             for(int i = 0; i < 3; i++) {
                 System.out.print("[" + /* p.getHand().getCard(i).getCardID() + */ "]");
@@ -57,13 +57,9 @@ public class SetUpControllerTest {
         System.out.println("Common goals: (" + game.getCommonGoal1().getGoalID() + ") (" + game.getCommonGoal2().getGoalID() + ")\n\n");
 
         // Field printing:
-        for (Player p: players.values()) {
+        for (Player p: players) {
 
-            System.out.print(p.getNickname() + ": " + p.getField().getMatrix().get(new Coords(0, 0)));     // How to get the card?????
-
-            for (Kingdom k : Kingdom.values()) {
-                System.out.print(" {" + k + ": " + p.getField().getTotalResources().get(k) + "}");
-            }
+            System.out.print(p.getNickname() + ": " /* + p.getField().getMatrix().get(new Coords(0, 0)) */ + p.getField().toString());
             System.out.println();
         }
     }
