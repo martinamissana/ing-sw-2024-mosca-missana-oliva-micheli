@@ -1,8 +1,10 @@
 package it.polimi.ingsw.controller;
 
-import it.polimi.ingsw.model.deck.Deck;
+import it.polimi.ingsw.model.deck.DeckType;
 import it.polimi.ingsw.model.exceptions.HandIsFullException;
+import it.polimi.ingsw.controller.exceptions.IllegalActionException;
 import it.polimi.ingsw.model.exceptions.IllegalMoveException;
+import it.polimi.ingsw.model.game.Action;
 import it.polimi.ingsw.model.game.Game;
 import it.polimi.ingsw.model.player.Player;
 import it.polimi.ingsw.model.card.ResourceCard;
@@ -18,7 +20,11 @@ public class GameController {
      * @param coords
      * @throws IllegalMoveException
      */
-    public void playCard(Game game, int handPos, Coords coords) throws IllegalMoveException {
+    public void playCard(Game game, int handPos, Coords coords) throws IllegalActionException, IllegalMoveException {
+
+        // if the game's state isn't PLAY, leave method
+        if (game.getAction() != Action.PLAY)
+            throw new IllegalActionException();
 
         // get the game's current player
         Player currPlayer = game.getCurrPlayer();
@@ -39,11 +45,16 @@ public class GameController {
     /**
      * draws a card from deck and adds it to the game's current player's hand
      * @param game
-     * @param deck
+     * @param deckType
      * @throws HandIsFullException
      */
-    public void drawCard(Game game, Deck deck) throws HandIsFullException {
-        ResourceCard newCard = deck.draw();
+    public void drawCard(Game game, DeckType deckType) throws IllegalActionException, HandIsFullException {
+
+        // if the game's state isn't DRAW, leave method
+        if (game.getAction() != Action.DRAW)
+            throw new IllegalActionException();
+
+        ResourceCard newCard = game.getDeck(deckType).draw();
         game.getCurrPlayer().getHand().addCard(newCard);
     }
 
@@ -53,8 +64,13 @@ public class GameController {
      * @param deckBuffer
      * @throws HandIsFullException
      */
-    public void drawCard(Game game, DeckBuffer deckBuffer) throws HandIsFullException {
-        ResourceCard newCard = (ResourceCard) deckBuffer.draw(); // a DeckBuffer.draw() should return ResourceCard, not Card
+    public void drawCard(Game game, String deckBuffer) throws IllegalActionException, HandIsFullException {
+
+        // if the game's state isn't DRAW, leave method
+        if (game.getAction() != Action.DRAW)
+            throw new IllegalActionException();
+
+        ResourceCard newCard = game.getDeckBuffer(deckBuffer).draw();
         game.getCurrPlayer().getHand().addCard(newCard);
     }
 
