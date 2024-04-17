@@ -1,23 +1,26 @@
-package it.polimi.ingsw.model.game;
+package it.polimi.ingsw.controller;
 
-import it.polimi.ingsw.controller.Controller;
-import it.polimi.ingsw.model.card.*;
+import it.polimi.ingsw.model.card.CardSide;
+import it.polimi.ingsw.model.card.Corner;
+import it.polimi.ingsw.model.card.CornerType;
+import it.polimi.ingsw.model.card.ResourceCard;
 import it.polimi.ingsw.model.commonItem.CornerStatus;
 import it.polimi.ingsw.model.commonItem.Kingdom;
 import it.polimi.ingsw.model.commonItem.Resource;
 import it.polimi.ingsw.model.exceptions.*;
-import it.polimi.ingsw.model.player.Hand;
+import it.polimi.ingsw.model.game.Game;
+import it.polimi.ingsw.model.game.GameHandler;
 import it.polimi.ingsw.model.player.Player;
+import junit.framework.TestCase;
 
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.HashSet;
-import junit.framework.TestCase;
-import org.junit.jupiter.api.BeforeEach;
 
-public class GameHandlerTest extends TestCase {
+import static org.junit.jupiter.api.Assertions.*;
+
+public class testController extends TestCase {
     GameHandler gameHandler=new GameHandler();
-    HashMap< CornerType, Corner > frontCorners;
+    HashMap<CornerType, Corner> frontCorners;
     HashMap< CornerType, Corner > backCorners;
     Corner corner1=new Corner(CornerStatus.EMPTY);
     Corner corner2=new Corner(Resource.INKWELL);
@@ -43,14 +46,15 @@ public class GameHandlerTest extends TestCase {
         anna.getHand().addCard(card);
     }
 
-    public void testSaveAndLoad() throws IOException, ClassNotFoundException, GameDoesNotExistException {
-        gameHandler.save();
-        GameHandler gameHandler1=new GameHandler();
-        gameHandler1.load();
-        assertEquals(gameHandler.getGame(0).getPlayers().get(0).getNickname(),gameHandler1.getActiveGames().get(0).getPlayers().get(0).getNickname());
-        assertEquals(gameHandler.getGame(0).getPlayers().get(0).getHand().getCard(0).getCardID(),gameHandler1.getActiveGames().get(0).getPlayers().get(0).getHand().getCard(0).getCardID());
-    }/**/
 
-
+    public void testCreateGame() throws IOException, GameDoesNotExistException, FullLobbyException, NicknameAlreadyTakenException {
+        assertTrue(gameHandler.getGame(0).getPlayers().contains(anna));
+        assertTrue(gameHandler.getGame(0).getPlayers().contains(eric));
+        assertTrue(gameHandler.getGame(0).getPlayers().contains(giorgio));
+        assertEquals(gameHandler.getGame(0).getPlayers().get(0).getNickname(),"anna");
+        assertEquals(anna.getNickname(),"anna");
+        assertEquals(eric.getNickname(),"eric");
+        assertEquals(giorgio.getNickname(),"giorgio");
+    }
 
 }

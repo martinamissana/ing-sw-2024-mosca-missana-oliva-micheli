@@ -222,4 +222,14 @@ public class Game implements Serializable {
     public Deck getGoldenDeck() {
         return GoldenDeck;
     }
+
+    /**
+     * getter of a specific deck
+     * @param type - defines the type of deck wanted
+     * @return Deck
+     */
+    public Deck getDeck(DeckType type){
+        if(type==DeckType.RESOURCE) return ResourceDeck;
+        else return GoldenDeck;
+    }
 }
