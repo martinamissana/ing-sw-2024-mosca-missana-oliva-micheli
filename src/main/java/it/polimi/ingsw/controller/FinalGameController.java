@@ -16,7 +16,7 @@ public class FinalGameController {
      * @param game
      */
     public void evaluatePrivateGoal(Game game){
-        for(Player p:game.getPlayers().values()){
+        for(Player p:game.getPlayers()){
             if(p.getPrivateGoal().getClass()==ResourceGoal.class){
                 resourceEvaluator(game, (ResourceGoal) p.getPrivateGoal(),p);
             } else if (p.getPrivateGoal().getClass()==L_ShapeGoal.class) {
@@ -36,7 +36,7 @@ public class FinalGameController {
     public void evaluateCommonGoal(Game game){
         Goal commonGoal1= game.getCommonGoal1();
         Goal commonGoal2= game.getCommonGoal2();
-        for(Player p: game.getPlayers().values()){
+        for(Player p: game.getPlayers()){
             if(commonGoal1.getClass()==ResourceGoal.class){
                 resourceEvaluator(game, (ResourceGoal) commonGoal1,p);
             } else if (commonGoal1.getClass()==L_ShapeGoal.class) {

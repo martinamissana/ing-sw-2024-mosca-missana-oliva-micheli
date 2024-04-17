@@ -30,14 +30,14 @@ public class SetUpController {
         g.getDeckBuffer("gold1").refill();
         g.getDeckBuffer("gold2").refill();
 
-        HashMap<Integer, Player> players = g.getPlayers();
+        ArrayList<Player> players = g.getPlayers();
 
         // Creating starter deck:
         ArrayList<StarterCard> starter = CardsPreset.getStarterCards();
         Collections.shuffle(starter);
 
         // Initializing fields + Drawing and placing starter card for each player:
-        for (Player p : players.values()) {
+        for (Player p : players) {
             p.getHand().addCard(starter.removeLast());
             // p has to choose card side before playCard(p);
             playCard(p);
@@ -47,13 +47,13 @@ public class SetUpController {
         Pawn[] pawns = Pawn.values();
         int i = 0;
 
-        for (Player p : players.values()) {
+        for (Player p : players) {
             p.setPawn(pawns[i]);
             i++;
         }
 
         // Fill hand of players:
-        for (Player p : players.values()) {
+        for (Player p : players) {
             p.getHand().addCard(g.getResourceDeck().draw());
             p.getHand().addCard(g.getResourceDeck().draw());
             p.getHand().addCard(g.getGoldenDeck().draw());
@@ -65,7 +65,7 @@ public class SetUpController {
         g.setCommonGoal2(goals.getgoal());
 
         // Choosing personal goals:
-        for (Player p : players.values()) {
+        for (Player p : players) {
             Goal[] choices = new Goal[2];
             choices[0] = goals.getgoal();
             choices[1] = goals.getgoal();
