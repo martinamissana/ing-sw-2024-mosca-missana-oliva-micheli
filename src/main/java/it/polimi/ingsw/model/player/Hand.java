@@ -1,53 +1,44 @@
 package it.polimi.ingsw.model.player;
 
+import java.io.Serializable;
 import it.polimi.ingsw.model.card.Card;
 import it.polimi.ingsw.model.exceptions.HandIsFullException;
-
-import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.NoSuchElementException;
 
 /**
  * Hand Class
  * each player has an associated hand containing all their available cards
  */
 public class Hand implements Serializable {
-    private final ArrayList<Card> handList;
-
-    /**
-     * Class constructor
-     */
-    public Hand() {
-        this.handList = new ArrayList<Card>();
-    }
+    private final ArrayList<Card> handList = new ArrayList<>();
 
     /**
      * returns the card at the specified position in the hand
-     * @param pos
+     * @param pos position of the desired card
      * @return Card
-     * @throws IndexOutOfBoundsException
+     * @throws IndexOutOfBoundsException thrown if the position requested isn't in the list
      */
-    public Card getCard(int pos) throws IndexOutOfBoundsException {
-        return handList.get(pos);
-    }
+    public Card getCard(int pos) throws IndexOutOfBoundsException { return handList.get(pos); }
 
     /**
-     * adds a card to the hand, returning true.
-     * returns false if the hand is full
-     * @param card
-     * @return boolean
-     * @throws  HandIsFullException
+     * adds a card to the hand
+     * @param card card to add to the hand
+     * @throws HandIsFullException thrown if the hand already contains three (or more) cards
      */
-    public boolean addCard(Card card) throws HandIsFullException {
+    public void addCard(Card card) throws HandIsFullException {
         if (this.handList.size() > 2)
             throw new HandIsFullException();
-        return this.handList.add(card);
+        this.handList.add(card);
     }
 
     /**
-     * removes a card from the hand, returning true.
+     * removes a card from the hand
      * returns false if the specified card wasn't in the hand
-     * @param card
-     * @return boolean
+     * @param card card to remove from the hand
      */
-    public boolean removeCard(Card card) { return this.handList.remove(card); }
+    public void removeCard(Card card) {
+        if (!this.handList.remove(card))
+            throw new NoSuchElementException();
+    }
 }
