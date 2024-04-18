@@ -20,7 +20,7 @@ public class SetUpController {
         return g;
     }
 
-    public void setGameArea() throws IOException, HandIsFullException {
+    public void setGameArea() throws IOException, HandIsFullException, EmptyDeckException {
         // setting decks and deck buffers: (buffers missing)
         g.getResourceDeck().shuffle();
         g.getGoldenDeck().shuffle();

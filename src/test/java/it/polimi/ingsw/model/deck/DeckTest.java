@@ -1,13 +1,14 @@
 package it.polimi.ingsw.model.deck;
 
 import it.polimi.ingsw.model.card.*;
+import it.polimi.ingsw.model.exceptions.EmptyDeckException;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import java.io.IOException;
 
 public class DeckTest {
     @Test
-    public void ShuffleAndDrawTest() throws IOException {
+    public void ShuffleAndDrawTest() throws IOException, EmptyDeckException {
         Deck ResourceDeck = new Deck(DeckType.RESOURCE);
         assertFalse(ResourceDeck.getDeck().isEmpty());
         ResourceDeck.shuffle();

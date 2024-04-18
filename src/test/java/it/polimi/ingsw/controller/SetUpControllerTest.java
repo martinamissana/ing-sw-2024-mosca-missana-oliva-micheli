@@ -13,7 +13,7 @@ import java.util.HashMap;
 
 public class SetUpControllerTest {
     @Test
-    public void SetUpTest() throws IOException, HandIsFullException {
+    public void SetUpTest() throws IOException, HandIsFullException, EmptyDeckException {
         // Game creation + SetUp:
         ArrayList<Player> players = new ArrayList<>();
         HashMap<Player, Integer> scoreboard = new HashMap<>();

@@ -1,6 +1,8 @@
 package it.polimi.ingsw.model.deck;
+
 import it.polimi.ingsw.model.card.*;
-import it.polimi.ingsw.model.game.CardsPreset;
+import it.polimi.ingsw.model.game.*;
+import it.polimi.ingsw.model.exceptions.*;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -59,8 +61,8 @@ public class Deck implements Drawable, Serializable {
      * @return last card on cards ArrayList
      */
     @Override
-    public ResourceCard draw() {
+    public ResourceCard draw() throws EmptyDeckException {
         if(!cards.isEmpty()) return cards.removeLast();
-        else return null;
+        else throw new EmptyDeckException("Deck is empty. Cannot draw!");
     }
 }

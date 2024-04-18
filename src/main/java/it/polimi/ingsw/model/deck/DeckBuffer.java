@@ -1,6 +1,8 @@
 package it.polimi.ingsw.model.deck;
 
 import it.polimi.ingsw.model.card.*;
+import it.polimi.ingsw.model.exceptions.EmptyDeckException;
+
 import java.io.Serializable;
 
 /**
@@ -28,10 +30,10 @@ public class DeckBuffer implements Drawable, Serializable {
     /**
      * Put a card in the deck buffer (if empty)
      */
-    public void refill() {
+    public void refill() throws EmptyDeckException{
         if(!deck.getDeck().isEmpty()) {
             card = deck.draw();
-        }
+        } else throw new EmptyDeckException("Deck is empty. Cannot draw!");
     }
 
     /**
@@ -49,7 +51,12 @@ public class DeckBuffer implements Drawable, Serializable {
     public ResourceCard draw() {
         ResourceCard drawn = card;
         card = null;
-        this.refill();
+        try {
+            this.refill();
+        }
+        catch(EmptyDeckException e) {
+            System.out.println("Cannot refill the space");
+        }
 
         return drawn;
     }

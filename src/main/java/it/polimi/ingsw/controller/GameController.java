@@ -1,13 +1,10 @@
 package it.polimi.ingsw.controller;
 
-import it.polimi.ingsw.model.deck.Deck;
-import it.polimi.ingsw.model.exceptions.HandIsFullException;
-import it.polimi.ingsw.model.exceptions.IllegalMoveException;
+import it.polimi.ingsw.model.deck.*;
+import it.polimi.ingsw.model.exceptions.*;
+import it.polimi.ingsw.model.player.*;
 import it.polimi.ingsw.model.game.Game;
-import it.polimi.ingsw.model.player.Player;
 import it.polimi.ingsw.model.card.ResourceCard;
-import it.polimi.ingsw.model.deck.DeckBuffer;
-import it.polimi.ingsw.model.player.Coords;
 
 public class GameController {
 
@@ -42,7 +39,7 @@ public class GameController {
      * @param deck
      * @throws HandIsFullException
      */
-    public void drawCard(Game game, Deck deck) throws HandIsFullException {
+    public void drawCard(Game game, Deck deck) throws HandIsFullException, EmptyDeckException {
         ResourceCard newCard = deck.draw();
         game.getCurrPlayer().getHand().addCard(newCard);
     }
