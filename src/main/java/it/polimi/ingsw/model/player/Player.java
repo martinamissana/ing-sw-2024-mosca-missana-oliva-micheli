@@ -21,7 +21,7 @@ public class Player implements Serializable {
 
     /**
      * Class constructor
-     * @param nickname
+     * @param nickname player's nickname
      */
     public Player(String nickname) {
         this.nickname = nickname;
@@ -35,9 +35,9 @@ public class Player implements Serializable {
 
     /**
      * Class constructor
-     * @param goesFirst
-     * @param nickname
-     * @param pawn
+     * @param nickname player's nickname
+     * @param goesFirst signals that the player is the first of each turn in the game
+     * @param pawn player's pawn
      */
     // might not be needed
     public Player(String nickname, boolean goesFirst, Pawn pawn) {
@@ -52,19 +52,19 @@ public class Player implements Serializable {
 
     /**
      * sets the player to be the one to go first
-     * @param goesFirst
+     * @param goesFirst signals that the player is the first of each turn in the game
      */
     public void setGoesFirst(boolean goesFirst) { this.goesFirst = goesFirst; }
 
     /**
      * sets the player's private goal
-     * @param goal
+     * @param goal goal to set as the player's private goal
      */
     public void setPrivateGoal(Goal goal) { this.privateGoal = goal; }
 
     /**
      * sets the player's pawn
-     * @param pawn
+     * @param pawn pawn to set
      */
     public void setPawn(Pawn pawn) { this.pawn = pawn; }
 
@@ -111,31 +111,4 @@ public class Player implements Serializable {
      * @return Pawn
      */
     public Pawn getPawn() { return pawn; }
-
-    // this should all be in the controller side of things
-    /*
-    public boolean playCard() {
-        StarterCard card = (StarterCard) hand.getCard(0);
-        field.addCard(card);
-        hand.removeCard(card);
-        return true;
-    }
-    public boolean playCard(int handPos, Coords coords) {
-        ResourceCard card = (ResourceCard) hand.getCard(handPos);
-        // very temporary
-        int points = field.addCard((ResourceCard) card, coords);
-        return hand.removeCard(card);
-    }
-    public boolean drawCard(Deck deck) {
-        if (deck == null)
-            return false;
-        Card newCard = deck.draw();
-        return hand.addCard(newCard);
-    }
-    public boolean drawCard(DeckBuffer deckBuffer) {
-        if (deckBuffer == null)
-            return false;
-        Card newCard = deckBuffer.draw();
-        return hand.addCard(newCard);
-    }*/
 }
