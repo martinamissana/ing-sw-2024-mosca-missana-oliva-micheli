@@ -13,8 +13,8 @@ public class Coords implements Serializable {
 
     /**
      * Class constructor
-     * @param x
-     * @param y
+     * @param x first coordinate of the matrix. positive and negative values correspond to positions to the east and west respectively
+     * @param y second coordinate of the matrix. positive and negative values correspond to positions to the north and south respectively
      */
     public Coords(int x, int y) {
         this.x = x;
@@ -37,6 +37,11 @@ public class Coords implements Serializable {
         return y;
     }
 
+    /**
+     * pairs of coordinates are equal to each other if and only if both the x and y values of the first pair are equal to the second pair's
+     * @param o object to compare with the caller
+     * @return boolean
+     */
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
