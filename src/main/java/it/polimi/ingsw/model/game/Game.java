@@ -4,6 +4,7 @@ import it.polimi.ingsw.model.deck.Deck;
 import it.polimi.ingsw.model.deck.DeckBuffer;
 import it.polimi.ingsw.model.deck.DeckType;
 import it.polimi.ingsw.model.goal.Goal;
+import it.polimi.ingsw.model.player.PawnBuffer;
 import it.polimi.ingsw.model.player.Player;
 
 import java.io.IOException;
@@ -28,6 +29,7 @@ public class Game implements Serializable {
     private final Deck ResourceDeck=new Deck(DeckType.RESOURCE);
     private final Deck GoldenDeck=new Deck(DeckType.GOLDEN);
     private final HashMap<String,DeckBuffer> deckBuffers = new HashMap<>();
+    private final PawnBuffer pawnBuffer;
 
 
     /**
@@ -50,6 +52,7 @@ public class Game implements Serializable {
         this.deckBuffers.put("gold2",new DeckBuffer(this.GoldenDeck));
         this.deckBuffers.put("res1",new DeckBuffer(this.ResourceDeck));
         this.deckBuffers.put("res2",new DeckBuffer(this.ResourceDeck));
+        this.pawnBuffer=new PawnBuffer();
     }
 
     /**
@@ -108,6 +111,8 @@ public class Game implements Serializable {
     public Action getAction() {
         return action;
     }
+
+    public PawnBuffer getPawnBuffer() {return pawnBuffer;}
 
     /**
      * sets action
