@@ -2,6 +2,7 @@ package it.polimi.ingsw.model.game;
 
 import it.polimi.ingsw.model.deck.Deck;
 import it.polimi.ingsw.model.deck.DeckBuffer;
+import it.polimi.ingsw.model.deck.DeckBufferType;
 import it.polimi.ingsw.model.deck.DeckType;
 import it.polimi.ingsw.model.goal.Goal;
 import it.polimi.ingsw.model.player.PawnBuffer;
@@ -28,7 +29,7 @@ public class Game implements Serializable {
     private Goal commonGoal2;
     private final Deck ResourceDeck=new Deck(DeckType.RESOURCE);
     private final Deck GoldenDeck=new Deck(DeckType.GOLDEN);
-    private final HashMap<String,DeckBuffer> deckBuffers = new HashMap<>();
+    private final HashMap<DeckBufferType,DeckBuffer> deckBuffers = new HashMap<>();
     private final PawnBuffer pawnBuffer;
 
 
@@ -48,10 +49,10 @@ public class Game implements Serializable {
         this.commonGoal2 = null;
         this.whoseTurn=0;
         this.scoreboard=scoreboard;
-        this.deckBuffers.put("gold1",new DeckBuffer(this.GoldenDeck));
-        this.deckBuffers.put("gold2",new DeckBuffer(this.GoldenDeck));
-        this.deckBuffers.put("res1",new DeckBuffer(this.ResourceDeck));
-        this.deckBuffers.put("res2",new DeckBuffer(this.ResourceDeck));
+        this.deckBuffers.put(DeckBufferType.GOLD1,new DeckBuffer(this.GoldenDeck));
+        this.deckBuffers.put(DeckBufferType.GOLD2,new DeckBuffer(this.GoldenDeck));
+        this.deckBuffers.put(DeckBufferType.RES1,new DeckBuffer(this.ResourceDeck));
+        this.deckBuffers.put(DeckBufferType.RES2,new DeckBuffer(this.ResourceDeck));
         this.pawnBuffer=new PawnBuffer();
     }
 
@@ -60,7 +61,7 @@ public class Game implements Serializable {
      * @param type - specifies the type of the deckbuffer needed (gold1,gold2,res1,res2)
      * @return Deckbuffer
      */
-    public DeckBuffer getDeckBuffer(String type){
+    public DeckBuffer getDeckBuffer(DeckBufferType type){
         return deckBuffers.get(type);
     }
 
