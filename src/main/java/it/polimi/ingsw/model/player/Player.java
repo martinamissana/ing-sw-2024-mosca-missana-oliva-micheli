@@ -1,11 +1,6 @@
 package it.polimi.ingsw.model.player;
 
-import it.polimi.ingsw.model.card.Card;
-import it.polimi.ingsw.model.card.ResourceCard;
-import it.polimi.ingsw.model.card.StarterCard;
 import it.polimi.ingsw.model.chat.Chat;
-import it.polimi.ingsw.model.deck.Deck;
-import it.polimi.ingsw.model.deck.DeckBuffer;
 import it.polimi.ingsw.model.goal.Goal;
 
 import java.io.Serializable;
