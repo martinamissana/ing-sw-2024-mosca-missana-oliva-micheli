@@ -1,13 +1,13 @@
 package it.polimi.ingsw.model.player;
 
-import it.polimi.ingsw.model.card.*;
-import it.polimi.ingsw.model.commonItem.CornerStatus;
-import it.polimi.ingsw.model.commonItem.ItemBox;
-import it.polimi.ingsw.model.commonItem.Kingdom;
-import it.polimi.ingsw.model.commonItem.Resource;
-import it.polimi.ingsw.model.exceptions.*;
-
 import java.io.Serializable;
+import it.polimi.ingsw.model.card.*;
+import it.polimi.ingsw.model.commonItem.*;
+import it.polimi.ingsw.model.exceptions.IllegalMoveException;
+import it.polimi.ingsw.model.exceptions.IllegalCoordsException;
+import it.polimi.ingsw.model.exceptions.OccupiedCoordsException;
+import it.polimi.ingsw.model.exceptions.UnreachablePositionException;
+import it.polimi.ingsw.model.exceptions.RequirementsNotSatisfiedException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -24,9 +24,9 @@ public class Field implements Serializable {
      * Class constructor
      */
     public Field() {
-        this.matrix = new HashMap<Coords, Card>();
+        this.matrix = new HashMap<>();
 
-        HashMap<ItemBox, Integer> temp = new HashMap<ItemBox, Integer>();
+        HashMap<ItemBox, Integer> temp = new HashMap<>();
 
         for(Kingdom kingdom : Kingdom.values())
             temp.put(kingdom, 0);
@@ -57,15 +57,15 @@ public class Field implements Serializable {
 
     @Override
     public String toString() {
-        String out = "Total Res:\n";
+        StringBuilder out = new StringBuilder("Total Res:\n");
         for (HashMap.Entry<ItemBox, Integer> entry : totalResources.entrySet())
-            out += "\t" + entry.getKey() + ": " + entry.getValue() + "\n";
-        return out;
+            out.append("\t").append(entry.getKey()).append(": ").append(entry.getValue()).append("\n");
+        return out.toString();
     }
 
     /**
      * adds a starter card at the origin of the field (0,0) with no checks whatsoever
-     * @param card
+     * @param card Starter card that is to be added
      */
     public void addCard(StarterCard card) {
         Coords coords = new Coords(0, 0);
@@ -77,10 +77,10 @@ public class Field implements Serializable {
     /**
      * adds a card (Resource or Golden) to the field at the specified position.
      * returns the number of points gained by the player after placing said card.
-     * @param card
-     * @param coords
+     * @param card Resource or Golden card that is to be added
+     * @param coords position at which to place the card
      * @return int
-     * @throws IllegalMoveException
+     * @throws IllegalMoveException thrown if the card couldn't be added to the field
      */
     public int addCard(ResourceCard card, Coords coords) throws IllegalMoveException {
         if (!checkIfPlaceable(coords)) throw new IllegalCoordsException();
@@ -93,9 +93,9 @@ public class Field implements Serializable {
 
     /**
      * checks if a position is already occupied by a card, blocked by a corner or unreachable
-     * @param coords
+     * @param coords position to check
      * @return boolean
-     * @throws IllegalCoordsException
+     * @throws IllegalCoordsException thrown if the position currently cannot contain a card
      */
     public boolean checkIfPlaceable(Coords coords) throws IllegalCoordsException {
 
@@ -105,7 +105,7 @@ public class Field implements Serializable {
 
         // if any of the adjacent positions has a card with a non-blocking corner
         // pointed towards the specified position, return true
-        for (Map.Entry<CornerType, Coords> entry : getNeighbours(coords).entrySet())            // iterate through neighboring cards
+        for (Map.Entry<CornerType, Coords> entry : getAdjacentCards(coords).entrySet())            // iterate through neighboring cards
             if (this.matrix.get(entry.getValue()).getCorner(opposite(entry.getKey())) != null)  // if any such card... (as before)
                 return true;                                                                    // a card can be placed at 'coords'
 
@@ -115,9 +115,9 @@ public class Field implements Serializable {
 
     /**
      * checks if a card's requirements are met (any non-Golden card will always have its requirements met)
-     * @param card
+     * @param card card to check the requirements of
      * @return boolean
-     * @throws RequirementsNotSatisfiedException
+     * @throws RequirementsNotSatisfiedException thrown if the card doesn't have its requirements met
      */
     public boolean checkRequirements(ResourceCard card) throws RequirementsNotSatisfiedException {
 
@@ -136,21 +136,21 @@ public class Field implements Serializable {
 
     /**
      * looks at a card's blocking corners and sets cardBlock entries if there already isn't any Card
-     * @param card
-     * @param coords
+     * @param card newly placed card
+     * @param coords position of the card
      */
     private void blockCardSpaces(Card card, Coords coords) {
 
         // if a free adjacent position is covered by a blocking corner of
         // the specified card, set a CardBlock at that position
-        for (Map.Entry<CornerType, Coords> entry : getFreeNeighboursCoords(coords).entrySet())  // iterate through free neighboring positions.
+        for (Map.Entry<CornerType, Coords> entry : getFreeAdjacentCoords(coords).entrySet())  // iterate through free neighboring positions.
             if (card.getCorner(entry.getKey()) == null)                                         // if no corner is instantiated for that direction,
                 this.matrix.put(entry.getValue(), this.cardBlock);                              // then set a CardBlock
     }
 
     /**
      * updates each resource's total count, given the newly placed Starter card
-     * @param card
+     * @param card newly placed Starter card
      */
     private void updateTotalRes(StarterCard card) {
 
@@ -162,13 +162,13 @@ public class Field implements Serializable {
             // starter card is flipped
             this.totalResources.putAll(card.getPermanentRes());             // get center resources first
 
-            // two of the starter cards have resources on their back corners
+            // this is for the two Starter cards
+            // that have resources on their back corners
             for (CornerType corner : CornerType.values()) {                 // then check all corners
                 ItemBox resource = card.getCorner(corner);
-                Integer oldQty = 0;
                 if (resource != null && resource != CornerStatus.EMPTY) {   // if there's a resource,
-                    oldQty = this.totalResources.get(resource);             // increment its count
-                    this.totalResources.put(resource, oldQty+1);            // by 1
+                    Integer oldQty = this.totalResources.get(resource);
+                    this.totalResources.replace(resource, oldQty+1);        // increment its count by 1
                 }
             }
         }
@@ -176,8 +176,8 @@ public class Field implements Serializable {
 
     /**
      * updates each resource's total count, given the newly placed card and its position
-     * @param card
-     * @param coords
+     * @param card newly placed Resource or Golden card
+     * @param coords position of the card
      */
     private void updateTotalRes(ResourceCard card, Coords coords) {
         int oldQty;
@@ -189,37 +189,30 @@ public class Field implements Serializable {
                 item = card.getCorner(corner);                      // resources.
                 if (item != null && item != CornerStatus.EMPTY) {   // if there's any,
                     oldQty = this.totalResources.get(item);         // increment the corresponding
-                    this.totalResources.put(item, oldQty+1);        // total count
+                    this.totalResources.replace(item, oldQty+1);    // total count
                 }
             }
         } else {
             // card is face down
-            item = card.getKingdom();                   // get the card's Kingdom resource
-            oldQty = this.totalResources.get(item);     // add 1 to its
-            this.totalResources.put(item, oldQty+1);    // total count
+            item = card.getKingdom();                       // get the card's Kingdom resource
+            oldQty = this.totalResources.get(item);         // add 1 to its
+            this.totalResources.replace(item, oldQty+1);    // total count
         }
 
         // subtract 1 to a resource's count every time an adjacent card's corner that contains it gets covered
-        for (Map.Entry<CornerType, Coords> entry : getNeighbours(coords).entrySet()) {      // iterate through neighboring cards
+        for (Map.Entry<CornerType, Coords> entry : getAdjacentCards(coords).entrySet()) {   // iterate through neighboring cards
             item = this.matrix.get(entry.getValue()).getCorner(opposite(entry.getKey()));   // get covered corner's resource
             if (item != null && item != CornerStatus.EMPTY) {                               // if there is
-                oldQty = this.totalResources.get(item);                                     // decrement its
-                this.totalResources.put(item, oldQty-1);                                    // total count
+                oldQty = this.totalResources.get(item);
+                this.totalResources.replace(item, oldQty-1);                                // decrement its total count
             }
         }
     }
 
     /**
-     * returns the number of points from Resource cards
-     * @param card
-     * @return int
-     */
-    private int evaluatePoints(ResourceCard card) { return card.getPoints(); }
-
-    /**
-     * evaluates and returns the number of points (given the card's position and GoldenCardType if it's a GoldenCard)
-     * @param card
-     * @param coords
+     * evaluates and returns the number of points (given the card's position and GoldenCardType if it's a Golden card)
+     * @param card card to evaluate the points of
+     * @param coords position of the card
      * @return int
      */
     private int evaluatePoints(ResourceCard card, Coords coords) {
@@ -240,7 +233,7 @@ public class Field implements Serializable {
 
         // two points for each neighboring card
         if (goldenCard.getType() == GoldenCardType.CORNER)
-            return getNeighbours(coords).size() * 2; // get the number of adjacent cards and multiply by 2
+            return getAdjacentCards(coords).size() * 2; // get the number of adjacent cards and multiply by 2
         return 0;
     }
 
@@ -248,14 +241,14 @@ public class Field implements Serializable {
      * returns all cards adjacent to the specified position.
      * more formally, it returns a CornerType (meaning direction) to Coords map,
      * containing all coordinates with a Card in them (CardBlock cards are NOT included)
-     * @param coords
+     * @param coords position of which to look for adjacent cards of
      * @return HashMap<CornerType, Coords>
      */
-    private HashMap<CornerType, Coords> getNeighbours(Coords coords) {
+    private HashMap<CornerType, Coords> getAdjacentCards(Coords coords) {
         HashMap<CornerType, Coords> map = new HashMap<>();
         if (coords == null) return map;
         
-        // create neighboring coordinates
+        // create adjacent coordinates
         int Xin = coords.getX();
         int Yin = coords.getY();
         Coords northCoords = new Coords(Xin,Yin+1);
@@ -263,7 +256,8 @@ public class Field implements Serializable {
         Coords southCoords = new Coords(Xin,Yin-1);
         Coords westCoords = new Coords(Xin-1,Yin);
 
-        // if there's a non-blocking Card, add that position to the map (is checking != null needed?)
+        // if there's a card (not including CardBlock cards),
+        // add that position to the map (is checking != null needed?)
         if (this.matrix.get(northCoords) != null && this.matrix.get(northCoords).getClass() != CardBlock.class)
             map.put(CornerType.NORTH, northCoords);
         if (this.matrix.get(eastCoords) != null && this.matrix.get(eastCoords).getClass() != CardBlock.class)
@@ -276,13 +270,13 @@ public class Field implements Serializable {
     }
 
     /**
-     * returns all non-blocked and empty locations near a specified position.
+     * returns all non-blocked and empty coordinates adjacent to a specified one.
      * more formally, it returns a CornerType (meaning direction) to Coords map,
      * containing all coordinates without ANY Card in them (CardBlock cards are excluded too)
-     * @param coords
+     * @param coords position of which to look for free adjacent coordinates of
      * @return HashMap<CornerType, Coords>
      */
-    private HashMap<CornerType, Coords> getFreeNeighboursCoords(Coords coords) {
+    private HashMap<CornerType, Coords> getFreeAdjacentCoords(Coords coords) {
         HashMap<CornerType, Coords> map = new HashMap<>();
         if (coords == null) return map;
 
@@ -308,7 +302,7 @@ public class Field implements Serializable {
 
     /**
      * returns the CornerType opposite to the one specified
-     * @param corner
+     * @param corner CornerType to invert
      * @return CornerType
      */
     private CornerType opposite(CornerType corner) {
