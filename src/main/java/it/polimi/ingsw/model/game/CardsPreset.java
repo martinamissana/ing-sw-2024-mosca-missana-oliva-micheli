@@ -11,8 +11,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
-
 
 /**
  * Class CardPreset
@@ -23,7 +21,7 @@ public class CardsPreset {
     /**
      * gets all the resource cards in a list
      * @return list<ResourceCard>
-     * @throws IOException
+     * @throws IOException - produced by failed or interrupted I/O operations
      */
     public static ArrayList<ResourceCard> getResourceCards() throws IOException {
         InputStream inputStream = CardsPreset.class.getClassLoader().getResourceAsStream("resource_cards.json");
@@ -47,7 +45,7 @@ public class CardsPreset {
     /**
      * gets all the golden cards in a list
      * @return list<GoldenCard>
-     * @throws IOException
+     * @throws IOException - produced by failed or interrupted I/O operations
      */
     public static ArrayList<GoldenCard> getGoldenCards() throws IOException {
         InputStream inputStream = CardsPreset.class.getClassLoader().getResourceAsStream("golden_cards.json");
@@ -70,7 +68,7 @@ public class CardsPreset {
     /**
      * gets all the starter cards in a list
      * @return list<StarterCard>
-     * @throws IOException
+     * @throws IOException - produced by failed or interrupted I/O operations
      */
     public static ArrayList<StarterCard> getStarterCards() throws IOException {
         InputStream inputStream = CardsPreset.class.getClassLoader().getResourceAsStream("starter_cards.json");

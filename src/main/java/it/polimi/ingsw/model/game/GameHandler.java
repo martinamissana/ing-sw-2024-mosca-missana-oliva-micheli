@@ -8,8 +8,7 @@ import it.polimi.ingsw.model.player.Player;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
+
 
 /**
  * Class GameHandler
@@ -20,7 +19,7 @@ public class GameHandler implements Serializable {
     private HashMap<Integer,Lobby> lobbies;
     private int numOfGames=0;
     private int numOfLobbies=0;
-    private ArrayList<Player> users;
+    private final ArrayList<Player> users;
 
     /**
      * Class constructor
@@ -32,42 +31,54 @@ public class GameHandler implements Serializable {
     }
 
     /**
-     * gets the HashMap with the active games
-     * @return activeGames
+     * getter
+     * @return activeGames - the HashMap with the active games
      */
     public HashMap<Integer, Game> getActiveGames() {
         return activeGames;
     }
 
     /**
-     * gets the HashMap with the  current lobbies
-     * @return lobbies
+     * getter
+     * @return lobbies - the HashMap with the  current lobbies
      */
     public HashMap<Integer, Lobby> getLobbies() { return lobbies; }
 
+    /**
+     * getter
+     * @return users - the list of users connected
+     */
     public ArrayList<Player> getUsers() {
         return users;
     }
 
     /**
-     * gets the number of games that have been created
-     * @return numOfGames
+     * removes a user from the user list
+     * @param user - is the user you want to remove
+     */
+    public void removeUser(Player user){
+        this.users.remove(user);
+    }
+
+    /**
+     * getter
+     * @return numOfGames - the number of games that have been created
      */
     public int getNumOfGames() {
         return numOfGames;
     }
 
     /**
-     * gets the number of lobbies that have been created
-     * @return numOfLobbies
+     * getter
+     * @return numOfLobbies - the number of lobbies that have been created
      */
     public int getNumOfLobbies() { return numOfLobbies; }
 
     /**
-     * used to get a specific game from the list of active games, returns an exception if it doesn't exist
-     * @param ID
+     * used to get a specific game
+     * @param ID of the game you want to get from the list of active games
      * @return the specified game
-     * @throws GameDoesNotExistException
+     * @throws GameDoesNotExistException if the game doesn't exist
      */
     public Game getGame(int ID) throws GameDoesNotExistException {
         if (activeGames.containsKey(ID)) {
@@ -78,10 +89,10 @@ public class GameHandler implements Serializable {
     }
 
     /**
-     * used to get a specific lobby from the list of lobbies, returns an exception if it doesn't exist
-     * @param ID
+     * used to get a specific lobby
+     * @param ID - of the lobby you want to get from the list of lobbies
      * @return the specified lobby
-     * @throws LobbyDoesNotExistsException
+     * @throws LobbyDoesNotExistsException if the lobby doesn't exist
      */
     public Lobby getLobby(Integer ID) throws LobbyDoesNotExistsException {
         if (lobbies.containsKey(ID)) {
@@ -92,14 +103,14 @@ public class GameHandler implements Serializable {
     }
 
     /**
-     * sets numOfGames to the value in input
-     * @param numOfGames
+     * setter
+     * @param numOfGames- the value you want to set for the number of active games
      */
     public void setNumOfGames(int numOfGames) { this.numOfGames = numOfGames; }
 
     /**
-     * sets numOfLobbies to the value in input
-     * @param numOfLobbies
+     * setter
+     * @param numOfLobbies - the value you want to set for the number of lobbies
      */
     public void setNumOfLobbies(int numOfLobbies) { this.numOfLobbies = numOfLobbies; }
     public void addUser(Player user) throws NicknameAlreadyTakenException {
@@ -111,7 +122,7 @@ public class GameHandler implements Serializable {
 
     /**
      * used to save the GameHandler status with all the data about all active games and lobbies
-     * @throws IOException
+     * @throws IOException - produced by failed or interrupted I/O operations
      */
     public void save() throws IOException {
         FileOutputStream fileOutputStream = new FileOutputStream("./data.ser");
@@ -123,8 +134,8 @@ public class GameHandler implements Serializable {
 
     /**
      * used to load all the data about active games and lobbies in case the server crashes
-     * @throws IOException
-     * @throws ClassNotFoundException
+     * @throws IOException - produced by failed or interrupted I/O operations
+     * @throws ClassNotFoundException  -  if no definition for the class with the specified name could be found
      */
     public void load() throws IOException, ClassNotFoundException {
         FileInputStream fileInputStream = new FileInputStream("./data.ser");
@@ -132,10 +143,7 @@ public class GameHandler implements Serializable {
         GameHandler deserialized = (GameHandler) objectInputStream.readObject();
         this.activeGames=deserialized.activeGames;
         this.lobbies=deserialized.lobbies;
-        this.numOfLobbies=deserialized.numOfLobbies;
-        this.numOfGames=deserialized.numOfGames;
-        this.activeGames=deserialized.activeGames;
-
-
+        fileInputStream.close();
+        objectInputStream.close();
     }
 }

@@ -2,9 +2,10 @@ package it.polimi.ingsw.model.player;
 
 import it.polimi.ingsw.model.exceptions.PawnAlreadyTakenException;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class PawnBuffer {
+public class PawnBuffer implements Serializable {
     private ArrayList<Pawn> pawnList=new ArrayList<>();
 
     public PawnBuffer() {
