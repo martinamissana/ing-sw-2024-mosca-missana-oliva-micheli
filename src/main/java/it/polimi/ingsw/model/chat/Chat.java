@@ -9,22 +9,21 @@ import java.util.ArrayList;
  * each Player has an associated chat with a list of sent messages and a list of received messages
  */
 public class Chat implements Serializable {
-    private ArrayList<Message> sentMessages;
-    private ArrayList<Message> receivedMessages;
-
+    private final ArrayList<Message> sentMessages;
+    private final ArrayList<Message> receivedMessages;
 
     /**
      * Class constructor
      */
     public Chat(){
-        this.sentMessages = new ArrayList<Message>();
-        this.receivedMessages = new ArrayList<Message>();
+        this.sentMessages = new ArrayList<>();
+        this.receivedMessages = new ArrayList<>();
     }
 
     /**
      * Class constructor with attributes, used in case of server disconnection
-     * @param sentMessages
-     * @param receivedMessages
+     * @param sentMessages - the list of sent messages from the player
+     * @param receivedMessages - the list of received messages to the player
      */
     public Chat(ArrayList<Message> sentMessages, ArrayList<Message> receivedMessages) {
         this.sentMessages = sentMessages;
@@ -32,28 +31,28 @@ public class Chat implements Serializable {
     }
 
     /**
-     * gets the received messages
-     * @return receivedMessages
+     * getter
+     * @return receivedMessages - the list of received messages
      */
     public ArrayList<Message> getReceivedMessages() {
         return receivedMessages;
     }
     /**
-     * gets the sent messages
-     * @return sentMessages
+     * getter
+     * @return sentMessages - the list of sent messages
      */
     public ArrayList<Message> getSentMessages() {
         return sentMessages;
     }
 
     /**
-     * gets the messages received from a specified player
-     * @param sender
-     * @return list of messages from sender
+     * getter
+     * @param sender - the player that sent the messages
+     * @return list of the messages received from a specified player
      */
     public ArrayList<Message> getReceivedMessagesFromPlayer(Player sender) {
         int i;
-        ArrayList<Message> list= new ArrayList<Message>();
+        ArrayList<Message> list= new ArrayList<>();
         for(i=0;i<receivedMessages.size();i++){
             if(receivedMessages.get(i).getSender()==sender && !receivedMessages.get(i).isGlobal()){
                 list.add(receivedMessages.get(i));
@@ -63,13 +62,13 @@ public class Chat implements Serializable {
     }
 
     /**
-     * gets the messages sent to a specified player
-     * @param receiver
-     * @return list of messages to receiver
+     * getter
+     * @param receiver - the player that received the messages
+     * @return list of the messages sent to a specified player
      */
     public ArrayList<Message> getSentMessagesToPlayer(Player receiver) {
         int i;
-        ArrayList<Message> list= new ArrayList<Message>();
+        ArrayList<Message> list= new ArrayList<>();
         for(i=0;i<sentMessages.size();i++){
             if(sentMessages.get(i).getReceiver()==receiver&& !sentMessages.get(i).isGlobal()){
                 list.add(sentMessages.get(i));
@@ -79,12 +78,12 @@ public class Chat implements Serializable {
     }
 
     /**
-     * gets the messages received in the global chat
+     * getter
      * @return list of global received message
      */
     public ArrayList<Message> getGlobalReceivedMessages() {
         int i;
-        ArrayList<Message> list= new ArrayList<Message>();
+        ArrayList<Message> list= new ArrayList<>();
         for(i=0;i<receivedMessages.size();i++){
             if(receivedMessages.get(i).isGlobal()){
                 list.add(receivedMessages.get(i));
@@ -94,12 +93,12 @@ public class Chat implements Serializable {
     }
 
     /**
-     * gets the messages sent in the global chat
+     * getter
      * @return list of global sent messages
      */
     public ArrayList<Message> getGlobalSentMessages() {
         int i;
-        ArrayList<Message> list= new ArrayList<Message>();
+        ArrayList<Message> list= new ArrayList<>();
         for(i=0;i<sentMessages.size();i++){
             if(sentMessages.get(i).isGlobal()){
                 list.add(sentMessages.get(i));
@@ -107,6 +106,11 @@ public class Chat implements Serializable {
         }
         return list;
     }
+
+    /**
+     * getter
+     * @return a list of the sent and received messages in the global chat in the order they have been sent
+     */
     public ArrayList<Message> getGlobalChat(){
         ArrayList<Message> sent=this.getGlobalSentMessages();
         ArrayList<Message> received=this.getGlobalReceivedMessages();
@@ -138,6 +142,12 @@ public class Chat implements Serializable {
         }
         return chat;
     }
+
+    /**
+     * getter
+     * @param player - the player from which you want to get the private chat
+     * @return list of the sent and received messages in a private chat in the order they have been sent
+     */
     public ArrayList<Message> getPrivateChat(Player player){
         ArrayList<Message> sent=this.getSentMessagesToPlayer(player);
         ArrayList<Message> received=this.getReceivedMessagesFromPlayer(player);

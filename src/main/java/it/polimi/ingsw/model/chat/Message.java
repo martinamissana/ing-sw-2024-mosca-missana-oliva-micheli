@@ -18,10 +18,10 @@ public class Message implements Serializable {
 
     /**
      * CLass constructor
-     * @param text
-     * @param sender
-     * @param receiver
-     * @param global
+     * @param text - the text of the message
+     * @param sender - the sender of the message
+     * @param receiver - the receiver of the message
+     * @param global -  indicates if the message is global
      */
     public Message(String text, Player sender, Player receiver, boolean global) {
         this.sender = sender;
@@ -32,24 +32,24 @@ public class Message implements Serializable {
     }
 
     /**
-     * gets the text
-     * @return message text
+     * getter
+     * @return String - the message text
      */
     public String getText() {
         return text;
     }
 
     /**
-     * gets the sender of the message
-     * @return  message sender
+     * getter
+     * @return Player - the message sender
      */
     public Player getSender() {
         return sender;
     }
 
     /**
-     * gets the receiver of the message
-     * @return  message receiver
+     * getter
+     * @return Player - the message receiver
      */
     public Player getReceiver() {
         return receiver;
@@ -63,18 +63,34 @@ public class Message implements Serializable {
         return isGlobal;
     }
 
+    /**
+     * getter
+     * @return int - the order assigned to the message
+     */
     public int getOrder() {
         return order;
     }
 
+    /**
+     * getter
+     * @return int - the counter used to order the messages in the order they are sent
+     */
     public static int getCounter() {
         return counter;
     }
 
+    /**
+     * setter
+     * @param counter - the counter used to order the messages in the order they are sent
+     */
     public static void setCounter(int counter) {
         Message.counter = counter;
     }
 
+    /**
+     * setter
+     * @param order - the order assigned to the message
+     */
     public void setOrder(int order) {
         this.order = order;
     }
