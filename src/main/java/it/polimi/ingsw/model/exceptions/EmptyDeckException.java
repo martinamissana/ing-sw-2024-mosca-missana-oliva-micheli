@@ -4,6 +4,6 @@ import java.io.Serializable;
 
 public class EmptyDeckException extends Exception implements Serializable {
     public EmptyDeckException(String s){
-        super();
+        super(s);
     }
 }

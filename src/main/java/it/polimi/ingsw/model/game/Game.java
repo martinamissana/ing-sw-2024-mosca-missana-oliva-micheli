@@ -2,6 +2,7 @@ package it.polimi.ingsw.model.game;
 
 import it.polimi.ingsw.model.card.ResourceCard;
 import it.polimi.ingsw.model.deck.*;
+import it.polimi.ingsw.model.exceptions.EmptyBufferException;
 import it.polimi.ingsw.model.exceptions.EmptyDeckException;
 import it.polimi.ingsw.model.goal.Goal;
 import it.polimi.ingsw.model.player.PawnBuffer;
@@ -249,7 +250,7 @@ public class Game implements Serializable {
      * @return ResourceCard
      * @throws EmptyDeckException thrown if the source has no cards
      */
-    public ResourceCard drawFromSource(DeckTypeBox src) throws EmptyDeckException {
+    public ResourceCard drawFromSource(DeckTypeBox src) throws EmptyDeckException, EmptyBufferException {
         switch (src) {
             case DeckType.RESOURCE -> { return getResourceDeck().draw(); }
             case DeckType.GOLDEN -> { return getGoldenDeck().draw(); }

@@ -2,6 +2,7 @@ package it.polimi.ingsw.controller;
 
 import it.polimi.ingsw.model.deck.DeckTypeBox;
 import it.polimi.ingsw.controller.exceptions.IllegalActionException;
+import it.polimi.ingsw.model.exceptions.EmptyBufferException;
 import it.polimi.ingsw.model.exceptions.IllegalMoveException;
 import it.polimi.ingsw.model.exceptions.HandIsFullException;
 import it.polimi.ingsw.model.exceptions.EmptyDeckException;
@@ -54,7 +55,7 @@ public class GameController {
      * @throws HandIsFullException thrown if the selected game's current player has their hand full
      * @throws EmptyDeckException thrown if the selected source is out of cards
      */
-    public void drawCard(Game game, DeckTypeBox deckTypeBox) throws IllegalActionException, HandIsFullException, EmptyDeckException {
+    public void drawCard(Game game, DeckTypeBox deckTypeBox) throws IllegalActionException, HandIsFullException, EmptyDeckException, EmptyBufferException {
 
         // if the game's state isn't DRAW, leave method
         if (game.getAction() != Action.DRAW)

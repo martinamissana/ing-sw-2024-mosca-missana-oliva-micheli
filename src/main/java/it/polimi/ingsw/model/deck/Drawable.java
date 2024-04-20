@@ -10,5 +10,5 @@ public interface Drawable {
      * Method for drawing cards
      * @return a card drawn from where specified
      */
-    ResourceCard draw() throws EmptyDeckException;
+    ResourceCard draw() throws EmptyDeckException, EmptyBufferException;
 }
