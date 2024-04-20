@@ -32,31 +32,6 @@ public class Controller implements Serializable {
         return gh;
     }
 
-    //chat related methods
-
-    /**
-     * sends the message either to the specified receiver, or to every player in the global chat,
-     * adds the message in the list of sent messages of the sender too
-     * @param message
-     * @param game
-     * @throws GameDoesNotExistException
-     */
-    public void send(Message message, int game) throws GameDoesNotExistException {
-        try {
-            if (!message.isGlobal()) {
-                message.getSender().getChat().getSentMessages().add(message);
-                message.getReceiver().getChat().getReceivedMessages().add(message);
-            } else {
-                message.getSender().getChat().getSentMessages().add(message);
-                for (Player player : gh.getGame(game).getPlayers()) {
-                    if (player != message.getSender()) player.getChat().getReceivedMessages().add(message);
-                }
-            }
-        }
-            catch (GameDoesNotExistException e) {
-                    throw new GameDoesNotExistException("Game with ID " + game + " does not exist");
-                }
-    }
 
     //methods related to lobby
 
@@ -145,7 +120,7 @@ public class Controller implements Serializable {
      * @param gameID
      * @throws GameDoesNotExistException if the game does not exist
      */
-    public void deleteGame(Integer gameID) throws GameDoesNotExistException {
+    public void terminateGame(Integer gameID) throws GameDoesNotExistException {
         if(gh.getActiveGames().containsKey(gameID))gh.getActiveGames().remove(gameID);
         else throw new GameDoesNotExistException("Game with ID " + gameID + " does not exist");
     }
@@ -165,4 +140,41 @@ public class Controller implements Serializable {
             if(game.getScoreboard().get(p)>=20)game.setLastRound(true);
         }
     }
+
+    //chat related methods
+
+    /**
+     * sends the message either to the specified receiver, or to every player in the global chat,
+     * adds the message in the list of sent messages of the sender too
+     * @param message
+     * @param ID
+     * @throws GameDoesNotExistException
+     */
+    public void send(Message message, int ID) throws GameDoesNotExistException, LobbyDoesNotExistsException {
+        try {
+            if (!message.isGlobal()) {
+                message.getSender().getChat().getSentMessages().add(message);
+                message.getReceiver().getChat().getReceivedMessages().add(message);
+            } else {
+                message.getSender().getChat().getSentMessages().add(message);
+                ArrayList<Player> list;
+                if(gh.getActiveGames().containsKey(ID)) {
+                    list=gh.getGame(ID).getPlayers();
+                }
+                else {
+                    list=gh.getLobby(ID).getPlayers();
+                }
+                for (Player player : list) {
+                    if (player != message.getSender()) player.getChat().getReceivedMessages().add(message);
+                }
+            }
+            message.setOrder(Message.getCounter());
+            Message.setCounter(Message.getCounter()+1);
+        }
+        catch (GameDoesNotExistException e) {
+            throw new GameDoesNotExistException("Game with ID " + ID + " does not exist");
+        }
+    }
+
+
 }

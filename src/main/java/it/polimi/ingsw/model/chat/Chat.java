@@ -55,7 +55,7 @@ public class Chat implements Serializable {
         int i;
         ArrayList<Message> list= new ArrayList<Message>();
         for(i=0;i<receivedMessages.size();i++){
-            if(receivedMessages.get(i).getSender()==sender){
+            if(receivedMessages.get(i).getSender()==sender && !receivedMessages.get(i).isGlobal()){
                 list.add(receivedMessages.get(i));
             }
         }
@@ -71,7 +71,7 @@ public class Chat implements Serializable {
         int i;
         ArrayList<Message> list= new ArrayList<Message>();
         for(i=0;i<sentMessages.size();i++){
-            if(sentMessages.get(i).getSender()==receiver){
+            if(sentMessages.get(i).getReceiver()==receiver&& !sentMessages.get(i).isGlobal()){
                 list.add(sentMessages.get(i));
             }
         }
@@ -100,13 +100,74 @@ public class Chat implements Serializable {
     public ArrayList<Message> getGlobalSentMessages() {
         int i;
         ArrayList<Message> list= new ArrayList<Message>();
-        for(i=0;i<=sentMessages.size();i++){
+        for(i=0;i<sentMessages.size();i++){
             if(sentMessages.get(i).isGlobal()){
                 list.add(sentMessages.get(i));
             }
         }
         return list;
     }
+    public ArrayList<Message> getGlobalChat(){
+        ArrayList<Message> sent=this.getGlobalSentMessages();
+        ArrayList<Message> received=this.getGlobalReceivedMessages();
+        ArrayList<Message> chat=new ArrayList<>();
+        int i=0;
+        int j=0;
+        while(i<sent.size()||j<received.size()){
+            if(i>=sent.size()){
+                while(j<received.size()){
+                    chat.add(received.get(j));
+                    j++;
+                }
+                return chat;
+            }
+            if(j>=received.size()){
+                while(i<sent.size()){
+                    chat.add(sent.get(i));
+                    i++;
+                }
+                return chat;
+            }
+            if(sent.get(i).getOrder()<=received.get(j).getOrder()){
+                chat.add(sent.get(i));
+                i++;
+            } else {
+                chat.add(received.get(j));
+                j++;
+            }
+        }
+        return chat;
+    }
+    public ArrayList<Message> getPrivateChat(Player player){
+        ArrayList<Message> sent=this.getSentMessagesToPlayer(player);
+        ArrayList<Message> received=this.getReceivedMessagesFromPlayer(player);
+        ArrayList<Message> chat=new ArrayList<>();
+        int i=0;
+        int j=0;
+        while(i<sent.size()||j<received.size()){
+            if(i>=sent.size()){
+                while(j<received.size()){
+                    chat.add(received.get(j));
+                    j++;
+                }
+                return chat;
+            }
+            if(j>=received.size()){
+                while(i<sent.size()){
+                    chat.add(sent.get(i));
+                    i++;
+                }
+                return chat;
+            }
+            if(sent.get(i).getOrder()<=received.get(j).getOrder()){
+                chat.add(sent.get(i));
+                i++;
+            } else if(sent.get(i).getOrder()>received.get(j).getOrder()) {
+                chat.add(received.get(j));
+                j++;
+            }
 
-
+        }
+        return chat;
+    }
 }
