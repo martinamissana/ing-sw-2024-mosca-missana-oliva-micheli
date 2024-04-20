@@ -18,10 +18,10 @@ public abstract class Card implements Serializable {
 
     /**
      * Class constructor
-     * @param ID
-     * @param side
-     * @param frontCorner
-     * @param backCorner
+     * @param ID - the card ID
+     * @param side - the side of the card that is visible
+     * @param frontCorner - the list of corners in the front
+     * @param backCorner - the list of corners in the back
      */
     public Card(int ID, CardSide side, HashMap<CornerType, Corner> frontCorner, HashMap<CornerType, Corner> backCorner) {
         this.ID = ID;
@@ -31,31 +31,31 @@ public abstract class Card implements Serializable {
     }
 
     /**
-     * gets the ID
-     * @return card ID
+     * getter
+     * @return int - card ID
      */
     public int getCardID() {
         return this.ID;
     }
 
     /**
-     * gets the side
-     * @return card side
+     * getter
+     * @return CardSide
      */
     public CardSide getSide() {
         return this.side;
     }
 
     /**
-     * gets the kingdom
-     * @return card kingdom
+     * getter
+     * @return Kingdom
      */
     public Kingdom getKingdom(){return null;}
 
     /**
      * depends on which side the card is set
      * returns null if the corner does not exist
-     * @param cornerType
+     * @param cornerType - the corner you want to get from the side the card is on
      * @return ItemBox associated with the given corner
      */
     public ItemBox getCorner(CornerType cornerType) {

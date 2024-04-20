@@ -17,15 +17,15 @@ public class GoldenCard extends ResourceCard{
 
     /**
      * Class constructor
-     * @param cardID
-     * @param side
-     * @param frontCorner
-     * @param backCorner
-     * @param points
-     * @param kingdom
-     * @param requirements
-     * @param type
-     * @param pointResource
+     * @param cardID - the card ID
+     * @param side - the side of the card that is visible
+     * @param frontCorner - the list of corners in the front
+     * @param backCorner - the list of corners in the back
+     * @param points - the points associated with the card
+     * @param kingdom - the kingdom associated with the card
+     * @param requirements - the requirements to play the card
+     * @param type - the type of golden card
+     * @param pointResource - the resource counted to assign points
      */
     public GoldenCard(int cardID, CardSide side, HashMap<CornerType, Corner> frontCorner, HashMap<CornerType, Corner> backCorner, int points, Kingdom kingdom, HashMap<Kingdom, Integer> requirements, GoldenCardType type, Resource pointResource) {
         super(cardID, side, frontCorner, backCorner, points, kingdom);

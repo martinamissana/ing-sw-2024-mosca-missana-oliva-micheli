@@ -13,15 +13,15 @@ public class Corner implements Serializable {
 
     /**
      * Class constructor
-     * @param item
+     * @param item - the item that is stored in the corner
      */
     public Corner(ItemBox item){
         this.item=item;
     }
 
     /**
-     * gets the item
-     * @return ItemBox associated with the corner
+     * getter
+     * @return ItemBox - item associated with the corner
      */
     public ItemBox getItem() {
         return this.item;
