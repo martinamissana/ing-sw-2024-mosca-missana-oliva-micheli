@@ -1,6 +1,7 @@
 package it.polimi.ingsw.controller;
 
 import it.polimi.ingsw.model.card.*;
+import it.polimi.ingsw.model.deck.DeckBufferType;
 import it.polimi.ingsw.model.exceptions.*;
 import it.polimi.ingsw.model.game.*;
 import it.polimi.ingsw.model.goal.*;
@@ -21,14 +22,10 @@ public class SetUpController {
     }
 
     public void setGameArea() throws IOException, HandIsFullException, EmptyDeckException {
-        // setting decks and deck buffers: (buffers missing)
+        // setting decks and deck buffers:
         g.getResourceDeck().shuffle();
         g.getGoldenDeck().shuffle();
-
-        g.getDeckBuffer("res1").refill();
-        g.getDeckBuffer("res2").refill();
-        g.getDeckBuffer("gold1").refill();
-        g.getDeckBuffer("gold2").refill();
+        for(DeckBufferType type : DeckBufferType.values()) g.getDeckBuffer(type).refill();
 
         ArrayList<Player> players = g.getPlayers();
 

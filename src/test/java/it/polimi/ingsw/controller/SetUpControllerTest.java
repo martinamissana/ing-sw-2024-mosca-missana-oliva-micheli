@@ -1,5 +1,6 @@
 package it.polimi.ingsw.controller;
 
+import it.polimi.ingsw.model.deck.DeckBufferType;
 import it.polimi.ingsw.model.exceptions.*;
 import it.polimi.ingsw.model.game.*;
 import it.polimi.ingsw.model.player.*;
@@ -45,13 +46,15 @@ public class SetUpControllerTest {
         for (int i = 0; i < game.getResourceDeck().getDeck().size(); i++) {
             System.out.print("[" /* + game.getResourceDeck().getDeck().get(i).getCardID() + "]" */);
         }
-        System.out.println("]\nDeck Buffers:  [" + game.getDeckBuffer("res1").getCard().getCardID() + "] [" + game.getDeckBuffer("res2").getCard().getCardID() + "]");
+        System.out.println("]\nDeck Buffers:  [" + game.getDeckBuffer(DeckBufferType.RES1).getCard().getCardID() + "] " +
+                "[" + game.getDeckBuffer(DeckBufferType.RES2).getCard().getCardID() + "]");
 
         System.out.println("\nGolden Deck (" + game.getGoldenDeck().getDeck().size() + "):");
         for (int i = 0; i < game.getGoldenDeck().getDeck().size(); i++) {
             System.out.print("[" /* + game.getGoldenDeck().getDeck().get(i).getCardID() + "]" */);
         }
-        System.out.println("]\nDeck Buffers:  [" + game.getDeckBuffer("gold1").getCard().getCardID() + "] [" + game.getDeckBuffer("gold2").getCard().getCardID() + "]\n");
+        System.out.println("]\nDeck Buffers:  [" + game.getDeckBuffer(DeckBufferType.GOLD1).getCard().getCardID() + "] " +
+                "[" + game.getDeckBuffer(DeckBufferType.GOLD2).getCard().getCardID() + "]\n");
 
         // Goals printing:
         System.out.println("Common goals: (" + game.getCommonGoal1().getGoalID() + ") (" + game.getCommonGoal2().getGoalID() + ")\n\n");
