@@ -13,6 +13,8 @@ public class Message implements Serializable {
     private final Player sender;
     private final Player receiver;
     private final boolean isGlobal;
+    private int  order;
+    private static int counter;
 
     /**
      * CLass constructor
@@ -26,6 +28,7 @@ public class Message implements Serializable {
         this.text = text;
         this.receiver = receiver; //null if global message
         this.isGlobal = global;
+        this.order=counter;
     }
 
     /**
@@ -60,4 +63,19 @@ public class Message implements Serializable {
         return isGlobal;
     }
 
+    public int getOrder() {
+        return order;
+    }
+
+    public static int getCounter() {
+        return counter;
+    }
+
+    public static void setCounter(int counter) {
+        Message.counter = counter;
+    }
+
+    public void setOrder(int order) {
+        this.order = order;
+    }
 }
