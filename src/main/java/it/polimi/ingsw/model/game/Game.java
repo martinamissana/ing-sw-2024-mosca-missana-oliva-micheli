@@ -1,9 +1,8 @@
 package it.polimi.ingsw.model.game;
 
-import it.polimi.ingsw.model.deck.Deck;
-import it.polimi.ingsw.model.deck.DeckBuffer;
-import it.polimi.ingsw.model.deck.DeckBufferType;
-import it.polimi.ingsw.model.deck.DeckType;
+import it.polimi.ingsw.model.card.ResourceCard;
+import it.polimi.ingsw.model.deck.*;
+import it.polimi.ingsw.model.exceptions.EmptyDeckException;
 import it.polimi.ingsw.model.goal.Goal;
 import it.polimi.ingsw.model.player.PawnBuffer;
 import it.polimi.ingsw.model.player.Player;
@@ -237,5 +236,23 @@ public class Game implements Serializable {
     public Deck getDeck(DeckType type){
         if(type==DeckType.RESOURCE) return ResourceDeck;
         else return GoldenDeck;
+    }
+
+    /**
+     * draws a card from the specified source (Deck or DeckBuffer)
+     * @param src source to draw the card from
+     * @return ResourceCard
+     * @throws EmptyDeckException thrown if the source has no cards
+     */
+    public ResourceCard drawFromSource(DeckTypeBox src) throws EmptyDeckException {
+        switch (src) {
+            case DeckType.RESOURCE -> { return getResourceDeck().draw(); }
+            case DeckType.GOLDEN -> { return getGoldenDeck().draw(); }
+            case DeckBufferType.RES1 -> { return getDeckBuffer(DeckBufferType.RES1).draw(); }
+            case DeckBufferType.RES2 -> { return getDeckBuffer(DeckBufferType.RES2).draw(); }
+            case DeckBufferType.GOLD1 -> { return getDeckBuffer(DeckBufferType.GOLD1).draw(); }
+            case DeckBufferType.GOLD2 -> { return getDeckBuffer(DeckBufferType.GOLD2).draw(); }
+            default -> throw new IllegalStateException("Unexpected value: " + src);
+        }
     }
 }
