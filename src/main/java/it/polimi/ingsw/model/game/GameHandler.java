@@ -2,6 +2,7 @@ package it.polimi.ingsw.model.game;
 
 import it.polimi.ingsw.model.exceptions.GameDoesNotExistException;
 import it.polimi.ingsw.model.exceptions.LobbyDoesNotExistsException;
+import it.polimi.ingsw.model.exceptions.NicknameAlreadyTakenException;
 import it.polimi.ingsw.model.player.Player;
 
 import java.io.*;
@@ -19,6 +20,7 @@ public class GameHandler implements Serializable {
     private HashMap<Integer,Lobby> lobbies;
     private int numOfGames=0;
     private int numOfLobbies=0;
+    private ArrayList<Player> users;
 
     /**
      * Class constructor
@@ -26,6 +28,7 @@ public class GameHandler implements Serializable {
     public GameHandler() {
         this.activeGames = new HashMap<>();
         this.lobbies = new HashMap<>();
+        this.users=new ArrayList<>();
     }
 
     /**
@@ -41,6 +44,10 @@ public class GameHandler implements Serializable {
      * @return lobbies
      */
     public HashMap<Integer, Lobby> getLobbies() { return lobbies; }
+
+    public ArrayList<Player> getUsers() {
+        return users;
+    }
 
     /**
      * gets the number of games that have been created
@@ -95,6 +102,12 @@ public class GameHandler implements Serializable {
      * @param numOfLobbies
      */
     public void setNumOfLobbies(int numOfLobbies) { this.numOfLobbies = numOfLobbies; }
+    public void addUser(Player user) throws NicknameAlreadyTakenException {
+        for (Player u: this.users){
+            if(u.getNickname().equals(user.getNickname())) throw new NicknameAlreadyTakenException();
+        }
+        getUsers().add(user);
+    }
 
     /**
      * used to save the GameHandler status with all the data about all active games and lobbies

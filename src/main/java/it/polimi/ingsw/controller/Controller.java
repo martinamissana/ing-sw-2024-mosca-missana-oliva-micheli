@@ -32,7 +32,6 @@ public class Controller implements Serializable {
         return gh;
     }
 
-
     //methods related to lobby
 
     /**

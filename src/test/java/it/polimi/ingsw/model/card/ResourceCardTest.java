@@ -3,9 +3,7 @@ package it.polimi.ingsw.model.card;
 import it.polimi.ingsw.model.commonItem.CornerStatus;
 import it.polimi.ingsw.model.commonItem.Kingdom;
 import it.polimi.ingsw.model.commonItem.Resource;
-import junit.framework.TestCase;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 
 import java.util.HashMap;
