@@ -42,15 +42,15 @@ public class SetUpControllerTest {
         }
 
         // Deck + Deck Buffers printing
-        System.out.println("\nResource Deck (" + game.getResourceDeck().getDeck().size() + "):");
-        for (int i = 0; i < game.getResourceDeck().getDeck().size(); i++) {
+        System.out.println("\nResource Deck (" + game.getResourceDeck().getCards().size() + "):");
+        for (int i = 0; i < game.getResourceDeck().getCards().size(); i++) {
             System.out.print("[" /* + game.getResourceDeck().getDeck().get(i).getCardID() + "]" */);
         }
         System.out.println("]\nDeck Buffers:  [" + game.getDeckBuffer(DeckBufferType.RES1).getCard().getCardID() + "] " +
                 "[" + game.getDeckBuffer(DeckBufferType.RES2).getCard().getCardID() + "]");
 
-        System.out.println("\nGolden Deck (" + game.getGoldenDeck().getDeck().size() + "):");
-        for (int i = 0; i < game.getGoldenDeck().getDeck().size(); i++) {
+        System.out.println("\nGolden Deck (" + game.getGoldenDeck().getCards().size() + "):");
+        for (int i = 0; i < game.getGoldenDeck().getCards().size(); i++) {
             System.out.print("[" /* + game.getGoldenDeck().getDeck().get(i).getCardID() + "]" */);
         }
         System.out.println("]\nDeck Buffers:  [" + game.getDeckBuffer(DeckBufferType.GOLD1).getCard().getCardID() + "] " +

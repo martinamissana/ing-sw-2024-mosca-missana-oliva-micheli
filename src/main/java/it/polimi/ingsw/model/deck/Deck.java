@@ -37,7 +37,7 @@ public class Deck implements Drawable, Serializable {
      * gets the list of cards in the deck
      * @return cards
      */
-    public ArrayList<ResourceCard> getDeck() {
+    public ArrayList<ResourceCard> getCards() {
         return this.cards;
     }
 

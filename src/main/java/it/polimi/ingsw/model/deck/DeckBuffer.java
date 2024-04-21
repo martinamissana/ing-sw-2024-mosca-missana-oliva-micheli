@@ -33,7 +33,7 @@ public class DeckBuffer implements Drawable, Serializable {
      * Put a card in the deck buffer (if empty)
      */
     public void refill() throws EmptyDeckException {
-        if(!deck.getDeck().isEmpty() && card == null) this.card = this.deck.draw();
+        if(!deck.getCards().isEmpty() && card == null) this.card = this.deck.draw();
         // else System.out.println("Card space not refilled");
     }
 

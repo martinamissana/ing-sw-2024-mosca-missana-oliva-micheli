@@ -10,20 +10,20 @@ public class DeckTest {
     @Test
     public void ShuffleAndDrawTest() throws IOException, EmptyDeckException {
         Deck ResourceDeck = new Deck(DeckType.RESOURCE);
-        assertFalse(ResourceDeck.getDeck().isEmpty());
+        assertFalse(ResourceDeck.getCards().isEmpty());
         ResourceDeck.shuffle();
 
         Deck GoldenDeck = new Deck(DeckType.GOLDEN);
-        assertFalse(GoldenDeck.getDeck().isEmpty());
+        assertFalse(GoldenDeck.getCards().isEmpty());
         GoldenDeck.shuffle();
 
         System.out.println("Resource Deck:");
-        for (int i = 0; i < ResourceDeck.getDeck().size(); i++) {
-            System.out.print("[" + ResourceDeck.getDeck().get(i).getCardID() + "]");
+        for (int i = 0; i < ResourceDeck.getCards().size(); i++) {
+            System.out.print("[" + ResourceDeck.getCards().get(i).getCardID() + "]");
         }
         System.out.println("\n\nGolden Deck:");
-        for (int i = 0; i < GoldenDeck.getDeck().size(); i++) {
-            System.out.print("[" + GoldenDeck.getDeck().get(i).getCardID() + "]");
+        for (int i = 0; i < GoldenDeck.getCards().size(); i++) {
+            System.out.print("[" + GoldenDeck.getCards().get(i).getCardID() + "]");
         }
 
         Card card1 = ResourceDeck.draw();
@@ -34,12 +34,12 @@ public class DeckTest {
         System.out.println("\n\nCards drawn: [" + card1.getCardID() + "] & [" + card2.getCardID() + "]\n");
 
         System.out.println("Resource Deck:");
-        for (int i = 0; i < ResourceDeck.getDeck().size(); i++) {
-            System.out.print("[" + ResourceDeck.getDeck().get(i).getCardID() + "]");
+        for (int i = 0; i < ResourceDeck.getCards().size(); i++) {
+            System.out.print("[" + ResourceDeck.getCards().get(i).getCardID() + "]");
         }
         System.out.println("\n\nGolden Deck:");
-        for (int i = 0; i < GoldenDeck.getDeck().size(); i++) {
-            System.out.print("[" + GoldenDeck.getDeck().get(i).getCardID() + "]");
+        for (int i = 0; i < GoldenDeck.getCards().size(); i++) {
+            System.out.print("[" + GoldenDeck.getCards().get(i).getCardID() + "]");
         }
     }
 }
