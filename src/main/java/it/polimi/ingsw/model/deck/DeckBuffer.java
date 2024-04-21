@@ -32,9 +32,14 @@ public class DeckBuffer implements Drawable, Serializable {
     /**
      * Put a card in the deck buffer (if empty)
      */
-    public void refill() throws EmptyDeckException {
-        if(!deck.getCards().isEmpty() && card == null) this.card = this.deck.draw();
-        // else System.out.println("Card space not refilled");
+    public void refill() {
+        if(!deck.getCards().isEmpty() && card == null)
+            try {
+                this.card = this.deck.draw();
+            }
+            catch (EmptyDeckException ignored) {
+                // System.out.println("Card space not refilled");
+            }
     }
 
     /**
@@ -42,7 +47,7 @@ public class DeckBuffer implements Drawable, Serializable {
      * @return drawn
      */
     @Override
-    public ResourceCard draw() throws EmptyDeckException, EmptyBufferException {
+    public ResourceCard draw() throws EmptyBufferException {
         if (card != null) {
             ResourceCard drawn = card;
             card = null;
