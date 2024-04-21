@@ -6,14 +6,14 @@ import java.util.*;
 
 /**
  * Class GoalBuffer
- * contains the goal deck
+ * contains the goal deck and draws randomly from it
  */
 public class GoalBuffer {
     private static final ArrayList<Goal> goalDeck=new ArrayList<>();
 
     /**
-     * constructor, add goals from json files to goalDeck
-     * @throws IOException
+     * constructor, adds goals from json files to goalDeck
+     * @throws IOException produced by failed or interrupted I/O operations
      */
     public GoalBuffer() throws IOException {
         GoalBuffer.goalDeck.addAll(GoalsPreset.getDiagonalGoals());
@@ -22,7 +22,8 @@ public class GoalBuffer {
     }
 
     /**
-     * @return random goal from the goalDeck
+     * draws a random goal from the goalDeck
+     * @return Goal
      */
     public Goal getgoal(){
         if(!goalDeck.isEmpty()){
