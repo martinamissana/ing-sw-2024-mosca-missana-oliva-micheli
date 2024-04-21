@@ -83,5 +83,5 @@ public class GameController {
      * updates the game's "whoseTurn" attribute and sets it to the next player's playerID
      * @param game game to advance the turn of
      */
-    public void nextTurn(Game game) { game.setWhoseTurn((game.getWhoseTurn()+1)%game.getNumOfPlayer()); }
+    public void nextTurn(Game game) { game.setWhoseTurn((game.getWhoseTurn()+1)%game.getNumOfPlayers()); }
 }
