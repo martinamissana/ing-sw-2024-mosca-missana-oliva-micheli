@@ -47,7 +47,9 @@ public class GameController {
         game.addToScore(player, points);
 
         // set the game's current action to DRAW after playing a card
-        game.setAction(Action.DRAW);
+        // only if it's not the last round (because if it is, players cannot draw cards)
+        if (!game.isLastRound())
+            game.setAction(Action.DRAW);
     }
 
     /**
