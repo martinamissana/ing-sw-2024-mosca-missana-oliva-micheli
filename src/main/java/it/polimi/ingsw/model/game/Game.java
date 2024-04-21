@@ -23,7 +23,7 @@ public class Game implements Serializable {
     private final ArrayList<Player> players;
     private int whoseTurn;
     private Action action= Action.PLAY;
-    private boolean lastRound;//set to true afterward someone reached 20 points in a round and that same round has finished
+    private boolean lastRound; //set to true afterward someone reached 20 points in a round and that same round has finished
     private final HashMap<Player,Integer> scoreboard;
     private Goal commonGoal1;
     private Goal commonGoal2;
@@ -35,11 +35,11 @@ public class Game implements Serializable {
 
     /**
      * Class Constructor
-     * @param gameID - identifies univocally the game
-     * @param numOfPlayers - number of players of the game
-     * @param players - HashMap<Integer, Player> maps PlayerID to Player
-     * @param scoreboard - HashMap<Player,Integer> maps the player to his points
-     * @throws IOException - produced by failed or interrupted I/O operations
+     * @param gameID identifies univocally the game
+     * @param numOfPlayers number of players of the game
+     * @param players HashMap<Integer, Player> maps PlayerID to Player
+     * @param scoreboard HashMap<Player,Integer> maps the player to his points
+     * @throws IOException produced by failed or interrupted I/O operations
      */
     public Game(int gameID, int numOfPlayers, ArrayList<Player> players, HashMap<Player,Integer> scoreboard) throws IOException {
         this.numOfPlayers = numOfPlayers;
@@ -58,7 +58,7 @@ public class Game implements Serializable {
 
     /**
      * getter
-     * @param type - specifies the type of the deckbuffer needed (gold1,gold2,res1,res2)
+     * @param type specifies the type of the deckbuffer needed (gold1,gold2,res1,res2)
      * @return Deckbuffer
      */
     public DeckBuffer getDeckBuffer(DeckBufferType type){
@@ -66,8 +66,8 @@ public class Game implements Serializable {
     }
 
     /**
-     * Setter
-     * @param whoseTurn - int, indicates the PlayerID of who is playing at the moment
+     * setter
+     * @param whoseTurn int, indicates the index in the ArrayList players of who is playing when the method is called
      */
     public void setWhoseTurn(int whoseTurn) {
         this.whoseTurn = whoseTurn;
@@ -75,7 +75,7 @@ public class Game implements Serializable {
 
     /**
      * getter
-     * @return int - PlayerID of who is playing at the moment
+     * @return int, index in the ArrayList players of who is playing when the method is called
      */
     public int getWhoseTurn() {
         return whoseTurn;
@@ -83,7 +83,7 @@ public class Game implements Serializable {
 
     /**
      * getter
-     * @return int - GameID
+     * @return int GameID, identifies the match
      */
     public int getGameID() {
         return gameID;
@@ -91,15 +91,15 @@ public class Game implements Serializable {
 
     /**
      * getter
-     * @return int- NumOfPlayer
+     * @return int, NumOfPlayers
      */
-    public int getNumOfPlayer() {
+    public int getNumOfPlayers() {
         return numOfPlayers;
     }
 
     /**
      * getter
-     * @return HashMap<Integer,Player> - players
+     * @return HashMap<Integer,Player> players
      */
     public ArrayList<Player> getPlayers() {
         return players;
@@ -115,7 +115,7 @@ public class Game implements Serializable {
 
     /**
      * getter
-     * @return PawnBuffer - the class where there are stored the available pawns
+     * @return PawnBuffer, the class where there are stored the available pawns
      */
     public PawnBuffer getPawnBuffer() {return pawnBuffer;}
 
@@ -129,7 +129,7 @@ public class Game implements Serializable {
 
     /**
      * getter
-     * @return boolean isLastRound - the boolean that specify if it is the last round of the game
+     * @return boolean isLastRound, the boolean that specify if it is the last round of the game
      */
     public boolean isLastRound() {
         return lastRound;
@@ -137,7 +137,7 @@ public class Game implements Serializable {
 
     /**
      * setter
-     * @param lastRound - the boolean that specify if it is the last round of the game
+     * @param lastRound, the boolean that specify if it is the last round of the game
      */
     public void setLastRound(boolean lastRound) {
         this.lastRound = lastRound;
@@ -145,7 +145,7 @@ public class Game implements Serializable {
 
     /**
      * getter
-     * @return Goal - one of the two common goals
+     * @return Goal, one of the two common goals
      */
     public Goal getCommonGoal1() {
         return commonGoal1;
@@ -153,7 +153,7 @@ public class Game implements Serializable {
 
     /**
      * getter
-     * @return Goal - one of the two common goals
+     * @return Goal, one of the two common goals
      */
     public Goal getCommonGoal2() {
         return commonGoal2;
@@ -177,8 +177,8 @@ public class Game implements Serializable {
 
     /**
      * increments the points of a player
-     * @param player - the player that will have their points incremented
-     * @param points - the amount of points added to the player score
+     * @param player the player that will have their points incremented
+     * @param points the amount of points added to the player score
      */
     public void addToScore(Player player,int points){
         scoreboard.put(player,scoreboard.get(player)+points);
@@ -186,8 +186,8 @@ public class Game implements Serializable {
 
     /**
      * setter
-     * @param player - the player that will have their points set
-     * @param points - the amount of points set to the player score
+     * @param player the player that will have their points set
+     * @param points the amount of points set to the player score
      */
     public void setPlayerScore(Player player,int points) {
         this.scoreboard.put(player,points);
@@ -195,8 +195,8 @@ public class Game implements Serializable {
 
     /**
      * getter
-     * @param player - the player that you want to get the points from
-     * @return int - the points of the specified player
+     * @param player the player that you want to get the points from
+     * @return int, the points of the specified player
      */
     public int getPlayerScore(Player player) {
         return scoreboard.get(player);
@@ -204,7 +204,7 @@ public class Game implements Serializable {
 
     /**
      * getter
-     * @return Player - the player who is playing at the moment
+     * @return Player, the player who is playing at the moment
      */
     public Player getCurrPlayer(){
         return players.get(whoseTurn);
@@ -220,7 +220,7 @@ public class Game implements Serializable {
 
     /**
      * getter
-     * @return Deck - ResourceDeck of the game
+     * @return Deck, ResourceDeck of the game
      */
     public Deck getResourceDeck() {
         return ResourceDeck;
@@ -228,7 +228,7 @@ public class Game implements Serializable {
 
     /**
      * getter
-     * @return Deck - GoldenDeck of the game
+     * @return Deck, GoldenDeck of the game
      */
     public Deck getGoldenDeck() {
         return GoldenDeck;
