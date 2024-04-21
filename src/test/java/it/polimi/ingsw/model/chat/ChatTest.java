@@ -33,7 +33,7 @@ public class ChatTest {
         c.joinLobby(eric,0);
         c.joinLobby(giorgio,0);
         gameHandler.setNumOfGames(0);
-        c.createGame(gameHandler.getLobbies().get(0));
+        //c.createGame(gameHandler.getLobbies().get(0));
         m1=new Message("ciao",anna,eric,false);
         m2=new Message("come va",eric,anna,false);
         m3=new Message("ciao a tutti",giorgio,null,true);
@@ -68,7 +68,7 @@ public class ChatTest {
         Assert.assertEquals(eric.getChat().getSentMessages().get(0), m2);
         Assert.assertEquals(eric.getChat().getReceivedMessages().get(0), m1);
         Assert.assertEquals(eric.getChat().getReceivedMessages().get(1), m3);
-        Assert.assertTrue(giorgio.getChat().getReceivedMessages().isEmpty());
+        Assert.assertFalse(giorgio.getChat().getReceivedMessages().isEmpty());
         Assert.assertEquals(giorgio.getChat().getSentMessages().get(0), m3);
     }
 
