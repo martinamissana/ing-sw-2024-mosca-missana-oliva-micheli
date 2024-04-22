@@ -18,8 +18,8 @@ public class Deck implements Drawable, Serializable {
 
     /**
      * Class constructor
-     * @param type of the deck (RESOURCE / GOLDEN)
-     * @throws IOException (for adding cards in the deck)
+     * @param type - type of the deck (RESOURCE / GOLDEN)
+     * @throws IOException - for building the decks
      */
     public Deck(DeckType type) throws IOException {
         this.type = type;
@@ -34,7 +34,7 @@ public class Deck implements Drawable, Serializable {
     }
 
     /**
-     * gets the list of cards in the deck
+     * Gets the list of cards in the deck
      * @return cards
      */
     public ArrayList<ResourceCard> getCards() {
@@ -42,7 +42,7 @@ public class Deck implements Drawable, Serializable {
     }
 
     /**
-     * gets the type of the deck
+     * Gets the type of the deck
      * @return type
      */
     public DeckType getType() {

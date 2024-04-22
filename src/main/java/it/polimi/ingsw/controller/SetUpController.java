@@ -54,7 +54,7 @@ public class SetUpController extends Controller implements Serializable {
             try {
                 p.getHand().addCard(starter.removeLast());
             }
-            catch(HandIsFullException ignored) {}   // doesn't suppose to happen
+            catch(HandIsFullException ignored) {}   // isn't supposed to happen
         }
     }
 
@@ -81,7 +81,7 @@ public class SetUpController extends Controller implements Serializable {
      * @param player - who is playing the card
      * @param side - side chosen by the player
      */
-    public void chooseCard(Player player, CardSide side) {
+    public void chooseCardSide(Player player, CardSide side) {
         StarterCard card = (StarterCard) player.getHand().getCard(0);
         if(!card.getSide().equals(side)) card.flip();
 
@@ -106,13 +106,38 @@ public class SetUpController extends Controller implements Serializable {
         }
     }
 
-    public void chooseGoals(Integer gameID, GoalBuffer goals) throws GameDoesNotExistException {
+    /**
+     * Set the common goals in the game
+     * @param gameID - ID of the game played
+     * @throws GameDoesNotExistException  - if gameID does not correspond to a game in game handler
+     */
+    public void setCommonGoals(Integer gameID) throws GameDoesNotExistException {
+        GoalBuffer goals = new GoalBuffer();
         Game game = gh.getGame(gameID);
-        game.setCommonGoal1(goals.getgoal());
-        game.setCommonGoal2(goals.getgoal());
+
+        game.setCommonGoal1(goals.getGoal1());
+        game.setCommonGoal2(goals.getGoal2());
     }
 
-    public void choosePersonalGoal(Player player, Goal goal1, Goal goal2, Goal choice) {
-        if (choice.equals(goal1) || choice.equals(goal2)) player.setPrivateGoal(choice);
+    /**
+     * Gives two goals from which the player can choose
+     * @return list of two goals
+     */
+    public ArrayList<Goal> giveGoals() {
+        GoalBuffer goals = new GoalBuffer();
+        ArrayList<Goal> list = new ArrayList<>();
+        list.add(goals.getGoal1());
+        list.add(goals.getGoal2());
+
+        return list;
+    }
+
+    /**
+     * Allows the player to choose his personal goal
+     * @param player - who is choosing the personal goal
+     * @param goal - goal chosen by the player
+     */
+    public void choosePersonalGoal(Player player, Goal goal) {
+        player.setPrivateGoal(goal);
     }
 }

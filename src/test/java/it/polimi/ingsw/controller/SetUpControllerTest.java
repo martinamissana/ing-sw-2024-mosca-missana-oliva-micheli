@@ -4,7 +4,6 @@ import it.polimi.ingsw.model.card.CardSide;
 import it.polimi.ingsw.model.deck.DeckBufferType;
 import it.polimi.ingsw.model.exceptions.*;
 import it.polimi.ingsw.model.goal.Goal;
-import it.polimi.ingsw.model.goal.GoalBuffer;
 import it.polimi.ingsw.model.player.Coords;
 import it.polimi.ingsw.model.game.GameHandler;
 import it.polimi.ingsw.model.player.Pawn;
@@ -37,7 +36,7 @@ public class SetUpControllerTest {
         c.giveStarterCards(0);
 
         // Starter card choosing:
-        for(Player p : players) c.chooseCard(p, CardSide.FRONT);
+        for(Player p : players) c.chooseCardSide(p, CardSide.FRONT);
 
         // Pawn choosing:
         int j = 0;
@@ -51,13 +50,11 @@ public class SetUpControllerTest {
         c.fillHands(0);
 
         // Setting goals:
-        GoalBuffer goals = new GoalBuffer();
-        c.chooseGoals(0, goals);
+        c.setCommonGoals(0);
 
         for (Player p : players) {
-            Goal goal1 = goals.getgoal();
-            Goal goal2 = goals.getgoal();
-            c.choosePersonalGoal(p, goal1, goal2, goal1);
+            ArrayList<Goal> goals = c.giveGoals();
+            c.choosePersonalGoal(p, goals.getFirst());
         }
 
         // Player + Pawn + Hand printing:
