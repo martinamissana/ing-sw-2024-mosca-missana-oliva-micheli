@@ -21,16 +21,6 @@ public class Chat implements Serializable {
     }
 
     /**
-     * Class constructor with attributes, used in case of server disconnection
-     * @param sentMessages - the list of sent messages from the player
-     * @param receivedMessages - the list of received messages to the player
-     */
-    public Chat(ArrayList<Message> sentMessages, ArrayList<Message> receivedMessages) {
-        this.sentMessages = sentMessages;
-        this.receivedMessages = receivedMessages;
-    }
-
-    /**
      * getter
      * @return receivedMessages - the list of received messages
      */
@@ -50,7 +40,7 @@ public class Chat implements Serializable {
      * @param sender - the player that sent the messages
      * @return list of the messages received from a specified player
      */
-    public ArrayList<Message> getReceivedMessagesFromPlayer(Player sender) {
+    private ArrayList<Message> getReceivedMessagesFromPlayer(Player sender) {
         int i;
         ArrayList<Message> list= new ArrayList<>();
         for(i=0;i<receivedMessages.size();i++){
@@ -66,7 +56,7 @@ public class Chat implements Serializable {
      * @param receiver - the player that received the messages
      * @return list of the messages sent to a specified player
      */
-    public ArrayList<Message> getSentMessagesToPlayer(Player receiver) {
+    private ArrayList<Message> getSentMessagesToPlayer(Player receiver) {
         int i;
         ArrayList<Message> list= new ArrayList<>();
         for(i=0;i<sentMessages.size();i++){
@@ -81,7 +71,7 @@ public class Chat implements Serializable {
      * getter
      * @return list of global received message
      */
-    public ArrayList<Message> getGlobalReceivedMessages() {
+    private ArrayList<Message> getGlobalReceivedMessages() {
         int i;
         ArrayList<Message> list= new ArrayList<>();
         for(i=0;i<receivedMessages.size();i++){
@@ -96,7 +86,7 @@ public class Chat implements Serializable {
      * getter
      * @return list of global sent messages
      */
-    public ArrayList<Message> getGlobalSentMessages() {
+    private ArrayList<Message> getGlobalSentMessages() {
         int i;
         ArrayList<Message> list= new ArrayList<>();
         for(i=0;i<sentMessages.size();i++){
