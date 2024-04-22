@@ -8,6 +8,7 @@ public class GoalBufferTest extends TestCase {
 
     public void testGetgoal() throws IOException {
         GoalBuffer g=new GoalBuffer();
-        assertNotNull(g.getgoal());
+        assertNotNull(g.getGoal1());
+        assertNotNull(g.getGoal2());
     }
 }
