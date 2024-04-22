@@ -23,6 +23,7 @@ public class DeckBuffer implements Drawable, Serializable {
     }
 
     /**
+     * Gets the card in the deck buffer
      * @return card
      */
     public ResourceCard getCard() {
@@ -37,9 +38,7 @@ public class DeckBuffer implements Drawable, Serializable {
             try {
                 this.card = this.deck.draw();
             }
-            catch (EmptyDeckException ignored) {
-                // System.out.println("Card space not refilled");
-            }
+            catch (EmptyDeckException ignored) {}
     }
 
     /**

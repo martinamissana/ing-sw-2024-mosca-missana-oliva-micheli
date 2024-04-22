@@ -19,11 +19,11 @@ import java.lang.reflect.Type;
 public class CornerDeserializer implements JsonDeserializer<Corner> {
     /**
      * method called in CardsPreset to help with the deserialization and the instantiation of the corners associated to each card
-     * @param jsonElement
-     * @param type
-     * @param jsonDeserializationContext
+     * @param jsonElement -the element that will be deserialized
+     * @param type - the type of the element that will be deserialized
+     * @param jsonDeserializationContext - the context in which the element is deserialized
      * @return Corner with its associated item
-     * @throws JsonParseException
+     * @throws JsonParseException - if there is an issue that occurs during the parsing of a Json string
      */
     @Override
     public Corner deserialize(JsonElement jsonElement, Type type, JsonDeserializationContext jsonDeserializationContext) throws JsonParseException {

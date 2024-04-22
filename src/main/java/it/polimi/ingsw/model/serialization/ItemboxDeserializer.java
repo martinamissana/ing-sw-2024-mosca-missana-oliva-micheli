@@ -16,11 +16,11 @@ import java.lang.reflect.Type;
 public class ItemboxDeserializer implements JsonDeserializer<ItemBox>{
     /**
      * method called in GoalsPreset to help with the deserialization and the instantiation of the Arraylist of resources in Resource Goals
-     * @param jsonElement
-     * @param type
-     * @param jsonDeserializationContext
-     * @return an item (Kingdom or Resource, depending on what type of Itembox it is)
-     * @throws JsonParseException
+     * @param jsonElement - the element that will be deserialized
+     * @param type - the type of the element that will be deserialized
+     * @param jsonDeserializationContext - the context in which the element is deserialized
+     * @return item (Kingdom or Resource, depending on what type of ItemBox it is)
+     * @throws JsonParseException - if there is an issue that occurs during the parsing of a Json string
      */
     @Override
     public ItemBox deserialize(JsonElement jsonElement, Type type, JsonDeserializationContext jsonDeserializationContext) throws JsonParseException {

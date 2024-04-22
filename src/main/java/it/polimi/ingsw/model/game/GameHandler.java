@@ -80,7 +80,7 @@ public class GameHandler implements Serializable {
      * @return the specified game
      * @throws GameDoesNotExistException if the game doesn't exist
      */
-    public Game getGame(int ID) throws GameDoesNotExistException {
+    public Game getGame(Integer ID) throws GameDoesNotExistException {
         if (activeGames.containsKey(ID)) {
             return activeGames.get(ID);
         } else {

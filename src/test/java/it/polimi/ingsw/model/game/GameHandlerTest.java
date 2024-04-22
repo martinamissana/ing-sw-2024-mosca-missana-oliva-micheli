@@ -10,8 +10,6 @@ import it.polimi.ingsw.model.player.Player;
 
 import java.io.IOException;
 import java.util.HashMap;
-
-import junit.framework.TestCase;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -27,7 +25,7 @@ public class GameHandlerTest {
     ResourceCard card;
 
     @Before
-    public void setUp() throws IOException, FullLobbyException, NicknameAlreadyTakenException, LobbyDoesNotExistsException, HandIsFullException {
+    public void setUp() {
         frontCorners.put(CornerType.NORTH,corner1);
         backCorners.put(CornerType.NORTH,corner2);
         card = new ResourceCard(0, CardSide.FRONT, frontCorners,backCorners,0, Kingdom.FUNGI);
