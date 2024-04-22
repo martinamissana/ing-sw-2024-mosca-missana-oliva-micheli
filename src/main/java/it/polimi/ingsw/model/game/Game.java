@@ -29,7 +29,7 @@ public class Game implements Serializable {
     private Goal commonGoal2;
     private final Deck ResourceDeck=new Deck(DeckType.RESOURCE);
     private final Deck GoldenDeck=new Deck(DeckType.GOLDEN);
-    private final HashMap<DeckBufferType,DeckBuffer> deckBuffers = new HashMap<>();
+    private final HashMap<DeckBufferType, DeckBuffer> deckBuffers = new HashMap<>();
     private final PawnBuffer pawnBuffer;
 
 
