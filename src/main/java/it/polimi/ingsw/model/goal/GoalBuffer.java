@@ -11,18 +11,25 @@ import java.util.*;
  * when the GoalBuffer is instantiated for the class Player they represent the choices of private goal for the player
  */
 public class GoalBuffer {
-    private static final ArrayList<Goal> goalDeck=new ArrayList<>();
+    private static final ArrayList<Goal> goalDeck =new ArrayList<>();
+
+    static {
+        try {
+            goalDeck.addAll(GoalsPreset.getDiagonalGoals());
+            goalDeck.addAll(GoalsPreset.getLShapeGoals());
+            goalDeck.addAll(GoalsPreset.getResourceGoals());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     private final Goal goal1;
     private final Goal goal2;
 
     /**
-     * constructor, adds goals from json files to goalDeck and draws two random goals from goalDeck
-     * @throws IOException produced by failed or interrupted I/O operations
+     * constructor, draws two random goals from goalDeck
      */
-    public GoalBuffer() throws IOException {
-        GoalBuffer.goalDeck.addAll(GoalsPreset.getDiagonalGoals());
-        GoalBuffer.goalDeck.addAll(GoalsPreset.getLShapeGoals());
-        GoalBuffer.goalDeck.addAll(GoalsPreset.getResourceGoals());
+    public GoalBuffer() {
         goal1=getgoal();
         goal2=getgoal();
     }
