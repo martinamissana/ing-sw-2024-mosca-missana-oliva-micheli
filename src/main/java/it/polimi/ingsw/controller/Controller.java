@@ -1,15 +1,23 @@
 package it.polimi.ingsw.controller;
 
 import it.polimi.ingsw.controller.exceptions.GameAlreadyStartedException;
+import it.polimi.ingsw.controller.exceptions.IllegalActionException;
+import it.polimi.ingsw.controller.exceptions.NotYourTurnException;
+import it.polimi.ingsw.model.card.Card;
+import it.polimi.ingsw.model.card.CardSide;
+import it.polimi.ingsw.model.card.ResourceCard;
+import it.polimi.ingsw.model.card.StarterCard;
 import it.polimi.ingsw.model.chat.Message;
+import it.polimi.ingsw.model.commonItem.ItemBox;
+import it.polimi.ingsw.model.deck.DeckBufferType;
 import it.polimi.ingsw.model.deck.DeckType;
-import it.polimi.ingsw.model.exceptions.FullLobbyException;
-import it.polimi.ingsw.model.exceptions.GameDoesNotExistException;
-import it.polimi.ingsw.model.exceptions.LobbyDoesNotExistsException;
-import it.polimi.ingsw.model.exceptions.NicknameAlreadyTakenException;
-import it.polimi.ingsw.model.game.Game;
-import it.polimi.ingsw.model.game.GameHandler;
-import it.polimi.ingsw.model.game.Lobby;
+import it.polimi.ingsw.model.deck.DeckTypeBox;
+import it.polimi.ingsw.model.exceptions.*;
+import it.polimi.ingsw.model.game.*;
+import it.polimi.ingsw.model.goal.*;
+import it.polimi.ingsw.model.player.Coords;
+import it.polimi.ingsw.model.player.Pawn;
+import it.polimi.ingsw.model.player.PawnBuffer;
 import it.polimi.ingsw.model.player.Player;
 
 import java.io.IOException;
@@ -17,7 +25,7 @@ import java.io.Serializable;
 import java.util.*;
 
 public class Controller implements Serializable {
-    private GameHandler gh;
+    private final GameHandler gh;
 
     /**Class constructor
      * @param gh - the game handler frown which the controller will extract all the information about the model
@@ -60,7 +68,7 @@ public class Controller implements Serializable {
      * @throws NicknameAlreadyTakenException -  if the nickname is already taken
      * @throws LobbyDoesNotExistsException - if the lobby does not exist
      */
-    public void joinLobby(Player player,int lobbyID ) throws FullLobbyException, NicknameAlreadyTakenException, LobbyDoesNotExistsException, IOException {//avrebbe senso creare i player prima?
+    public void joinLobby(Player player,int lobbyID ) throws FullLobbyException, NicknameAlreadyTakenException, LobbyDoesNotExistsException, IOException {
         //lobbyID is the index in lobbies
         if(gh.getLobbies().containsKey(lobbyID)){
             gh.getLobbies().get(lobbyID).addPlayer(player);
@@ -190,5 +198,405 @@ public class Controller implements Serializable {
         }
     }
 
+
+    // SET UP
+
+
+    /**
+     * Set decks and deck buffers
+     * @param gameID - ID of the game played
+     * @throws GameDoesNotExistException - if gameID does not correspond to a game in game handler
+     */
+    public void setGameArea(Integer gameID) throws GameDoesNotExistException {
+        Game game = gh.getGame(gameID);
+
+        // setting decks and deck buffers:
+        game.getResourceDeck().shuffle();
+        game.getGoldenDeck().shuffle();
+        for(DeckBufferType type : DeckBufferType.values()) game.getDeckBuffer(type).refill();
+    }
+
+    /**
+     * @param gameID - ID of the game played
+     * @throws GameDoesNotExistException - if gameID does not correspond to a game in game handler
+     * @throws IOException - for building the starter deck
+     */
+    public void giveStarterCards(Integer gameID) throws GameDoesNotExistException, IOException {
+        Game game = gh.getGame(gameID);
+        ArrayList<Player> players = game.getPlayers();
+
+        // Creating starter deck + drawing starter cards for all players:
+        ArrayList<StarterCard> starter = CardsPreset.getStarterCards();
+        Collections.shuffle(starter);
+
+        for (Player p : players) {
+            try {
+                p.getHand().addCard(starter.removeLast());
+            }
+            catch(HandIsFullException ignored) {}   // isn't supposed to happen
+        }
+    }
+
+    /**
+     * Allows the player to choose a pawn
+     * @param gameID - ID of the game played
+     * @param player - who is choosing the pawn
+     * @param color - color of the desired pawn
+     * @throws PawnAlreadyTakenException - if the chosen pawn has already been taken
+     * @throws GameDoesNotExistException - if gameID does not correspond to a game in game handler
+     */
+    public void choosePawn(Integer gameID, Player player, Pawn color) throws PawnAlreadyTakenException, GameDoesNotExistException {
+        Game game = gh.getGame(gameID);
+        PawnBuffer pawnList = game.getPawnBuffer();
+
+        if(pawnList.getPawnList().contains(color)) pawnList.getPawnList().remove(color);
+        else throw new PawnAlreadyTakenException();
+
+        player.setPawn(color);
+    }
+
+    /**
+     * Allows the player to choose the side of the starter card before placing it down
+     * @param player - who is playing the card
+     * @param side - side chosen by the player
+     */
+    public void chooseCardSide(Player player, CardSide side) {
+        StarterCard card = (StarterCard) player.getHand().getCard(0);
+        if(!card.getSide().equals(side)) card.flip();
+
+        player.getField().addCard(card);
+        player.getHand().removeCard(card);
+    }
+
+    /**
+     * Fill all players' hands with 2 resource cards and 1 golden card
+     * @param gameID - ID of the game played
+     * @throws GameDoesNotExistException - if gameID does not correspond to a game in game handler
+     * @throws EmptyDeckException - (doesn't suppose to happen)
+     * @throws HandIsFullException - if in hands are already present other cards
+     */
+    public void fillHands(Integer gameID) throws GameDoesNotExistException, EmptyDeckException, HandIsFullException {
+        Game game = gh.getGame(gameID);
+
+        for (Player p : game.getPlayers()) {
+            p.getHand().addCard(game.getResourceDeck().draw());
+            p.getHand().addCard(game.getResourceDeck().draw());
+            p.getHand().addCard(game.getGoldenDeck().draw());
+        }
+    }
+
+    /**
+     * Set the common goals in the game
+     * @param gameID - ID of the game played
+     * @throws GameDoesNotExistException  - if gameID does not correspond to a game in game handler
+     */
+    public void setCommonGoals(Integer gameID) throws GameDoesNotExistException {
+        GoalBuffer goals = new GoalBuffer();
+        Game game = gh.getGame(gameID);
+
+        game.setCommonGoal1(goals.getGoal1());
+        game.setCommonGoal2(goals.getGoal2());
+    }
+
+    /**
+     * Gives two goals from which the player can choose
+     * @return list of two goals
+     */
+    public ArrayList<Goal> giveGoals() {
+        GoalBuffer goals = new GoalBuffer();
+        ArrayList<Goal> list = new ArrayList<>();
+        list.add(goals.getGoal1());
+        list.add(goals.getGoal2());
+
+        return list;
+    }
+
+    /**
+     * Allows the player to choose his personal goal
+     * @param player - who is choosing the personal goal
+     * @param goal - goal chosen by the player
+     */
+    public void choosePersonalGoal(Player player, Goal goal) {
+        player.setPrivateGoal(goal);
+    }
+
+    // GAME
+
+
+    /**
+     * plays a card from the hand of a player to their field, at the specified position
+     * @param gameID ID of the calling player's game
+     * @param player player who's playing the card
+     * @param handPos card's position index in the player's hand
+     * @param coords position in the field to play the selected card to
+     * @throws GameDoesNotExistException thrown if the given ID does not correspond to any Game
+     * @throws NotYourTurnException thrown when a player tries to perform an action when it's not their turn
+     * @throws IllegalActionException thrown if the selected game's current expected action isn't PLAY
+     * @throws IllegalMoveException thrown if the selected card cannot be played to the field as requested
+     */
+    public void playCard(Integer gameID, Player player, int handPos, Coords coords) throws GameDoesNotExistException, NotYourTurnException, IllegalActionException, IllegalMoveException {
+
+        // get game from ID
+        Game game = gh.getGame(gameID);
+
+        // if it's not this player's turn
+        if (player.getNickname().equals(game.getCurrPlayer().getNickname()))
+            throw new NotYourTurnException();
+
+        // if the game's state isn't PLAY
+        if (game.getAction() != Action.PLAY)
+            throw new IllegalActionException();
+
+        // get card in player's specified hand position
+        ResourceCard card = (ResourceCard) player.getHand().getCard(handPos);
+
+        // place card in the field and calculate points
+        int points = player.getField().addCard(card, coords);
+
+        // remove card from player's hand
+        player.getHand().removeCard(card);
+
+        // add points to player's score
+        game.addToScore(player, points);
+
+        // set the game's current action to DRAW after playing a card
+        // only if it's not the last round (because if it is, players cannot draw cards)
+        if (!game.isLastRound())
+            game.setAction(Action.DRAW);
+    }
+
+    /**
+     * draws a card from a player's game's deck or deckBuffer and adds it to their hand
+     * @param gameID ID of the game of the drawing player
+     * @param player player who's drawing the card
+     * @param deckTypeBox type of card source to draw from
+     * @throws GameDoesNotExistException thrown if the given ID does not correspond to any Game
+     * @throws NotYourTurnException thrown when a player tries to perform an action when it's not their turn
+     * @throws IllegalActionException thrown if the selected game's current expected action isn't DRAW
+     * @throws HandIsFullException thrown if the selected game's current player has their hand full
+     * @throws EmptyDeckException thrown if the selected deck is out of cards
+     * @throws EmptyBufferException thrown if the selected deck buffer is out of cards
+     */
+    public void drawCard(Integer gameID, Player player, DeckTypeBox deckTypeBox) throws GameDoesNotExistException, NotYourTurnException, IllegalActionException, HandIsFullException, EmptyDeckException, EmptyBufferException {
+
+        // get game from ID
+        Game game = gh.getGame(gameID);
+
+        // if it's not this player's turn
+        if (player.getNickname().equals(game.getCurrPlayer().getNickname()))
+            throw new NotYourTurnException();
+
+        // if the game's state isn't DRAW
+        if (game.getAction() != Action.DRAW)
+            throw new IllegalActionException();
+
+        // draw a card and add it to the current player's hand
+        ResourceCard newCard = game.drawFromSource(deckTypeBox);
+        player.getHand().addCard(newCard);
+
+        // set the game's current action to PLAY after drawing a card
+        game.setAction(Action.PLAY);
+    }
+
+    /**
+     * updates the game's "whoseTurn" attribute and sets it to the next player's playerID
+     * @param gameID ID of the game to advance the turn of
+     * @throws GameDoesNotExistException thrown if the given ID does not correspond to any Game
+     */
+    public void nextTurn(Integer gameID) throws GameDoesNotExistException {
+
+        // get game from ID
+        Game game = gh.getGame(gameID);
+
+        // update turn counter
+        game.setWhoseTurn((game.getWhoseTurn()+1)%game.getNumOfPlayers());
+    }
+
+
+    // FINAL PHASE
+
+
+    /**
+     * checks in the field the private goal of the players and adds the points to the scoreboard
+     * @param gameID index of the game where the evaluation is done
+     */
+    private  void evaluatePrivateGoal(Integer gameID){
+        Game game=gh.getActiveGames().get(gameID);
+        for(Player p:game.getPlayers()){
+            if(p.getPrivateGoal().getClass()== ResourceGoal.class){
+                resourceEvaluator(gameID, (ResourceGoal) p.getPrivateGoal(),p);
+            } else if (p.getPrivateGoal().getClass()== L_ShapeGoal.class) {
+                L_ShapeEvaluator(gameID, (L_ShapeGoal) p.getPrivateGoal(),p);
+            }
+            else{
+                diagonalEvaluator(gameID, (DiagonalGoal) p.getPrivateGoal(),p);
+            }
+
+        }
+    }
+
+    /**
+     * checks in the field of every player the common goals and adds the points to the scoreboard
+     * @param gameID index of the game where the evaluation is done
+     */
+    private void evaluateCommonGoal(Integer gameID){
+        Game game=gh.getActiveGames().get(gameID);
+        Goal commonGoal1= game.getCommonGoal1();
+        Goal commonGoal2= game.getCommonGoal2();
+        for(Player p: game.getPlayers()){
+            if(commonGoal1.getClass()==ResourceGoal.class){
+                resourceEvaluator(gameID, (ResourceGoal) commonGoal1,p);
+            } else if (commonGoal1.getClass()==L_ShapeGoal.class) {
+                L_ShapeEvaluator(gameID, (L_ShapeGoal) commonGoal1,p);
+            }
+            else{
+                diagonalEvaluator(gameID, (DiagonalGoal) commonGoal1,p);
+            }
+            if(commonGoal2.getClass()==ResourceGoal.class){
+                resourceEvaluator(gameID, (ResourceGoal) commonGoal2,p);
+            } else if (commonGoal2.getClass()==L_ShapeGoal.class) {
+                L_ShapeEvaluator(gameID, (L_ShapeGoal) commonGoal2,p);
+            }
+            else{
+                diagonalEvaluator(gameID, (DiagonalGoal) commonGoal2,p);
+            }
+        }
+    }
+
+    /**
+     * returns the list of winners (players with the highest score) of the game after the evaluation of the private and the common goals
+     * @param gameID index of the game where the evaluation is done
+     * @return ArrayList<Player>
+     */
+    public ArrayList<Player> winner(Integer gameID){
+        Game game=gh.getActiveGames().get(gameID);
+        evaluatePrivateGoal(gameID);
+        evaluateCommonGoal(gameID);
+        HashMap<Player,Integer> scoreboard=game.getScoreboard();
+        ArrayList<Player> winners=new ArrayList<>();
+        int maxValue = 0;
+        for (Map.Entry<Player, Integer> entry : scoreboard.entrySet()) {
+            if (entry.getValue() > maxValue) {
+                maxValue = entry.getValue();
+            }
+        }
+        for(Player p:scoreboard.keySet()){
+            if(scoreboard.get(p)==maxValue) winners.add(p);
+        }
+        return winners;
+    }
+
+    /**
+     * checks the presence of the Diagonal goal in the field and adds the points to the scoreboard
+     * @param gameID index of the game where the evaluation is done
+     * @param goal goal that needs to be found in the field
+     * @param player player who has to complete the goal
+     */
+    private void diagonalEvaluator(Integer gameID,DiagonalGoal goal,Player player) {
+        Game game=gh.getActiveGames().get(gameID);
+        HashMap<Coords, Card> field = player.getField().getMatrix();
+        HashSet<Coords> done = new HashSet<>(); //indicates the cards already used for the goal
+        if (goal.getType() == DiagonalGoalType.UPWARD) {
+            for (Coords coords : field.keySet()) {
+                Coords secondCard = new Coords(coords.getX() + 1, coords.getY());
+                Coords thirdCard = new Coords(coords.getX() + 2, coords.getY());
+                if (!done.contains(coords)&& !done.contains(secondCard)&&!done.contains(thirdCard) && field.get(coords).getKingdom() == goal.getColor()&&field.containsKey(secondCard) && field.containsKey(thirdCard) && field.get(secondCard).getKingdom() == goal.getColor() && field.get(thirdCard).getKingdom() == goal.getColor()) {
+                    done.add(coords);
+                    done.add(secondCard);
+                    done.add(thirdCard);
+                    game.addToScore(player, goal.getPoints());
+                }
+            }
+        } else {
+            for (Coords coords : field.keySet()) {
+                Coords secondCard = new Coords(coords.getX(), coords.getY()+1);
+                Coords thirdCard = new Coords(coords.getX(),coords.getY()+2);
+                if (!done.contains(coords)&&!done.contains(secondCard)&&!done.contains(thirdCard) && field.get(coords).getKingdom() == goal.getColor()&&field.containsKey(secondCard) && field.containsKey(thirdCard) && field.get(secondCard).getKingdom() == goal.getColor() && field.get(thirdCard).getKingdom() == goal.getColor()) {
+                    done.add(coords);
+                    done.add(secondCard);
+                    done.add(thirdCard);
+                    game.addToScore(player, goal.getPoints());
+                }
+            }
+        }
+    }
+
+    /**
+     * checks the presence of the Resource goal in the field and adds the points to the scoreboard
+     * @param gameID index of the game where the evaluation is done
+     * @param goal goal that needs to be found in the field
+     * @param player player who has to complete the goal
+     */
+    private void resourceEvaluator(Integer gameID,ResourceGoal goal,Player player){
+        Game game=gh.getActiveGames().get(gameID);
+        HashMap<ItemBox, Integer> totalResources = player.getField().getTotalResources();
+        for (ItemBox item : goal.getResourceList()) {
+            if(totalResources.get(item)==0) return;
+            totalResources.replace(item,totalResources.get(item)-1);
+        }
+        game.addToScore(player,goal.getPoints());
+    }
+
+    /**
+     * checks the presence of the L_Shape goal in the field and adds the points to the scoreboard
+     * @param gameID index of the game where the evaluation is done
+     * @param goal goal that needs to be found in the field
+     * @param player player who has to complete the goal
+     */
+    private void L_ShapeEvaluator(Integer gameID,L_ShapeGoal goal,Player player){
+        HashSet<Coords> done=new HashSet<>();
+        HashMap<Coords, Card> field=player.getField().getMatrix();
+        switch (goal.getType()){
+            case UP_RIGHT -> {
+                for(Coords coords: field.keySet()){
+                    Coords secondCard=new Coords(coords.getX()-1,coords.getY());
+                    Coords thirdCard=new Coords(coords.getX()-2,coords.getY()-1);
+                    genericL_ShapeEvaluator(gameID,goal,player,coords,secondCard,thirdCard,done);
+                }
+            }
+            case UP_LEFT -> {
+                for(Coords coords: field.keySet()){
+                    Coords secondCard=new Coords(coords.getX(),coords.getY()-1);
+                    Coords thirdCard=new Coords(coords.getX()-1,coords.getY()-2);
+                    genericL_ShapeEvaluator(gameID,goal,player,coords,secondCard,thirdCard,done);
+                }
+            }
+            case DOWN_LEFT -> {
+                for(Coords coords: field.keySet()){
+                    Coords secondCard=new Coords(coords.getX()+1,coords.getY());
+                    Coords thirdCard=new Coords(coords.getX()+2,coords.getY()+1);
+                    genericL_ShapeEvaluator(gameID,goal,player,coords,secondCard,thirdCard,done);
+                }
+            }
+            case DOWN_RIGHT -> {
+                for(Coords coords: field.keySet()){
+                    Coords secondCard=new Coords(coords.getX(),coords.getY()+1);
+                    Coords thirdCard=new Coords(coords.getX()+1,coords.getY()+2);
+                    genericL_ShapeEvaluator(gameID,goal,player,coords,secondCard,thirdCard,done);
+                }
+            }
+        }
+    }
+
+    /**
+     * useful method to avoid repetition of code based on the direction of L_Shape goal
+     * @param gameID index of the game where the evaluation is done
+     * @param goal goal that needs to be found in the field
+     * @param player player who has to complete the goal
+     * @param firstCard coordinates of the card with a different color from the other two in the L_Shape
+     * @param secondCard coordinates of one of the cards with the main L_Shape color
+     * @param thirdCard coordinates of one of the cards with the main L_Shape color
+     * @param done HashMap that maps the cards already used to complete the goal
+     */
+    private void genericL_ShapeEvaluator(Integer gameID,L_ShapeGoal goal,Player player,Coords firstCard,Coords secondCard,Coords thirdCard,HashSet<Coords> done){
+        Game game=gh.getActiveGames().get(gameID);
+        HashMap<Coords, Card> field=player.getField().getMatrix();
+        if(!done.contains(firstCard)&&!done.contains(secondCard)&&!done.contains(thirdCard)&&field.get(firstCard).getKingdom()==goal.getSecondaryColor()&&field.containsKey(secondCard)&&field.containsKey(thirdCard)&&field.get(secondCard).getKingdom()==goal.getMainColor()&&field.get(thirdCard).getKingdom()==goal.getMainColor()){
+            done.add(firstCard);
+            done.add(secondCard);
+            done.add(thirdCard);
+            game.addToScore(player, goal.getPoints());
+        }
+    }
 
 }

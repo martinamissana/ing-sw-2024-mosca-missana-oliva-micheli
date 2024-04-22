@@ -19,8 +19,7 @@ public class SetUpControllerTest {
     @Test
     public void SetUpTest() throws IOException, HandIsFullException, FullLobbyException, LobbyDoesNotExistsException, NicknameAlreadyTakenException, GameDoesNotExistException, EmptyDeckException, PawnAlreadyTakenException {
         GameHandler gh = new GameHandler();
-        Controller controller = new Controller(gh);
-        SetUpController c = new SetUpController(gh);
+        Controller c = new Controller(gh);
 
         // Game creation + SetUp:
         ArrayList<Player> players = new ArrayList<>();
@@ -29,8 +28,8 @@ public class SetUpControllerTest {
             players.add(p);
         }
 
-        controller.createLobby(4, players.getFirst());
-        for (int i = 1; i < 4; i++) controller.joinLobby(players.get(i), 0);
+        c.createLobby(4, players.getFirst());
+        for (int i = 1; i < 4; i++) c.joinLobby(players.get(i), 0);
 
         c.setGameArea(0);
         c.giveStarterCards(0);
