@@ -17,7 +17,7 @@ import java.io.Serializable;
 import java.util.*;
 
 public class Controller implements Serializable {
-    GameHandler gh;
+    private GameHandler gh;
 
     /**Class constructor
      * @param gh - the game handler frown which the controller will extract all the information about the model
