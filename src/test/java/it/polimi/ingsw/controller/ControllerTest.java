@@ -26,7 +26,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import static org.junit.Assert.*;
-import static org.junit.Assert.assertEquals;
 
 
 public class ControllerTest {
@@ -55,37 +54,37 @@ public class ControllerTest {
 
     @Test
     public void testCreateGameAndTerminateGame() throws GameDoesNotExistException, LobbyDoesNotExistsException {
-        Assert.assertTrue(gameHandler.getGame(0).getPlayers().contains(anna));
-        Assert.assertTrue(gameHandler.getGame(0).getPlayers().contains(eric));
-        Assert.assertTrue(gameHandler.getGame(0).getPlayers().contains(giorgio));
-        Assert.assertEquals(anna.getHand().getCard(0),card);
+        assertTrue(gameHandler.getGame(0).getPlayers().contains(anna));
+        assertTrue(gameHandler.getGame(0).getPlayers().contains(eric));
+        assertTrue(gameHandler.getGame(0).getPlayers().contains(giorgio));
+        assertEquals(anna.getHand().getCard(0),card);
         c.terminateGame(0);
-        Assert.assertTrue(gameHandler.getActiveGames().isEmpty());
-        Assert.assertTrue(gameHandler.getLobbies().isEmpty());
+        assertTrue(gameHandler.getActiveGames().isEmpty());
+        assertTrue(gameHandler.getLobbies().isEmpty());
     }
     @Test (expected = FullLobbyException.class)
     public void testJoinLobbyButLobbyIsFull() throws FullLobbyException, NicknameAlreadyTakenException, LobbyDoesNotExistsException, IOException, GameDoesNotExistException {
         c.joinLobby(sara,0);
-        Assert.assertFalse(gameHandler.getLobby(0).getPlayers().contains(sara));
-        Assert.assertFalse(gameHandler.getGame(0).getPlayers().contains(sara));
+        assertFalse(gameHandler.getLobby(0).getPlayers().contains(sara));
+        assertFalse(gameHandler.getGame(0).getPlayers().contains(sara));
     }
     @Test (expected = LobbyDoesNotExistsException.class)
     public void testJoinLobbyButLobbyDoesNotExist() throws FullLobbyException, NicknameAlreadyTakenException, LobbyDoesNotExistsException, IOException, GameDoesNotExistException {
         c.joinLobby(sara,1);
-        Assert.assertFalse(gameHandler.getLobby(0).getPlayers().contains(sara));
-        Assert.assertFalse(gameHandler.getGame(0).getPlayers().contains(sara));
+        assertFalse(gameHandler.getLobby(0).getPlayers().contains(sara));
+        assertFalse(gameHandler.getGame(0).getPlayers().contains(sara));
     }
     @Test (expected = GameAlreadyStartedException.class)
     public void leaveLobby() throws FullLobbyException, LobbyDoesNotExistsException, NicknameAlreadyTakenException, IOException, GameAlreadyStartedException {
         c.createLobby(3, sara);
         c.joinLobby(paola,1);
         c.leaveLobby(sara, 1);
-        Assert.assertTrue(gameHandler.getLobbies().containsKey(1));
+        assertTrue(gameHandler.getLobbies().containsKey(1));
         c.leaveLobby(paola, 1);
-        Assert.assertFalse(gameHandler.getLobbies().containsKey(1));
+        assertFalse(gameHandler.getLobbies().containsKey(1));
         c.leaveLobby(anna, 0);
-        Assert.assertTrue(gameHandler.getLobbies().containsKey(0));
-        Assert.assertTrue(gameHandler.getActiveGames().containsKey(0));
+        assertTrue(gameHandler.getLobbies().containsKey(0));
+        assertTrue(gameHandler.getActiveGames().containsKey(0));
     }
     @Test
     public void SetUpTest() throws IOException, HandIsFullException, FullLobbyException, LobbyDoesNotExistsException, NicknameAlreadyTakenException, GameDoesNotExistException, EmptyDeckException, PawnAlreadyTakenException {
