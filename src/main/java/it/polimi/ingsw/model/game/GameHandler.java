@@ -3,6 +3,7 @@ package it.polimi.ingsw.model.game;
 import it.polimi.ingsw.model.exceptions.GameDoesNotExistException;
 import it.polimi.ingsw.model.exceptions.LobbyDoesNotExistsException;
 import it.polimi.ingsw.model.exceptions.NicknameAlreadyTakenException;
+import it.polimi.ingsw.model.observer.Observable;
 import it.polimi.ingsw.model.player.Player;
 
 import java.io.*;
@@ -14,7 +15,7 @@ import java.util.HashMap;
  * Class GameHandler
  * stores all the data about multiple games and lobbies hosted in a server
  */
-public class GameHandler implements Serializable {
+public class GameHandler extends Observable implements Serializable  {
     private HashMap<Integer,Game> activeGames;
     private HashMap<Integer,Lobby> lobbies;
     private int numOfGames=0;
