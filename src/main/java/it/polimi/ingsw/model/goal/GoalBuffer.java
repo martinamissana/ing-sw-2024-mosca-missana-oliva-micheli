@@ -6,47 +6,23 @@ import java.util.*;
 
 /**
  * Class GoalBuffer
- * contains the goal deck (static) and two goals randomly drawn from it:
+ * contains two goals randomly drawn from GoalContainer:
  * when the GoalBuffer is instantiated for the class Game they represent the common goals,
  * when the GoalBuffer is instantiated for the class Player they represent the choices of private goal for the player
  */
 public class GoalBuffer {
-    private static final ArrayList<Goal> goalDeck =new ArrayList<>();
-
-    static {
-        try {
-            goalDeck.addAll(GoalsPreset.getDiagonalGoals());
-            goalDeck.addAll(GoalsPreset.getLShapeGoals());
-            goalDeck.addAll(GoalsPreset.getResourceGoals());
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
 
     private final Goal goal1;
     private final Goal goal2;
 
     /**
-     * constructor, draws two random goals from goalDeck
+     * Class constructor
+     * @param goal1 random goal from GoalContainer
+     * @param goal2 random goal from GoalContainer
      */
-    public GoalBuffer() {
-        goal1=getgoal();
-        goal2=getgoal();
-    }
-
-    /**
-     * private method to draw a random goal from the goalDeck
-     * @return Goal
-     */
-    private Goal getgoal(){
-        if(!goalDeck.isEmpty()){
-        Collections.shuffle(goalDeck);
-        Goal goal=goalDeck.get(0);
-        goalDeck.remove(0);
-        return goal;}
-        else{
-            return null;
-        }
+    public GoalBuffer(Goal goal1, Goal goal2) {
+        this.goal1 = goal1;
+        this.goal2 = goal2;
     }
 
     /**
