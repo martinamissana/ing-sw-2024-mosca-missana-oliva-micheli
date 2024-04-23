@@ -6,12 +6,14 @@ import it.polimi.ingsw.model.card.Corner;
 import it.polimi.ingsw.model.card.CornerType;
 import it.polimi.ingsw.model.card.ResourceCard;
 import it.polimi.ingsw.model.commonItem.CornerStatus;
+import it.polimi.ingsw.model.commonItem.ItemBox;
 import it.polimi.ingsw.model.commonItem.Kingdom;
 import it.polimi.ingsw.model.commonItem.Resource;
 import it.polimi.ingsw.model.deck.DeckBufferType;
 import it.polimi.ingsw.model.exceptions.*;
+import it.polimi.ingsw.model.game.CardsPreset;
 import it.polimi.ingsw.model.game.GameHandler;
-import it.polimi.ingsw.model.goal.Goal;
+import it.polimi.ingsw.model.goal.*;
 import it.polimi.ingsw.model.player.Coords;
 import it.polimi.ingsw.model.player.Pawn;
 import it.polimi.ingsw.model.player.Player;
@@ -22,6 +24,9 @@ import org.junit.Test;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+
+import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 
 public class ControllerTest {
@@ -49,7 +54,7 @@ public class ControllerTest {
     }
 
     @Test
-    public void testCreateGameAndTerminateGame() throws IOException, GameDoesNotExistException, FullLobbyException, NicknameAlreadyTakenException, LobbyDoesNotExistsException {
+    public void testCreateGameAndTerminateGame() throws GameDoesNotExistException, LobbyDoesNotExistsException {
         Assert.assertTrue(gameHandler.getGame(0).getPlayers().contains(anna));
         Assert.assertTrue(gameHandler.getGame(0).getPlayers().contains(eric));
         Assert.assertTrue(gameHandler.getGame(0).getPlayers().contains(giorgio));
@@ -153,5 +158,62 @@ public class ControllerTest {
             System.out.println(p.getNickname() + ": (starterID = " + p.getField().getMatrix().get(new Coords(0, 0)).getCardID() + ")");
             System.out.println(p.getField());
         }
+    }
+
+    @Test
+    public void winnerTest() throws FullLobbyException, LobbyDoesNotExistsException, NicknameAlreadyTakenException, GameDoesNotExistException, IOException, IllegalMoveException {
+        GameHandler gh = new GameHandler();
+        Controller c = new Controller(gh);
+
+        // Game creation + SetUp:
+        ArrayList<Player> players = new ArrayList<>();
+        for (int i = 0; i < 3; i++) {
+            Player p = new Player("Player" + (i));
+            players.add(p);
+        }
+
+        c.createLobby(3, players.getFirst());
+        for (int i = 1; i < 3; i++) c.joinLobby(players.get(i), 0);
+
+        c.setGameArea(0);
+        c.giveStarterCards(0);
+        //Create goals
+        ArrayList<ItemBox> resourceList = new ArrayList<>();
+        resourceList.add(Resource.QUILL);
+        resourceList.add(Resource.QUILL);
+        Goal goal0 = new ResourceGoal(15, resourceList, 2);
+        Goal goal1 = new DiagonalGoal(0, 2, Kingdom.FUNGI, DiagonalGoalType.UPWARD);
+        Goal goal2 = new L_ShapeGoal(4, 3, Kingdom.FUNGI, Kingdom.PLANT, L_ShapeGoalType.DOWN_RIGHT);
+        Player player0 = gh.getGame(0).getPlayers().get(0);
+        Player player1 = gh.getGame(0).getPlayers().get(1);
+        Player player2 = gh.getGame(0).getPlayers().get(2);
+        player0.setPrivateGoal(goal0);
+        player1.setPrivateGoal(goal1);
+        player2.setPrivateGoal(goal2);
+        //setting common goals
+        gh.getGame(0).setCommonGoal1(goal2);
+        gh.getGame(0).setCommonGoal2(goal2);
+        // Starter card choosing:
+        for (Player p : players) c.chooseCardSide(p, CardSide.FRONT);
+        // Adding cards to the field to satisfy the private goal
+        ArrayList<ResourceCard> cards = CardsPreset.getResourceCards();
+        player0.getField().addCard(cards.get(4), new Coords(1, 0));
+        player0.getField().addCard(cards.get(14), new Coords(0, 1));
+        player1.getField().addCard(cards.get(0), new Coords(0, -1));
+        player1.getField().addCard(cards.get(1), new Coords(-1, -1));
+        player1.getField().addCard(cards.get(2), new Coords(1, -1));
+        player2.getField().addCard(cards.get(3), new Coords(0, -1));
+        player2.getField().addCard(cards.get(7), new Coords(0, -2));
+        player2.getField().addCard(cards.get(6), new Coords(-1, -2));
+        player2.getField().addCard(cards.get(15), new Coords(-1, -3));
+        ArrayList<Player> winners = c.winner(0);
+        assertNotNull(winners);
+        assertSame(winners.getFirst(), player2);
+        // player0's field contains their private goal so their score should be equal to the points of their private goal
+        assertEquals(goal0.getPoints(), gh.getGame(0).getPlayerScore(player0));
+        // player1's field contains their private goal so their score should be equal to the points of their private goal
+        assertEquals(goal1.getPoints(), gh.getGame(0).getPlayerScore(player1));
+        // since for the test the common goals are the same of player2 private goal (not possible in the real game), player2 score should be three times the points of his private goal (one time for the private one, two times for the common ones)
+        assertEquals(3 * goal2.getPoints(), gh.getGame(0).getPlayerScore(player2));
     }
 }
