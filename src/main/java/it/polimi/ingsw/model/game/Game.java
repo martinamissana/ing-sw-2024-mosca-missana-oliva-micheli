@@ -5,6 +5,7 @@ import it.polimi.ingsw.model.deck.*;
 import it.polimi.ingsw.model.exceptions.EmptyBufferException;
 import it.polimi.ingsw.model.exceptions.EmptyDeckException;
 import it.polimi.ingsw.model.goal.Goal;
+import it.polimi.ingsw.model.goal.GoalContainer;
 import it.polimi.ingsw.model.player.PawnBuffer;
 import it.polimi.ingsw.model.player.Player;
 
@@ -31,6 +32,7 @@ public class Game implements Serializable {
     private final Deck GoldenDeck=new Deck(DeckType.GOLDEN);
     private final HashMap<DeckBufferType, DeckBuffer> deckBuffers = new HashMap<>();
     private final PawnBuffer pawnBuffer;
+    private final GoalContainer goals;
 
 
     /**
@@ -44,16 +46,17 @@ public class Game implements Serializable {
     public Game(int gameID, int numOfPlayers, ArrayList<Player> players, HashMap<Player,Integer> scoreboard) throws IOException {
         this.numOfPlayers = numOfPlayers;
         this.players = players;
-        this.gameID=gameID;
+        this.gameID = gameID;
         this.commonGoal1 = null;
         this.commonGoal2 = null;
-        this.whoseTurn=0;
-        this.scoreboard=scoreboard;
-        this.deckBuffers.put(DeckBufferType.GOLD1,new DeckBuffer(this.GoldenDeck));
-        this.deckBuffers.put(DeckBufferType.GOLD2,new DeckBuffer(this.GoldenDeck));
-        this.deckBuffers.put(DeckBufferType.RES1,new DeckBuffer(this.ResourceDeck));
-        this.deckBuffers.put(DeckBufferType.RES2,new DeckBuffer(this.ResourceDeck));
-        this.pawnBuffer=new PawnBuffer();
+        this.whoseTurn = 0;
+        this.scoreboard = scoreboard;
+        this.deckBuffers.put(DeckBufferType.GOLD1, new DeckBuffer(this.GoldenDeck));
+        this.deckBuffers.put(DeckBufferType.GOLD2, new DeckBuffer(this.GoldenDeck));
+        this.deckBuffers.put(DeckBufferType.RES1, new DeckBuffer(this.ResourceDeck));
+        this.deckBuffers.put(DeckBufferType.RES2, new DeckBuffer(this.ResourceDeck));
+        this.pawnBuffer = new PawnBuffer();
+        this.goals = new GoalContainer();
     }
 
     /**
@@ -118,6 +121,14 @@ public class Game implements Serializable {
      * @return PawnBuffer, the class where there are stored the available pawns
      */
     public PawnBuffer getPawnBuffer() {return pawnBuffer;}
+
+    /**
+     * getter
+     * @return list of goals
+     */
+    public GoalContainer getGoals() {
+        return this.goals;
+    }
 
     /**
      * setter

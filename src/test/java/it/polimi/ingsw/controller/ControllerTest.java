@@ -32,7 +32,7 @@ import static org.junit.Assert.assertEquals;
 public class ControllerTest {
     GameHandler gameHandler=new GameHandler();
     HashMap<CornerType, Corner> frontCorners;
-    HashMap< CornerType, Corner > backCorners;
+    HashMap<CornerType, Corner> backCorners;
     Corner corner1=new Corner(CornerStatus.EMPTY);
     Corner corner2=new Corner(Resource.INKWELL);
     ResourceCard card= new ResourceCard(0, CardSide.FRONT, frontCorners,backCorners,0, Kingdom.FUNGI);
@@ -123,7 +123,7 @@ public class ControllerTest {
         c.setCommonGoals(0);
 
         for (Player p : players) {
-            ArrayList<Goal> goals = c.giveGoals();
+            ArrayList<Goal> goals = c.giveGoals(0);
             c.choosePersonalGoal(p, goals.getFirst());
         }
 

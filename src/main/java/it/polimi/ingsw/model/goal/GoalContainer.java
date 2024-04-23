@@ -7,30 +7,30 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 public class GoalContainer {
-
-    private final ArrayList<Goal> goalContainer =new ArrayList<>();
+    private final ArrayList<Goal> goals = new ArrayList<>();
 
     /**
      * class constructor
      * @throws IOException produced by failed or interrupted I/O operations
      */
     public GoalContainer() throws IOException {
-        goalContainer.addAll(GoalsPreset.getDiagonalGoals());
-        goalContainer.addAll(GoalsPreset.getLShapeGoals());
-        goalContainer.addAll(GoalsPreset.getResourceGoals());
+        goals.addAll(GoalsPreset.getDiagonalGoals());
+        goals.addAll(GoalsPreset.getLShapeGoals());
+        goals.addAll(GoalsPreset.getResourceGoals());
     }
 
     /**
      * method to pick a random goal from goalContainer
      * @return Goal
      */
-    public Goal getgoal(){
-        if(!goalContainer.isEmpty()){
-            Collections.shuffle(goalContainer);
-            Goal goal=goalContainer.getFirst();
-            goalContainer.removeFirst();
-            return goal;}
-        else{
+    public Goal getGoal() {
+        if(!goals.isEmpty()) {
+            Collections.shuffle(goals);
+            Goal goal = goals.getFirst();
+            goals.removeFirst();
+            return goal;
+        }
+        else {
             return null;
         }
     }

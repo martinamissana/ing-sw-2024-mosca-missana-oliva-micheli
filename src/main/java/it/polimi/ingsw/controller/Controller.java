@@ -54,11 +54,12 @@ public class Controller implements Serializable {
      * @throws NicknameAlreadyTakenException - this will never be thrown
      */
     public void createLobby(int numOfPlayers, Player lobbyCreator) throws LobbyDoesNotExistsException, FullLobbyException, NicknameAlreadyTakenException {
-        gh.getLobbies().put(gh.getNumOfLobbies(),new Lobby(numOfPlayers));
+        gh.getLobbies().put(gh.getNumOfLobbies(), new Lobby(numOfPlayers));
         gh.getLobby(gh.getNumOfLobbies()).addPlayer(lobbyCreator);
-        gh.setNumOfLobbies(gh.getNumOfLobbies()+1);
+        gh.setNumOfLobbies(gh.getNumOfLobbies() + 1);
 
     }
+
     /**
      * adds the player to the specified lobby
      * when the chosen number or player for the game is reached, a game is created
@@ -68,12 +69,12 @@ public class Controller implements Serializable {
      * @throws NicknameAlreadyTakenException -  if the nickname is already taken
      * @throws LobbyDoesNotExistsException - if the lobby does not exist
      */
-    public void joinLobby(Player player,int lobbyID ) throws FullLobbyException, NicknameAlreadyTakenException, LobbyDoesNotExistsException, IOException {
+    public void joinLobby(Player player, int lobbyID ) throws FullLobbyException, NicknameAlreadyTakenException, LobbyDoesNotExistsException, IOException {
         //lobbyID is the index in lobbies
-        if(gh.getLobbies().containsKey(lobbyID)){
+        if(gh.getLobbies().containsKey(lobbyID)) {
             gh.getLobbies().get(lobbyID).addPlayer(player);
             if(gh.getLobbies().get(lobbyID).getPlayers().size() == gh.getLobbies().get(lobbyID).getNumOfPlayers())
-                this.createGame(gh.getLobbies().get(lobbyID));//in the last player has joined, the game is created
+                this.createGame(gh.getLobbies().get(lobbyID)); // in the last player has joined, the game is created
         }
         else throw new LobbyDoesNotExistsException("Lobby with ID " + lobbyID + " does not exist");
     }
@@ -87,7 +88,7 @@ public class Controller implements Serializable {
     public void leaveLobby(Player player,int lobbyID) throws LobbyDoesNotExistsException, GameAlreadyStartedException {
         //if the game has already started the player will not be removed
         if(gh.getActiveGames().containsKey(lobbyID)) throw new GameAlreadyStartedException();
-        else if(gh.getLobbies().containsKey(lobbyID)){
+        else if(gh.getLobbies().containsKey(lobbyID)) {
             gh.getLobbies().get(lobbyID).getPlayers().remove(player);
             if(gh.getLobbies().get(lobbyID).getPlayers().isEmpty())deleteLobby(lobbyID);
         }
@@ -100,7 +101,7 @@ public class Controller implements Serializable {
      * @throws LobbyDoesNotExistsException if the lobby does not exist
      */
     public void deleteLobby(int lobbyID) throws LobbyDoesNotExistsException {
-        if(gh.getLobbies().get(lobbyID)!=null)gh.getLobbies().remove(lobbyID);
+        if(gh.getLobbies().get(lobbyID) != null) gh.getLobbies().remove(lobbyID);
         else throw new LobbyDoesNotExistsException("Lobby with ID " + lobbyID + " does not exist");
     }
 
@@ -118,7 +119,7 @@ public class Controller implements Serializable {
         Random r=new Random();
         int i=r.nextInt(lobby.getNumOfPlayers());//the first player is randomly chosen
         Collections.rotate(players,i);
-        players.get(0).setGoesFirst(true);
+        players.getFirst().setGoesFirst(true);
 
         //scoreboard initialization->all values set at 0
         HashMap<Player,Integer> scoreboard= new HashMap<>();
@@ -134,6 +135,7 @@ public class Controller implements Serializable {
      * @param gameID - the ID of the game that will be deleted
      * @throws GameDoesNotExistException - if the game does not exist
      */
+
     public void terminateGame(Integer gameID) throws GameDoesNotExistException, LobbyDoesNotExistsException {
         if(gh.getActiveGames().containsKey(gameID)){
             gh.getActiveGames().remove(gameID);
@@ -146,6 +148,7 @@ public class Controller implements Serializable {
      * will be called at the end of each round
      * @param gameID - the ID of the game where the status is checked
      */
+
     //method related to game phases
     public void checkGameStatus(Integer gameID) throws GameDoesNotExistException, LobbyDoesNotExistsException {
         Game game=gh.getActiveGames().get(gameID);
@@ -291,22 +294,21 @@ public class Controller implements Serializable {
      * @throws GameDoesNotExistException  - if gameID does not correspond to a game in game handler
      */
     public void setCommonGoals(Integer gameID) throws GameDoesNotExistException {
-        GoalBuffer goals = new GoalBuffer();
         Game game = gh.getGame(gameID);
 
-        game.setCommonGoal1(goals.getGoal1());
-        game.setCommonGoal2(goals.getGoal2());
+        game.setCommonGoal1(game.getGoals().getGoal());
+        game.setCommonGoal2(game.getGoals().getGoal());
     }
 
     /**
      * Gives two goals from which the player can choose
+     * @param gameID - ID of the game played
      * @return list of two goals
      */
-    public ArrayList<Goal> giveGoals() {
-        GoalBuffer goals = new GoalBuffer();
+    public ArrayList<Goal> giveGoals(Integer gameID) throws GameDoesNotExistException {
         ArrayList<Goal> list = new ArrayList<>();
-        list.add(goals.getGoal1());
-        list.add(goals.getGoal2());
+        list.add(gh.getGame(gameID).getGoals().getGoal());
+        list.add(gh.getGame(gameID).getGoals().getGoal());
 
         return list;
     }
