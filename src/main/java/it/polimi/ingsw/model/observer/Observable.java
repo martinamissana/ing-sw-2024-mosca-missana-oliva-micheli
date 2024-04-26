@@ -1,26 +1,30 @@
 package it.polimi.ingsw.model.observer;
 
-import it.polimi.ingsw.model.game.GameHandler;
 
 import java.util.ArrayList;
+import java.util.List;
 
-public abstract class Observable {
-    private GameHandler data;
-    private ArrayList<Listener> listeners = new ArrayList<>();
-    public void addListener(Listener ld) {
-        listeners.add(ld);
+public abstract class Observable<T> {
+
+    private final List<Observer<T>> observers = new ArrayList<>();
+
+    public void addObserver(Observer<T> observer){
+        synchronized (observers) {
+            observers.add(observer);
+        }
     }
-    public void removeListener(Listener ld) {
-        listeners.remove(ld);
+
+    public void removeObserver(Observer<T> observer){
+        synchronized (observers) {
+            observers.remove(observer);
+        }
     }
-    protected void updateAll(GameHandler data){
-        for(Listener ld : listeners)
-            ld.update(data);
-    }
-    public void setData(GameHandler data) {
-        this.data = data;
-        for (Listener l : this.listeners) {
-            l.update(this.data);
+
+    protected void notify(T message){
+        synchronized (observers) {
+            for(Observer<T> observer : observers){
+                observer.update(message);
+            }
         }
     }
 }
