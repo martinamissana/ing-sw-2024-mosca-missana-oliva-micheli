@@ -369,7 +369,7 @@ public class Controller implements Serializable {
         Game game = gh.getGame(gameID);
 
         // if it's not this player's turn
-        if (player.getNickname().equals(game.getCurrPlayer().getNickname()))
+        if (!player.getNickname().equals(game.getCurrPlayer().getNickname()))
             throw new NotYourTurnException();
 
         // if the game's state isn't PLAY
@@ -414,7 +414,7 @@ public class Controller implements Serializable {
         Game game = gh.getGame(gameID);
 
         // if it's not this player's turn
-        if (player.getNickname().equals(game.getCurrPlayer().getNickname()))
+        if (!player.getNickname().equals(game.getCurrPlayer().getNickname()))
             throw new NotYourTurnException();
 
         // if the game's state isn't DRAW
