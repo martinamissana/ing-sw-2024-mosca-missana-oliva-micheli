@@ -42,6 +42,15 @@ public class Controller implements Serializable {
         return gh;
     }
 
+
+    /**
+     * adds users to user list in game handler
+     * @param username - of the player that joined the server
+     * @throws NicknameAlreadyTakenException - when in user list there is already a user with the same nickname
+     */
+    public void login(String username) throws NicknameAlreadyTakenException {
+        gh.addUser(new Player(username));
+    }
     //methods related to lobby
     /**
      * creates a new lobby adding it to the list of lobbies in GameHandler,
