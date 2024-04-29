@@ -324,6 +324,24 @@ public class Controller implements Serializable {
 
     // GAME
 
+    /**
+     * flips a card in a player's hand
+     * @param gameID ID of the player's game
+     * @param player player who's flipping the card
+     * @param handPos position of the card in the player's hand
+     * @throws GameDoesNotExistException thrown if the specified ID doesn't correspond to any active game
+     */
+    public void flipCard(Integer gameID, Player player, int handPos) throws GameDoesNotExistException {
+
+        // get game from ID
+        Game game = gh.getGame(gameID);
+
+        // flip the card
+        if(game.getPlayers().contains(player))
+            player.getHand().getCard(handPos).flip();
+
+        // message
+    }
 
     /**
      * plays a card from the hand of a player to their field, at the specified position
@@ -365,6 +383,8 @@ public class Controller implements Serializable {
         // only if it's not the last round (because if it is, players cannot draw cards)
         if (!game.isLastRound())
             game.setAction(Action.DRAW);
+
+        // message
     }
 
     /**
@@ -398,6 +418,8 @@ public class Controller implements Serializable {
 
         // set the game's current action to PLAY after drawing a card
         game.setAction(Action.PLAY);
+
+        // message
     }
 
     /**
@@ -412,6 +434,8 @@ public class Controller implements Serializable {
 
         // update turn counter
         game.setWhoseTurn((game.getWhoseTurn()+1)%game.getNumOfPlayers());
+
+        // message
     }
 
 
