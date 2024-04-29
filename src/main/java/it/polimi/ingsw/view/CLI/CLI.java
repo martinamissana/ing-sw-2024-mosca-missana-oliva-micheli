@@ -1,10 +1,11 @@
 package it.polimi.ingsw.view.CLI;
 
 import it.polimi.ingsw.controller.Controller;
-import it.polimi.ingsw.model.exceptions.FullLobbyException;
-import it.polimi.ingsw.model.exceptions.LobbyDoesNotExistsException;
-import it.polimi.ingsw.model.exceptions.NicknameAlreadyTakenException;
+import it.polimi.ingsw.controller.exceptions.GameAlreadyStartedException;
+import it.polimi.ingsw.model.exceptions.*;
 import it.polimi.ingsw.model.game.GameHandler;
+import it.polimi.ingsw.model.game.Lobby;
+import it.polimi.ingsw.model.player.Pawn;
 import it.polimi.ingsw.model.player.Player;
 
 import java.io.IOException;
@@ -30,10 +31,10 @@ public class CLI {
 
     public void printHello() {
         // prepare for the ASCII ART!!!!!!
-        System.out.println("\tWelcome to \"Codex Naturalis\"");
+        System.out.println(cli + "Welcome to \"Codex Naturalis\"");
     }
 
-    public Player askLogin() {
+    public void askLogin() {
         String username;
         boolean availableUsername = false;
         Player you = null;
@@ -52,7 +53,6 @@ public class CLI {
         } while (!availableUsername);
 
         System.out.println(cli + "Hello " + you.getNickname() + "!");
-        return you;
     }
 
     public void chooseAction(Player you) {
@@ -83,7 +83,7 @@ public class CLI {
     }
 
     public void printOpenLobbies() {
-        System.out.print(cli + "Open lobbies:");
+        System.out.print("\n" + cli + "Open lobbies:");
 
         for (Integer i : gh.getLobbies().keySet()) {
             try {
@@ -99,6 +99,32 @@ public class CLI {
                     }
                 } else System.out.print(cli + "-> Lobby " + warningColor + "#" + i + reset + ": FULL");
             } catch (LobbyDoesNotExistsException ignored) {}
+        }
+    }
+
+    public void printActiveGames() {
+        System.out.print("\n" + cli + "Games:");
+
+        for (Integer i : gh.getActiveGames().keySet()) {
+            try {
+                System.out.print(cli + "-> Game " + green + "#" + i + reset + ": " + " - [");
+
+                for (Player p : gh.getGame(i).getPlayers()) {
+                    switch (p.getPawn()) {
+                        case Pawn.BLUE -> System.out.print(blue + "● " + reset);
+                        case Pawn.RED -> System.out.print(red + "● " + reset);
+                        case Pawn.GREEN -> System.out.print(green + "● " + reset);
+                        case Pawn.YELLOW -> System.out.print(yellow + "● " + reset);
+                        default -> System.out.print("● " + reset);
+                    }
+
+                    if (p.equals(gh.getLobby(i).getPlayers().getLast())) {
+                        System.out.print(p.getNickname() + "]");
+                    } else {
+                        System.out.print(p.getNickname() + " - ");
+                    }
+                }
+            } catch (GameDoesNotExistException | LobbyDoesNotExistsException ignored) {}
         }
     }
 
@@ -147,32 +173,103 @@ public class CLI {
             controller.createLobby(numOfPlayers, you);
             int lobbyID = gh.getNumOfLobbies() - 1;
             System.out.print(cli + "Lobby successfully created! ID: " + lobbyID);
+            waiting(lobbyID, you);
 
-        } catch (FullLobbyException | LobbyDoesNotExistsException | NicknameAlreadyTakenException ignored) {}
+        } catch (LobbyDoesNotExistsException ignored) {}
     }
 
-    public void waiting(Player you) {
+    public void waiting(Integer lobbyID, Player you) throws LobbyDoesNotExistsException {
         int choice;
         System.out.println(cli + "Waiting for players..." + cli + "1. Set pawn color" + cli + "2. Send message" + cli + "3. Quit lobby");
         choice = input.nextInt();
 
         switch (choice) {
-            case 1 -> setPawnColor(you);
-            case 2 -> sendMessage(you);
-            case 3 -> quitLobby(you);
+            case 1 -> setPawnColor(lobbyID, you);
+            case 2 -> sendMessage(lobbyID, you);
+            case 3 -> quitLobby(lobbyID, you);
         }
     }
 
-    public void setPawnColor(Player you) {
+    public static final String blue = "\u001B[34m";
+    public static final String yellow = "\u001B[93m";
+    public static final String red = "\u001B[31m";
+
+    public void printAvailablePawns(int lobbyID) throws LobbyDoesNotExistsException {
+        Lobby lobby = gh.getLobby(lobbyID);
+
+        System.out.print(cli + "Available pawns: ");
+        for (Pawn p : lobby.getPawnBuffer().getPawnList()) {
+            switch (p) {
+                case Pawn.BLUE -> System.out.print(blue + "● " + reset);
+                case Pawn.RED -> System.out.print(red + "● " + reset);
+                case Pawn.GREEN -> System.out.print(green + "● " + reset);
+                case Pawn.YELLOW -> System.out.print(yellow + "● " + reset);
+            }
+        }
+        System.out.println();
+    }
+
+    public void printPlayers(int lobbyID) throws LobbyDoesNotExistsException {
+        Lobby lobby = gh.getLobby(lobbyID);
+
+        System.out.print(cli + "Players: " + lobby.getPlayers().size() + "/" + lobby.getNumOfPlayers());
+        for (Player p : lobby.getPlayers()) {
+            switch (p.getPawn()) {
+                case Pawn.BLUE -> System.out.print(cli + blue + "● " + reset);
+                case Pawn.RED -> System.out.print(cli + red + "● " + reset);
+                case Pawn.GREEN -> System.out.print(cli + green + "● " + reset);
+                case Pawn.YELLOW -> System.out.print(cli + yellow + "● " + reset);
+                case null, default -> System.out.print(cli + "● " + reset);
+            }
+            System.out.print(p.getNickname());
+        }
+        System.out.println();
+    }
+
+    public void setPawnColor(Integer lobbyID, Player you) throws LobbyDoesNotExistsException {
+        Pawn pawn;
+
+        do {
+            printAvailablePawns(lobbyID);
+            System.out.print(cli + "Which pawn do you want to choose? (");
+            for (int i = 0; i < gh.getLobby(lobbyID).getPawnBuffer().getPawnList().size(); i++) {
+                if (i != gh.getLobby(lobbyID).getPawnBuffer().getPawnList().size() - 1) System.out.print(gh.getLobby(lobbyID).getPawnBuffer().getPawnList().get(i) + " - ");
+                else System.out.print(gh.getLobby(lobbyID).getPawnBuffer().getPawnList().get(i) + ")" + user);
+            }
+
+            pawn = switch (input.nextLine().toUpperCase()) {
+                case "RED", "R", "ANTONIO" -> Pawn.RED;         // Easter egg
+                case "GREEN", "G", "SHREK" -> Pawn.GREEN;       // Easter egg
+                case "BLUE", "B", "GIORGIO" -> Pawn.BLUE;       // Easter egg
+                case "YELLOW", "Y", "BANANA" -> Pawn.YELLOW;    // Easter egg
+                default -> null;
+            };
+
+            if(pawn != null) {
+                try {
+                    controller.choosePawn(lobbyID, you, pawn);
+                } catch (PawnAlreadyTakenException e) {
+                    System.out.print(cli + "Pawn already taken!\n");
+                    pawn = null;
+                }
+            } else System.out.print(cli + "Color chosen does not exist!\n");
+        } while(pawn == null);
+    }
+
+    public void sendMessage(int lobbyID, Player you) {
 
     }
 
-    public void sendMessage(Player you) {
+    public void quitLobby(int lobbyID, Player you) throws LobbyDoesNotExistsException {
+        System.out.print("\n" + cli + "Trying leaving lobby " + green + "#" + lobbyID + reset + "...");
+        try {
+            controller.leaveLobby(you, lobbyID);
+        } catch (GameAlreadyStartedException ignored) {
+            System.out.print(cli + "The game is already started! Cannot leave the lobby!");
+            return;
+        }
 
-    }
-
-    public void quitLobby(Player you) {
-
+        System.out.print(cli + "Successfully leaved the lobby\n");
     }
 }
 

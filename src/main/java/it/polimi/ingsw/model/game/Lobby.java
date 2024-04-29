@@ -2,27 +2,30 @@ package it.polimi.ingsw.model.game;
 
 import it.polimi.ingsw.model.exceptions.FullLobbyException;
 import it.polimi.ingsw.model.exceptions.NicknameAlreadyTakenException;
+import it.polimi.ingsw.model.player.PawnBuffer;
 import it.polimi.ingsw.model.player.Player;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.HashSet;
 
 /**
  * Lobby class, it represents a waiting room that players can join. When the number of players required is reached, the game is created
  */
 public class Lobby implements Serializable {
 
-    private ArrayList<Player> players;
-    private int numOfPlayers;
+    private final ArrayList<Player> players;
+    private final int numOfPlayers;
+    private final PawnBuffer pawnBuffer;
+
 
     /**
      * Constructor
      * @param numOfPlayers - number of players required
      */
     public Lobby(int numOfPlayers){
-        this.numOfPlayers=numOfPlayers;
-        this.players=new ArrayList<>();
+        this.numOfPlayers = numOfPlayers;
+        this.players = new ArrayList<>();
+        this.pawnBuffer = new PawnBuffer();
     }
 
     /**
@@ -40,6 +43,12 @@ public class Lobby implements Serializable {
     public ArrayList<Player> getPlayers() {
         return players;
     }
+
+    /**
+     * getter
+     * @return PawnBuffer, the class where there are stored the available pawns
+     */
+    public PawnBuffer getPawnBuffer() {return pawnBuffer;}
 
     /**
      * method to add players to the lobby
@@ -64,7 +73,6 @@ public class Lobby implements Serializable {
      */
     public void removePlayer(Player player){
         players.remove(player);
-
     }
 
     /**

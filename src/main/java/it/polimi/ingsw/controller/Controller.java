@@ -59,14 +59,13 @@ public class Controller implements Serializable {
      * @param numOfPlayers - the number of player needed for the game to starts
      * @param lobbyCreator - the player that created the lobby
      * @throws LobbyDoesNotExistsException - this will never be thrown
-     * @throws FullLobbyException - this will never be thrown
-     * @throws NicknameAlreadyTakenException - this will never be thrown
      */
-    public void createLobby(int numOfPlayers, Player lobbyCreator) throws LobbyDoesNotExistsException, FullLobbyException, NicknameAlreadyTakenException {
-        gh.getLobbies().put(gh.getNumOfLobbies(), new Lobby(numOfPlayers));
-        gh.getLobby(gh.getNumOfLobbies()).addPlayer(lobbyCreator);
-        gh.setNumOfLobbies(gh.getNumOfLobbies() + 1);
-
+    public void createLobby(int numOfPlayers, Player lobbyCreator) throws LobbyDoesNotExistsException {
+        try {
+            gh.getLobbies().put(gh.getNumOfLobbies(), new Lobby(numOfPlayers));
+            gh.getLobby(gh.getNumOfLobbies()).addPlayer(lobbyCreator);
+            gh.setNumOfLobbies(gh.getNumOfLobbies() + 1);
+        } catch (FullLobbyException | NicknameAlreadyTakenException ignored) {}
     }
 
     /**
@@ -78,12 +77,12 @@ public class Controller implements Serializable {
      * @throws NicknameAlreadyTakenException -  if the nickname is already taken
      * @throws LobbyDoesNotExistsException - if the lobby does not exist
      */
-    public void joinLobby(Player player, int lobbyID ) throws FullLobbyException, NicknameAlreadyTakenException, LobbyDoesNotExistsException, IOException {
+    public void joinLobby(Player player, int lobbyID) throws FullLobbyException, NicknameAlreadyTakenException, LobbyDoesNotExistsException, IOException {
         //lobbyID is the index in lobbies
         if(gh.getLobbies().containsKey(lobbyID)) {
             gh.getLobbies().get(lobbyID).addPlayer(player);
             if(gh.getLobbies().get(lobbyID).getPlayers().size() == gh.getLobbies().get(lobbyID).getNumOfPlayers())
-                this.createGame(gh.getLobbies().get(lobbyID)); // in the last player has joined, the game is created
+                this.createGame(lobbyID); // in the last player has joined, the game is created
         }
         else throw new LobbyDoesNotExistsException("Lobby with ID " + lobbyID + " does not exist");
     }
@@ -110,7 +109,12 @@ public class Controller implements Serializable {
      * @throws LobbyDoesNotExistsException if the lobby does not exist
      */
     public void deleteLobby(int lobbyID) throws LobbyDoesNotExistsException {
-        if(gh.getLobbies().get(lobbyID) != null) gh.getLobbies().remove(lobbyID);
+        if(gh.getActiveGames().containsKey(lobbyID)) {
+            try {
+                terminateGame(lobbyID);
+            } catch (GameDoesNotExistException ignored) {}
+        }
+        else if(gh.getLobbies().get(lobbyID) != null) gh.getLobbies().remove(lobbyID);
         else throw new LobbyDoesNotExistsException("Lobby with ID " + lobbyID + " does not exist");
     }
 
@@ -120,31 +124,41 @@ public class Controller implements Serializable {
      * creates a new game adding it to the list of active games in GameHandler,
      * all the players of the lobby in input will be added to the game and the scoreboard is initialized
      * the order in which players joined the lobby determines their playing sequence, but the first player is randomly chosen
-     * @param lobby - the lobby that starts the game
+     * @param lobbyID - ID of the lobby that starts the game
      * @throws IOException - produced by failed or interrupted I/O operations
      */
-    private void createGame(Lobby lobby) throws IOException {
-        ArrayList<Player> players=lobby.getPlayers();
-        Random r=new Random();
-        int i=r.nextInt(lobby.getNumOfPlayers());//the first player is randomly chosen
+    private void createGame(Integer lobbyID) throws IOException, LobbyDoesNotExistsException {
+        Lobby lobby = gh.getLobby(lobbyID);
+
+        ArrayList<Player> players = lobby.getPlayers();
+        Random r = new Random();
+        int i = r.nextInt(lobby.getNumOfPlayers()); // the first player is randomly chosen
         Collections.rotate(players,i);
         players.getFirst().setGoesFirst(true);
 
+        for (Player p : players) {
+            if (p.getPawn() == null) {
+                i = r.nextInt(lobby.getPawnBuffer().getPawnList().size());
+                try {
+                    choosePawn(lobbyID, p, lobby.getPawnBuffer().getPawnList().get(i));
+                } catch (PawnAlreadyTakenException ignored) {}
+            }
+        }
+
         //scoreboard initialization->all values set at 0
         HashMap<Player,Integer> scoreboard= new HashMap<>();
-        for(Player p : players){
+        for(Player p : players) {
             scoreboard.put(p,0);
         }
         //the game is instantiated and added to the list to active games
-        gh.getActiveGames().put(gh.getNumOfGames(), new Game(gh.getNumOfGames(),lobby.getNumOfPlayers(),players,scoreboard));
-        gh.setNumOfGames(gh.getNumOfGames()+1);
+        gh.getActiveGames().put(lobbyID, new Game(lobbyID,lobby.getNumOfPlayers(),players,scoreboard));
     }
+
     /**
      * deletes the specified game from the list of active games and also the associated lobby
      * @param gameID - the ID of the game that will be deleted
      * @throws GameDoesNotExistException - if the game does not exist
      */
-
     public void terminateGame(Integer gameID) throws GameDoesNotExistException, LobbyDoesNotExistsException {
         if(gh.getActiveGames().containsKey(gameID)){
             gh.getActiveGames().remove(gameID);
@@ -251,15 +265,15 @@ public class Controller implements Serializable {
 
     /**
      * Allows the player to choose a pawn
-     * @param gameID - ID of the game played
+     * @param lobbyID - ID of the lobby
      * @param player - who is choosing the pawn
      * @param color - color of the desired pawn
      * @throws PawnAlreadyTakenException - if the chosen pawn has already been taken
-     * @throws GameDoesNotExistException - if gameID does not correspond to a game in game handler
+     * @throws LobbyDoesNotExistsException - if lobbyID does not correspond to a lobby in game handler
      */
-    public void choosePawn(Integer gameID, Player player, Pawn color) throws PawnAlreadyTakenException, GameDoesNotExistException {
-        Game game = gh.getGame(gameID);
-        PawnBuffer pawnList = game.getPawnBuffer();
+    public void choosePawn(Integer lobbyID, Player player, Pawn color) throws PawnAlreadyTakenException, LobbyDoesNotExistsException {
+        Lobby lobby = gh.getLobby(lobbyID);
+        PawnBuffer pawnList = lobby.getPawnBuffer();
 
         if(pawnList.getPawnList().contains(color)) pawnList.getPawnList().remove(color);
         else throw new PawnAlreadyTakenException();

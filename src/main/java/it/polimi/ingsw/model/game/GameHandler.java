@@ -18,7 +18,6 @@ import java.util.HashMap;
 public class GameHandler extends Observable implements Serializable  {
     private HashMap<Integer,Game> activeGames;
     private HashMap<Integer,Lobby> lobbies;
-    private int numOfGames=0;
     private int numOfLobbies=0;
     private final ArrayList<Player> users;
 
@@ -63,14 +62,6 @@ public class GameHandler extends Observable implements Serializable  {
 
     /**
      * getter
-     * @return numOfGames - the number of games that have been created
-     */
-    public int getNumOfGames() {
-        return numOfGames;
-    }
-
-    /**
-     * getter
      * @return numOfLobbies - the number of lobbies that have been created
      */
     public int getNumOfLobbies() { return numOfLobbies; }
@@ -102,12 +93,6 @@ public class GameHandler extends Observable implements Serializable  {
             throw new LobbyDoesNotExistsException("Lobby with ID " + ID + " does not exist");
         }
     }
-
-    /**
-     * setter
-     * @param numOfGames- the value you want to set for the number of active games
-     */
-    public void setNumOfGames(int numOfGames) { this.numOfGames = numOfGames; }
 
     /**
      * setter

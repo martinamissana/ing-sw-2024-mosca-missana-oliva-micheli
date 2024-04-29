@@ -6,7 +6,6 @@ import it.polimi.ingsw.model.exceptions.EmptyBufferException;
 import it.polimi.ingsw.model.exceptions.EmptyDeckException;
 import it.polimi.ingsw.model.goal.Goal;
 import it.polimi.ingsw.model.goal.GoalContainer;
-import it.polimi.ingsw.model.player.PawnBuffer;
 import it.polimi.ingsw.model.player.Player;
 
 import java.io.IOException;
@@ -23,15 +22,14 @@ public class Game implements Serializable {
     private final int numOfPlayers;
     private final ArrayList<Player> players;
     private int whoseTurn;
-    private Action action= Action.PLAY;
-    private boolean lastRound; //set to true afterward someone reached 20 points in a round and that same round has finished
-    private final HashMap<Player,Integer> scoreboard;
+    private Action action = Action.PLAY;
+    private boolean lastRound; // set to true afterward someone reached 20 points in a round and that same round has finished
+    private final HashMap<Player, Integer> scoreboard;
     private Goal commonGoal1;
     private Goal commonGoal2;
-    private final Deck ResourceDeck=new Deck(DeckType.RESOURCE);
-    private final Deck GoldenDeck=new Deck(DeckType.GOLDEN);
+    private final Deck ResourceDeck = new Deck(DeckType.RESOURCE);
+    private final Deck GoldenDeck = new Deck(DeckType.GOLDEN);
     private final HashMap<DeckBufferType, DeckBuffer> deckBuffers = new HashMap<>();
-    private final PawnBuffer pawnBuffer;
     private final GoalContainer goals;
 
 
@@ -55,7 +53,6 @@ public class Game implements Serializable {
         this.deckBuffers.put(DeckBufferType.GOLD2, new DeckBuffer(this.GoldenDeck));
         this.deckBuffers.put(DeckBufferType.RES1, new DeckBuffer(this.ResourceDeck));
         this.deckBuffers.put(DeckBufferType.RES2, new DeckBuffer(this.ResourceDeck));
-        this.pawnBuffer = new PawnBuffer();
         this.goals = new GoalContainer();
     }
 
@@ -115,12 +112,6 @@ public class Game implements Serializable {
     public Action getAction() {
         return action;
     }
-
-    /**
-     * getter
-     * @return PawnBuffer, the class where there are stored the available pawns
-     */
-    public PawnBuffer getPawnBuffer() {return pawnBuffer;}
 
     /**
      * getter
