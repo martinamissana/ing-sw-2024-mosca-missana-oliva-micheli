@@ -2,7 +2,9 @@ package it.polimi.ingsw.model.observer;
 
 
 import it.polimi.ingsw.model.observer.events.Event;
+import it.polimi.ingsw.network.exceptions.ConnectionException;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,7 +24,7 @@ public abstract class Observable<T> {
         }
     }
 
-    protected void notify(Event event){
+    protected void notify(Event event) throws IOException, ConnectionException {
         synchronized (observers) {
             for(Observer<T> observer : observers){
                 observer.update(event);

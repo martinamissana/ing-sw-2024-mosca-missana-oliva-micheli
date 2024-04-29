@@ -1,4 +1,6 @@
-package it.polimi.ingsw.network.netMessage;
+package it.polimi.ingsw.network.netMessage.s2c;
+
+import it.polimi.ingsw.network.netMessage.NetMessage;
 
 public class LoginMessage extends NetMessage {
     String nickname;
