@@ -1,6 +1,8 @@
 package it.polimi.ingsw.model.observer;
 
 
+import it.polimi.ingsw.model.observer.events.Event;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,10 +22,10 @@ public abstract class Observable<T> {
         }
     }
 
-    protected void notify(T message){
+    protected void notify(Event event){
         synchronized (observers) {
             for(Observer<T> observer : observers){
-                observer.update(message);
+                observer.update(event);
             }
         }
     }

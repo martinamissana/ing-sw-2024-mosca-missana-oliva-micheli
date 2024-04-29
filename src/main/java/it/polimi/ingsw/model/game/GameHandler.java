@@ -114,6 +114,12 @@ public class GameHandler extends Observable implements Serializable  {
      * @param numOfLobbies - the value you want to set for the number of lobbies
      */
     public void setNumOfLobbies(int numOfLobbies) { this.numOfLobbies = numOfLobbies; }
+
+    /**
+     * used to add users to user list
+     * @param user - the user that will be added to the user list
+     * @throws NicknameAlreadyTakenException - when in user list there is already a user with the same nickname
+     */
     public void addUser(Player user) throws NicknameAlreadyTakenException {
         for (Player u: this.users){
             if(u.getNickname().equals(user.getNickname())) throw new NicknameAlreadyTakenException();
