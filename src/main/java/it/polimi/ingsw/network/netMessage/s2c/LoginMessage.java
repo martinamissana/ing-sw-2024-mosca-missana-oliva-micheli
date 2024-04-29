@@ -8,4 +8,8 @@ public class LoginMessage extends NetMessage {
     public LoginMessage(String nickname) {
         this.nickname = nickname;
     }
+
+    public String getNickname() {
+        return nickname;
+    }
 }
