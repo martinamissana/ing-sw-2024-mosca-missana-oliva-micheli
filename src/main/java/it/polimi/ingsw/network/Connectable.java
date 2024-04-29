@@ -7,6 +7,6 @@ import java.io.IOException;
 
 public interface Connectable {
     public void send(NetMessage message) throws IOException, ConnectionException;
-    public NetMessage receive() throws InterruptedException, ConnectionException;
+    public void receive(NetMessage message) throws InterruptedException, ConnectionException;
     public void disconnect();
 }
