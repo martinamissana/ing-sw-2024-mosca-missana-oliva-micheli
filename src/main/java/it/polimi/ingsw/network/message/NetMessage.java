@@ -1,5 +1,5 @@
 package it.polimi.ingsw.network.message;
 
-public abstract class Message {
+public abstract class NetMessage {
 
 }
