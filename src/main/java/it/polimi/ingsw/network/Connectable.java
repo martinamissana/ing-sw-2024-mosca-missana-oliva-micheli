@@ -6,7 +6,7 @@ import it.polimi.ingsw.network.exceptions.ConnectionException;
 import java.io.IOException;
 
 public interface Connectable {
-    void send(Message message) throws IOException, ConnectionException;
-    Message receive() throws InterruptedException, ConnectionException;
-    void disconnect();
+    public void send(Message message) throws IOException, ConnectionException;
+    public Message receive() throws InterruptedException, ConnectionException;
+    public void disconnect();
 }
