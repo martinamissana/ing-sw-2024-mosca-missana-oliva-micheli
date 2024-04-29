@@ -1,6 +1,6 @@
 package it.polimi.ingsw.network;
 
-import it.polimi.ingsw.network.message.NetMessage;
+import it.polimi.ingsw.network.netMessage.NetMessage;
 import it.polimi.ingsw.network.exceptions.ConnectionException;
 
 import java.io.IOException;

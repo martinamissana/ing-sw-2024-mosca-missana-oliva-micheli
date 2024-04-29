@@ -1,4 +1,4 @@
-package it.polimi.ingsw.network.message;
+package it.polimi.ingsw.network.netMessage;
 
 public class LoginMessage extends NetMessage {
     String nickname;
