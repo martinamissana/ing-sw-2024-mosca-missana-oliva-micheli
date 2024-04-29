@@ -14,6 +14,14 @@ public class Hand implements Serializable {
     private final ArrayList<Card> handList = new ArrayList<>();
 
     /**
+     * returns number of cards in hand
+     * @return size
+     */
+    public int getSize() {
+        return handList.size();
+    }
+
+    /**
      * returns the card at the specified position in the hand
      * @param pos position of the desired card
      * @return Card
