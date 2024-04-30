@@ -83,7 +83,7 @@ public class CLI {
     }
 
     public void printOpenLobbies() {
-        System.out.print("\n" + cli + "Open lobbies:");
+        System.out.print(cli + "Open lobbies:");
 
         for (Integer i : gh.getLobbies().keySet()) {
             try {
@@ -100,10 +100,11 @@ public class CLI {
                 } else System.out.print(cli + "-> Lobby " + warningColor + "#" + i + reset + ": FULL");
             } catch (LobbyDoesNotExistsException ignored) {}
         }
+        System.out.println();
     }
 
     public void printActiveGames() {
-        System.out.print("\n" + cli + "Games:");
+        System.out.print(cli + "Games:");
 
         for (Integer i : gh.getActiveGames().keySet()) {
             try {
@@ -126,6 +127,7 @@ public class CLI {
                 }
             } catch (GameDoesNotExistException | LobbyDoesNotExistsException ignored) {}
         }
+        System.out.println();
     }
 
     private boolean chooseLobby(Player you) {
@@ -212,7 +214,7 @@ public class CLI {
     public void printPlayers(int lobbyID) throws LobbyDoesNotExistsException {
         Lobby lobby = gh.getLobby(lobbyID);
 
-        System.out.print(cli + "Players: " + lobby.getPlayers().size() + "/" + lobby.getNumOfPlayers());
+        System.out.print(cli + "Players (lobby " + green + "#" + lobbyID + reset + "): " + lobby.getPlayers().size() + "/" + lobby.getNumOfPlayers());
         for (Player p : lobby.getPlayers()) {
             switch (p.getPawn()) {
                 case Pawn.BLUE -> System.out.print(cli + blue + "● " + reset);
@@ -238,10 +240,10 @@ public class CLI {
             }
 
             pawn = switch (input.nextLine().toUpperCase()) {
-                case "RED", "R", "ANTONIO" -> Pawn.RED;         // Easter egg
-                case "GREEN", "G", "SHREK" -> Pawn.GREEN;       // Easter egg
-                case "BLUE", "B", "GIORGIO" -> Pawn.BLUE;       // Easter egg
-                case "YELLOW", "Y", "BANANA" -> Pawn.YELLOW;    // Easter egg
+                case "RED", "R" -> Pawn.RED;
+                case "GREEN", "G", "SHREK", "ANTONIO" -> Pawn.GREEN;    // Easter egg
+                case "BLUE", "B", "GIORGIO" -> Pawn.BLUE;               // Easter egg
+                case "YELLOW", "Y", "BANANA" -> Pawn.YELLOW;            // Easter egg
                 default -> null;
             };
 

@@ -21,7 +21,7 @@ public class CLIGame extends CLI {
     public static final String InsectColor = "\u001B[30;45m"; // Purple
     public static final String AnimalColor = "\u001B[30;46m"; // Cyan
     public static final String StarterColor = "\u001B[30;48;2;245;200;157m"; // Meat
-    public static final String ResourcesColor = "\u001B[30;43m"; // Gold
+    public static final String GoldColor = "\u001B[30;43m"; // Gold
     public static final String CardBlockColor = "\u001B[40m";
 
     @Override
@@ -44,9 +44,9 @@ public class CLIGame extends CLI {
 
         if (card.getClass().getName().equals("it.polimi.ingsw.model.card.StarterCard")) {
             return switch (item) {
-                case Resource.INKWELL -> ResourcesColor + " I " + reset;
-                case Resource.MANUSCRIPT -> ResourcesColor + " M " + reset;
-                case Resource.QUILL -> ResourcesColor + " Q " + reset;
+                case Resource.INKWELL -> GoldColor + " I " + reset;
+                case Resource.MANUSCRIPT -> GoldColor + " M " + reset;
+                case Resource.QUILL -> GoldColor + " Q " + reset;
                 case Kingdom.FUNGI -> FungiColor + " F " + reset;
                 case Kingdom.PLANT -> PlantColor + " P " + reset;
                 case Kingdom.ANIMAL -> AnimalColor + " A " + reset;
@@ -56,9 +56,9 @@ public class CLIGame extends CLI {
             };
         }
         else return switch (item) {
-            case Resource.INKWELL -> ResourcesColor + " I " + reset;
-            case Resource.MANUSCRIPT -> ResourcesColor + " M " + reset;
-            case Resource.QUILL -> ResourcesColor + " Q " + reset;
+            case Resource.INKWELL -> GoldColor + " I " + reset;
+            case Resource.MANUSCRIPT -> GoldColor + " M " + reset;
+            case Resource.QUILL -> GoldColor + " Q " + reset;
             case Kingdom.FUNGI -> StarterColor + " F " + reset;
             case Kingdom.PLANT -> StarterColor + " P " + reset;
             case Kingdom.ANIMAL -> StarterColor + " A " + reset;
@@ -77,13 +77,28 @@ public class CLIGame extends CLI {
         String north = ItemToString(card, CornerType.NORTH);
         String west = ItemToString(card, CornerType.WEST);
 
-        int points = 0;
-        if (card.getClass().getName().equals("it.polimi.ingsw.model.card.ResourceCard") || card.getClass().getName().equals("it.polimi.ingsw.model.card.GoldenCard")) {
-            points = ((ResourceCard) card).getPoints();
-        }
+        if (card.getSide().equals(CardSide.FRONT)) {
+            int directPoints = 0;
+            if (card.getClass().getName().equals("it.polimi.ingsw.model.card.ResourceCard") || card.getClass().getName().equals("it.polimi.ingsw.model.card.GoldenCard")) {
+                directPoints = ((ResourceCard) card).getPoints();
+            }
 
-        if (points != 0) return west + kingdom + "   " + reset + ResourcesColor + points + reset + kingdom + "   " + reset + north;
-        else return west + kingdom + "       " + reset + north;
+            if (directPoints != 0) {
+                String points;
+                if (card.getClass().getName().equals("it.polimi.ingsw.model.card.GoldenCard") && ((GoldenCard) card).getType() == GoldenCardType.CORNER)
+                    points = directPoints + "xC";
+                else if (card.getClass().getName().equals("it.polimi.ingsw.model.card.GoldenCard") && ((GoldenCard) card).getType() == GoldenCardType.RESOURCE) {
+                    points = directPoints + "x" + switch (((GoldenCard) card).getPointResource()) {
+                        case INKWELL -> "I";
+                        case MANUSCRIPT -> "M";
+                        case QUILL -> "Q";
+                    };
+                } else points = " " + directPoints + " ";
+
+                return west + kingdom + "  " + reset + GoldColor + points + reset + kingdom + "  " + reset + north;
+            }
+        }
+        return west + kingdom + "       " + reset + north;
     }
 
     private String printMiddle(Card card) {
@@ -114,15 +129,18 @@ public class CLIGame extends CLI {
         String kingdom;
         if (card.getSide().equals(CardSide.BACK)) {
             kingdom = switch (KingdomToColor(card.getKingdom())) {
-                case AnimalColor -> "A";
-                case FungiColor -> "F";
-                case InsectColor -> "I";
-                case PlantColor -> "P";
+                case AnimalColor -> " A ";
+                case FungiColor -> " F ";
+                case InsectColor -> " I ";
+                case PlantColor -> " P ";
                 default -> throw new IllegalStateException("Unexpected value: " + KingdomToColor(card.getKingdom()));
             };
-        } else kingdom = " ";
 
-        return KingdomToColor(card.getKingdom()) + "      " + kingdom + "      " + reset;
+            if (card.getClass().getName().equals("it.polimi.ingsw.model.card.GoldenCard"))
+                return KingdomToColor(card.getKingdom()) + "     " + reset + GoldColor + kingdom + reset + KingdomToColor(card.getKingdom()) + "     " + reset;
+        } else kingdom = "   ";
+
+        return KingdomToColor(card.getKingdom()) + "     " + kingdom + "     " + reset;
     }
 
     private String printLower(Card card) {
@@ -134,14 +152,44 @@ public class CLIGame extends CLI {
         String south = ItemToString(card, CornerType.SOUTH);
         String east = ItemToString(card, CornerType.EAST);
 
-        return south + kingdom + "       " + kingdom + east;
+        if (card.getClass().getName().equals("it.polimi.ingsw.model.card.GoldenCard") && card.getSide().equals(CardSide.FRONT)) {
+            StringBuilder requirements = new StringBuilder();
+            for (Kingdom k : ((GoldenCard) card).getRequirements().keySet()) {
+                switch(k) {
+                    case ANIMAL -> requirements.append("A".repeat(Math.max(0, ((GoldenCard) card).getRequirements().get(k))));
+                    case FUNGI -> requirements.append("F".repeat(Math.max(0, ((GoldenCard) card).getRequirements().get(k))));
+                    case INSECT -> requirements.append("I".repeat(Math.max(0, ((GoldenCard) card).getRequirements().get(k))));
+                    case PLANT -> requirements.append("P".repeat(Math.max(0, ((GoldenCard) card).getRequirements().get(k))));
+                }
+            }
+
+            return south + kingdom + switch (requirements.toString().length()) {
+                case 1 -> "   " + reset + StarterColor + requirements + reset + kingdom + "   ";
+                case 2 -> "  " + reset + StarterColor + requirements + reset + kingdom + "   ";
+                case 3 -> "  " + reset + StarterColor + requirements + reset + kingdom + "  ";
+                case 4 -> " " + reset + StarterColor + requirements + reset + kingdom + "  ";
+                case 5 -> " " + reset + StarterColor + requirements + reset + kingdom + " ";
+                default -> throw new IllegalStateException("Unexpected value: " + requirements.toString().length());
+            } + reset + east;
+        }
+        return south + kingdom + "       " + reset + east;
     }
 
     public void printCard(Card card) {
         System.out.println(cli + printUpper(card) + cli + printMiddle(card) + cli + printLower(card) + "\n");
     }
 
-    public void printHand(Player player) {
+    public void printHand(Player player, int swapFactor) {
+        switch (swapFactor) {
+            case -1 -> {
+                for (int i = 0; i < player.getHand().getSize(); i++) player.getHand().getCard(i).flip();
+            }
+            case 0, 1, 2 -> {
+                try {
+                    player.getHand().getCard(swapFactor).flip();
+                } catch (IndexOutOfBoundsException ignored) {}
+            }
+        }
         Hand hand = player.getHand();
 
         System.out.print("\n" + cli + player.getNickname());
@@ -170,38 +218,63 @@ public class CLIGame extends CLI {
 
     public void printGameArea(Integer gameID) throws GameDoesNotExistException {
         Game game = gh.getGame(gameID);
+        ResourceCard next;
+
+        // Printing resource deck + spaces
+        if (!game.getDeck(DeckType.RESOURCE).getCards().isEmpty()) {
+            next = game.getDeck(DeckType.RESOURCE).getCards().getLast();
+            next.flip();
+        } else next = null;
+
         System.out.print(cli + "Resource Deck (" + game.getDeck(DeckType.RESOURCE).getCards().size() + ") + card spaces:" + cli);
+        if (next != null) System.out.print(printUpper(next) + "\t\t");
+        else System.out.print("\t\t\t\t\t");
+        if (game.getDeckBuffer(DeckBufferType.RES1).getCard() != null) System.out.print(printUpper(game.getDeckBuffer(DeckBufferType.RES1).getCard()) + "\t");
+        else System.out.print("\t\t\t\t");
+        if (game.getDeckBuffer(DeckBufferType.RES2).getCard() != null) System.out.print(printUpper(game.getDeckBuffer(DeckBufferType.RES2).getCard()) + cli);
+        else System.out.print("\t\t\t\t");
 
-        int i;
-        for (i = 0; i < game.getDeck(DeckType.RESOURCE).getCards().size(); i++) {
-            System.out.print(KingdomToColor(game.getDeck(DeckType.RESOURCE).getCards().get(i).getKingdom()) + "|" + reset);
-            if (i == game.getDeck(DeckType.RESOURCE).getCards().size() - 1) System.out.print(KingdomToColor(game.getDeck(DeckType.RESOURCE).getCards().get(i).getKingdom()) + "  |" + reset + cli);
-        }
-        for (i = 0; i < game.getDeck(DeckType.RESOURCE).getCards().size(); i++) {
-            System.out.print(KingdomToColor(game.getDeck(DeckType.RESOURCE).getCards().get(i).getKingdom()) + "|" + reset);
-            if (i == game.getDeck(DeckType.RESOURCE).getCards().size() - 1)  System.out.println(KingdomToColor(game.getDeck(DeckType.RESOURCE).getCards().get(i).getKingdom()) + "  |" + reset);
-        }
+        if (next != null) System.out.print(printMiddle(next) + "\t\t");
+        else System.out.print("\t\t\t\t\t");
+        if (game.getDeckBuffer(DeckBufferType.RES1).getCard() != null) System.out.print(printMiddle(game.getDeckBuffer(DeckBufferType.RES1).getCard()) + "\t");
+        else System.out.print("\t\t\t\t");
+        if (game.getDeckBuffer(DeckBufferType.RES2).getCard() != null) System.out.print(printMiddle(game.getDeckBuffer(DeckBufferType.RES2).getCard()) + cli);
+        else System.out.print("\t\t\t\t");
 
-        System.out.print(cli + "Resource Card spaces:");
-        System.out.print(cli + printUpper(game.getDeckBuffer(DeckBufferType.RES1).getCard()) + "\t" + printUpper(game.getDeckBuffer(DeckBufferType.RES2).getCard()));
-        System.out.print(cli + printMiddle(game.getDeckBuffer(DeckBufferType.RES1).getCard()) + "\t" + printMiddle(game.getDeckBuffer(DeckBufferType.RES2).getCard()));
-        System.out.println(cli + printLower(game.getDeckBuffer(DeckBufferType.RES1).getCard()) + "\t" + printLower(game.getDeckBuffer(DeckBufferType.RES2).getCard()));
+        if (next != null) System.out.print(printLower(next) + "\t\t");
+        else System.out.print("\t\t\t\t\t");
+        if (game.getDeckBuffer(DeckBufferType.RES1).getCard() != null) System.out.print(printLower(game.getDeckBuffer(DeckBufferType.RES1).getCard()) + "\t");
+        else System.out.print("\t\t\t\t");
+        if (game.getDeckBuffer(DeckBufferType.RES2).getCard() != null) System.out.print(printLower(game.getDeckBuffer(DeckBufferType.RES2).getCard()) + cli);
+        else System.out.print("\t\t\t\t");
 
+        // Printing golden deck + spaces
+        if (!game.getDeck(DeckType.GOLDEN).getCards().isEmpty()) {
+            next = game.getDeck(DeckType.GOLDEN).getCards().getLast();
+            next.flip();
+        } else next = null;
 
         System.out.print(cli + "Golden Deck (" + game.getDeck(DeckType.GOLDEN).getCards().size() + ") + card spaces:" + cli);
-        for (i = 0; i < game.getDeck(DeckType.GOLDEN).getCards().size(); i++) {
-            System.out.print(KingdomToColor(game.getDeck(DeckType.GOLDEN).getCards().get(i).getKingdom()) + "|" + reset);
-            if (i == game.getDeck(DeckType.GOLDEN).getCards().size() - 1) System.out.print(KingdomToColor(game.getDeck(DeckType.GOLDEN).getCards().get(i).getKingdom()) + "  |" + reset + cli);
-        }
-        for (i = 0; i < game.getDeck(DeckType.GOLDEN).getCards().size(); i++) {
-            System.out.print(KingdomToColor(game.getDeck(DeckType.GOLDEN).getCards().get(i).getKingdom()) + "|" + reset);
-            if (i == game.getDeck(DeckType.GOLDEN).getCards().size() - 1) System.out.println(KingdomToColor(game.getDeck(DeckType.GOLDEN).getCards().get(i).getKingdom()) + "  |" + reset);
-        }
+        if (next != null) System.out.print(printUpper(next) + "\t\t");
+        else System.out.print("\t\t\t\t\t");
+        if (game.getDeckBuffer(DeckBufferType.GOLD1).getCard() != null) System.out.print(printUpper(game.getDeckBuffer(DeckBufferType.GOLD1).getCard()) + "\t");
+        else System.out.print("\t\t\t\t");
+        if (game.getDeckBuffer(DeckBufferType.GOLD2).getCard() != null) System.out.print(printUpper(game.getDeckBuffer(DeckBufferType.GOLD2).getCard()) + cli);
+        else System.out.print("\t\t\t\t");
 
-        System.out.print(cli + "Golden Card spaces:");
-        System.out.print(cli + printUpper(game.getDeckBuffer(DeckBufferType.GOLD1).getCard()) + "\t" + printUpper(game.getDeckBuffer(DeckBufferType.GOLD2).getCard()));
-        System.out.print(cli + printMiddle(game.getDeckBuffer(DeckBufferType.GOLD1).getCard()) + "\t" + printMiddle(game.getDeckBuffer(DeckBufferType.GOLD2).getCard()));
-        System.out.println(cli + printLower(game.getDeckBuffer(DeckBufferType.GOLD1).getCard()) + "\t" + printLower(game.getDeckBuffer(DeckBufferType.GOLD2).getCard()));
+        if (next != null) System.out.print(printMiddle(next) + "\t\t");
+        else System.out.print("\t\t\t\t\t");
+        if (game.getDeckBuffer(DeckBufferType.GOLD1).getCard() != null) System.out.print(printMiddle(game.getDeckBuffer(DeckBufferType.GOLD1).getCard()) + "\t");
+        else System.out.print("\t\t\t\t");
+        if (game.getDeckBuffer(DeckBufferType.GOLD2).getCard() != null) System.out.print(printMiddle(game.getDeckBuffer(DeckBufferType.GOLD2).getCard()) + cli);
+        else System.out.print("\t\t\t\t");
+
+        if (next != null) System.out.print(printLower(next) + "\t\t");
+        else System.out.print("\t\t\t\t\t");
+        if (game.getDeckBuffer(DeckBufferType.GOLD1).getCard() != null) System.out.print(printLower(game.getDeckBuffer(DeckBufferType.GOLD1).getCard()) + "\t");
+        else System.out.print("\t\t\t\t");
+        if (game.getDeckBuffer(DeckBufferType.GOLD2).getCard() != null) System.out.print(printLower(game.getDeckBuffer(DeckBufferType.GOLD2).getCard()) + cli);
+        else System.out.print("\t\t\t\t");
     }
 
     public void printScoreboard(Integer gameID) throws GameDoesNotExistException {
