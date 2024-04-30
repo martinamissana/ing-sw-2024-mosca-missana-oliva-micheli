@@ -4,7 +4,9 @@ import it.polimi.ingsw.model.exceptions.GameDoesNotExistException;
 import it.polimi.ingsw.model.exceptions.LobbyDoesNotExistsException;
 import it.polimi.ingsw.model.exceptions.NicknameAlreadyTakenException;
 import it.polimi.ingsw.model.observer.Observable;
+import it.polimi.ingsw.model.observer.events.LoginEvent;
 import it.polimi.ingsw.model.player.Player;
+import it.polimi.ingsw.network.exceptions.ConnectionException;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -105,11 +107,12 @@ public class GameHandler extends Observable implements Serializable  {
      * @param user - the user that will be added to the user list
      * @throws NicknameAlreadyTakenException - when in user list there is already a user with the same nickname
      */
-    public void addUser(Player user) throws NicknameAlreadyTakenException {
+    public void addUser(Player user) throws NicknameAlreadyTakenException, IOException, ConnectionException {
         for (Player u: this.users){
             if(u.getNickname().equals(user.getNickname())) throw new NicknameAlreadyTakenException();
         }
         getUsers().add(user);
+        notify(new LoginEvent(user.getNickname()));
     }
 
     /**

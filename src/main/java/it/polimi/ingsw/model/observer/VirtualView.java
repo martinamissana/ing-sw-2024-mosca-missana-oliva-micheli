@@ -12,30 +12,26 @@ import it.polimi.ingsw.network.netMessage.NetMessage;
 
 import java.io.IOException;
 
-public class VirtualView implements Observer, Connectable{
+public class VirtualView implements Observer, Runnable{
     private Controller c;
+    private Connectable connection;
+
+    public VirtualView(Controller c, Connectable connection) {
+        this.c = c;
+        this.connection = connection;
+    }
 
     @Override
     public void update(Event event) throws IOException, ConnectionException {
         switch (event.getEventType()) {
             case LOGIN -> {
                 LoginMessage m = new LoginMessage(((LoginEvent) event).getNickname());
-                send(m);
+                connection.send(m);
             }
         }
     }
-    public void Receive(String nickname) throws NicknameAlreadyTakenException {
-        c.login(nickname);
-    }
 
-
-    @Override
-    public void send(NetMessage message) throws IOException, ConnectionException {
-        //
-    }
-
-    @Override
-    public void receive(NetMessage message) throws InterruptedException, ConnectionException, NicknameAlreadyTakenException {
+    private void elaborate(NetMessage message) throws InterruptedException, ConnectionException, NicknameAlreadyTakenException {
         switch (message) {
             case MyNickname m -> {
                c.login(m.getNickname());
@@ -46,7 +42,7 @@ public class VirtualView implements Observer, Connectable{
 
 
     @Override
-    public void disconnect() {
+    public void run() {
 
     }
 }

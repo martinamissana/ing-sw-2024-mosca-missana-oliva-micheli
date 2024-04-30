@@ -12,11 +12,12 @@ import it.polimi.ingsw.model.game.GameHandler;
 import it.polimi.ingsw.model.player.Coords;
 import it.polimi.ingsw.model.player.Pawn;
 import it.polimi.ingsw.model.player.Player;
+import it.polimi.ingsw.network.exceptions.ConnectionException;
 
 import java.io.IOException;
 
 public class Main {
-    public static void main(String[] args) throws FullLobbyException, LobbyDoesNotExistsException, NicknameAlreadyTakenException, IOException, GameDoesNotExistException, EmptyDeckException, HandIsFullException, PawnAlreadyTakenException, GameAlreadyStartedException, IllegalActionException, NotYourTurnException, IllegalMoveException, EmptyBufferException {
+    public static void main(String[] args) throws FullLobbyException, LobbyDoesNotExistsException, NicknameAlreadyTakenException, IOException, GameDoesNotExistException, EmptyDeckException, HandIsFullException, PawnAlreadyTakenException, GameAlreadyStartedException, IllegalActionException, NotYourTurnException, IllegalMoveException, EmptyBufferException, ConnectionException {
         CLI cli = new CLI();
         CLIGame cliG = new CLIGame();
         GameHandler gh = new GameHandler();

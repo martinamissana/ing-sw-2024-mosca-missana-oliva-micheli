@@ -7,6 +7,7 @@ import it.polimi.ingsw.model.game.GameHandler;
 import it.polimi.ingsw.model.game.Lobby;
 import it.polimi.ingsw.model.player.Pawn;
 import it.polimi.ingsw.model.player.Player;
+import it.polimi.ingsw.network.exceptions.ConnectionException;
 
 import java.io.IOException;
 import java.util.Scanner;
@@ -49,6 +50,10 @@ public class CLI {
                 availableUsername = true;
             } catch (NicknameAlreadyTakenException e) {
                 System.out.println(warningColor + "\n[ERROR]: Username already taken!\n" + reset);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            } catch (ConnectionException e) {
+                throw new RuntimeException(e);
             }
         } while (!availableUsername);
 

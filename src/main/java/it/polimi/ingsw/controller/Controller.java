@@ -15,10 +15,12 @@ import it.polimi.ingsw.model.deck.DeckTypeBox;
 import it.polimi.ingsw.model.exceptions.*;
 import it.polimi.ingsw.model.game.*;
 import it.polimi.ingsw.model.goal.*;
+import it.polimi.ingsw.model.observer.events.LoginEvent;
 import it.polimi.ingsw.model.player.Coords;
 import it.polimi.ingsw.model.player.Pawn;
 import it.polimi.ingsw.model.player.PawnBuffer;
 import it.polimi.ingsw.model.player.Player;
+import it.polimi.ingsw.network.exceptions.ConnectionException;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -42,14 +44,17 @@ public class Controller implements Serializable {
         return gh;
     }
 
+    //TODO: aggiungere metodo che fa finire il gioco se un giocatore si disconnette,
+    // verrà attivato da un messaggio che arriva dalla view
 
     /**
      * adds users to user list in game handler
      * @param username - of the player that joined the server
      * @throws NicknameAlreadyTakenException - when in user list there is already a user with the same nickname
      */
-    public void login(String username) throws NicknameAlreadyTakenException {
+    public void login(String username) throws NicknameAlreadyTakenException, IOException, ConnectionException {
         gh.addUser(new Player(username));
+
     }
     //methods related to lobby
     /**
