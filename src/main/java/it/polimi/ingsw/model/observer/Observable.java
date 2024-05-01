@@ -23,7 +23,7 @@ public abstract class Observable<T> {
         }
     }
 
-    protected void notify(Event event) throws IOException, ConnectionException {
+    protected void notify(Event event) throws IOException {
         synchronized (observers) {
             for(Observer<T> observer : observers){
                 observer.update(event);

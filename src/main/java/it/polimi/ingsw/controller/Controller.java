@@ -50,7 +50,7 @@ public class Controller implements Serializable {
      * @param username - of the player that joined the server
      * @throws NicknameAlreadyTakenException - when in user list there is already a user with the same nickname
      */
-    public void login(String username) throws NicknameAlreadyTakenException, IOException, ConnectionException {
+    public void login(String username) throws NicknameAlreadyTakenException, IOException{
         gh.addUser(new Player(username));
 
     }
@@ -98,8 +98,8 @@ public class Controller implements Serializable {
      */
     public void leaveLobby(Player player,int lobbyID) throws LobbyDoesNotExistsException, GameAlreadyStartedException {
         //if the game has already started the player will not be removed
-        if(gh.getActiveGames().containsKey(lobbyID)) throw new GameAlreadyStartedException();
-        else if(gh.getLobbies().containsKey(lobbyID)) {
+        //if(gh.getActiveGames().containsKey(lobbyID)) throw new GameAlreadyStartedException();
+        if(gh.getLobbies().containsKey(lobbyID)) {
             gh.getLobbies().get(lobbyID).getPlayers().remove(player);
             if(gh.getLobbies().get(lobbyID).getPlayers().isEmpty())deleteLobby(lobbyID);
         }
@@ -155,6 +155,14 @@ public class Controller implements Serializable {
         }
         //the game is instantiated and added to the list to active games
         gh.getActiveGames().put(lobbyID, new Game(lobbyID,lobby.getNumOfPlayers(),players,scoreboard));
+    }
+//TODO testing e javadoc
+    public void leaveGame(Integer gameID,Player player) throws GameDoesNotExistException, LobbyDoesNotExistsException {
+        if(gh.getActiveGames().containsKey(gameID)) {
+            gh.getActiveGames().get(gameID).getPlayers().remove(player);
+            terminateGame(gameID);
+        }
+        else throw new GameDoesNotExistException("Lobby with ID " + gameID + " does not exist");
     }
 
     /**

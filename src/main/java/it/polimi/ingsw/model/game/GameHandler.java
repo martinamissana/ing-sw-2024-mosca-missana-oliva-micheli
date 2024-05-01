@@ -106,7 +106,7 @@ public class GameHandler extends Observable implements Serializable  {
      * @param user - the user that will be added to the user list
      * @throws NicknameAlreadyTakenException - when in user list there is already a user with the same nickname
      */
-    public void addUser(Player user) throws NicknameAlreadyTakenException, IOException, ConnectionException {
+    public void addUser(Player user) throws NicknameAlreadyTakenException, IOException {
         for (Player u: this.users){
             if(u.getNickname().equals(user.getNickname())) throw new NicknameAlreadyTakenException();
         }
