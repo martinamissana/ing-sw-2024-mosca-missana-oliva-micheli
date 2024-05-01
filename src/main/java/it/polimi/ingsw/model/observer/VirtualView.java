@@ -31,7 +31,7 @@ public class VirtualView implements Observer, Runnable{
         }
     }
 
-    private void elaborate(NetMessage message) throws InterruptedException, ConnectionException, NicknameAlreadyTakenException {
+    private void elaborate(NetMessage message) throws InterruptedException, ConnectionException, NicknameAlreadyTakenException, IOException {
         switch (message) {
             case MyNickname m -> {
                c.login(m.getNickname());
