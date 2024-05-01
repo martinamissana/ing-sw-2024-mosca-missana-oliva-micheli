@@ -1,23 +1,23 @@
 package it.polimi.ingsw.controller;
 
 import it.polimi.ingsw.controller.exceptions.GameAlreadyStartedException;
-import it.polimi.ingsw.model.card.CardSide;
-import it.polimi.ingsw.model.card.Corner;
-import it.polimi.ingsw.model.card.CornerType;
-import it.polimi.ingsw.model.card.ResourceCard;
+import it.polimi.ingsw.controller.exceptions.IllegalActionException;
+import it.polimi.ingsw.controller.exceptions.NotYourTurnException;
+import it.polimi.ingsw.model.card.*;
 import it.polimi.ingsw.model.commonItem.CornerStatus;
 import it.polimi.ingsw.model.commonItem.ItemBox;
 import it.polimi.ingsw.model.commonItem.Kingdom;
 import it.polimi.ingsw.model.commonItem.Resource;
 import it.polimi.ingsw.model.deck.DeckBufferType;
+import it.polimi.ingsw.model.deck.DeckType;
 import it.polimi.ingsw.model.exceptions.*;
 import it.polimi.ingsw.model.game.CardsPreset;
+import it.polimi.ingsw.model.game.Game;
 import it.polimi.ingsw.model.game.GameHandler;
 import it.polimi.ingsw.model.goal.*;
 import it.polimi.ingsw.model.player.Coords;
 import it.polimi.ingsw.model.player.Pawn;
 import it.polimi.ingsw.model.player.Player;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -26,7 +26,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import static org.junit.Assert.*;
-
 
 public class ControllerTest {
     GameHandler gameHandler=new GameHandler();
@@ -37,7 +36,6 @@ public class ControllerTest {
     ResourceCard card= new ResourceCard(0, CardSide.FRONT, frontCorners,backCorners,0, Kingdom.FUNGI);
     Player anna, eric, giorgio,sara,paola;
     Controller c=new Controller(gameHandler);
-
 
     @Before
     public void setUp() throws IOException, FullLobbyException, NicknameAlreadyTakenException, LobbyDoesNotExistsException, HandIsFullException {
@@ -157,6 +155,86 @@ public class ControllerTest {
             System.out.println(p.getNickname() + ": (starterID = " + p.getField().getMatrix().get(new Coords(0, 0)).getCardID() + ")");
             System.out.println(p.getField());
         }
+    }
+
+    @Test
+    public void FlipCardTest() throws IOException, FullLobbyException, LobbyDoesNotExistsException, NicknameAlreadyTakenException, GameDoesNotExistException, HandIsFullException {
+        GameHandler gh = new GameHandler();
+        Controller con = new Controller(gh);
+
+        // players
+        ArrayList<Player> players = new ArrayList<>();
+        for (int i = 0; i < 2; i++) players.add(new Player("Player" + (i+1)));
+
+        // lobby + game
+        con.createLobby(2, players.getFirst());
+        con.joinLobby(players.get(1), 0);
+        Game game = con.getGh().getGame(0);
+
+        // hand setup
+        ArrayList<ResourceCard> resourceCards = CardsPreset.getResourceCards();
+        ArrayList<GoldenCard> goldenCards = CardsPreset.getGoldenCards();
+        players.get(0).getHand().addCard(resourceCards.get(0));
+        players.get(0).getHand().addCard(resourceCards.get(1));
+        players.get(0).getHand().addCard(resourceCards.get(2));
+        players.get(1).getHand().addCard(goldenCards.get(3));
+        players.get(1).getHand().addCard(goldenCards.get(4));
+        players.get(1).getHand().addCard(goldenCards.get(5));
+
+        // card flipping
+        con.flipCard(0, game.getPlayers().get(0), 0);
+        assert(CardSide.BACK == game.getPlayers().get(0).getHand().getCard(0).getSide());
+        con.flipCard(0, game.getPlayers().get(0), 1);
+        assert(CardSide.BACK == game.getPlayers().get(0).getHand().getCard(1).getSide());
+        con.flipCard(0, game.getPlayers().get(0), 2);
+        assert(CardSide.BACK == game.getPlayers().get(0).getHand().getCard(2).getSide());
+        con.flipCard(0, game.getPlayers().get(1), 0);
+        assert(CardSide.BACK == game.getPlayers().get(1).getHand().getCard(0).getSide());
+        con.flipCard(0, game.getPlayers().get(1), 1);
+        assert(CardSide.BACK == game.getPlayers().get(1).getHand().getCard(1).getSide());
+        con.flipCard(0, game.getPlayers().get(1), 2);
+        assert(CardSide.BACK == game.getPlayers().get(1).getHand().getCard(2).getSide());
+    }
+
+    @Test
+    public void PlayDrawTurnTest() throws FullLobbyException, LobbyDoesNotExistsException, NicknameAlreadyTakenException, IOException, GameDoesNotExistException, PawnAlreadyTakenException, EmptyDeckException, HandIsFullException, IllegalActionException, NotYourTurnException, IllegalMoveException, EmptyBufferException {
+        GameHandler gh = new GameHandler();
+        Controller con = new Controller(gh);
+
+        // players
+        ArrayList<Player> players = new ArrayList<>();
+        for (int i = 0; i < 2; i++) players.add(new Player("Player" + (i+1)));
+
+        // lobby + game
+        con.createLobby(2, players.getFirst());
+        con.joinLobby(players.get(1), 0);
+        Game game = con.getGh().getGame(0);
+
+        // starter cards
+        con.giveStarterCards(game.getGameID());
+        for(Player p : players) con.chooseCardSide(p, CardSide.FRONT);
+
+        // hand setup
+        ArrayList<ResourceCard> resourceCards = CardsPreset.getResourceCards();
+        ArrayList<GoldenCard> goldenCards = CardsPreset.getGoldenCards();
+        players.get(0).getHand().addCard(resourceCards.get(0));
+        players.get(0).getHand().addCard(resourceCards.get(1));
+        players.get(0).getHand().addCard(goldenCards.get(0));
+        players.get(1).getHand().addCard(resourceCards.get(2));
+        players.get(1).getHand().addCard(resourceCards.get(3));
+        players.get(1).getHand().addCard(goldenCards.get(1));
+
+        // card placement, one resource and one golden for each player
+        con.playCard(0, game.getPlayers().get(0), 0, new Coords(1,0));
+        con.drawCard(0, game.getPlayers().get(0), DeckType.RESOURCE);
+        con.nextTurn(0);
+        con.playCard(0, game.getPlayers().get(1), 0, new Coords(0,1));
+        con.drawCard(0, game.getPlayers().get(1), DeckType.RESOURCE);
+        con.nextTurn(0);
+        con.playCard(0, game.getPlayers().get(0), 1, new Coords(-1,0));
+        con.drawCard(0, game.getPlayers().get(0), DeckType.RESOURCE);
+        con.nextTurn(0);
+        con.playCard(0, game.getPlayers().get(1), 1, new Coords(0,-1));
     }
 
     @Test
