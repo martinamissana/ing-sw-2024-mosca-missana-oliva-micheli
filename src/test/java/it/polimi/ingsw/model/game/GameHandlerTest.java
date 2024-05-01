@@ -11,7 +11,6 @@ import it.polimi.ingsw.model.player.Player;
 import java.io.IOException;
 import java.util.HashMap;
 
-import it.polimi.ingsw.network.exceptions.ConnectionException;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -38,7 +37,7 @@ public class GameHandlerTest {
 
     }
     @Test (expected = NicknameAlreadyTakenException.class)
-    public void testAddUser() throws NicknameAlreadyTakenException, IOException, ConnectionException {
+    public void testAddUser() throws NicknameAlreadyTakenException, IOException {
         gameHandler.addUser(anna);
         gameHandler.addUser(giorgio);
         gameHandler.addUser(eric);

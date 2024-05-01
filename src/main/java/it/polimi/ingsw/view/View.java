@@ -1,7 +1,5 @@
 package it.polimi.ingsw.view;
 
-import it.polimi.ingsw.network.Connectable;
-import it.polimi.ingsw.network.exceptions.ConnectionException;
 import it.polimi.ingsw.network.netMessage.NetMessage;
 import it.polimi.ingsw.network.netMessage.s2c.LoginMessage;
 

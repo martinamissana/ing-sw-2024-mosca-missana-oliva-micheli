@@ -6,7 +6,6 @@ import it.polimi.ingsw.model.exceptions.NicknameAlreadyTakenException;
 import it.polimi.ingsw.model.observer.Observable;
 import it.polimi.ingsw.model.observer.events.LoginEvent;
 import it.polimi.ingsw.model.player.Player;
-import it.polimi.ingsw.network.exceptions.ConnectionException;
 
 import java.io.*;
 import java.util.ArrayList;

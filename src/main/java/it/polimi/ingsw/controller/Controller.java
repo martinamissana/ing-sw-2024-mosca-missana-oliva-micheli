@@ -15,12 +15,10 @@ import it.polimi.ingsw.model.deck.DeckTypeBox;
 import it.polimi.ingsw.model.exceptions.*;
 import it.polimi.ingsw.model.game.*;
 import it.polimi.ingsw.model.goal.*;
-import it.polimi.ingsw.model.observer.events.LoginEvent;
 import it.polimi.ingsw.model.player.Coords;
 import it.polimi.ingsw.model.player.Pawn;
 import it.polimi.ingsw.model.player.PawnBuffer;
 import it.polimi.ingsw.model.player.Player;
-import it.polimi.ingsw.network.exceptions.ConnectionException;
 
 import java.io.IOException;
 import java.io.Serializable;

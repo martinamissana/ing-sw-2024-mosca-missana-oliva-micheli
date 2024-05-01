@@ -2,7 +2,6 @@ package it.polimi.ingsw.model.observer;
 
 
 import it.polimi.ingsw.model.observer.events.Event;
-import it.polimi.ingsw.network.exceptions.ConnectionException;
 
 import java.io.IOException;
 import java.util.ArrayList;

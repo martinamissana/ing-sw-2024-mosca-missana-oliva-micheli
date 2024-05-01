@@ -7,7 +7,6 @@ import it.polimi.ingsw.model.game.GameHandler;
 import it.polimi.ingsw.model.game.Lobby;
 import it.polimi.ingsw.model.player.Pawn;
 import it.polimi.ingsw.model.player.Player;
-import it.polimi.ingsw.network.exceptions.ConnectionException;
 
 import java.io.IOException;
 import java.util.Scanner;
