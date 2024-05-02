@@ -43,8 +43,7 @@ public class Controller implements Serializable {
         return gh;
     }
 
-    //TODO: aggiungere metodo che fa finire il gioco se un giocatore si disconnette,
-    // verrà attivato da un messaggio che arriva dalla view
+    // TODO: add a method to terminate the game if a player disconnects, it will be activated by a message from the vie
 
     /**
      * adds users to user list in game handler
@@ -55,7 +54,9 @@ public class Controller implements Serializable {
         gh.addUser(new Player(username));
 
     }
+
     //methods related to lobby
+
     /**
      * creates a new lobby adding it to the list of lobbies in GameHandler,
      * the creator needs to specify the desired amount of player for the game,
@@ -100,7 +101,7 @@ public class Controller implements Serializable {
     public void leaveLobby(Player player,int lobbyID) throws LobbyDoesNotExistsException, GameAlreadyStartedException {
         if(gh.getLobbies().containsKey(lobbyID)) {
             gh.getLobbies().get(lobbyID).getPlayers().remove(player);
-            if(gh.getLobbies().get(lobbyID).getPlayers().isEmpty())deleteLobby(lobbyID);
+            if(gh.getLobbies().get(lobbyID).getPlayers().isEmpty()) deleteLobby(lobbyID);
         }
         else throw new LobbyDoesNotExistsException("Lobby with ID " + lobbyID + " does not exist");
     }
@@ -142,8 +143,17 @@ public class Controller implements Serializable {
         //the game is instantiated and added to the list to active games
         gh.getActiveGames().put(lobbyID, new Game(lobbyID,lobby.getNumOfPlayers(),players,scoreboard));
     }
-//TODO testing e javadoc
-    public void leaveGame(Integer gameID,Player player) throws GameDoesNotExistException, LobbyDoesNotExistsException {
+
+    //TODO testing e javadoc
+
+    /**
+     * removes a player from a game and terminates said game
+     * @param gameID ID of the player's game
+     * @param player player who's leaving the game
+     * @throws GameDoesNotExistException thrown if the specified ID doesn't correspond to any game
+     * @throws LobbyDoesNotExistsException thrown if the specified ID doesn't correspond to any game, thus having no lobby
+     */
+    public void leaveGame(Integer gameID,Player player) throws GameDoesNotExistException, LobbyDoesNotExistsException  {
         if(gh.getActiveGames().containsKey(gameID)) {
             gh.getActiveGames().get(gameID).getPlayers().remove(player);
             terminateGame(gameID);
@@ -165,6 +175,7 @@ public class Controller implements Serializable {
     }
 
     //chat related methods
+
     /**
      * sends the message either to the specified receiver, or to every player in the global chat,
      * adds the message in the list of sent messages of the sender too
@@ -198,9 +209,7 @@ public class Controller implements Serializable {
         }
     }
 
-
     // SET UP
-
 
     /**
      * Set decks and deck buffers
@@ -341,8 +350,6 @@ public class Controller implements Serializable {
         // flip the card
         if(game.getPlayers().contains(player))
             player.getHand().getCard(handPos).flip();
-
-        // message
     }
 
     /**
@@ -385,12 +392,11 @@ public class Controller implements Serializable {
         // only if it's not the last round (because if it is, players cannot draw cards)
         if (!game.isLastRound())
             game.setAction(Action.DRAW);
-
-        // message
     }
 
     /**
-     * draws a card from a player's game's deck or deckBuffer and adds it to their hand
+     * draws a card from a player's game's deck or deckBuffer and adds it to their hand.
+     * then checks if the game is or was on its last turn, and terminates the game if needed.
      * @param gameID ID of the game of the drawing player
      * @param player player who's drawing the card
      * @param deckTypeBox type of card source to draw from
@@ -421,11 +427,14 @@ public class Controller implements Serializable {
         // set the game's current action to PLAY after drawing a card
         game.setAction(Action.PLAY);
 
-        // message
+        // update the game's current player
+        nextTurn(gameID);
     }
 
     /**
-     * updates the game's "whoseTurn" attribute and sets it to the next player's playerID
+     * updates the game's "whoseTurn" attribute and sets it to the next player's playerID.
+     * if the current player (as of calling the method) is the last of the whole round,
+     * the method checks if it's the game's last round or if the game should terminate.
      * @param gameID ID of the game to advance the turn of
      * @throws GameDoesNotExistException thrown if the given ID does not correspond to any Game
      */
@@ -449,9 +458,25 @@ public class Controller implements Serializable {
         game.setWhoseTurn((game.getWhoseTurn()+1) % game.getNumOfPlayers());
     }
 
+    // method related to game phases
+
+    /**
+     * updates the game's state, setting it to its last round if a player has reached 20 there's no remaining cards in the decks
+     * @param gameID - the ID of the game where the status is checked
+     */
+    public void updateLastRound(Integer gameID) throws GameDoesNotExistException, LobbyDoesNotExistsException {
+        Game game = gh.getActiveGames().get(gameID);
+
+        // if both decks are empty
+        if (gh.getGame(gameID).getDeck(DeckType.RESOURCE).getCards().isEmpty() && gh.getGame(gameID).getDeck(DeckType.GOLDEN).getCards().isEmpty())
+            game.setLastRound(true);
+
+        // if someone has reached 20 points
+        for(Player p:game.getPlayers())
+            if(game.getScoreboard().get(p)>=20) game.setLastRound(true);
+    }
 
     // FINAL PHASE
-
 
     /**
      * checks in the field the private goal of the players and adds the points to the scoreboard

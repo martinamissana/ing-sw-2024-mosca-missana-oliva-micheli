@@ -10,7 +10,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 
-public class TCPView extends View{
+public class TCPView extends View {
     private String ip;
     private final int port;
     private final ObjectInputStream in;
