@@ -4,6 +4,7 @@ import it.polimi.ingsw.model.chat.Chat;
 import it.polimi.ingsw.model.goal.Goal;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 
 public class Player implements Serializable {
     private final String nickname;
@@ -13,6 +14,7 @@ public class Player implements Serializable {
     private boolean goesFirst;
     private Goal privateGoal;
     private Pawn pawn;
+    ArrayList<Goal> choosableGoals;
 
     /**
      * Class constructor
@@ -26,6 +28,7 @@ public class Player implements Serializable {
         this.goesFirst = false;
         this.privateGoal = null;
         this.pawn = null;
+        this.choosableGoals = new ArrayList<>();
     }
 
     /**
@@ -106,4 +109,12 @@ public class Player implements Serializable {
      * @return Pawn
      */
     public Pawn getPawn() { return pawn; }
+
+    /**
+     * getter
+     * @return the list of choosable goals
+     */
+    public ArrayList<Goal> getChoosableGoals() {
+        return choosableGoals;
+    }
 }

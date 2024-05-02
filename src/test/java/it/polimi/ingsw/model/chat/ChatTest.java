@@ -7,7 +7,6 @@ import it.polimi.ingsw.model.exceptions.LobbyDoesNotExistsException;
 import it.polimi.ingsw.model.exceptions.NicknameAlreadyTakenException;
 import it.polimi.ingsw.model.game.GameHandler;
 import it.polimi.ingsw.model.player.Player;
-import junit.framework.TestCase;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -32,7 +31,7 @@ public class ChatTest {
         c.createLobby(3,anna);
         c.joinLobby(eric,0);
         c.joinLobby(giorgio,0);
-        gameHandler.setNumOfGames(0);
+        //gameHandler.setNumOfGames(0);
         //c.createGame(gameHandler.getLobbies().get(0));
         m1=new Message("ciao",anna,eric,false);
         m2=new Message("come va",eric,anna,false);

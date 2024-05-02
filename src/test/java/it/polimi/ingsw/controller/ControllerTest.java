@@ -2,6 +2,7 @@ package it.polimi.ingsw.controller;
 
 import it.polimi.ingsw.controller.exceptions.GameAlreadyStartedException;
 import it.polimi.ingsw.controller.exceptions.IllegalActionException;
+import it.polimi.ingsw.controller.exceptions.IllegalGoalChosenException;
 import it.polimi.ingsw.controller.exceptions.NotYourTurnException;
 import it.polimi.ingsw.model.card.*;
 import it.polimi.ingsw.model.commonItem.CornerStatus;
@@ -84,8 +85,8 @@ public class ControllerTest {
         assertTrue(gameHandler.getLobbies().containsKey(0));
         assertTrue(gameHandler.getActiveGames().containsKey(0));
     }
-    @Test
-    public void SetUpTest() throws IOException, HandIsFullException, FullLobbyException, LobbyDoesNotExistsException, NicknameAlreadyTakenException, GameDoesNotExistException, EmptyDeckException, PawnAlreadyTakenException {
+    @Test //(expected = PawnAlreadyTakenException.class)
+    public void SetUpTest() throws IOException, HandIsFullException, FullLobbyException, LobbyDoesNotExistsException, NicknameAlreadyTakenException, GameDoesNotExistException, EmptyDeckException, PawnAlreadyTakenException, IllegalGoalChosenException {
         GameHandler gh = new GameHandler();
         Controller c = new Controller(gh);
 
@@ -119,9 +120,9 @@ public class ControllerTest {
         // Setting goals:
         c.setCommonGoals(0);
 
+        c.giveGoals(0);
         for (Player p : players) {
-            ArrayList<Goal> goals = c.giveGoals(0);
-            c.choosePersonalGoal(p, goals.getFirst());
+            c.choosePersonalGoal(p, p.getChoosableGoals().getFirst());
         }
 
         // Player + Pawn + Hand printing:

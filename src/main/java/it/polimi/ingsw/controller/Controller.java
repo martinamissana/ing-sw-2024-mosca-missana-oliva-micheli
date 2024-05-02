@@ -2,6 +2,7 @@ package it.polimi.ingsw.controller;
 
 import it.polimi.ingsw.controller.exceptions.GameAlreadyStartedException;
 import it.polimi.ingsw.controller.exceptions.IllegalActionException;
+import it.polimi.ingsw.controller.exceptions.IllegalGoalChosenException;
 import it.polimi.ingsw.controller.exceptions.NotYourTurnException;
 import it.polimi.ingsw.model.card.Card;
 import it.polimi.ingsw.model.card.CardSide;
@@ -139,14 +140,6 @@ public class Controller implements Serializable {
         Collections.rotate(players,i);
         players.getFirst().setGoesFirst(true);
 
-        for (Player p : players) {
-            if (p.getPawn() == null) {
-                i = r.nextInt(lobby.getPawnBuffer().getPawnList().size());
-                try {
-                    choosePawn(lobbyID, p, lobby.getPawnBuffer().getPawnList().get(i));
-                } catch (PawnAlreadyTakenException ignored) {}
-            }
-        }
 
         //scoreboard initialization->all values set at 0
         HashMap<Player,Integer> scoreboard= new HashMap<>();
@@ -339,12 +332,14 @@ public class Controller implements Serializable {
      * @param gameID - ID of the game played
      * @return list of two goals
      */
-    public ArrayList<Goal> giveGoals(Integer gameID) throws GameDoesNotExistException {
-        ArrayList<Goal> list = new ArrayList<>();
-        list.add(gh.getGame(gameID).getGoals().getGoal());
-        list.add(gh.getGame(gameID).getGoals().getGoal());
+    public void giveGoals(Integer gameID) throws GameDoesNotExistException {
+        Game game = gh.getGame(gameID);
 
-        return list;
+        for (Player p : game.getPlayers()) {
+            p.getChoosableGoals().add(gh.getGame(gameID).getGoals().getGoal());
+            p.getChoosableGoals().add(gh.getGame(gameID).getGoals().getGoal());
+        }
+
     }
 
     /**
@@ -352,8 +347,10 @@ public class Controller implements Serializable {
      * @param player - who is choosing the personal goal
      * @param goal - goal chosen by the player
      */
-    public void choosePersonalGoal(Player player, Goal goal) {
-        player.setPrivateGoal(goal);
+    public void choosePersonalGoal(Player player, Goal goal) throws IllegalGoalChosenException {
+
+        if(player.getChoosableGoals().contains(goal))player.setPrivateGoal(goal);
+        else throw new IllegalGoalChosenException();
     }
 
     // GAME
