@@ -98,8 +98,6 @@ public class Controller implements Serializable {
      * @throws LobbyDoesNotExistsException - if the lobby does not exist
      */
     public void leaveLobby(Player player,int lobbyID) throws LobbyDoesNotExistsException, GameAlreadyStartedException {
-        //if the game has already started the player will not be removed
-        //if(gh.getActiveGames().containsKey(lobbyID)) throw new GameAlreadyStartedException();
         if(gh.getLobbies().containsKey(lobbyID)) {
             gh.getLobbies().get(lobbyID).getPlayers().remove(player);
             if(gh.getLobbies().get(lobbyID).getPlayers().isEmpty())deleteLobby(lobbyID);
@@ -113,12 +111,7 @@ public class Controller implements Serializable {
      * @throws LobbyDoesNotExistsException if the lobby does not exist
      */
     public void deleteLobby(int lobbyID) throws LobbyDoesNotExistsException {
-        if(gh.getActiveGames().containsKey(lobbyID)) {
-            try {
-                terminateGame(lobbyID);
-            } catch (GameDoesNotExistException ignored) {}
-        }
-        else if(gh.getLobbies().get(lobbyID) != null) gh.getLobbies().remove(lobbyID);
+        if(gh.getLobbies().get(lobbyID) != null) gh.getLobbies().remove(lobbyID);
         else throw new LobbyDoesNotExistsException("Lobby with ID " + lobbyID + " does not exist");
     }
 
@@ -169,29 +162,6 @@ public class Controller implements Serializable {
             deleteLobby(gameID);
         }
         else throw new GameDoesNotExistException("Game with ID " + gameID + " does not exist");
-    }
-
-    /**
-     * will be called at the end of each round
-     * @param gameID - the ID of the game where the status is checked
-     */
-
-    //method related to game phases
-    public void checkGameStatus(Integer gameID) throws GameDoesNotExistException, LobbyDoesNotExistsException {
-        Game game=gh.getActiveGames().get(gameID);
-        //if last round has finished
-        if(game.isLastRound()) {
-            //c.winner(gh.getGame(gameID));
-            terminateGame(gameID);
-            return;
-        }
-        //if someone has reached 20 points
-        for(Player p:game.getPlayers()){
-            if(game.getScoreboard().get(p)>=20)game.setLastRound(true);
-        }
-        //if both decks are empty
-        if(gh.getGame(gameID).getDeck(DeckType.RESOURCE).getCards().isEmpty()&&gh.getGame(gameID).getDeck(DeckType.GOLDEN).getCards().isEmpty())
-            game.setLastRound(true);
     }
 
     //chat related methods
@@ -290,12 +260,13 @@ public class Controller implements Serializable {
      * @param player - who is playing the card
      * @param side - side chosen by the player
      */
-    public void chooseCardSide(Player player, CardSide side) {
+    public void chooseCardSide(Integer ID,Player player, CardSide side) throws GameDoesNotExistException {
         StarterCard card = (StarterCard) player.getHand().getCard(0);
         if(!card.getSide().equals(side)) card.flip();
 
         player.getField().addCard(card);
         player.getHand().removeCard(card);
+        // getGh().getGame(ID);
     }
 
     /**
@@ -430,7 +401,7 @@ public class Controller implements Serializable {
      * @throws EmptyDeckException thrown if the selected deck is out of cards
      * @throws EmptyBufferException thrown if the selected deck buffer is out of cards
      */
-    public void drawCard(Integer gameID, Player player, DeckTypeBox deckTypeBox) throws GameDoesNotExistException, NotYourTurnException, IllegalActionException, HandIsFullException, EmptyDeckException, EmptyBufferException {
+    public void drawCard(Integer gameID, Player player, DeckTypeBox deckTypeBox) throws GameDoesNotExistException, NotYourTurnException, IllegalActionException, HandIsFullException, EmptyDeckException, EmptyBufferException, LobbyDoesNotExistsException {
 
         // get game from ID
         Game game = gh.getGame(gameID);
@@ -458,15 +429,24 @@ public class Controller implements Serializable {
      * @param gameID ID of the game to advance the turn of
      * @throws GameDoesNotExistException thrown if the given ID does not correspond to any Game
      */
-    public void nextTurn(Integer gameID) throws GameDoesNotExistException {
+    public void nextTurn(Integer gameID) throws GameDoesNotExistException, LobbyDoesNotExistsException {
 
         // get game from ID
         Game game = gh.getGame(gameID);
 
-        // update turn counter
-        game.setWhoseTurn((game.getWhoseTurn()+1)%game.getNumOfPlayers());
+        // if last round has finished, terminate game
+        if(game.getWhoseTurn() == game.getNumOfPlayers()-1 && game.isLastRound()) {
+            winner(gameID);
+            terminateGame(gameID);
+        }
 
-        // message
+        // if the current player is the last in the round,
+        // check if updating the game's status to last round is needed
+        if(game.getWhoseTurn() == game.getNumOfPlayers()-1)
+            updateLastRound(gameID);
+
+        // update turn counter
+        game.setWhoseTurn((game.getWhoseTurn()+1) % game.getNumOfPlayers());
     }
 
 
@@ -587,11 +567,14 @@ public class Controller implements Serializable {
     private void resourceEvaluator(Integer gameID,ResourceGoal goal,Player player){
         Game game=gh.getActiveGames().get(gameID);
         HashMap<ItemBox, Integer> totalResources = player.getField().getTotalResources();
-        for (ItemBox item : goal.getResourceList()) {
-            if(totalResources.get(item)==0) return;
-            totalResources.replace(item,totalResources.get(item)-1);
+        while (true) {
+            for (ItemBox item : goal.getResourceList()) {
+                if (totalResources.get(item) == 0) return;
+                totalResources.replace(item, totalResources.get(item) - 1);
+            }
+            game.addToScore(player, goal.getPoints());
         }
-        game.addToScore(player,goal.getPoints());
+
     }
 
     /**

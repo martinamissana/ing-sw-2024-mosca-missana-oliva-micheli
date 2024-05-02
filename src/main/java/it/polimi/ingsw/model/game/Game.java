@@ -31,6 +31,8 @@ public class Game implements Serializable {
     private final Deck GoldenDeck = new Deck(DeckType.GOLDEN);
     private final HashMap<DeckBufferType, DeckBuffer> deckBuffers = new HashMap<>();
     private final GoalContainer goals;
+    private GamePhase gamePhase;
+    private ArrayList<Player> winners=new ArrayList<>();
 
 
     /**
@@ -54,6 +56,16 @@ public class Game implements Serializable {
         this.deckBuffers.put(DeckBufferType.RES1, new DeckBuffer(this.ResourceDeck));
         this.deckBuffers.put(DeckBufferType.RES2, new DeckBuffer(this.ResourceDeck));
         this.goals = new GoalContainer();
+        this.gamePhase=GamePhase.PLACING_STARTER_CARD;
+    }
+
+    public ArrayList<Player> getWinners() {
+        return winners;
+    }
+
+    //TODO: add javadoc
+    public void setWinners(ArrayList<Player> winners){
+        this.winners.addAll(winners);
     }
 
     /**
@@ -246,6 +258,7 @@ public class Game implements Serializable {
         else return GoldenDeck;
     }
 
+
     /**
      * draws a card from the specified source (Deck or DeckBuffer)
      * @param src source to draw the card from
@@ -262,5 +275,13 @@ public class Game implements Serializable {
             case DeckBufferType.GOLD2 -> { return getDeckBuffer(DeckBufferType.GOLD2).draw(); }
             default -> throw new IllegalStateException("Unexpected value: " + src);
         }
+    }
+
+    public GamePhase getGamePhase() {
+        return gamePhase;
+    }
+
+    public void setGamePhase(GamePhase gamePhase) {
+        this.gamePhase = gamePhase;
     }
 }
