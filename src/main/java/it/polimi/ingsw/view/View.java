@@ -1,9 +1,11 @@
 package it.polimi.ingsw.view;
 
+import java.io.IOException;
+
 public abstract class View {
     private String nickname;
 
-    public View(String nickname){
+    public View(){
 
     }
 
@@ -15,8 +17,7 @@ public abstract class View {
         this.nickname = nickname;
     }
 
-    public void login(String nickname)  {};
-
+    public void login(String nickname) throws IOException {};
 
 
 }

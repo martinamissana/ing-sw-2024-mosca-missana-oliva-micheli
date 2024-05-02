@@ -1,7 +1,9 @@
-package it.polimi.ingsw.network.socket;
+package it.polimi.ingsw.network.TCP;
 
 import it.polimi.ingsw.controller.Controller;
 import it.polimi.ingsw.model.exceptions.NicknameAlreadyTakenException;
+import it.polimi.ingsw.model.observer.Observable;
+import it.polimi.ingsw.model.observer.Observer;
 import it.polimi.ingsw.model.observer.events.Event;
 import it.polimi.ingsw.model.observer.events.LoginEvent;
 import it.polimi.ingsw.network.VirtualView;
@@ -10,27 +12,25 @@ import it.polimi.ingsw.network.netMessage.c2s.MyNickname;
 import it.polimi.ingsw.network.netMessage.s2c.LoginMessage;
 
 import java.io.IOException;
+import java.io.ObjectOutputStream;
 
-public class SocketVirtualView implements VirtualView {
-    private Controller c;
+public class TCPVirtualView implements Observer {
+    private final Controller c;
 
 
-    public SocketVirtualView(Controller c) {
+    public TCPVirtualView(Controller c) {
         this.c = c;
-    }
-
-    @Override
-    public void update(LoginEvent event) throws IOException, NicknameAlreadyTakenException {
-
     }
 
     @Override
     public void update(Event event) throws IOException{
         switch (event.getEventType()) {
             case LOGIN -> {
+               // ObjectOutputStream temp= new ObjectOutputStream();;
                 LoginMessage m = new LoginMessage(((LoginEvent) event).getNickname());
-                //send(m);
+                //objectOutputStream.writeObject(m);
             }
+            default -> throw new IllegalStateException("Unexpected value: " + event.getEventType());
         }
     }
 
@@ -44,8 +44,5 @@ public class SocketVirtualView implements VirtualView {
     }
 
 
-    @Override
-    public void run() {
 
-    }
 }
