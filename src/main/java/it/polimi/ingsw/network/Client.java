@@ -1,7 +1,22 @@
 package it.polimi.ingsw.network;
 
+import it.polimi.ingsw.view.TCPClient;
+
+import java.io.IOException;
+
 public class Client {
-    public static void main(){
-        //fare in modo che in base a un parametro da command line crei o un RMIClient o un SocketClient
+    public static void main(String[] args) throws IOException {
+
+        if(args[0].equals("TCP")) {
+            TCPClient client = new TCPClient("127.0.0.1", 5555);
+            try {
+                client.startClient();
+            } catch (IOException e) {
+                System.err.println(e.getMessage());
+            }
+        }
+        else{
+            //RMI
+        }
     }
 }

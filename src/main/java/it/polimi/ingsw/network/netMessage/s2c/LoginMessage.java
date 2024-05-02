@@ -2,7 +2,9 @@ package it.polimi.ingsw.network.netMessage.s2c;
 
 import it.polimi.ingsw.network.netMessage.NetMessage;
 
-public class LoginMessage extends NetMessage {
+import java.io.Serializable;
+
+public class LoginMessage extends NetMessage implements Serializable {
     String nickname;
 
     public LoginMessage(String nickname) {
