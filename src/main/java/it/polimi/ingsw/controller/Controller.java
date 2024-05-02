@@ -308,9 +308,8 @@ public class Controller implements Serializable {
     }
 
     /**
-     * Gives two goals from which the player can choose
+     * adds to the choosableGoals two goals from which the player can choose
      * @param gameID - ID of the game played
-     * @return list of two goals
      */
     public void giveGoals(Integer gameID) throws GameDoesNotExistException {
         Game game = gh.getGame(gameID);
@@ -526,11 +525,10 @@ public class Controller implements Serializable {
     }
 
     /**
-     * returns the list of winners (players with the highest score) of the game after the evaluation of the private and the common goals
+     * adds the list of winners (players with the highest score) of the game after the evaluation of the private and the common goals
      * @param gameID index of the game where the evaluation is done
-     * @return ArrayList<Player>
      */
-    public ArrayList<Player> winner(Integer gameID){
+    public void winner(Integer gameID){
         Game game=gh.getActiveGames().get(gameID);
         evaluatePrivateGoal(gameID);
         evaluateCommonGoal(gameID);
@@ -545,7 +543,7 @@ public class Controller implements Serializable {
         for(Player p:scoreboard.keySet()){
             if(scoreboard.get(p)==maxValue) winners.add(p);
         }
-        return winners;
+        game.setWinners(winners);
     }
 
     /**
