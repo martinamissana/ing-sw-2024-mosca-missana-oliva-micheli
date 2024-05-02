@@ -1,15 +1,10 @@
 package it.polimi.ingsw.view;
 
-import it.polimi.ingsw.network.netMessage.NetMessage;
-import it.polimi.ingsw.network.netMessage.s2c.LoginMessage;
-
-import java.io.IOException;
-
-public abstract class View implements Runnable {
+public abstract class View {
     private String nickname;
 
     public View(String nickname){
-        this.nickname=nickname;
+
     }
 
     public String getNickname() {
@@ -20,23 +15,8 @@ public abstract class View implements Runnable {
         this.nickname = nickname;
     }
 
+    public void login(String nickname)  {};
 
-    @Override
-    public void run() {
 
-    }
-    private void elaborate(NetMessage message) throws IOException {
-        switch (message) {
-            case LoginMessage m -> {
-                setNickname(m.getNickname());
-            }
 
-            default -> throw new IllegalStateException("Unexpected value: " + message);
-        }
-    }
-
-    public void login(String nickname) throws IOException{
-        LoginMessage m= new LoginMessage(nickname);
-        //connection.send(m);
-    }
 }
