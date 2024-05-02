@@ -104,7 +104,7 @@ public class ControllerTest {
         c.giveStarterCards(0);
 
         // Starter card choosing:
-        for(Player p : players) c.chooseCardSide(p, CardSide.FRONT);
+        for(Player p : players) c.chooseCardSide(0,p, CardSide.FRONT);
 
         // Pawn choosing:
         int j = 0;
@@ -213,7 +213,7 @@ public class ControllerTest {
 
         // starter cards
         con.giveStarterCards(game.getGameID());
-        for(Player p : players) con.chooseCardSide(p, CardSide.FRONT);
+        for(Player p : players) con.chooseCardSide(0,p, CardSide.FRONT);
 
         // hand setup
         ArrayList<ResourceCard> resourceCards = CardsPreset.getResourceCards();
@@ -272,7 +272,7 @@ public class ControllerTest {
         gh.getGame(0).setCommonGoal1(goal2);
         gh.getGame(0).setCommonGoal2(goal2);
         // Starter card choosing:
-        for (Player p : players) c.chooseCardSide(p, CardSide.FRONT);
+        for (Player p : players) c.chooseCardSide(0,p, CardSide.FRONT);
         // Adding cards to the field to satisfy the private goal
         ArrayList<ResourceCard> cards = CardsPreset.getResourceCards();
         player0.getField().addCard(cards.get(4), new Coords(1, 0));
@@ -284,9 +284,9 @@ public class ControllerTest {
         player2.getField().addCard(cards.get(7), new Coords(0, -2));
         player2.getField().addCard(cards.get(6), new Coords(-1, -2));
         player2.getField().addCard(cards.get(15), new Coords(-1, -3));
-        ArrayList<Player> winners = c.winner(0);
-        assertNotNull(winners);
-        assertSame(winners.getFirst(), player2);
+        c.winner(0);
+        assertNotNull(gh.getGame(0).getWinners());
+        assertSame(gh.getGame(0).getWinners().getFirst(), player2);
         // player0's field contains their private goal so their score should be equal to the points of their private goal
         assertEquals(goal0.getPoints(), gh.getGame(0).getPlayerScore(player0));
         // player1's field contains their private goal so their score should be equal to the points of their private goal

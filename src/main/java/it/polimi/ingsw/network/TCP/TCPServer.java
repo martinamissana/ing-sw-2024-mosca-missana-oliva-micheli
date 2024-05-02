@@ -1,5 +1,7 @@
 package it.polimi.ingsw.network.TCP;
 
+import it.polimi.ingsw.controller.Controller;
+
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -10,9 +12,11 @@ import java.util.concurrent.Executors;
     public class TCPServer {
         private final int port;
         ExecutorService executor;
-        public TCPServer(int port) {
+        Controller c;
+        public TCPServer(int port, Controller c) {
             this.port = port;
             this.executor = Executors.newCachedThreadPool();
+            this.c=c;
             ServerSocket serverSocket;
             try {
                 serverSocket = new ServerSocket(port);
@@ -24,7 +28,9 @@ import java.util.concurrent.Executors;
             while (true) {
                 try {
                     Socket socket = serverSocket.accept();
-                    executor.submit(new TCPClientHandler(socket));
+                    System.out.println("New connection!");
+                    executor.submit(new TCPVirtualView(socket,c));
+
                 } catch(IOException e) {
                     break; // Entrerei qui se serverSocket venisse chiuso
                 }

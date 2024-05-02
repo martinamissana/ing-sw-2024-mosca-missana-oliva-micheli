@@ -14,7 +14,7 @@ public class Player implements Serializable {
     private boolean goesFirst;
     private Goal privateGoal;
     private Pawn pawn;
-    ArrayList<Goal> choosableGoals;
+    private ArrayList<Goal> choosableGoals;
 
     /**
      * Class constructor
