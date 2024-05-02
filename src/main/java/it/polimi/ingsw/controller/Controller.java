@@ -554,15 +554,15 @@ public class Controller implements Serializable {
      * @param goal goal that needs to be found in the field
      * @param player player who has to complete the goal
      */
-    private void diagonalEvaluator(Integer gameID,DiagonalGoal goal,Player player) {
+    private void diagonalEvaluator(Integer gameID, DiagonalGoal goal, Player player) {
         Game game=gh.getActiveGames().get(gameID);
         HashMap<Coords, Card> field = player.getField().getMatrix();
-        HashSet<Coords> done = new HashSet<>(); //indicates the cards already used for the goal
+        HashSet<Coords> done = new HashSet<>(); // indicates the cards already used for the goal
         if (goal.getType() == DiagonalGoalType.UPWARD) {
             for (Coords coords : field.keySet()) {
                 Coords secondCard = new Coords(coords.getX() + 1, coords.getY());
                 Coords thirdCard = new Coords(coords.getX() + 2, coords.getY());
-                if (!done.contains(coords)&& !done.contains(secondCard)&&!done.contains(thirdCard) && field.get(coords).getKingdom() == goal.getColor()&&field.containsKey(secondCard) && field.containsKey(thirdCard) && field.get(secondCard).getKingdom() == goal.getColor() && field.get(thirdCard).getKingdom() == goal.getColor()) {
+                if (!done.contains(coords) && !done.contains(secondCard) && !done.contains(thirdCard) && field.get(coords).getKingdom() == goal.getColor() && field.containsKey(secondCard) && field.containsKey(thirdCard) && field.get(secondCard).getKingdom() == goal.getColor() && field.get(thirdCard).getKingdom() == goal.getColor()) {
                     done.add(coords);
                     done.add(secondCard);
                     done.add(thirdCard);
@@ -571,9 +571,9 @@ public class Controller implements Serializable {
             }
         } else {
             for (Coords coords : field.keySet()) {
-                Coords secondCard = new Coords(coords.getX(), coords.getY()+1);
-                Coords thirdCard = new Coords(coords.getX(),coords.getY()+2);
-                if (!done.contains(coords)&&!done.contains(secondCard)&&!done.contains(thirdCard) && field.get(coords).getKingdom() == goal.getColor()&&field.containsKey(secondCard) && field.containsKey(thirdCard) && field.get(secondCard).getKingdom() == goal.getColor() && field.get(thirdCard).getKingdom() == goal.getColor()) {
+                Coords secondCard = new Coords(coords.getX(), coords.getY() + 1);
+                Coords thirdCard = new Coords(coords.getX(),coords.getY() + 2);
+                if (!done.contains(coords) && !done.contains(secondCard) && !done.contains(thirdCard) && field.get(coords).getKingdom() == goal.getColor() && field.containsKey(secondCard) && field.containsKey(thirdCard) && field.get(secondCard).getKingdom() == goal.getColor() && field.get(thirdCard).getKingdom() == goal.getColor()) {
                     done.add(coords);
                     done.add(secondCard);
                     done.add(thirdCard);
@@ -589,8 +589,8 @@ public class Controller implements Serializable {
      * @param goal goal that needs to be found in the field
      * @param player player who has to complete the goal
      */
-    private void resourceEvaluator(Integer gameID,ResourceGoal goal,Player player){
-        Game game=gh.getActiveGames().get(gameID);
+    private void resourceEvaluator(Integer gameID, ResourceGoal goal, Player player) {
+        Game game = gh.getActiveGames().get(gameID);
         HashMap<ItemBox, Integer> totalResources = player.getField().getTotalResources();
         while (true) {
             for (ItemBox item : goal.getResourceList()) {
