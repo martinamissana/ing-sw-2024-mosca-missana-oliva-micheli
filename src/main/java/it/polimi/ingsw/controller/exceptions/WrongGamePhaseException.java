@@ -1,4 +1,4 @@
-package it.polimi.ingsw.model.exceptions;
+package it.polimi.ingsw.controller.exceptions;
 
 public class WrongGamePhaseException extends Exception{
 }
