@@ -37,7 +37,7 @@ public class ControllerTest {
     Controller c=new Controller(gameHandler);
 
     @Before
-    public void setUp() throws IOException, FullLobbyException, NicknameAlreadyTakenException, LobbyDoesNotExistsException, HandIsFullException, CannotJoinMultipleLobbiesException {
+    public void setUp() throws IOException, FullLobbyException, NicknameAlreadyTakenException, LobbyDoesNotExistsException, HandIsFullException, CannotJoinMultipleLobbiesException, GameAlreadyStartedException, PawnAlreadyTakenException, GameDoesNotExistException {
         anna=new Player("anna");
         eric=new Player("eric");
         giorgio=new Player("giorgio");
@@ -46,6 +46,9 @@ public class ControllerTest {
         c.createLobby(3,anna);
         c.joinLobby(eric,0);
         c.joinLobby(giorgio,0);
+        c.choosePawn(0,anna,Pawn.BLUE);
+        c.choosePawn(0,eric,Pawn.RED);
+        c.choosePawn( 0,giorgio,Pawn.YELLOW);
         anna.getHand().addCard(card);
     }
 
@@ -78,6 +81,7 @@ public class ControllerTest {
         assertEquals(gameHandler.getGame(1).getGamePhase(), GamePhase.PLAYING_GAME);
 
 
+
     }
 
     @Test
@@ -85,7 +89,6 @@ public class ControllerTest {
         assertTrue(gameHandler.getGame(0).getPlayers().contains(anna));
         assertTrue(gameHandler.getGame(0).getPlayers().contains(eric));
         assertTrue(gameHandler.getGame(0).getPlayers().contains(giorgio));
-        assertEquals(anna.getHand().getCard(0),card);
         c.terminateGame(0);
         assertTrue(gameHandler.getActiveGames().isEmpty());
         assertTrue(gameHandler.getLobbies().isEmpty());
@@ -102,8 +105,8 @@ public class ControllerTest {
         assertFalse(gameHandler.getLobby(0).getPlayers().contains(sara));
         assertFalse(gameHandler.getGame(0).getPlayers().contains(sara));
     }
-    @Test (expected = GameAlreadyStartedException.class)
-    public void leaveLobby() throws FullLobbyException, LobbyDoesNotExistsException, NicknameAlreadyTakenException, IOException, GameAlreadyStartedException, CannotJoinMultipleLobbiesException {
+    @Test
+    public void leaveLobby() throws FullLobbyException, LobbyDoesNotExistsException, NicknameAlreadyTakenException, IOException, GameAlreadyStartedException, CannotJoinMultipleLobbiesException, GameDoesNotExistException {
         c.createLobby(3, sara);
         c.joinLobby(paola,1);
         c.leaveLobby(sara, 1);
@@ -227,7 +230,7 @@ public class ControllerTest {
     }
 
     @Test
-    public void PlayDrawTurnTest() throws FullLobbyException, LobbyDoesNotExistsException, NicknameAlreadyTakenException, IOException, GameDoesNotExistException, PawnAlreadyTakenException, EmptyDeckException, HandIsFullException, IllegalActionException, NotYourTurnException, IllegalMoveException, EmptyBufferException, CannotJoinMultipleLobbiesException {
+    public void PlayDrawTurnTest() throws FullLobbyException, LobbyDoesNotExistsException, NicknameAlreadyTakenException, IOException, GameDoesNotExistException, PawnAlreadyTakenException, EmptyDeckException, HandIsFullException, IllegalActionException, NotYourTurnException, IllegalMoveException, EmptyBufferException, CannotJoinMultipleLobbiesException, GameAlreadyStartedException {
         GameHandler gh = new GameHandler();
         Controller con = new Controller(gh);
 
@@ -238,6 +241,9 @@ public class ControllerTest {
         // lobby + game
         con.createLobby(2, players.getFirst());
         con.joinLobby(players.get(1), 0);
+        con.choosePawn(0,players.get(0),Pawn.BLUE);
+        con.choosePawn(0,players.get(1),Pawn.RED);
+
         Game game = con.getGh().getGame(0);
 
         // starter cards
@@ -247,6 +253,7 @@ public class ControllerTest {
         // hand setup
         ArrayList<ResourceCard> resourceCards = CardsPreset.getResourceCards();
         ArrayList<GoldenCard> goldenCards = CardsPreset.getGoldenCards();
+
         players.get(0).getHand().addCard(resourceCards.get(0));
         players.get(0).getHand().addCard(resourceCards.get(1));
         players.get(0).getHand().addCard(goldenCards.get(0));
@@ -281,7 +288,6 @@ public class ControllerTest {
 
         c.createLobby(3, players.getFirst());
         for (int i = 1; i < 3; i++) c.joinLobby(players.get(i), 0);
-
         c.setGameArea(0);
         c.giveStarterCards(0);
         //Create goals

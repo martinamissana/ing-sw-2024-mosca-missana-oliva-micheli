@@ -2,11 +2,9 @@ package it.polimi.ingsw.model.chat;
 
 import it.polimi.ingsw.controller.Controller;
 import it.polimi.ingsw.controller.exceptions.CannotJoinMultipleLobbiesException;
+import it.polimi.ingsw.controller.exceptions.GameAlreadyStartedException;
 import it.polimi.ingsw.controller.exceptions.PlayerChatMismatchException;
-import it.polimi.ingsw.model.exceptions.FullLobbyException;
-import it.polimi.ingsw.model.exceptions.GameDoesNotExistException;
-import it.polimi.ingsw.model.exceptions.LobbyDoesNotExistsException;
-import it.polimi.ingsw.model.exceptions.NicknameAlreadyTakenException;
+import it.polimi.ingsw.model.exceptions.*;
 import it.polimi.ingsw.model.game.GameHandler;
 import it.polimi.ingsw.model.player.Player;
 import org.junit.Assert;
@@ -22,7 +20,7 @@ public class ChatTest {
     Controller c;
 
     @Before
-    public void setUp() throws GameDoesNotExistException, IOException, FullLobbyException, LobbyDoesNotExistsException, NicknameAlreadyTakenException, CannotJoinMultipleLobbiesException, PlayerChatMismatchException {
+    public void setUp() throws GameDoesNotExistException, IOException, FullLobbyException, LobbyDoesNotExistsException, NicknameAlreadyTakenException, CannotJoinMultipleLobbiesException, PlayerChatMismatchException, GameAlreadyStartedException, PawnAlreadyTakenException {
 
         gameHandler= new GameHandler();
         c=new Controller(gameHandler);

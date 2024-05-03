@@ -99,7 +99,7 @@ public class Controller implements Serializable {
      * @param lobbyID - the ID of the lobby from which the player will be deleted
      * @throws LobbyDoesNotExistsException - if the lobby does not exist
      */
-    public void leaveLobby(Player player,int lobbyID) throws LobbyDoesNotExistsException, GameAlreadyStartedException {
+    public void leaveLobby(Player player,int lobbyID) throws LobbyDoesNotExistsException, GameAlreadyStartedException, GameDoesNotExistException {
         if(gh.getLobbies().containsKey(lobbyID)) {
             gh.getLobbies().get(lobbyID).getPlayers().remove(player);
             if(gh.getLobbies().get(lobbyID).getPlayers().isEmpty()) deleteLobby(lobbyID);
@@ -112,8 +112,11 @@ public class Controller implements Serializable {
      * @param lobbyID - the ID of the lobby that will be deleted
      * @throws LobbyDoesNotExistsException if the lobby does not exist
      */
-    public void deleteLobby(int lobbyID) throws LobbyDoesNotExistsException {
-        if(gh.getLobbies().get(lobbyID) != null) gh.getLobbies().remove(lobbyID);
+    public void deleteLobby(int lobbyID) throws LobbyDoesNotExistsException, GameDoesNotExistException {
+        if(gh.getLobbies().containsKey(lobbyID)) {
+            gh.getLobbies().remove(lobbyID);
+            if(gh.getActiveGames().containsKey(lobbyID)) gh.getActiveGames().remove(lobbyID);
+        }
         else throw new LobbyDoesNotExistsException("Lobby with ID " + lobbyID + " does not exist");
     }
 
@@ -185,7 +188,7 @@ public class Controller implements Serializable {
      * @throws GameDoesNotExistException- if the game does not exist
      */
     public void send(Message message, int ID) throws GameDoesNotExistException, LobbyDoesNotExistsException, PlayerChatMismatchException {
-        if(!gh.getLobby(ID).getPlayers().contains(message.getReceiver()) || !gh.getLobby(ID).getPlayers().contains(message.getSender()))
+        if((message.getReceiver()!=null &&!gh.getLobby(ID).getPlayers().contains(message.getReceiver()) )|| !gh.getLobby(ID).getPlayers().contains(message.getSender()))
             throw new PlayerChatMismatchException();
         try {
             if (!message.isGlobal()) {
