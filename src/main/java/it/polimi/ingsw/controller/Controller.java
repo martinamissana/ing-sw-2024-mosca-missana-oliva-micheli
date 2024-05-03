@@ -184,7 +184,9 @@ public class Controller implements Serializable {
      * @param ID - the ID of the game where the player that sends the message is found
      * @throws GameDoesNotExistException- if the game does not exist
      */
-    public void send(Message message, int ID) throws GameDoesNotExistException, LobbyDoesNotExistsException {
+    public void send(Message message, int ID) throws GameDoesNotExistException, LobbyDoesNotExistsException, PlayerChatMismatchException {
+        if(!gh.getLobby(ID).getPlayers().contains(message.getReceiver()) || !gh.getLobby(ID).getPlayers().contains(message.getSender()))
+            throw new PlayerChatMismatchException();
         try {
             if (!message.isGlobal()) {
                 message.getSender().getChat().getSentMessages().add(message);
