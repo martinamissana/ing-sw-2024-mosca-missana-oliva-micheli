@@ -1,5 +1,4 @@
 package it.polimi.ingsw.model.observer.events;
 
-public enum EventType {
-    LOGIN
+public class HandFilledEvent  extends Event{
 }

@@ -1,5 +1,4 @@
 package it.polimi.ingsw.model.observer.events;
 
-public abstract class Event {
-
+public class LobbyJoinedEvent extends Event{
 }

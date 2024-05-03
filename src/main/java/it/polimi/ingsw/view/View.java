@@ -12,6 +12,7 @@ import it.polimi.ingsw.model.deck.DeckBufferType;
 import it.polimi.ingsw.model.deck.DeckTypeBox;
 import it.polimi.ingsw.model.exceptions.*;
 import it.polimi.ingsw.model.game.Action;
+import it.polimi.ingsw.model.game.GamePhase;
 import it.polimi.ingsw.model.goal.Goal;
 import it.polimi.ingsw.model.player.*;
 
@@ -31,6 +32,7 @@ public abstract class View {
     private Chat chat;
     private Goal privateGoal;
     private Pawn pawn;
+    private HashMap<Player, Pawn> pawns; // all other players' pawns
     private boolean firstPlayer;
     private boolean lastRound;
     private ArrayList<Goal> personalGoalChoices;
@@ -41,7 +43,7 @@ public abstract class View {
     private Goal commonGoal1;
     private Goal commonGoal2;
 
-    // private GamePhase gamePhase;
+     private GamePhase gamePhase;
 
     public View() {
     }
