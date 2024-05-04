@@ -1,9 +1,6 @@
 package it.polimi.ingsw.controller;
 
-import it.polimi.ingsw.controller.exceptions.GameAlreadyStartedException;
-import it.polimi.ingsw.controller.exceptions.IllegalActionException;
-import it.polimi.ingsw.controller.exceptions.IllegalGoalChosenException;
-import it.polimi.ingsw.controller.exceptions.NotYourTurnException;
+import it.polimi.ingsw.controller.exceptions.*;
 import it.polimi.ingsw.model.card.Card;
 import it.polimi.ingsw.model.card.CardSide;
 import it.polimi.ingsw.model.card.ResourceCard;
@@ -16,6 +13,8 @@ import it.polimi.ingsw.model.deck.DeckTypeBox;
 import it.polimi.ingsw.model.exceptions.*;
 import it.polimi.ingsw.model.game.*;
 import it.polimi.ingsw.model.goal.*;
+import it.polimi.ingsw.model.observer.events.LobbyCreatedEvent;
+import it.polimi.ingsw.model.observer.events.LobbyJoinedEvent;
 import it.polimi.ingsw.model.player.Coords;
 import it.polimi.ingsw.model.player.Pawn;
 import it.polimi.ingsw.model.player.PawnBuffer;
@@ -69,8 +68,10 @@ public class Controller implements Serializable {
         try {
             gh.getLobbies().put(gh.getNumOfLobbies(), new Lobby(numOfPlayers));
             gh.getLobby(gh.getNumOfLobbies()).addPlayer(lobbyCreator);
+            gh.notify( new LobbyCreatedEvent(lobbyCreator,gh.getLobbies().get(gh.getNumOfLobbies()),gh.getNumOfLobbies()));
             gh.setNumOfLobbies(gh.getNumOfLobbies() + 1);
-        } catch (FullLobbyException | NicknameAlreadyTakenException ignored) {}
+        } catch (FullLobbyException | NicknameAlreadyTakenException | IOException ignored) {}
+
     }
 
     /**
@@ -82,12 +83,15 @@ public class Controller implements Serializable {
      * @throws NicknameAlreadyTakenException -  if the nickname is already taken
      * @throws LobbyDoesNotExistsException - if the lobby does not exist
      */
-    public void joinLobby(Player player, int lobbyID) throws FullLobbyException, NicknameAlreadyTakenException, LobbyDoesNotExistsException, IOException {
+    public void joinLobby(Player player, int lobbyID) throws FullLobbyException, NicknameAlreadyTakenException, LobbyDoesNotExistsException, IOException, CannotJoinMultipleLobbiesException {
         //lobbyID is the index in lobbies
+        for (Lobby l :gh.getLobbies().values()){
+            if(l.getPlayers().contains(player)) throw new CannotJoinMultipleLobbiesException();
+        }
+
         if(gh.getLobbies().containsKey(lobbyID)) {
             gh.getLobbies().get(lobbyID).addPlayer(player);
-            if(gh.getLobbies().get(lobbyID).getPlayers().size() == gh.getLobbies().get(lobbyID).getNumOfPlayers())
-                this.createGame(lobbyID); // in the last player has joined, the game is created
+            gh.notify(new LobbyJoinedEvent(player,lobbyID));
         }
         else throw new LobbyDoesNotExistsException("Lobby with ID " + lobbyID + " does not exist");
     }
@@ -98,7 +102,7 @@ public class Controller implements Serializable {
      * @param lobbyID - the ID of the lobby from which the player will be deleted
      * @throws LobbyDoesNotExistsException - if the lobby does not exist
      */
-    public void leaveLobby(Player player,int lobbyID) throws LobbyDoesNotExistsException, GameAlreadyStartedException {
+    public void leaveLobby(Player player,int lobbyID) throws LobbyDoesNotExistsException, GameAlreadyStartedException, GameDoesNotExistException {
         if(gh.getLobbies().containsKey(lobbyID)) {
             gh.getLobbies().get(lobbyID).getPlayers().remove(player);
             if(gh.getLobbies().get(lobbyID).getPlayers().isEmpty()) deleteLobby(lobbyID);
@@ -111,8 +115,11 @@ public class Controller implements Serializable {
      * @param lobbyID - the ID of the lobby that will be deleted
      * @throws LobbyDoesNotExistsException if the lobby does not exist
      */
-    public void deleteLobby(int lobbyID) throws LobbyDoesNotExistsException {
-        if(gh.getLobbies().get(lobbyID) != null) gh.getLobbies().remove(lobbyID);
+    public void deleteLobby(int lobbyID) throws LobbyDoesNotExistsException, GameDoesNotExistException {
+        if(gh.getLobbies().containsKey(lobbyID)) {
+            gh.getLobbies().remove(lobbyID);
+            if(gh.getActiveGames().containsKey(lobbyID)) gh.getActiveGames().remove(lobbyID);
+        }
         else throw new LobbyDoesNotExistsException("Lobby with ID " + lobbyID + " does not exist");
     }
 
@@ -183,7 +190,9 @@ public class Controller implements Serializable {
      * @param ID - the ID of the game where the player that sends the message is found
      * @throws GameDoesNotExistException- if the game does not exist
      */
-    public void send(Message message, int ID) throws GameDoesNotExistException, LobbyDoesNotExistsException {
+    public void send(Message message, int ID) throws GameDoesNotExistException, LobbyDoesNotExistsException, PlayerChatMismatchException {
+        if((message.getReceiver()!=null &&!gh.getLobby(ID).getPlayers().contains(message.getReceiver()) )|| !gh.getLobby(ID).getPlayers().contains(message.getSender()))
+            throw new PlayerChatMismatchException();
         try {
             if (!message.isGlobal()) {
                 message.getSender().getChat().getSentMessages().add(message);
@@ -216,13 +225,17 @@ public class Controller implements Serializable {
      * @param gameID - ID of the game played
      * @throws GameDoesNotExistException - if gameID does not correspond to a game in game handler
      */
-    public void setGameArea(Integer gameID) throws GameDoesNotExistException {
+    public void setGameArea(Integer gameID) throws GameDoesNotExistException, IOException {
         Game game = gh.getGame(gameID);
 
         // setting decks and deck buffers:
         game.getResourceDeck().shuffle();
         game.getGoldenDeck().shuffle();
         for(DeckBufferType type : DeckBufferType.values()) game.getDeckBuffer(type).refill();
+        giveStarterCards(gameID);
+        setCommonGoals(gameID);
+        giveGoals(gameID);
+
     }
 
     /**
@@ -247,14 +260,16 @@ public class Controller implements Serializable {
     }
 
     /**
-     * Allows the player to choose a pawn
+     * Allows the player to choose a pawn while he is in the lobby
      * @param lobbyID - ID of the lobby
      * @param player - who is choosing the pawn
      * @param color - color of the desired pawn
      * @throws PawnAlreadyTakenException - if the chosen pawn has already been taken
      * @throws LobbyDoesNotExistsException - if lobbyID does not correspond to a lobby in game handler
+     *
      */
-    public void choosePawn(Integer lobbyID, Player player, Pawn color) throws PawnAlreadyTakenException, LobbyDoesNotExistsException {
+    public void choosePawn(Integer lobbyID, Player player, Pawn color) throws PawnAlreadyTakenException, LobbyDoesNotExistsException, GameAlreadyStartedException, IOException, GameDoesNotExistException {
+        if(gh.getActiveGames().containsKey(lobbyID)) throw new GameAlreadyStartedException();
         Lobby lobby = gh.getLobby(lobbyID);
         PawnBuffer pawnList = lobby.getPawnBuffer();
 
@@ -262,20 +277,31 @@ public class Controller implements Serializable {
         else throw new PawnAlreadyTakenException();
 
         player.setPawn(color);
+
+        for(Player p: lobby.getPlayers()){
+            if(p.getPawn()==null)return;
+        }
+        createGame(lobbyID);
+        setGameArea(lobbyID);
     }
 
     /**
      * Allows the player to choose the side of the starter card before placing it down
+     * if all the players have placed the started card the game phase changes to CHOOSING PRIVATE GOAL and the hand of each player is filled
      * @param player - who is playing the card
      * @param side - side chosen by the player
      */
-    public void chooseCardSide(Integer ID,Player player, CardSide side) throws GameDoesNotExistException {
+    public void chooseCardSide(Integer ID,Player player, CardSide side) throws GameDoesNotExistException, EmptyDeckException, HandIsFullException {
+        if(gh.getGame(ID).getGamePhase()!=GamePhase.PLACING_STARTER_CARD) throw new WrongThreadException();
         StarterCard card = (StarterCard) player.getHand().getCard(0);
         if(!card.getSide().equals(side)) card.flip();
-
         player.getField().addCard(card);
         player.getHand().removeCard(card);
-        // getGh().getGame(ID);
+        for(Player p:gh.getGame(ID).getPlayers()){
+            if(p.getHand().getSize()!=0)return;
+        }
+        gh.getGame(ID).setGamePhase(GamePhase.CHOOSING_PRIVATE_GOAL);
+        fillHands(ID);
     }
 
     /**
@@ -326,10 +352,14 @@ public class Controller implements Serializable {
      * @param player - who is choosing the personal goal
      * @param goal - goal chosen by the player
      */
-    public void choosePersonalGoal(Player player, Goal goal) throws IllegalGoalChosenException {
-
+    public void choosePersonalGoal(Integer ID,Player player, Goal goal) throws IllegalGoalChosenException, GameDoesNotExistException, WrongGamePhaseException {
+        if(gh.getGame(ID).getGamePhase()!=GamePhase.CHOOSING_PRIVATE_GOAL)  throw new WrongGamePhaseException();
         if(player.getChoosableGoals().contains(goal))player.setPrivateGoal(goal);
         else throw new IllegalGoalChosenException();
+        for(Player p:gh.getGame(ID).getPlayers()){
+            if(p.getPrivateGoal()==null)return;
+        }
+        gh.getGame(ID).setGamePhase(GamePhase.PLAYING_GAME);
     }
 
     // GAME
@@ -455,6 +485,7 @@ public class Controller implements Serializable {
 
         // update turn counter
         game.setWhoseTurn((game.getWhoseTurn()+1) % game.getNumOfPlayers());
+
     }
 
     // method related to game phases

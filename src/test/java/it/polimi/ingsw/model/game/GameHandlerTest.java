@@ -1,19 +1,24 @@
 package it.polimi.ingsw.model.game;
 
 import it.polimi.ingsw.controller.Controller;
-import it.polimi.ingsw.model.card.*;
+import it.polimi.ingsw.controller.exceptions.CannotJoinMultipleLobbiesException;
+import it.polimi.ingsw.controller.exceptions.GameAlreadyStartedException;
+import it.polimi.ingsw.model.card.CardSide;
+import it.polimi.ingsw.model.card.Corner;
+import it.polimi.ingsw.model.card.CornerType;
+import it.polimi.ingsw.model.card.ResourceCard;
 import it.polimi.ingsw.model.commonItem.CornerStatus;
 import it.polimi.ingsw.model.commonItem.Kingdom;
 import it.polimi.ingsw.model.commonItem.Resource;
 import it.polimi.ingsw.model.exceptions.*;
+import it.polimi.ingsw.model.player.Pawn;
 import it.polimi.ingsw.model.player.Player;
-
-import java.io.IOException;
-import java.util.HashMap;
-
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+
+import java.io.IOException;
+import java.util.HashMap;
 
 public class GameHandlerTest {
     GameHandler gameHandler=new GameHandler();
@@ -48,10 +53,13 @@ public class GameHandlerTest {
         Assert.assertFalse(gameHandler.getUsers().contains(anna1));
     }
     @Test
-    public void testSaveAndLoad() throws IOException, ClassNotFoundException, GameDoesNotExistException, FullLobbyException, NicknameAlreadyTakenException, LobbyDoesNotExistsException, HandIsFullException {
+    public void testSaveAndLoad() throws IOException, ClassNotFoundException, GameDoesNotExistException, FullLobbyException, NicknameAlreadyTakenException, LobbyDoesNotExistsException, HandIsFullException, CannotJoinMultipleLobbiesException, GameAlreadyStartedException, PawnAlreadyTakenException {
         c.createLobby(3,anna);
         c.joinLobby(eric,0);
         c.joinLobby(giorgio,0);
+        c.choosePawn(0,anna, Pawn.BLUE);
+        c.choosePawn(0,eric,Pawn.RED);
+        c.choosePawn( 0,giorgio,Pawn.YELLOW);
         anna.getHand().addCard(card);
         eric.getHand().addCard(card);
         giorgio.getHand().addCard(card);

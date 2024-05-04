@@ -12,6 +12,8 @@ import it.polimi.ingsw.model.deck.DeckBufferType;
 import it.polimi.ingsw.model.deck.DeckTypeBox;
 import it.polimi.ingsw.model.exceptions.*;
 import it.polimi.ingsw.model.game.Action;
+import it.polimi.ingsw.model.game.GamePhase;
+import it.polimi.ingsw.model.game.Lobby;
 import it.polimi.ingsw.model.goal.Goal;
 import it.polimi.ingsw.model.player.*;
 
@@ -21,6 +23,7 @@ import java.util.HashMap;
 
 public abstract class View {
     private String nickname;
+    protected final HashMap<Integer, Lobby> lobbies = new HashMap<>();
     private Player player;
     private Integer ID; // both game and lobby ID
     private Hand hand;
@@ -31,6 +34,7 @@ public abstract class View {
     private Chat chat;
     private Goal privateGoal;
     private Pawn pawn;
+    private HashMap<Player, Pawn> pawns; // all other players' pawns
     private boolean firstPlayer;
     private boolean lastRound;
     private ArrayList<Goal> personalGoalChoices;
@@ -40,8 +44,8 @@ public abstract class View {
     private Card topGoldenCard;
     private Goal commonGoal1;
     private Goal commonGoal2;
-
-    // private GamePhase gamePhase;
+    private GamePhase gamePhase;
+    private final ArrayList<String> errorMessages=new ArrayList<>();
 
     public View() {
     }
@@ -58,6 +62,76 @@ public abstract class View {
         return topResourceCard;
     }
 
+    public HashMap<Integer, Lobby> getLobbies() {
+        return lobbies;
+    }
+
+    public Player getPlayer() {
+        return player;
+    }
+
+    public Integer getID() {
+        return ID;
+    }
+
+    public Hand getHand() {
+        return hand;
+    }
+
+    public Field getMyField() {
+        return myField;
+    }
+
+    public HashMap<Player, Field> getFields() {
+        return fields;
+    }
+
+    public boolean isYourTurn() {
+        return yourTurn;
+    }
+
+    public Action getAction() {
+        return action;
+    }
+
+    public Chat getChat() {
+        return chat;
+    }
+
+    public Goal getPrivateGoal() {
+        return privateGoal;
+    }
+
+    public ArrayList<String> getErrorMessages() {return errorMessages;}
+
+    public Pawn getPawn() {
+        return pawn;
+    }
+
+    public HashMap<Player, Pawn> getPawns() {
+        return pawns;
+    }
+
+    public boolean isFirstPlayer() {
+        return firstPlayer;
+    }
+
+    public boolean isLastRound() {
+        return lastRound;
+    }
+
+    public ArrayList<Goal> getPersonalGoalChoices() {
+        return personalGoalChoices;
+    }
+
+    public HashMap<Player, Integer> getScoreboard() {
+        return scoreboard;
+    }
+
+    public GamePhase getGamePhase() {
+        return gamePhase;
+    }
+
     public Card getTopGoldenCard() {
         return topGoldenCard;
     }
@@ -68,6 +142,70 @@ public abstract class View {
 
     public Goal getCommonGoal2() {
         return commonGoal2;
+    }
+
+    public void setPlayer(Player player) {
+        this.player = player;
+    }
+
+    public void setID(Integer ID) {
+        this.ID = ID;
+    }
+
+    public void setHand(Hand hand) {
+        this.hand = hand;
+    }
+
+    public void setMyField(Field myField) {
+        this.myField = myField;
+    }
+
+    public void setFields(HashMap<Player, Field> fields) {
+        this.fields = fields;
+    }
+
+    public void setYourTurn(boolean yourTurn) {
+        this.yourTurn = yourTurn;
+    }
+
+    public void setAction(Action action) {
+        this.action = action;
+    }
+
+    public void setChat(Chat chat) {
+        this.chat = chat;
+    }
+
+    public void setPrivateGoal(Goal privateGoal) {
+        this.privateGoal = privateGoal;
+    }
+
+    public void setPawn(Pawn pawn) {
+        this.pawn = pawn;
+    }
+
+    public void setPawns(HashMap<Player, Pawn> pawns) {
+        this.pawns = pawns;
+    }
+
+    public void setFirstPlayer(boolean firstPlayer) {
+        this.firstPlayer = firstPlayer;
+    }
+
+    public void setLastRound(boolean lastRound) {
+        this.lastRound = lastRound;
+    }
+
+    public void setPersonalGoalChoices(ArrayList<Goal> personalGoalChoices) {
+        this.personalGoalChoices = personalGoalChoices;
+    }
+
+    public void setScoreboard(HashMap<Player, Integer> scoreboard) {
+        this.scoreboard = scoreboard;
+    }
+
+    public void setGamePhase(GamePhase gamePhase) {
+        this.gamePhase = gamePhase;
     }
 
     public void setDeckBuffers(HashMap<DeckBufferType, DeckBuffer> deckBuffers) {
@@ -92,7 +230,7 @@ public abstract class View {
 
     public void setNickname(String nickname) { this.nickname = nickname; }
 
-    public void createLobby(int numOfPlayers, Player lobbyCreator) throws LobbyDoesNotExistsException {
+    public void createLobby(int numOfPlayers) throws LobbyDoesNotExistsException, IOException {
 
     }
 

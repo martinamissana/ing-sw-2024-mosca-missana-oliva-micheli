@@ -1,8 +1,10 @@
 package it.polimi.ingsw.network;
 
+import it.polimi.ingsw.model.exceptions.LobbyDoesNotExistsException;
 import it.polimi.ingsw.view.TCPView;
 
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
 public class Client {
     public static void main(String[] args) throws IOException {
@@ -20,10 +22,23 @@ public class Client {
                     } catch (ClassNotFoundException e) {
                         throw new RuntimeException(e);
                     }
-                    new Thread(() -> {
-                        //new CLIGame(c,client);
-                    }).start();
+
                 }).start();
+
+                new Thread(() -> {
+                    try {
+                        TimeUnit.SECONDS.sleep(10);
+                        client.createLobby(3);
+                        //new CLIGame(c,client);
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    } catch (LobbyDoesNotExistsException e) {
+                        throw new RuntimeException(e);
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                }).start();
+
             } catch (IOException e) {
                 System.err.println(e.getMessage());
             }
