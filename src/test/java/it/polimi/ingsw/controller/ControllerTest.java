@@ -228,13 +228,10 @@ public class ControllerTest {
         // card placement, one resource and one golden for each player
         con.playCard(0, game.getPlayers().get(0), 0, new Coords(1,0));
         con.drawCard(0, game.getPlayers().get(0), DeckType.RESOURCE);
-        con.nextTurn(0);
         con.playCard(0, game.getPlayers().get(1), 0, new Coords(0,1));
         con.drawCard(0, game.getPlayers().get(1), DeckType.RESOURCE);
-        con.nextTurn(0);
         con.playCard(0, game.getPlayers().get(0), 1, new Coords(-1,0));
         con.drawCard(0, game.getPlayers().get(0), DeckType.RESOURCE);
-        con.nextTurn(0);
         con.playCard(0, game.getPlayers().get(1), 1, new Coords(0,-1));
     }
 
