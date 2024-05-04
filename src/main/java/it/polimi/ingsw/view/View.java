@@ -45,6 +45,7 @@ public abstract class View {
     private Goal commonGoal1;
     private Goal commonGoal2;
     private GamePhase gamePhase;
+    private final ArrayList<String> errorMessages=new ArrayList<>();
 
     public View() {
     }
@@ -100,6 +101,8 @@ public abstract class View {
     public Goal getPrivateGoal() {
         return privateGoal;
     }
+
+    public ArrayList<String> getErrorMessages() {return errorMessages;}
 
     public Pawn getPawn() {
         return pawn;
