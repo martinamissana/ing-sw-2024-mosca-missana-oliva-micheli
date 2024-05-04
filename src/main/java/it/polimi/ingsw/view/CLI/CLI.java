@@ -51,8 +51,6 @@ public class CLI {
                 System.out.println(warningColor + "\n[ERROR]: Username already taken!\n" + reset);
             } catch (IOException e) {
                 throw new RuntimeException(e);
-            } catch (ConnectionException e) {
-                throw new RuntimeException(e);
             }
         } while (!availableUsername);
 
