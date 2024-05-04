@@ -60,7 +60,7 @@ public class Main {
         Integer gameID = 1;
         controller.setGameArea(gameID);
         controller.giveStarterCards(gameID);
-        for (Player p : gh.getGame(gameID).getPlayers()) controller.chooseCardSide(p, CardSide.BACK);
+        for (Player p : gh.getGame(gameID).getPlayers()) controller.chooseCardSide(gameID, p, CardSide.BACK);
         controller.fillHands(gameID);
 
         cli.printHello();
