@@ -14,6 +14,7 @@ import it.polimi.ingsw.model.exceptions.*;
 import it.polimi.ingsw.model.game.*;
 import it.polimi.ingsw.model.goal.*;
 import it.polimi.ingsw.model.observer.events.LobbyCreatedEvent;
+import it.polimi.ingsw.model.observer.events.LobbyJoinedEvent;
 import it.polimi.ingsw.model.player.Coords;
 import it.polimi.ingsw.model.player.Pawn;
 import it.polimi.ingsw.model.player.PawnBuffer;
@@ -90,8 +91,7 @@ public class Controller implements Serializable {
 
         if(gh.getLobbies().containsKey(lobbyID)) {
             gh.getLobbies().get(lobbyID).addPlayer(player);
-           // if(gh.getLobbies().get(lobbyID).getPlayers().size() == gh.getLobbies().get(lobbyID).getNumOfPlayers())
-            // this.createGame(lobbyID); // in the last player has joined, the game is created
+            gh.notify(new LobbyJoinedEvent(player,lobbyID));
         }
         else throw new LobbyDoesNotExistsException("Lobby with ID " + lobbyID + " does not exist");
     }

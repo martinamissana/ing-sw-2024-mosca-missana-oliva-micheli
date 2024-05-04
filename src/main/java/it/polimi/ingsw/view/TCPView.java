@@ -1,14 +1,15 @@
 package it.polimi.ingsw.view;
 
+import it.polimi.ingsw.model.exceptions.FullLobbyException;
 import it.polimi.ingsw.model.exceptions.LobbyDoesNotExistsException;
+import it.polimi.ingsw.model.exceptions.NicknameAlreadyTakenException;
 import it.polimi.ingsw.model.player.Player;
 import it.polimi.ingsw.network.netMessage.NetMessage;
 import it.polimi.ingsw.network.netMessage.c2s.CreateLobbyMessage;
 import it.polimi.ingsw.network.netMessage.c2s.DisconnectMessage;
+import it.polimi.ingsw.network.netMessage.c2s.LobbyJoinedMessage;
 import it.polimi.ingsw.network.netMessage.c2s.MyNickname;
-import it.polimi.ingsw.network.netMessage.s2c.LobbyCreatedMessage;
-import it.polimi.ingsw.network.netMessage.s2c.LoginFail_NicknameAlreadyTaken;
-import it.polimi.ingsw.network.netMessage.s2c.LoginMessage;
+import it.polimi.ingsw.network.netMessage.s2c.*;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -47,12 +48,12 @@ public class TCPView extends View {
             socket.close();
         } catch (IOException e) {
             System.err.println(e.getMessage());
-        } catch (ClassNotFoundException e) {
+        } catch (ClassNotFoundException | FullLobbyException | NicknameAlreadyTakenException e) {
             throw new RuntimeException(e);
         }
     }
 
-    private void elaborate(NetMessage message) throws IOException {
+    private void elaborate(NetMessage message) throws IOException, FullLobbyException, NicknameAlreadyTakenException {
         //System.out.println("elaborate has been called");
         switch (message) {
             case LoginMessage m -> {
@@ -64,10 +65,19 @@ public class TCPView extends View {
                 if(m.getCreator()==super.getPlayer()) System.out.println("your lobby was created, allowed players: "+ m.getLobby().getNumOfPlayers() );
                 else System.out.println("A lobby was created, allowed players: "+ m.getLobby().getNumOfPlayers() );
             }
+            //TODO: REVIEW THIS WITH DISCONNECTION LOGIC
             case LoginFail_NicknameAlreadyTaken m -> {
                 System.out.println("you are not logged in, disconnection");
                 DisconnectMessage disconnectMessage= new DisconnectMessage();
                 out.writeObject(disconnectMessage);
+            }
+            case LobbyJoinedMessage m -> {
+                if(m.getPlayer()==super.getPlayer()) System.out.println("you joined the lobby!");
+                else System.out.println("someone joined a lobby lobby!");
+                super.getLobbies().get(m.getID()).addPlayer(m.getPlayer());
+            }
+            case FailMessage m -> {
+                super.getErrorMessages().add(m.getMessage());
             }
             default -> throw new IllegalStateException("Unexpected value: " + message);
         }
@@ -87,5 +97,10 @@ public class TCPView extends View {
         System.out.println("you tried to create a lobby");
     }
 
-
+    @Override
+    public void joinLobby(Player player, int lobbyID) throws FullLobbyException, NicknameAlreadyTakenException, LobbyDoesNotExistsException, IOException {
+        JoinLobbyMessage m = new JoinLobbyMessage(player,lobbyID);
+        out.writeObject(m);
+        System.out.println("you tried to join a lobby");
+    }
 }

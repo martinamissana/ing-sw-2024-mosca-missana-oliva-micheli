@@ -1,13 +1,14 @@
-package it.polimi.ingsw.model.observer.events;
+package it.polimi.ingsw.network.netMessage.c2s;
 
 import it.polimi.ingsw.model.player.Player;
+import it.polimi.ingsw.network.netMessage.NetMessage;
 
-public class LobbyJoinedEvent extends Event{
+public class LobbyJoinedMessage extends NetMessage {
     private final Player player;
     private final Integer ID;
 
-    public LobbyJoinedEvent(Player creator,Integer ID) {
-        this.player = creator;
+    public LobbyJoinedMessage(Player player,Integer ID) {
+        this.player = player;
         this.ID=ID;
     }
 
