@@ -382,7 +382,8 @@ public class Controller implements Serializable {
     }
 
     /**
-     * plays a card from the hand of a player to their field, at the specified position
+     * plays a card from the hand of a player to their field, at the specified position.
+     * if it's the game's last round
      * @param gameID ID of the calling player's game
      * @param player player who's playing the card
      * @param handPos card's position index in the player's hand
@@ -391,8 +392,9 @@ public class Controller implements Serializable {
      * @throws NotYourTurnException thrown when a player tries to perform an action when it's not their turn
      * @throws IllegalActionException thrown if the selected game's current expected action isn't PLAY
      * @throws IllegalMoveException thrown if the selected card cannot be played to the field as requested
+     * @throws LobbyDoesNotExistsException thrown if the game's lobby does not exist
      */
-    public void playCard(Integer gameID, Player player, int handPos, Coords coords) throws GameDoesNotExistException, NotYourTurnException, IllegalActionException, IllegalMoveException {
+    public void playCard(Integer gameID, Player player, int handPos, Coords coords) throws GameDoesNotExistException, NotYourTurnException, IllegalActionException, IllegalMoveException, LobbyDoesNotExistsException {
 
         // get game from ID
         Game game = gh.getGame(gameID);
@@ -418,14 +420,17 @@ public class Controller implements Serializable {
         game.addToScore(player, points);
 
         // set the game's current action to DRAW after playing a card
-        // only if it's not the last round (because if it is, players cannot draw cards)
+        // only if it's not the last round (because if it is,
+        // players cannot draw cards and should pass instead)
         if (!game.isLastRound())
             game.setAction(Action.DRAW);
+        else
+            nextTurn(gameID); // on the last round, place a card and pass. and if this is the last player, terminate game
     }
 
     /**
      * draws a card from a player's game's deck or deckBuffer and adds it to their hand.
-     * then checks if the game is or was on its last turn, and terminates the game if needed.
+     * then checks whether the game's last round has been reached, and updates the game's state accordingly.
      * @param gameID ID of the game of the drawing player
      * @param player player who's drawing the card
      * @param deckTypeBox type of card source to draw from
@@ -456,14 +461,16 @@ public class Controller implements Serializable {
         // set the game's current action to PLAY after drawing a card
         game.setAction(Action.PLAY);
 
-        // update the game's current player
+        // update the game's current player and check
+        // whether the game's last round has been reached or not
         nextTurn(gameID);
     }
 
     /**
      * updates the game's "whoseTurn" attribute and sets it to the next player's playerID.
-     * if the current player (as of calling the method) is the last of the whole round,
-     * the method checks if it's the game's last round or if the game should terminate.
+     * at the end of every round, this method checks if the game has reached its last round
+     * and updates the game's lastRound parameter accordingly.
+     * when the last round is completed, the winner is declared and the game is terminated.
      * @param gameID ID of the game to advance the turn of
      * @throws GameDoesNotExistException thrown if the given ID does not correspond to any Game
      */
@@ -472,14 +479,14 @@ public class Controller implements Serializable {
         // get game from ID
         Game game = gh.getGame(gameID);
 
-        // if last round has finished, terminate game
-        if(game.getWhoseTurn() == game.getNumOfPlayers()-1 && game.isLastRound()) {
+        // if last round has finished, declare the winner and terminate the game
+        if(game.isLastRound() && game.getWhoseTurn() == game.getNumOfPlayers()-1) {
             winner(gameID);
             terminateGame(gameID);
         }
 
         // if the current player is the last in the round,
-        // check if updating the game's status to last round is needed
+        // update the game's status to last round if needed
         if(game.getWhoseTurn() == game.getNumOfPlayers()-1)
             updateLastRound(gameID);
 
@@ -488,22 +495,26 @@ public class Controller implements Serializable {
 
     }
 
-    // method related to game phases
-
     /**
-     * updates the game's state, setting it to its last round if a player has reached 20 there's no remaining cards in the decks
+     * updates the game's state, setting it to its last round if a player
+     * has reached 20 points or if there's no remaining cards in both decks
      * @param gameID - the ID of the game where the status is checked
      */
-    public void updateLastRound(Integer gameID) throws GameDoesNotExistException, LobbyDoesNotExistsException {
+    public void updateLastRound(Integer gameID) {
         Game game = gh.getActiveGames().get(gameID);
 
+        // if it's already last round there's no need to update
+        if (game.isLastRound()) return;
+
         // if both decks are empty
-        if (gh.getGame(gameID).getDeck(DeckType.RESOURCE).getCards().isEmpty() && gh.getGame(gameID).getDeck(DeckType.GOLDEN).getCards().isEmpty())
+        if (game.getResourceDeck().getCards().isEmpty() &&
+                game.getGoldenDeck().getCards().isEmpty())
             game.setLastRound(true);
 
         // if someone has reached 20 points
-        for(Player p:game.getPlayers())
-            if(game.getScoreboard().get(p)>=20) game.setLastRound(true);
+        for(Map.Entry<Player, Integer> entry : game.getScoreboard().entrySet())
+            if(entry.getValue() >= 20)
+                game.setLastRound(true);
     }
 
     // FINAL PHASE
