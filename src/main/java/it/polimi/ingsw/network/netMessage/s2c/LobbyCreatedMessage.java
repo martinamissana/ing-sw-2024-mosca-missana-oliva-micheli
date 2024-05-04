@@ -1,14 +1,17 @@
-package it.polimi.ingsw.model.observer.events;
+package it.polimi.ingsw.network.netMessage.s2c;
 
 import it.polimi.ingsw.model.game.Lobby;
 import it.polimi.ingsw.model.player.Player;
+import it.polimi.ingsw.network.netMessage.NetMessage;
 
-public class LobbyCreatedEvent extends Event{
+import java.io.Serializable;
+
+public class LobbyCreatedMessage extends NetMessage implements Serializable  {
     private final Player creator;
     private final Lobby lobby;
     private final Integer ID;
 
-    public LobbyCreatedEvent(Player creator, Lobby lobby,Integer ID) {
+    public LobbyCreatedMessage(Player creator, Lobby lobby,Integer ID) {
         this.creator = creator;
         this.lobby = lobby;
         this.ID=ID;

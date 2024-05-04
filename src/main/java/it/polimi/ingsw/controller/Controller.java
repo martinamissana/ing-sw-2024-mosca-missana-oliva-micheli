@@ -13,6 +13,7 @@ import it.polimi.ingsw.model.deck.DeckTypeBox;
 import it.polimi.ingsw.model.exceptions.*;
 import it.polimi.ingsw.model.game.*;
 import it.polimi.ingsw.model.goal.*;
+import it.polimi.ingsw.model.observer.events.LobbyCreatedEvent;
 import it.polimi.ingsw.model.player.Coords;
 import it.polimi.ingsw.model.player.Pawn;
 import it.polimi.ingsw.model.player.PawnBuffer;
@@ -66,8 +67,10 @@ public class Controller implements Serializable {
         try {
             gh.getLobbies().put(gh.getNumOfLobbies(), new Lobby(numOfPlayers));
             gh.getLobby(gh.getNumOfLobbies()).addPlayer(lobbyCreator);
+            gh.notify( new LobbyCreatedEvent(lobbyCreator,gh.getLobbies().get(gh.getNumOfLobbies()),gh.getNumOfLobbies()));
             gh.setNumOfLobbies(gh.getNumOfLobbies() + 1);
-        } catch (FullLobbyException | NicknameAlreadyTakenException ignored) {}
+        } catch (FullLobbyException | NicknameAlreadyTakenException | IOException ignored) {}
+
     }
 
     /**

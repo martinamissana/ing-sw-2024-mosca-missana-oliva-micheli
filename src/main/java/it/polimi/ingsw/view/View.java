@@ -141,6 +141,70 @@ public abstract class View {
         return commonGoal2;
     }
 
+    public void setPlayer(Player player) {
+        this.player = player;
+    }
+
+    public void setID(Integer ID) {
+        this.ID = ID;
+    }
+
+    public void setHand(Hand hand) {
+        this.hand = hand;
+    }
+
+    public void setMyField(Field myField) {
+        this.myField = myField;
+    }
+
+    public void setFields(HashMap<Player, Field> fields) {
+        this.fields = fields;
+    }
+
+    public void setYourTurn(boolean yourTurn) {
+        this.yourTurn = yourTurn;
+    }
+
+    public void setAction(Action action) {
+        this.action = action;
+    }
+
+    public void setChat(Chat chat) {
+        this.chat = chat;
+    }
+
+    public void setPrivateGoal(Goal privateGoal) {
+        this.privateGoal = privateGoal;
+    }
+
+    public void setPawn(Pawn pawn) {
+        this.pawn = pawn;
+    }
+
+    public void setPawns(HashMap<Player, Pawn> pawns) {
+        this.pawns = pawns;
+    }
+
+    public void setFirstPlayer(boolean firstPlayer) {
+        this.firstPlayer = firstPlayer;
+    }
+
+    public void setLastRound(boolean lastRound) {
+        this.lastRound = lastRound;
+    }
+
+    public void setPersonalGoalChoices(ArrayList<Goal> personalGoalChoices) {
+        this.personalGoalChoices = personalGoalChoices;
+    }
+
+    public void setScoreboard(HashMap<Player, Integer> scoreboard) {
+        this.scoreboard = scoreboard;
+    }
+
+    public void setGamePhase(GamePhase gamePhase) {
+        this.gamePhase = gamePhase;
+    }
+
     public void setDeckBuffers(HashMap<DeckBufferType, DeckBuffer> deckBuffers) {
         this.deckBuffers = deckBuffers;
     }
@@ -163,7 +227,7 @@ public abstract class View {
 
     public void setNickname(String nickname) { this.nickname = nickname; }
 
-    public void createLobby(int numOfPlayers, Player lobbyCreator) throws LobbyDoesNotExistsException {
+    public void createLobby(int numOfPlayers) throws LobbyDoesNotExistsException, IOException {
 
     }
 

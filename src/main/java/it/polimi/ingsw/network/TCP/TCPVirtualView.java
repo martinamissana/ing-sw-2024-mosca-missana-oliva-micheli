@@ -1,13 +1,18 @@
 package it.polimi.ingsw.network.TCP;
 
 import it.polimi.ingsw.controller.Controller;
+import it.polimi.ingsw.model.exceptions.LobbyDoesNotExistsException;
 import it.polimi.ingsw.model.exceptions.NicknameAlreadyTakenException;
 import it.polimi.ingsw.model.observer.Observer;
 import it.polimi.ingsw.model.observer.events.Event;
+import it.polimi.ingsw.model.observer.events.LobbyCreatedEvent;
 import it.polimi.ingsw.model.observer.events.LoginEvent;
 import it.polimi.ingsw.network.netMessage.NetMessage;
+import it.polimi.ingsw.network.netMessage.c2s.CreateLobbyMessage;
 import it.polimi.ingsw.network.netMessage.c2s.DisconnectMessage;
 import it.polimi.ingsw.network.netMessage.c2s.MyNickname;
+import it.polimi.ingsw.network.netMessage.s2c.LobbyCreatedMessage;
+import it.polimi.ingsw.network.netMessage.s2c.LoginFail_NicknameAlreadyTaken;
 import it.polimi.ingsw.network.netMessage.s2c.LoginMessage;
 
 import java.io.IOException;
@@ -50,6 +55,8 @@ public class TCPVirtualView implements Runnable, Observer {
             throw new RuntimeException(e);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
+        } catch (LobbyDoesNotExistsException e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -59,7 +66,7 @@ public class TCPVirtualView implements Runnable, Observer {
 
     @Override
     public void update(Event event) throws IOException{
-        System.out.println("update has been called");
+        //System.out.println("update has been called");
         if (socket.isConnected()){
             switch (event) {
                 case LoginEvent e -> {
@@ -67,19 +74,32 @@ public class TCPVirtualView implements Runnable, Observer {
                     out.writeObject(m);
                     System.out.println("Update that a user logged in: " + m.getNickname());
                 }
+                case LobbyCreatedEvent e -> {
+                    LobbyCreatedMessage m= new LobbyCreatedMessage(e.getCreator(),e.getLobby(),e.getID());
+                    out.writeObject(m);
+                    System.out.println("A lobby was created, allowed players: "+ e.getLobby().getNumOfPlayers() );
+                }
                 default -> throw new IllegalStateException("Unexpected value: " + event);
             }
-            System.out.println("Update message error");
         }
-        System.out.println("socket error");
 
     }
-    private void elaborate(NetMessage message) throws InterruptedException, NicknameAlreadyTakenException, IOException {
-        System.out.println("elaborate has been called");
+    private void elaborate(NetMessage message) throws InterruptedException, NicknameAlreadyTakenException, IOException, LobbyDoesNotExistsException {
+        //System.out.println("elaborate has been called");
         switch (message) {
             case MyNickname m -> {
-                c.login(m.getNickname());
-                System.out.println("Logged in: " + m.getNickname());
+                try{
+                    c.login(m.getNickname());
+                    System.out.println("Logged in: " + m.getNickname());
+                }catch (NicknameAlreadyTakenException e){
+                    LoginFail_NicknameAlreadyTaken errorMessage=new LoginFail_NicknameAlreadyTaken();
+                    out.writeObject(m);
+                    System.out.println("Couldn't log in: " + m.getNickname());
+                }
+            }
+            case CreateLobbyMessage m ->{
+                c.createLobby(m.getNumOfPlayers(),m.getCreator());
+                System.out.println(m.getCreator().getNickname() +" created a lobby");
             }
             default -> throw new IllegalStateException("Unexpected value: " + message);
         }
