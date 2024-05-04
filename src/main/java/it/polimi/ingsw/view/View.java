@@ -13,6 +13,7 @@ import it.polimi.ingsw.model.deck.DeckTypeBox;
 import it.polimi.ingsw.model.exceptions.*;
 import it.polimi.ingsw.model.game.Action;
 import it.polimi.ingsw.model.game.GamePhase;
+import it.polimi.ingsw.model.game.Lobby;
 import it.polimi.ingsw.model.goal.Goal;
 import it.polimi.ingsw.model.player.*;
 
@@ -22,6 +23,7 @@ import java.util.HashMap;
 
 public abstract class View {
     private String nickname;
+    protected final HashMap<Integer, Lobby> lobbies = new HashMap<>();
     private Player player;
     private Integer ID; // both game and lobby ID
     private Hand hand;
@@ -42,8 +44,7 @@ public abstract class View {
     private Card topGoldenCard;
     private Goal commonGoal1;
     private Goal commonGoal2;
-
-     private GamePhase gamePhase;
+    private GamePhase gamePhase;
 
     public View() {
     }
@@ -58,6 +59,74 @@ public abstract class View {
 
     public Card getTopResourceCard() {
         return topResourceCard;
+    }
+
+    public HashMap<Integer, Lobby> getLobbies() {
+        return lobbies;
+    }
+
+    public Player getPlayer() {
+        return player;
+    }
+
+    public Integer getID() {
+        return ID;
+    }
+
+    public Hand getHand() {
+        return hand;
+    }
+
+    public Field getMyField() {
+        return myField;
+    }
+
+    public HashMap<Player, Field> getFields() {
+        return fields;
+    }
+
+    public boolean isYourTurn() {
+        return yourTurn;
+    }
+
+    public Action getAction() {
+        return action;
+    }
+
+    public Chat getChat() {
+        return chat;
+    }
+
+    public Goal getPrivateGoal() {
+        return privateGoal;
+    }
+
+    public Pawn getPawn() {
+        return pawn;
+    }
+
+    public HashMap<Player, Pawn> getPawns() {
+        return pawns;
+    }
+
+    public boolean isFirstPlayer() {
+        return firstPlayer;
+    }
+
+    public boolean isLastRound() {
+        return lastRound;
+    }
+
+    public ArrayList<Goal> getPersonalGoalChoices() {
+        return personalGoalChoices;
+    }
+
+    public HashMap<Player, Integer> getScoreboard() {
+        return scoreboard;
+    }
+
+    public GamePhase getGamePhase() {
+        return gamePhase;
     }
 
     public Card getTopGoldenCard() {
