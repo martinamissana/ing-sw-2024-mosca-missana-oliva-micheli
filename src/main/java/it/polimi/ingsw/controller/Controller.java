@@ -60,13 +60,15 @@ public class Controller implements Serializable {
      * @param creator - the player that created the lobby
      * @throws LobbyDoesNotExistsException - this will never be thrown
      */
-    public synchronized void createLobby(int numOfPlayers, String creator) throws LobbyDoesNotExistsException, UnexistentUserException {
+    public synchronized void createLobby(int numOfPlayers, String creator) throws LobbyDoesNotExistsException, UnexistentUserException, CannotJoinMultipleLobbiesException {
         Player lobbyCreator = null;
         for (Player p : gh.getUsers()) {
             if (p.getNickname().equals(creator)) lobbyCreator = p;
         }
         if (lobbyCreator == null) throw new UnexistentUserException();
-
+        for (Lobby l :gh.getLobbies().values()){
+            if(l.getPlayers().contains(lobbyCreator)) throw new CannotJoinMultipleLobbiesException();
+        }
         try {
             gh.getLobbies().put(gh.getNumOfLobbies(), new Lobby(numOfPlayers));
             gh.getLobby(gh.getNumOfLobbies()).addPlayer(lobbyCreator);

@@ -3,6 +3,7 @@ package it.polimi.ingsw.network.TCP;
 import it.polimi.ingsw.controller.Controller;
 import it.polimi.ingsw.controller.exceptions.CannotJoinMultipleLobbiesException;
 import it.polimi.ingsw.controller.exceptions.GameAlreadyStartedException;
+import it.polimi.ingsw.controller.exceptions.UnexistentUserException;
 import it.polimi.ingsw.model.exceptions.*;
 import it.polimi.ingsw.model.observer.Observer;
 import it.polimi.ingsw.model.observer.events.*;
@@ -46,7 +47,7 @@ public class TCPVirtualView implements Runnable, Observer {
           //  System.err.println(e.getMessage());
         } catch (ClassNotFoundException | GameAlreadyStartedException | GameDoesNotExistException |
                  InterruptedException | NicknameAlreadyTakenException | LobbyDoesNotExistsException |
-                 CannotJoinMultipleLobbiesException | FullLobbyException e) {
+                 CannotJoinMultipleLobbiesException | FullLobbyException | UnexistentUserException e) {
             throw new RuntimeException(e);
         }
     }
@@ -95,7 +96,7 @@ public class TCPVirtualView implements Runnable, Observer {
         }
 
     }
-    private void elaborate(NetMessage message) throws InterruptedException, NicknameAlreadyTakenException, IOException, LobbyDoesNotExistsException, CannotJoinMultipleLobbiesException, FullLobbyException, GameAlreadyStartedException, GameDoesNotExistException {
+    private void elaborate(NetMessage message) throws InterruptedException, NicknameAlreadyTakenException, IOException, LobbyDoesNotExistsException, CannotJoinMultipleLobbiesException, FullLobbyException, GameAlreadyStartedException, GameDoesNotExistException, UnexistentUserException {
         switch (message) {
             case MyNickname m -> {
                 try{
@@ -113,8 +114,14 @@ public class TCPVirtualView implements Runnable, Observer {
                 for(Player p:c.getGh().getUsers()){
                     if(p.equals(m.getCreator()))player=p;
                 }
-                c.createLobby(m.getNumOfPlayers(),player);
-               // System.out.println(m.getCreator().getNickname() +" created a lobby");
+                try{
+                    c.createLobby(m.getNumOfPlayers(),player.getNickname());
+                    // System.out.println(m.getCreator().getNickname() +" created a lobby");
+                }catch(CannotJoinMultipleLobbiesException e){
+                    FailMessage failMessage=new FailMessage("you can't create a lobby when you are already in one");
+                    out.writeObject(failMessage);
+                }
+
             }
             case JoinLobbyMessage m -> {
                 Player player=new Player(null);
@@ -122,7 +129,7 @@ public class TCPVirtualView implements Runnable, Observer {
                     if(p.equals(m.getPlayer()))player=p;
                 }
                 try{
-                    c.joinLobby(player,m.getID());
+                    c.joinLobby(player.getNickname(),m.getID());
                   //  System.out.println(m.getPlayer().getNickname() +" joined a lobby");
                 }catch (FullLobbyException e){
                     FailMessage failMessage=new FailMessage("you couldn't join the lobby because it was full");
@@ -135,6 +142,8 @@ public class TCPVirtualView implements Runnable, Observer {
                 catch(CannotJoinMultipleLobbiesException e){
                     FailMessage failMessage=new FailMessage("you can't join multiple lobbies");
                     out.writeObject(failMessage);
+                } catch (UnexistentUserException e) {
+                    throw new RuntimeException(e);
                 }
             }
             case LeaveLobbyMessage m -> {
@@ -143,7 +152,7 @@ public class TCPVirtualView implements Runnable, Observer {
                     if(p.equals(m.getPlayer()))player=p;
                 }
                 try{
-                    c.leaveLobby(player, m.getID());
+                    c.leaveLobby(player.getNickname(), m.getID());
                     //System.out.println(m.getPlayer().getNickname() +" left a lobby");
                 }catch (LobbyDoesNotExistsException e){
                     FailMessage failMessage=new FailMessage("you can't join an inexistant lobby");
@@ -156,7 +165,7 @@ public class TCPVirtualView implements Runnable, Observer {
                     if(p.equals(m.getPlayer()))player=p;
                 }
                 try{
-                    c.choosePawn(m.getLobbyID(),player,m.getColor());
+                    c.choosePawn(m.getLobbyID(),player.getNickname(),m.getColor());
                 }catch (PawnAlreadyTakenException e){
                   //  System.out.println(e);
                     FailMessage failMessage=new FailMessage("pawn already taken");

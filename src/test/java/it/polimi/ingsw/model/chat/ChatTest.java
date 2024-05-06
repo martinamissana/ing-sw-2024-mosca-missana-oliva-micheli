@@ -4,6 +4,7 @@ import it.polimi.ingsw.controller.Controller;
 import it.polimi.ingsw.controller.exceptions.CannotJoinMultipleLobbiesException;
 import it.polimi.ingsw.controller.exceptions.GameAlreadyStartedException;
 import it.polimi.ingsw.controller.exceptions.PlayerChatMismatchException;
+import it.polimi.ingsw.controller.exceptions.UnexistentUserException;
 import it.polimi.ingsw.model.exceptions.*;
 import it.polimi.ingsw.model.game.GameHandler;
 import it.polimi.ingsw.model.player.Player;
@@ -20,7 +21,7 @@ public class ChatTest {
     Controller c;
 
     @Before
-    public void setUp() throws GameDoesNotExistException, IOException, FullLobbyException, LobbyDoesNotExistsException, NicknameAlreadyTakenException, CannotJoinMultipleLobbiesException, PlayerChatMismatchException, GameAlreadyStartedException, PawnAlreadyTakenException {
+    public void setUp() throws GameDoesNotExistException, IOException, FullLobbyException, LobbyDoesNotExistsException, NicknameAlreadyTakenException, CannotJoinMultipleLobbiesException, PlayerChatMismatchException, GameAlreadyStartedException, PawnAlreadyTakenException, UnexistentUserException {
 
         gameHandler= new GameHandler();
         c=new Controller(gameHandler);
@@ -28,9 +29,9 @@ public class ChatTest {
         anna=new Player("anna");
         eric=new Player("eric");
         giorgio=new Player("giorgio");
-        c.createLobby(3,anna);
-        c.joinLobby(eric,0);
-        c.joinLobby(giorgio,0);
+        c.createLobby(3,anna.getNickname());
+        c.joinLobby(eric.getNickname(),0);
+        c.joinLobby(giorgio.getNickname(),0);
         //gameHandler.setNumOfGames(0);
         //c.createGame(gameHandler.getLobbies().get(0));
         m1=new Message("ciao",anna,eric,false);

@@ -16,7 +16,6 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
-import java.util.Map;
 
 public class TCPView extends View {
     private String ip;
@@ -49,7 +48,7 @@ public class TCPView extends View {
             out.close();
             socket.close();
         } catch (IOException e) {
-           // System.err.println(e.getMessage());
+            System.err.println(e.getMessage());
         } catch (ClassNotFoundException | FullLobbyException | NicknameAlreadyTakenException e) {
             throw new RuntimeException(e);
         }
@@ -62,9 +61,9 @@ public class TCPView extends View {
                 //System.out.println("you are logged in!");
             }
             case LobbyCreatedMessage m -> {
-                super.getLobbies().put(m.getID(),m.getLobby());
+                //super.getLobbies().put(m.getID(),m.getLobby());
                 if(m.getCreator().equals(super.getPlayer()))super.setID(m.getID());
-                if(m.getCreator().equals(super.getPlayer()))System.out.println("your lobby was created, allowed players: "+ m.getLobby().getNumOfPlayers() );
+               // if(m.getCreator().equals(super.getPlayer()))System.out.println("your lobby was created, allowed players: "+ m.getLobby().getNumOfPlayers() );
                 //else System.out.println("A lobby was created, allowed players: "+ m.getLobby().getNumOfPlayers() );
             }
             //TODO: REVIEW THIS WITH DISCONNECTION LOGIC
@@ -78,7 +77,7 @@ public class TCPView extends View {
                     //System.out.println("you joined the lobby!");
                     super.setID(m.getID());
                 }
-                else// System.out.println("someone joined a lobby!");
+                //else System.out.println("someone joined a lobby!");
                 super.getLobbies().get(m.getID()).addPlayer( m.getPlayer());
 
             }
@@ -111,7 +110,7 @@ public class TCPView extends View {
             }
             case CurrentStatusMessage m ->{
                 super.getLobbies().putAll(m.getLobbies());
-                for(Map.Entry<Integer,Lobby> e: super.getLobbies().entrySet()) System.out.println("yo: "+e.getKey());
+                //for(Map.Entry<Integer,Lobby> e: super.getLobbies().entrySet()) System.out.println("yo: "+e.getKey());
                 for (Lobby l : super.getLobbies().values()){
                     for(Player p:l.getPlayers()){
                         if(p.getPawn()!=null) super.getPawns().put(p,p.getPawn());
@@ -153,7 +152,7 @@ public class TCPView extends View {
 
     @Override
     public synchronized void choosePawn(Integer lobbyID, Pawn color) throws LobbyDoesNotExistsException, PawnAlreadyTakenException, IOException {
-        System.out.println(this.getPlayer().getNickname()+" ID is "+this.getID());
+        //System.out.println(this.getPlayer().getNickname()+" ID is "+this.getID());
         ChoosePawnMessage m= new ChoosePawnMessage(super.getID(),super.getPlayer(),color);
         out.writeObject(m);
        // System.out.println("you tried to choose a pawn");
