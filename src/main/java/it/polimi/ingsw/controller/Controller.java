@@ -26,7 +26,7 @@ public class Controller implements Serializable {
     private final GameHandler gh;
 
     /**Class constructor
-     * @param gh - the game handler frown which the controller will extract all the information about the model
+     * @param gh the game handler frown which the controller will extract all the information about the model
      */
     public Controller(GameHandler gh) {
         this.gh = gh;
@@ -34,7 +34,7 @@ public class Controller implements Serializable {
 
     /**
      * getter
-     * @return gh - game handler
+     * @return gh game handler
      */
     public GameHandler getGh() {
         return gh;
@@ -44,14 +44,12 @@ public class Controller implements Serializable {
 
     /**
      * adds users to user list in game handler
-     * @param username - of the player that joined the server
-     * @throws NicknameAlreadyTakenException - when in user list there is already a user with the same nickname
+     * @param username of the player that joined the server
+     * @throws NicknameAlreadyTakenException when in user list there is already a user with the same nickname
      */
-    public synchronized void login(String username) throws NicknameAlreadyTakenException, IOException{
+    public synchronized void login(String username) throws NicknameAlreadyTakenException, IOException {
         gh.addUser(new Player(username));
-
     }
-
     //methods related to lobby
 
     /**
@@ -132,8 +130,8 @@ public class Controller implements Serializable {
      * creates a new game adding it to the list of active games in GameHandler,
      * all the players of the lobby in input will be added to the game and the scoreboard is initialized
      * the order in which players joined the lobby determines their playing sequence, but the first player is randomly chosen
-     * @param lobbyID - ID of the lobby that starts the game
-     * @throws IOException - produced by failed or interrupted I/O operations
+     * @param lobbyID ID of the lobby that starts the game
+     * @throws IOException produced by failed or interrupted I/O operations
      */
     private synchronized void createGame(Integer lobbyID) throws IOException, LobbyDoesNotExistsException {
         Lobby lobby = gh.getLobby(lobbyID);
@@ -173,7 +171,7 @@ public class Controller implements Serializable {
 
     /**
      * deletes the specified game from the list of active games and also the associated lobby
-     * @param gameID - the ID of the game that will be deleted
+     * @param gameID the ID of the game that will be deleted
      * @throws GameDoesNotExistException - if the game does not exist
      */
     public synchronized void terminateGame(Integer gameID) throws GameDoesNotExistException, LobbyDoesNotExistsException {
@@ -189,8 +187,8 @@ public class Controller implements Serializable {
     /**
      * sends the message either to the specified receiver, or to every player in the global chat,
      * adds the message in the list of sent messages of the sender too
-     * @param message - the message that will be sent
-     * @param ID - the ID of the game where the player that sends the message is found
+     * @param message the message that will be sent
+     * @param ID the ID of the game where the player that sends the message is found
      * @throws GameDoesNotExistException- if the game does not exist
      */
     public synchronized void send(Message message, int ID) throws GameDoesNotExistException, LobbyDoesNotExistsException, PlayerChatMismatchException {
@@ -225,10 +223,10 @@ public class Controller implements Serializable {
 
     /**
      * Set decks and deck buffers
-     * @param gameID - ID of the game played
-     * @throws GameDoesNotExistException - if gameID does not correspond to a game in game handler
+     * @param gameID ID of the game played
+     * @throws GameDoesNotExistException if gameID does not correspond to a game in game handler
      */
-    public void setGameArea(Integer gameID) throws GameDoesNotExistException, IOException {
+    public synchronized void setGameArea(Integer gameID) throws GameDoesNotExistException, IOException {
         Game game = gh.getGame(gameID);
 
         // setting decks and deck buffers:
@@ -242,11 +240,11 @@ public class Controller implements Serializable {
     }
 
     /**
-     * @param gameID - ID of the game played
-     * @throws GameDoesNotExistException - if gameID does not correspond to a game in game handler
-     * @throws IOException - for building the starter deck
+     * @param gameID ID of the game played
+     * @throws GameDoesNotExistException if gameID does not correspond to a game in game handler
+     * @throws IOException for building the starter deck
      */
-    public void giveStarterCards(Integer gameID) throws GameDoesNotExistException, IOException {
+    public synchronized void giveStarterCards(Integer gameID) throws GameDoesNotExistException, IOException {
         Game game = gh.getGame(gameID);
         ArrayList<Player> players = game.getPlayers();
 
@@ -264,11 +262,11 @@ public class Controller implements Serializable {
 
     /**
      * Allows the player to choose a pawn while he is in the lobby
-     * @param lobbyID - ID of the lobby
-     * @param player - who is choosing the pawn
-     * @param color - color of the desired pawn
-     * @throws PawnAlreadyTakenException - if the chosen pawn has already been taken
-     * @throws LobbyDoesNotExistsException - if lobbyID does not correspond to a lobby in game handler
+     * @param lobbyID ID of the lobby
+     * @param player who is choosing the pawn
+     * @param color color of the desired pawn
+     * @throws PawnAlreadyTakenException if the chosen pawn has already been taken
+     * @throws LobbyDoesNotExistsException if lobbyID does not correspond to a lobby in game handler
      *
      */
     public synchronized void choosePawn (Integer lobbyID, Player player, Pawn color) throws PawnAlreadyTakenException, LobbyDoesNotExistsException, GameAlreadyStartedException, IOException, GameDoesNotExistException {
@@ -282,22 +280,24 @@ public class Controller implements Serializable {
                 // gh.notify(new PawnAssignedEvent(player,color));
             } else throw new PawnAlreadyTakenException();
 
-        for(Player p: lobby.getPlayers()){
-            if(p.getPawn()!=Pawn.BLUE&&p.getPawn()!=Pawn.YELLOW&&p.getPawn()!=Pawn.RED&&p.getPawn()!=Pawn.GREEN)return;
-        }
-        if(gh.getLobby(lobbyID).getPlayers().size()==gh.getLobby(lobbyID).getNumOfPlayers()){
-            createGame(lobbyID);
-            setGameArea(lobbyID);
+            for (Player p : lobby.getPlayers()) {
+                if (p.getPawn() != Pawn.BLUE && p.getPawn() != Pawn.YELLOW && p.getPawn() != Pawn.RED && p.getPawn() != Pawn.GREEN)
+                    return;
+            }
+            if (gh.getLobby(lobbyID).getPlayers().size() == gh.getLobby(lobbyID).getNumOfPlayers()) {
+                createGame(lobbyID);
+                setGameArea(lobbyID);
+            }
         }
     }
 
     /**
      * Allows the player to choose the side of the starter card before placing it down
      * if all the players have placed the started card the game phase changes to CHOOSING PRIVATE GOAL and the hand of each player is filled
-     * @param player - who is playing the card
-     * @param side - side chosen by the player
+     * @param player who is playing the card
+     * @param side side chosen by the player
      */
-    public void chooseCardSide(Integer ID,Player player, CardSide side) throws GameDoesNotExistException, EmptyDeckException, HandIsFullException {
+    public synchronized void chooseCardSide(Integer ID,Player player, CardSide side) throws GameDoesNotExistException, EmptyDeckException, HandIsFullException {
         if(gh.getGame(ID).getGamePhase()!=GamePhase.PLACING_STARTER_CARD) throw new WrongThreadException();
         StarterCard card = (StarterCard) player.getHand().getCard(0);
         if(!card.getSide().equals(side)) card.flip();
@@ -312,12 +312,12 @@ public class Controller implements Serializable {
 
     /**
      * Fill all players' hands with 2 resource cards and 1 golden card
-     * @param gameID - ID of the game played
-     * @throws GameDoesNotExistException - if gameID does not correspond to a game in game handler
-     * @throws EmptyDeckException - (doesn't suppose to happen)
-     * @throws HandIsFullException - if in hands are already present other cards
+     * @param gameID ID of the game played
+     * @throws GameDoesNotExistException if gameID does not correspond to a game in game handler
+     * @throws EmptyDeckException (isn't supposed to happen)
+     * @throws HandIsFullException if in hands are already present other cards
      */
-    public void fillHands(Integer gameID) throws GameDoesNotExistException, EmptyDeckException, HandIsFullException {
+    public synchronized  void fillHands(Integer gameID) throws GameDoesNotExistException, EmptyDeckException, HandIsFullException {
         Game game = gh.getGame(gameID);
 
         for (Player p : game.getPlayers()) {
@@ -329,10 +329,10 @@ public class Controller implements Serializable {
 
     /**
      * Set the common goals in the game
-     * @param gameID - ID of the game played
-     * @throws GameDoesNotExistException  - if gameID does not correspond to a game in game handler
+     * @param gameID ID of the game played
+     * @throws GameDoesNotExistException if gameID does not correspond to a game in game handler
      */
-    public void setCommonGoals(Integer gameID) throws GameDoesNotExistException {
+    public synchronized void setCommonGoals(Integer gameID) throws GameDoesNotExistException {
         Game game = gh.getGame(gameID);
 
         game.setCommonGoal1(game.getGoals().getGoal());
@@ -340,10 +340,10 @@ public class Controller implements Serializable {
     }
 
     /**
-     * adds to the choosableGoals two goals from which the player can choose
-     * @param gameID - ID of the game played
+     * adds to the choosable Goals two goals from which the player can choose
+     * @param gameID ID of the game played
      */
-    public void giveGoals(Integer gameID) throws GameDoesNotExistException {
+    public synchronized void giveGoals(Integer gameID) throws GameDoesNotExistException {
         Game game = gh.getGame(gameID);
 
         for (Player p : game.getPlayers()) {
@@ -355,10 +355,10 @@ public class Controller implements Serializable {
 
     /**
      * Allows the player to choose his personal goal
-     * @param player - who is choosing the personal goal
-     * @param goal - goal chosen by the player
+     * @param player who is choosing the personal goal
+     * @param goal goal chosen by the player
      */
-    public void choosePersonalGoal(Integer ID,Player player, Goal goal) throws IllegalGoalChosenException, GameDoesNotExistException, WrongGamePhaseException {
+    public synchronized void choosePersonalGoal(Integer ID,Player player, Goal goal) throws IllegalGoalChosenException, GameDoesNotExistException, WrongGamePhaseException {
         if(gh.getGame(ID).getGamePhase()!=GamePhase.CHOOSING_PRIVATE_GOAL)  throw new WrongGamePhaseException();
         if(player.getChoosableGoals().contains(goal))player.setPrivateGoal(goal);
         else throw new IllegalGoalChosenException();
@@ -403,7 +403,7 @@ public class Controller implements Serializable {
      * @throws IllegalMoveException thrown if the selected card cannot be played to the field as requested
      * @throws LobbyDoesNotExistsException thrown if the game's lobby does not exist
      */
-    public void playCard(Integer gameID, Player player, int handPos, Coords coords) throws GameDoesNotExistException, NotYourTurnException, IllegalActionException, IllegalMoveException, LobbyDoesNotExistsException {
+    public synchronized void playCard(Integer gameID, Player player, int handPos, Coords coords) throws GameDoesNotExistException, NotYourTurnException, IllegalActionException, IllegalMoveException, LobbyDoesNotExistsException {
 
         // get game from ID
         Game game = gh.getGame(gameID);
@@ -450,7 +450,7 @@ public class Controller implements Serializable {
      * @throws EmptyDeckException thrown if the selected deck is out of cards
      * @throws EmptyBufferException thrown if the selected deck buffer is out of cards
      */
-    public void drawCard(Integer gameID, Player player, DeckTypeBox deckTypeBox) throws GameDoesNotExistException, NotYourTurnException, IllegalActionException, HandIsFullException, EmptyDeckException, EmptyBufferException, LobbyDoesNotExistsException {
+    public synchronized void drawCard(Integer gameID, Player player, DeckTypeBox deckTypeBox) throws GameDoesNotExistException, NotYourTurnException, IllegalActionException, HandIsFullException, EmptyDeckException, EmptyBufferException, LobbyDoesNotExistsException {
 
         // get game from ID
         Game game = gh.getGame(gameID);
@@ -483,7 +483,7 @@ public class Controller implements Serializable {
      * @param gameID ID of the game to advance the turn of
      * @throws GameDoesNotExistException thrown if the given ID does not correspond to any Game
      */
-    public void nextTurn(Integer gameID) throws GameDoesNotExistException, LobbyDoesNotExistsException {
+    public synchronized void nextTurn(Integer gameID) throws GameDoesNotExistException, LobbyDoesNotExistsException {
 
         // get game from ID
         Game game = gh.getGame(gameID);
@@ -509,7 +509,7 @@ public class Controller implements Serializable {
      * has reached 20 points or if there's no remaining cards in both decks
      * @param gameID - the ID of the game where the status is checked
      */
-    public void updateLastRound(Integer gameID) {
+    public synchronized void updateLastRound(Integer gameID) {
         Game game = gh.getActiveGames().get(gameID);
 
         // if it's already last round there's no need to update
@@ -532,7 +532,7 @@ public class Controller implements Serializable {
      * checks in the field the private goal of the players and adds the points to the scoreboard
      * @param gameID index of the game where the evaluation is done
      */
-    private  void evaluatePrivateGoal(Integer gameID){
+    private  synchronized void evaluatePrivateGoal(Integer gameID){
         Game game=gh.getActiveGames().get(gameID);
         for(Player p:game.getPlayers()){
             if(p.getPrivateGoal().getClass()== ResourceGoal.class){
@@ -551,7 +551,7 @@ public class Controller implements Serializable {
      * checks in the field of every player the common goals and adds the points to the scoreboard
      * @param gameID index of the game where the evaluation is done
      */
-    private void evaluateCommonGoal(Integer gameID){
+    private synchronized void evaluateCommonGoal(Integer gameID){
         Game game=gh.getActiveGames().get(gameID);
         Goal commonGoal1= game.getCommonGoal1();
         Goal commonGoal2= game.getCommonGoal2();
@@ -579,7 +579,7 @@ public class Controller implements Serializable {
      * adds the list of winners (players with the highest score) of the game after the evaluation of the private and the common goals
      * @param gameID index of the game where the evaluation is done
      */
-    public void winner(Integer gameID){
+    public synchronized void winner(Integer gameID){
         Game game=gh.getActiveGames().get(gameID);
         evaluatePrivateGoal(gameID);
         evaluateCommonGoal(gameID);
@@ -603,7 +603,7 @@ public class Controller implements Serializable {
      * @param goal goal that needs to be found in the field
      * @param player player who has to complete the goal
      */
-    private void diagonalEvaluator(Integer gameID, DiagonalGoal goal, Player player) {
+    private synchronized void diagonalEvaluator(Integer gameID, DiagonalGoal goal, Player player) {
         Game game=gh.getActiveGames().get(gameID);
         HashMap<Coords, Card> field = player.getField().getMatrix();
         HashSet<Coords> done = new HashSet<>(); // indicates the cards already used for the goal
@@ -638,7 +638,7 @@ public class Controller implements Serializable {
      * @param goal goal that needs to be found in the field
      * @param player player who has to complete the goal
      */
-    private void resourceEvaluator(Integer gameID, ResourceGoal goal, Player player) {
+    private synchronized void resourceEvaluator(Integer gameID, ResourceGoal goal, Player player) {
         Game game = gh.getActiveGames().get(gameID);
         HashMap<ItemBox, Integer> totalResources = player.getField().getTotalResources();
         while (true) {
@@ -657,7 +657,7 @@ public class Controller implements Serializable {
      * @param goal goal that needs to be found in the field
      * @param player player who has to complete the goal
      */
-    private void L_ShapeEvaluator(Integer gameID,L_ShapeGoal goal,Player player){
+    private synchronized void L_ShapeEvaluator(Integer gameID,L_ShapeGoal goal,Player player){
         HashSet<Coords> done=new HashSet<>();
         HashMap<Coords, Card> field=player.getField().getMatrix();
         switch (goal.getType()){
@@ -702,7 +702,7 @@ public class Controller implements Serializable {
      * @param thirdCard coordinates of one of the cards with the main L_Shape color
      * @param done HashMap that maps the cards already used to complete the goal
      */
-    private void genericL_ShapeEvaluator(Integer gameID,L_ShapeGoal goal,Player player,Coords firstCard,Coords secondCard,Coords thirdCard,HashSet<Coords> done){
+    private synchronized void genericL_ShapeEvaluator(Integer gameID,L_ShapeGoal goal,Player player,Coords firstCard,Coords secondCard,Coords thirdCard,HashSet<Coords> done){
         Game game=gh.getActiveGames().get(gameID);
         HashMap<Coords, Card> field=player.getField().getMatrix();
         if(!done.contains(firstCard)&&!done.contains(secondCard)&&!done.contains(thirdCard)&&field.get(firstCard).getKingdom()==goal.getSecondaryColor()&&field.containsKey(secondCard)&&field.containsKey(thirdCard)&&field.get(secondCard).getKingdom()==goal.getMainColor()&&field.get(thirdCard).getKingdom()==goal.getMainColor()){
