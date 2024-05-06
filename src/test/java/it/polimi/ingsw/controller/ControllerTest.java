@@ -52,7 +52,7 @@ public class ControllerTest {
         anna.getHand().addCard(card);
     }
 
-    @Test
+    @Test (expected = PawnAlreadyTakenException.class)
     public void testGamePhase() throws LobbyDoesNotExistsException, GameDoesNotExistException, FullLobbyException, NicknameAlreadyTakenException, IOException, EmptyDeckException, HandIsFullException, IllegalGoalChosenException, WrongGamePhaseException, GameAlreadyStartedException, PawnAlreadyTakenException, CannotJoinMultipleLobbiesException {
         anna1=new Player("anna1");
         eric1=new Player("eric1");
@@ -60,11 +60,13 @@ public class ControllerTest {
 
         c.createLobby(3,anna1);
         c.joinLobby(eric1,1);
-        c.joinLobby(giorgio1,1);
+
 
         assertFalse(c.getGh().getActiveGames().containsKey(1));
         c.choosePawn(1,anna1,Pawn.BLUE);
+        c.choosePawn(1,eric1,Pawn.BLUE);
         c.choosePawn(1,eric1,Pawn.RED);
+        c.joinLobby(giorgio1,1);
         c.choosePawn( 1,giorgio1,Pawn.YELLOW);
         assertTrue(c.getGh().getActiveGames().containsKey(1));
 
