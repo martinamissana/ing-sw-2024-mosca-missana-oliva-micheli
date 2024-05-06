@@ -37,48 +37,48 @@ public class ControllerTest {
     Controller c=new Controller(gameHandler);
 
     @Before
-    public void setUp() throws IOException, FullLobbyException, NicknameAlreadyTakenException, LobbyDoesNotExistsException, HandIsFullException, CannotJoinMultipleLobbiesException, GameAlreadyStartedException, PawnAlreadyTakenException, GameDoesNotExistException {
+    public void setUp() throws IOException, FullLobbyException, NicknameAlreadyTakenException, LobbyDoesNotExistsException, HandIsFullException, CannotJoinMultipleLobbiesException, GameAlreadyStartedException, PawnAlreadyTakenException, GameDoesNotExistException, UnexistentUserException {
         anna=new Player("anna");
         eric=new Player("eric");
         giorgio=new Player("giorgio");
         sara=new Player("sara");
         paola=new Player("paola");
-        c.createLobby(3,anna);
-        c.joinLobby(eric,0);
-        c.joinLobby(giorgio,0);
-        c.choosePawn(0,anna,Pawn.BLUE);
-        c.choosePawn(0,eric,Pawn.RED);
-        c.choosePawn( 0,giorgio,Pawn.YELLOW);
+        c.createLobby(3,anna.getNickname());
+        c.joinLobby(eric.getNickname(),0);
+        c.joinLobby(giorgio.getNickname(),0);
+        c.choosePawn(0,anna.getNickname(),Pawn.BLUE);
+        c.choosePawn(0,eric.getNickname(),Pawn.RED);
+        c.choosePawn( 0,giorgio.getNickname(),Pawn.YELLOW);
         anna.getHand().addCard(card);
     }
 
     @Test (expected = PawnAlreadyTakenException.class)
-    public void testGamePhase() throws LobbyDoesNotExistsException, GameDoesNotExistException, FullLobbyException, NicknameAlreadyTakenException, IOException, EmptyDeckException, HandIsFullException, IllegalGoalChosenException, WrongGamePhaseException, GameAlreadyStartedException, PawnAlreadyTakenException, CannotJoinMultipleLobbiesException {
+    public void testGamePhase() throws LobbyDoesNotExistsException, GameDoesNotExistException, FullLobbyException, NicknameAlreadyTakenException, IOException, EmptyDeckException, HandIsFullException, IllegalGoalChosenException, WrongGamePhaseException, GameAlreadyStartedException, PawnAlreadyTakenException, CannotJoinMultipleLobbiesException, UnexistentUserException {
         anna1=new Player("anna1");
         eric1=new Player("eric1");
         giorgio1=new Player("giorgio1");
 
-        c.createLobby(3,anna1);
-        c.joinLobby(eric1,1);
+        c.createLobby(3,anna1.getNickname());
+        c.joinLobby(eric1.getNickname(),1);
 
 
         assertFalse(c.getGh().getActiveGames().containsKey(1));
-        c.choosePawn(1,anna1,Pawn.BLUE);
-        c.choosePawn(1,eric1,Pawn.BLUE);
-        c.choosePawn(1,eric1,Pawn.RED);
-        c.joinLobby(giorgio1,1);
-        c.choosePawn( 1,giorgio1,Pawn.YELLOW);
+        c.choosePawn(1,anna1.getNickname(),Pawn.BLUE);
+        c.choosePawn(1,eric1.getNickname(),Pawn.BLUE);
+        c.choosePawn(1,eric1.getNickname(),Pawn.RED);
+        c.joinLobby(giorgio1.getNickname(),1);
+        c.choosePawn( 1,giorgio1.getNickname(),Pawn.YELLOW);
         assertTrue(c.getGh().getActiveGames().containsKey(1));
 
         assertEquals(gameHandler.getGame(1).getGamePhase(), GamePhase.PLACING_STARTER_CARD);
-        c.chooseCardSide(1,anna1,CardSide.FRONT);
-        c.chooseCardSide(1,eric1,CardSide.BACK);
-        c.chooseCardSide(1,giorgio1,CardSide.FRONT);
+        c.chooseCardSide(1,anna1.getNickname(),CardSide.FRONT);
+        c.chooseCardSide(1,eric1.getNickname(),CardSide.BACK);
+        c.chooseCardSide(1,giorgio1.getNickname(),CardSide.FRONT);
 
         assertEquals(gameHandler.getGame(1).getGamePhase(), GamePhase.CHOOSING_PRIVATE_GOAL);
-        c.choosePersonalGoal(1,anna1,anna1.getChoosableGoals().get(1));
-        c.choosePersonalGoal(1,eric1,eric1.getChoosableGoals().get(0));
-        c.choosePersonalGoal(1,giorgio1,giorgio1.getChoosableGoals().get(1));
+        c.choosePersonalGoal(1,anna1.getNickname(),anna1.getChoosableGoals().get(1).getGoalID());
+        c.choosePersonalGoal(1,eric1.getNickname(),eric1.getChoosableGoals().get(0).getGoalID());
+        c.choosePersonalGoal(1,giorgio1.getNickname(),giorgio1.getChoosableGoals().get(1).getGoalID());
 
         assertEquals(gameHandler.getGame(1).getGamePhase(), GamePhase.PLAYING_GAME);
 
@@ -96,31 +96,31 @@ public class ControllerTest {
         assertTrue(gameHandler.getLobbies().isEmpty());
     }
     @Test (expected = FullLobbyException.class)
-    public void testJoinLobbyButLobbyIsFull() throws FullLobbyException, NicknameAlreadyTakenException, LobbyDoesNotExistsException, IOException, GameDoesNotExistException, CannotJoinMultipleLobbiesException {
-        c.joinLobby(sara,0);
+    public void testJoinLobbyButLobbyIsFull() throws FullLobbyException, NicknameAlreadyTakenException, LobbyDoesNotExistsException, IOException, GameDoesNotExistException, CannotJoinMultipleLobbiesException, UnexistentUserException {
+        c.joinLobby(sara.getNickname(),0);
         assertFalse(gameHandler.getLobby(0).getPlayers().contains(sara));
         assertFalse(gameHandler.getGame(0).getPlayers().contains(sara));
     }
     @Test (expected = LobbyDoesNotExistsException.class)
-    public void testJoinLobbyButLobbyDoesNotExist() throws FullLobbyException, NicknameAlreadyTakenException, LobbyDoesNotExistsException, IOException, GameDoesNotExistException, CannotJoinMultipleLobbiesException {
-        c.joinLobby(sara,1);
+    public void testJoinLobbyButLobbyDoesNotExist() throws FullLobbyException, NicknameAlreadyTakenException, LobbyDoesNotExistsException, IOException, GameDoesNotExistException, CannotJoinMultipleLobbiesException, UnexistentUserException {
+        c.joinLobby(sara.getNickname(),1);
         assertFalse(gameHandler.getLobby(0).getPlayers().contains(sara));
         assertFalse(gameHandler.getGame(0).getPlayers().contains(sara));
     }
     @Test
-    public void leaveLobby() throws FullLobbyException, LobbyDoesNotExistsException, NicknameAlreadyTakenException, IOException, GameAlreadyStartedException, CannotJoinMultipleLobbiesException, GameDoesNotExistException {
-        c.createLobby(3, sara);
-        c.joinLobby(paola,1);
-        c.leaveLobby(sara, 1);
+    public void leaveLobby() throws FullLobbyException, LobbyDoesNotExistsException, NicknameAlreadyTakenException, IOException, GameAlreadyStartedException, CannotJoinMultipleLobbiesException, GameDoesNotExistException, UnexistentUserException {
+        c.createLobby(3, sara.getNickname());
+        c.joinLobby(paola.getNickname(),1);
+        c.leaveLobby(sara.getNickname(), 1);
         assertTrue(gameHandler.getLobbies().containsKey(1));
-        c.leaveLobby(paola, 1);
+        c.leaveLobby(paola.getNickname(), 1);
         assertFalse(gameHandler.getLobbies().containsKey(1));
-        c.leaveLobby(anna, 0);
+        c.leaveLobby(anna.getNickname(), 0);
         assertTrue(gameHandler.getLobbies().containsKey(0));
         assertTrue(gameHandler.getActiveGames().containsKey(0));
     }
     @Test //(expected = PawnAlreadyTakenException.class)
-    public void SetUpTest() throws IOException, HandIsFullException, FullLobbyException, LobbyDoesNotExistsException, NicknameAlreadyTakenException, GameDoesNotExistException, EmptyDeckException, PawnAlreadyTakenException, IllegalGoalChosenException, WrongGamePhaseException, GameAlreadyStartedException, CannotJoinMultipleLobbiesException {
+    public void SetUpTest() throws IOException, HandIsFullException, FullLobbyException, LobbyDoesNotExistsException, NicknameAlreadyTakenException, GameDoesNotExistException, EmptyDeckException, PawnAlreadyTakenException, IllegalGoalChosenException, WrongGamePhaseException, GameAlreadyStartedException, CannotJoinMultipleLobbiesException, UnexistentUserException {
         GameHandler gh = new GameHandler();
         Controller c = new Controller(gh);
 
@@ -131,20 +131,20 @@ public class ControllerTest {
             players.add(p);
         }
 
-        c.createLobby(4, players.getFirst());
-        for (int i = 1; i < 4; i++) c.joinLobby(players.get(i), 0);
+        c.createLobby(4, players.getFirst().getNickname());
+        for (int i = 1; i < 4; i++) c.joinLobby(players.get(i).getNickname(), 0);
 
         c.setGameArea(0);
         c.giveStarterCards(0);
 
         // Starter card choosing:
-        for(Player p : players) c.chooseCardSide(0,p, CardSide.FRONT);
+        for(Player p : players) c.chooseCardSide(0,p.getNickname(), CardSide.FRONT);
 
         // Pawn choosing:
         int j = 0;
 
         for(Player p : players) {
-            c.choosePawn(0, p, Pawn.values()[j]);
+            c.choosePawn(0, p.getNickname(), Pawn.values()[j]);
             j++;
         }
 
@@ -156,7 +156,7 @@ public class ControllerTest {
 
         c.giveGoals(0);
         for (Player p : players) {
-            c.choosePersonalGoal(0,p, p.getChoosableGoals().getFirst());
+            c.choosePersonalGoal(0,p.getNickname(), p.getChoosableGoals().getFirst().getGoalID());
         }
 
         // Player + Pawn + Hand printing:
@@ -193,7 +193,7 @@ public class ControllerTest {
     }
 
     @Test
-    public void FlipCardTest() throws IOException, FullLobbyException, LobbyDoesNotExistsException, NicknameAlreadyTakenException, GameDoesNotExistException, HandIsFullException, CannotJoinMultipleLobbiesException {
+    public void FlipCardTest() throws IOException, FullLobbyException, LobbyDoesNotExistsException, NicknameAlreadyTakenException, GameDoesNotExistException, HandIsFullException, CannotJoinMultipleLobbiesException, UnexistentUserException {
         GameHandler gh = new GameHandler();
         Controller con = new Controller(gh);
 
@@ -202,8 +202,8 @@ public class ControllerTest {
         for (int i = 0; i < 2; i++) players.add(new Player("Player" + (i+1)));
 
         // lobby + game
-        con.createLobby(2, players.getFirst());
-        con.joinLobby(players.get(1), 0);
+        con.createLobby(2, players.getFirst().getNickname());
+        con.joinLobby(players.get(1).getNickname(), 0);
         Game game = con.getGh().getGame(0);
 
         // hand setup
@@ -217,22 +217,22 @@ public class ControllerTest {
         players.get(1).getHand().addCard(goldenCards.get(5));
 
         // card flipping
-        con.flipCard(0, game.getPlayers().get(0), 0);
+        con.flipCard(0, game.getPlayers().get(0).getNickname(), 0);
         assert(CardSide.BACK == game.getPlayers().get(0).getHand().getCard(0).getSide());
-        con.flipCard(0, game.getPlayers().get(0), 1);
+        con.flipCard(0, game.getPlayers().get(0).getNickname(), 1);
         assert(CardSide.BACK == game.getPlayers().get(0).getHand().getCard(1).getSide());
-        con.flipCard(0, game.getPlayers().get(0), 2);
+        con.flipCard(0, game.getPlayers().get(0).getNickname(), 2);
         assert(CardSide.BACK == game.getPlayers().get(0).getHand().getCard(2).getSide());
-        con.flipCard(0, game.getPlayers().get(1), 0);
+        con.flipCard(0, game.getPlayers().get(1).getNickname(), 0);
         assert(CardSide.BACK == game.getPlayers().get(1).getHand().getCard(0).getSide());
-        con.flipCard(0, game.getPlayers().get(1), 1);
+        con.flipCard(0, game.getPlayers().get(1).getNickname(), 1);
         assert(CardSide.BACK == game.getPlayers().get(1).getHand().getCard(1).getSide());
-        con.flipCard(0, game.getPlayers().get(1), 2);
+        con.flipCard(0, game.getPlayers().get(1).getNickname(), 2);
         assert(CardSide.BACK == game.getPlayers().get(1).getHand().getCard(2).getSide());
     }
 
     @Test
-    public void PlayDrawTurnTest() throws FullLobbyException, LobbyDoesNotExistsException, NicknameAlreadyTakenException, IOException, GameDoesNotExistException, PawnAlreadyTakenException, EmptyDeckException, HandIsFullException, IllegalActionException, NotYourTurnException, IllegalMoveException, EmptyBufferException, CannotJoinMultipleLobbiesException, GameAlreadyStartedException {
+    public void PlayDrawTurnTest() throws FullLobbyException, LobbyDoesNotExistsException, NicknameAlreadyTakenException, IOException, GameDoesNotExistException, PawnAlreadyTakenException, EmptyDeckException, HandIsFullException, IllegalActionException, NotYourTurnException, IllegalMoveException, EmptyBufferException, CannotJoinMultipleLobbiesException, GameAlreadyStartedException, UnexistentUserException {
         GameHandler gh = new GameHandler();
         Controller con = new Controller(gh);
 
@@ -241,16 +241,16 @@ public class ControllerTest {
         for (int i = 0; i < 2; i++) players.add(new Player("Player" + (i+1)));
 
         // lobby + game
-        con.createLobby(2, players.getFirst());
-        con.joinLobby(players.get(1), 0);
-        con.choosePawn(0,players.get(0),Pawn.BLUE);
-        con.choosePawn(0,players.get(1),Pawn.RED);
+        con.createLobby(2, players.getFirst().getNickname());
+        con.joinLobby(players.get(1).getNickname(), 0);
+        con.choosePawn(0,players.get(0).getNickname(),Pawn.BLUE);
+        con.choosePawn(0,players.get(1).getNickname(),Pawn.RED);
 
         Game game = con.getGh().getGame(0);
 
         // starter cards
         con.giveStarterCards(game.getGameID());
-        for(Player p : players) con.chooseCardSide(0,p, CardSide.FRONT);
+        for(Player p : players) con.chooseCardSide(0,p.getNickname(), CardSide.FRONT);
 
         // hand setup
         ArrayList<ResourceCard> resourceCards = CardsPreset.getResourceCards();
@@ -264,17 +264,17 @@ public class ControllerTest {
         players.get(1).getHand().addCard(goldenCards.get(1));
 
         // card placement, one resource and one golden for each player
-        con.playCard(0, game.getPlayers().get(0), 0, new Coords(1,0));
-        con.drawCard(0, game.getPlayers().get(0), DeckType.RESOURCE);
-        con.playCard(0, game.getPlayers().get(1), 0, new Coords(0,1));
-        con.drawCard(0, game.getPlayers().get(1), DeckType.RESOURCE);
-        con.playCard(0, game.getPlayers().get(0), 1, new Coords(-1,0));
-        con.drawCard(0, game.getPlayers().get(0), DeckType.RESOURCE);
-        con.playCard(0, game.getPlayers().get(1), 1, new Coords(0,-1));
+        con.playCard(0, game.getPlayers().get(0).getNickname(), 0, new Coords(1,0));
+        con.drawCard(0, game.getPlayers().get(0).getNickname(), DeckType.RESOURCE);
+        con.playCard(0, game.getPlayers().get(1).getNickname(), 0, new Coords(0,1));
+        con.drawCard(0, game.getPlayers().get(1).getNickname(), DeckType.RESOURCE);
+        con.playCard(0, game.getPlayers().get(0).getNickname(), 1, new Coords(-1,0));
+        con.drawCard(0, game.getPlayers().get(0).getNickname(), DeckType.RESOURCE);
+        con.playCard(0, game.getPlayers().get(1).getNickname(), 1, new Coords(0,-1));
     }
 
     @Test
-    public void winnerTest() throws FullLobbyException, LobbyDoesNotExistsException, NicknameAlreadyTakenException, GameDoesNotExistException, IOException, IllegalMoveException, EmptyDeckException, HandIsFullException, CannotJoinMultipleLobbiesException {
+    public void winnerTest() throws FullLobbyException, LobbyDoesNotExistsException, NicknameAlreadyTakenException, GameDoesNotExistException, IOException, IllegalMoveException, EmptyDeckException, HandIsFullException, CannotJoinMultipleLobbiesException, UnexistentUserException {
         GameHandler gh = new GameHandler();
         Controller c = new Controller(gh);
 
@@ -285,8 +285,8 @@ public class ControllerTest {
             players.add(p);
         }
 
-        c.createLobby(3, players.getFirst());
-        for (int i = 1; i < 3; i++) c.joinLobby(players.get(i), 0);
+        c.createLobby(3, players.getFirst().getNickname());
+        for (int i = 1; i < 3; i++) c.joinLobby(players.get(i).getNickname(), 0);
         c.setGameArea(0);
         c.giveStarterCards(0);
         //Create goals
@@ -306,7 +306,7 @@ public class ControllerTest {
         gh.getGame(0).setCommonGoal1(goal2);
         gh.getGame(0).setCommonGoal2(goal2);
         // Starter card choosing:
-        for (Player p : players) c.chooseCardSide(0,p, CardSide.FRONT);
+        for (Player p : players) c.chooseCardSide(0,p.getNickname(), CardSide.FRONT);
         // Adding cards to the field to satisfy the private goal
         ArrayList<ResourceCard> cards = CardsPreset.getResourceCards();
         player0.getField().addCard(cards.get(4), new Coords(1, 0));

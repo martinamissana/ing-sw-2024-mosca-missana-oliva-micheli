@@ -61,7 +61,6 @@ public class CLI implements Runnable {
             } else System.out.println(cli + "Returning to selection\n");
             s = input.nextLine();
         } while (!s.equals("quit"));
-
     }
 
     private void printHello() {
@@ -140,7 +139,7 @@ public class CLI implements Runnable {
 
     private int chooseLobby() {
         boolean chosen = false;
-        int ID = -1;
+        int ID;
         HashMap<Integer, Lobby> lobbies = view.getLobbies();
 
         printOpenLobbies();
@@ -183,7 +182,7 @@ public class CLI implements Runnable {
             } while (numOfPlayers < 2 || numOfPlayers > 4);
 
             view.createLobby(numOfPlayers);
-            ID = view.getLobbies().size() - 1;
+            ID = view.getLobbies().size() - 1;      // TODO: Change how to take ID
             System.out.print(cli + "Lobby successfully created! ID: " + ID);
 
         } catch (LobbyDoesNotExistsException | IOException ignored) {}
@@ -215,7 +214,7 @@ public class CLI implements Runnable {
         System.out.println();
     }
 
-    private void printPlayers(int ID) {
+    private void printPlayers(Integer ID) {
         Lobby lobby = view.getLobbies().get(ID);
 
         System.out.print(cli + "Players (lobby " + green + "#" + ID + reset + "): " + lobby.getPlayers().size() + "/" + lobby.getNumOfPlayers());

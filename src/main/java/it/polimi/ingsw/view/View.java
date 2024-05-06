@@ -256,7 +256,7 @@ public abstract class View {
 
     }
 
-    public void choosePersonalGoal(Goal goal) {
+    public void choosePersonalGoal(int goalID) {
 
     }
 

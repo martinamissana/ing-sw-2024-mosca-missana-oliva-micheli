@@ -60,7 +60,7 @@ public class Controller implements Serializable {
      * @param creator - the player that created the lobby
      * @throws LobbyDoesNotExistsException - this will never be thrown
      */
-    public synchronized void createLobby(int numOfPlayers, String creator) throws LobbyDoesNotExistsException {
+    public synchronized void createLobby(int numOfPlayers, String creator) throws LobbyDoesNotExistsException, UnexistentUserException {
         Player lobbyCreator = null;
         for (Player p : gh.getUsers()) {
             if (p.getNickname().equals(creator)) lobbyCreator = p;
@@ -84,7 +84,7 @@ public class Controller implements Serializable {
      * @throws NicknameAlreadyTakenException -  if the nickname is already taken
      * @throws LobbyDoesNotExistsException - if the lobby does not exist
      */
-    public synchronized void joinLobby(String nickname, int lobbyID) throws FullLobbyException, NicknameAlreadyTakenException, LobbyDoesNotExistsException, IOException, CannotJoinMultipleLobbiesException {
+    public synchronized void joinLobby(String nickname, int lobbyID) throws FullLobbyException, NicknameAlreadyTakenException, LobbyDoesNotExistsException, IOException, CannotJoinMultipleLobbiesException, UnexistentUserException {
         Player player = null;
         for (Player p : gh.getUsers()) {
             if (p.getNickname().equals(nickname)) player = p;
@@ -108,7 +108,7 @@ public class Controller implements Serializable {
      * @param lobbyID - the ID of the lobby from which the player will be deleted
      * @throws LobbyDoesNotExistsException - if the lobby does not exist
      */
-    public synchronized void leaveLobby(String nickname,int lobbyID) throws LobbyDoesNotExistsException, GameDoesNotExistException, IOException {
+    public synchronized void leaveLobby(String nickname,int lobbyID) throws LobbyDoesNotExistsException, GameDoesNotExistException, IOException, UnexistentUserException {
         Player player = null;
         for (Player p : gh.getUsers()) {
             if (p.getNickname().equals(nickname)) player = p;
@@ -117,7 +117,7 @@ public class Controller implements Serializable {
         if(gh.getLobbies().containsKey(lobbyID)) {
            gh.getLobbies().get(lobbyID).getPlayers().remove(player);
            gh.notify(new LobbyLeftEvent(player,gh.getLobby(lobbyID),lobbyID));
-           if(gh.getActiveGames().containsKey(lobbyID) && gh.getGame(lobbyID).getPlayers().contains(player)) leaveGame(lobbyID, player);
+           if(gh.getActiveGames().containsKey(lobbyID) && gh.getGame(lobbyID).getPlayers().contains(player)) leaveGame(lobbyID, player.getNickname());
            if(gh.getLobbies().get(lobbyID).getPlayers().isEmpty()) {
                deleteLobby(lobbyID);
                gh.notify(new LobbyDeletedEvent(lobbyID));
@@ -177,7 +177,7 @@ public class Controller implements Serializable {
      * @throws GameDoesNotExistException thrown if the specified ID doesn't correspond to any game
      * @throws LobbyDoesNotExistsException thrown if the specified ID doesn't correspond to any game, thus having no lobby
      */
-    public synchronized void leaveGame(Integer gameID,String nickname) throws GameDoesNotExistException, LobbyDoesNotExistsException  {
+    public synchronized void leaveGame(Integer gameID,String nickname) throws GameDoesNotExistException, LobbyDoesNotExistsException, UnexistentUserException {
         Player player = null;
         for (Player p : gh.getUsers()) {
             if (p.getNickname().equals(nickname)) player = p;
@@ -212,28 +212,36 @@ public class Controller implements Serializable {
      * @param ID the ID of the game where the player that sends the message is found
      * @throws GameDoesNotExistException- if the game does not exist
      */
-    public synchronized void send(Message message, int ID) throws GameDoesNotExistException, LobbyDoesNotExistsException, PlayerChatMismatchException {
-        if((message.getReceiver()!=null &&!gh.getLobby(ID).getPlayers().contains(message.getReceiver()) )|| !gh.getLobby(ID).getPlayers().contains(message.getSender()))
+    public synchronized void send(Message message, int ID) throws GameDoesNotExistException, LobbyDoesNotExistsException, PlayerChatMismatchException, UnexistentUserException {
+        Player sender = null;
+        Player receiver = null;
+        for (Player p : gh.getUsers()) {
+            if (p.getNickname().equals(message.getSender().getNickname())) sender = p;
+            if (p.getNickname().equals(message.getReceiver().getNickname())) receiver = p;
+        }
+        if (sender == null || receiver == null) throw new UnexistentUserException();
+
+        if((!gh.getLobby(ID).getPlayers().contains(receiver)) || !gh.getLobby(ID).getPlayers().contains(sender))
             throw new PlayerChatMismatchException();
         try {
             if (!message.isGlobal()) {
-                message.getSender().getChat().getSentMessages().add(message);
-                message.getReceiver().getChat().getReceivedMessages().add(message);
+                sender.getChat().getSentMessages().add(message);
+                receiver.getChat().getReceivedMessages().add(message);
             } else {
-                message.getSender().getChat().getSentMessages().add(message);
+                sender.getChat().getSentMessages().add(message);
                 ArrayList<Player> list;
                 if(gh.getActiveGames().containsKey(ID)) {
-                    list=gh.getGame(ID).getPlayers();
+                    list = gh.getGame(ID).getPlayers();
                 }
                 else {
-                    list=gh.getLobby(ID).getPlayers();
+                    list = gh.getLobby(ID).getPlayers();
                 }
                 for (Player player : list) {
-                    if (player != message.getSender()) player.getChat().getReceivedMessages().add(message);
+                    if (player != sender) player.getChat().getReceivedMessages().add(message);
                 }
             }
             message.setOrder(Message.getCounter());
-            Message.setCounter(Message.getCounter()+1);
+            Message.setCounter(Message.getCounter() + 1);
         }
         catch (GameDoesNotExistException e) {
             throw new GameDoesNotExistException("Game with ID " + ID + " does not exist");
@@ -284,44 +292,51 @@ public class Controller implements Serializable {
     /**
      * Allows the player to choose a pawn while he is in the lobby
      * @param lobbyID ID of the lobby
-     * @param player who is choosing the pawn
+     * @param nickname who is choosing the pawn
      * @param color color of the desired pawn
      * @throws PawnAlreadyTakenException if the chosen pawn has already been taken
      * @throws LobbyDoesNotExistsException if lobbyID does not correspond to a lobby in game handler
      *
      */
-    public synchronized void choosePawn (Integer lobbyID, String nickname,Pawn color) throws PawnAlreadyTakenException, LobbyDoesNotExistsException, GameAlreadyStartedException, IOException, GameDoesNotExistException {
+    public synchronized void choosePawn (Integer lobbyID, String nickname, Pawn color) throws PawnAlreadyTakenException, LobbyDoesNotExistsException, GameAlreadyStartedException, IOException, GameDoesNotExistException, UnexistentUserException {
         Player player = null;
         for (Player p : gh.getUsers()) {
-             if (p.getNickname().equals(nickname)) player = nicknamef (player == null) throw new UnexistentUserException();
-            if (gh.getActiveGames().containsKey(lobbyID)) throw new GameAlreadyStartedException();
-            Lobby lobby = gh.getLobby(lobbyID);
-            PawnBuffer pawnList = lobby.getPawnBuffer();
+            if (p.getNickname().equals(nickname)) player = p;
+        } if (player == null) throw new UnexistentUserException();
 
-            if (pawnList.getPawnList().contains(color) || player.getPawn() != null) {
-                pawnList.getPawnList().remove(color);
-                player.setPawn(color);
-                // gh.notify(new PawnAssignedEvent(player,color));
-            } else throw new PawnAlreadyTakenException();
+        if (gh.getActiveGames().containsKey(lobbyID)) throw new GameAlreadyStartedException();
+        Lobby lobby = gh.getLobby(lobbyID);
+        PawnBuffer pawnList = lobby.getPawnBuffer();
 
-            for (Player p : lobby.getPlayers()) {
-                if (p.getPawn() != Pawn.BLUE && p.getPawn() != Pawn.YELLOW && p.getPawn() != Pawn.RED && p.getPawn() != Pawn.GREEN)
-                    return;
-            }
-            if (gh.getLobby(lobbyID).getPlayers().size() == gh.getLobby(lobbyID).getNumOfPlayers()) {
-                createGame(lobbyID);
-                setGameArea(lobbyID);
-            }
+        if (pawnList.getPawnList().contains(color) || player.getPawn() != null) {
+            pawnList.getPawnList().remove(color);
+            player.setPawn(color);
+            // gh.notify(new PawnAssignedEvent(player,color));
+        } else throw new PawnAlreadyTakenException();
+
+        for (Player p : lobby.getPlayers()) {
+            if (p.getPawn() != Pawn.BLUE && p.getPawn() != Pawn.YELLOW && p.getPawn() != Pawn.RED && p.getPawn() != Pawn.GREEN)
+                return;
+        }
+        if (gh.getLobby(lobbyID).getPlayers().size() == gh.getLobby(lobbyID).getNumOfPlayers()) {
+            createGame(lobbyID);
+            setGameArea(lobbyID);
         }
     }
 
     /**
      * Allows the player to choose the side of the starter card before placing it down
      * if all the players have placed the started card the game phase changes to CHOOSING PRIVATE GOAL and the hand of each player is filled
-     * @param player who is playing the card
+     * @param nickname who is playing the card
      * @param side side chosen by the player
      */
-    public synchronized void chooseCardSide(Integer ID,Player player, CardSide side) throws GameDoesNotExistException, EmptyDeckException, HandIsFullException {
+    public synchronized void chooseCardSide(Integer ID,String nickname, CardSide side) throws GameDoesNotExistException, EmptyDeckException, HandIsFullException, UnexistentUserException {
+
+        Player player = null;
+        for (Player p : gh.getUsers()) {
+            if (p.getNickname().equals(nickname)) player = p;
+        }
+        if (player == null) throw new UnexistentUserException();
         if(gh.getGame(ID).getGamePhase()!=GamePhase.PLACING_STARTER_CARD) throw new WrongThreadException();
         StarterCard card = (StarterCard) player.getHand().getCard(0);
         if(!card.getSide().equals(side)) card.flip();
@@ -379,13 +394,22 @@ public class Controller implements Serializable {
 
     /**
      * Allows the player to choose his personal goal
-     * @param player who is choosing the personal goal
-     * @param goal goal chosen by the player
+     * @param ID ID of the game played
+     * @param nickname who is choosing the personal goal
+     * @param goalID goal chosen by the player
      */
-    public synchronized void choosePersonalGoal(Integer ID,Player player, Goal goal) throws IllegalGoalChosenException, GameDoesNotExistException, WrongGamePhaseException {
-        if(gh.getGame(ID).getGamePhase()!=GamePhase.CHOOSING_PRIVATE_GOAL)  throw new WrongGamePhaseException();
-        if(player.getChoosableGoals().contains(goal))player.setPrivateGoal(goal);
+    public synchronized void choosePersonalGoal(Integer ID, String nickname, int goalID) throws IllegalGoalChosenException, GameDoesNotExistException, WrongGamePhaseException, UnexistentUserException {
+        Player player = null;
+        for (Player p : gh.getUsers()) {
+            if (p.getNickname().equals(nickname)) player = p;
+        }
+        if (player == null) throw new UnexistentUserException();
+
+        if(gh.getGame(ID).getGamePhase()!=GamePhase.CHOOSING_PRIVATE_GOAL) throw new WrongGamePhaseException();
+        if(player.getChoosableGoals().get(0).getGoalID() == goalID ) player.setPrivateGoal(player.getChoosableGoals().get(0));
+        else if(player.getChoosableGoals().get(1).getGoalID() == goalID)player.setPrivateGoal(player.getChoosableGoals().get(1));
         else throw new IllegalGoalChosenException();
+
         for(Player p:gh.getGame(ID).getPlayers()){
             if(p.getPrivateGoal()==null)return;
         }
@@ -397,17 +421,17 @@ public class Controller implements Serializable {
     /**
      * flips a card in a player's hand
      * @param gameID ID of the player's game
-     * @param playerName nickname of the player who's flipping the card
+     * @param nickname nickname of the player who's flipping the card
      * @param handPos position of the card in the player's hand
      * @throws GameDoesNotExistException thrown if the specified ID doesn't correspond to any active game
      */
-    public synchronized void flipCard(Integer gameID, String playerName, int handPos) throws GameDoesNotExistException {
+    public synchronized void flipCard(Integer gameID, String nickname, int handPos) throws GameDoesNotExistException, UnexistentUserException {
 
         // get game from ID and player from nickname
         Game game = gh.getGame(gameID);
         Player player = game.getPlayers().stream()
-                                         .filter(p -> p.getNickname().equals(playerName))
-                                         .findFirst().orElseThrow(UnexistentUserException);
+                .filter(p -> p.getNickname().equals(nickname))
+                .findFirst().orElseThrow(UnexistentUserException::new);
 
         // flip the card
         if(game.getPlayers().contains(player))
@@ -418,7 +442,7 @@ public class Controller implements Serializable {
      * plays a card from the hand of a player to their field, at the specified position.
      * if it's the game's last round
      * @param gameID ID of the calling player's game
-     * @param player player who's playing the card
+     * @param nickname nickname of the player who's playing the card
      * @param handPos card's position index in the player's hand
      * @param coords position in the field to play the selected card to
      * @throws GameDoesNotExistException thrown if the given ID does not correspond to any Game
@@ -427,10 +451,13 @@ public class Controller implements Serializable {
      * @throws IllegalMoveException thrown if the selected card cannot be played to the field as requested
      * @throws LobbyDoesNotExistsException thrown if the game's lobby does not exist
      */
-    public synchronized void playCard(Integer gameID, Player player, int handPos, Coords coords) throws GameDoesNotExistException, NotYourTurnException, IllegalActionException, IllegalMoveException, LobbyDoesNotExistsException {
+    public synchronized void playCard(Integer gameID, String nickname, int handPos, Coords coords) throws GameDoesNotExistException, NotYourTurnException, IllegalActionException, IllegalMoveException, LobbyDoesNotExistsException, UnexistentUserException {
 
-        // get game from ID
+        // get game from ID and player from nickname
         Game game = gh.getGame(gameID);
+        Player player = game.getPlayers().stream()
+                .filter(p -> p.getNickname().equals(nickname))
+                .findFirst().orElseThrow(UnexistentUserException::new);
 
         // if it's not this player's turn
         if (!player.getNickname().equals(game.getCurrPlayer().getNickname()))
@@ -465,7 +492,7 @@ public class Controller implements Serializable {
      * draws a card from a player's game's deck or deckBuffer and adds it to their hand.
      * then checks whether the game's last round has been reached, and updates the game's state accordingly.
      * @param gameID ID of the game of the drawing player
-     * @param player player who's drawing the card
+     * @param nickname nickname of the player who's drawing the card
      * @param deckTypeBox type of card source to draw from
      * @throws GameDoesNotExistException thrown if the given ID does not correspond to any Game
      * @throws NotYourTurnException thrown when a player tries to perform an action when it's not their turn
@@ -474,10 +501,13 @@ public class Controller implements Serializable {
      * @throws EmptyDeckException thrown if the selected deck is out of cards
      * @throws EmptyBufferException thrown if the selected deck buffer is out of cards
      */
-    public synchronized void drawCard(Integer gameID, Player player, DeckTypeBox deckTypeBox) throws GameDoesNotExistException, NotYourTurnException, IllegalActionException, HandIsFullException, EmptyDeckException, EmptyBufferException, LobbyDoesNotExistsException {
+    public synchronized void drawCard(Integer gameID, String nickname, DeckTypeBox deckTypeBox) throws GameDoesNotExistException, NotYourTurnException, IllegalActionException, HandIsFullException, EmptyDeckException, EmptyBufferException, LobbyDoesNotExistsException, UnexistentUserException {
 
-        // get game from ID
+        // get game from ID and player from nickname
         Game game = gh.getGame(gameID);
+        Player player = game.getPlayers().stream()
+                .filter(p -> p.getNickname().equals(nickname))
+                .findFirst().orElseThrow(UnexistentUserException::new);
 
         // if it's not this player's turn
         if (!player.getNickname().equals(game.getCurrPlayer().getNickname()))
@@ -525,7 +555,6 @@ public class Controller implements Serializable {
 
         // update turn counter
         game.setWhoseTurn((game.getWhoseTurn()+1) % game.getNumOfPlayers());
-
     }
 
     /**
@@ -559,15 +588,15 @@ public class Controller implements Serializable {
     private  synchronized void evaluatePrivateGoal(Integer gameID){
         Game game=gh.getActiveGames().get(gameID);
         for(Player p:game.getPlayers()){
-            if(p.getPrivateGoal().getClass()== ResourceGoal.class){
-                resourceEvaluator(gameID, (ResourceGoal) p.getPrivateGoal(),p);
-            } else if (p.getPrivateGoal().getClass()== L_ShapeGoal.class) {
-                L_ShapeEvaluator(gameID, (L_ShapeGoal) p.getPrivateGoal(),p);
-            }
-            else{
-                diagonalEvaluator(gameID, (DiagonalGoal) p.getPrivateGoal(),p);
-            }
-
+            try {
+                if (p.getPrivateGoal().getClass() == ResourceGoal.class) {
+                    resourceEvaluator(gameID, (ResourceGoal) p.getPrivateGoal(), p.getNickname());
+                } else if (p.getPrivateGoal().getClass() == L_ShapeGoal.class) {
+                    L_ShapeEvaluator(gameID, (L_ShapeGoal) p.getPrivateGoal(), p.getNickname());
+                } else {
+                    diagonalEvaluator(gameID, (DiagonalGoal) p.getPrivateGoal(), p.getNickname());
+                }
+            } catch (UnexistentUserException ignored) {}
         }
     }
 
@@ -580,22 +609,22 @@ public class Controller implements Serializable {
         Goal commonGoal1= game.getCommonGoal1();
         Goal commonGoal2= game.getCommonGoal2();
         for(Player p: game.getPlayers()){
-            if(commonGoal1.getClass()==ResourceGoal.class){
-                resourceEvaluator(gameID, (ResourceGoal) commonGoal1,p);
-            } else if (commonGoal1.getClass()==L_ShapeGoal.class) {
-                L_ShapeEvaluator(gameID, (L_ShapeGoal) commonGoal1,p);
-            }
-            else{
-                diagonalEvaluator(gameID, (DiagonalGoal) commonGoal1,p);
-            }
-            if(commonGoal2.getClass()==ResourceGoal.class){
-                resourceEvaluator(gameID, (ResourceGoal) commonGoal2,p);
-            } else if (commonGoal2.getClass()==L_ShapeGoal.class) {
-                L_ShapeEvaluator(gameID, (L_ShapeGoal) commonGoal2,p);
-            }
-            else{
-                diagonalEvaluator(gameID, (DiagonalGoal) commonGoal2,p);
-            }
+            try {
+                if (commonGoal1.getClass() == ResourceGoal.class) {
+                    resourceEvaluator(gameID, (ResourceGoal) commonGoal1, p.getNickname());
+                } else if (commonGoal1.getClass() == L_ShapeGoal.class) {
+                    L_ShapeEvaluator(gameID, (L_ShapeGoal) commonGoal1, p.getNickname());
+                } else {
+                    diagonalEvaluator(gameID, (DiagonalGoal) commonGoal1, p.getNickname());
+                }
+                if (commonGoal2.getClass() == ResourceGoal.class) {
+                    resourceEvaluator(gameID, (ResourceGoal) commonGoal2, p.getNickname());
+                } else if (commonGoal2.getClass() == L_ShapeGoal.class) {
+                    L_ShapeEvaluator(gameID, (L_ShapeGoal) commonGoal2, p.getNickname());
+                } else {
+                    diagonalEvaluator(gameID, (DiagonalGoal) commonGoal2, p.getNickname());
+                }
+            } catch (UnexistentUserException ignored) {}
         }
     }
 
@@ -625,9 +654,14 @@ public class Controller implements Serializable {
      * checks the presence of the Diagonal goal in the field and adds the points to the scoreboard
      * @param gameID index of the game where the evaluation is done
      * @param goal goal that needs to be found in the field
-     * @param player player who has to complete the goal
+     * @param nickname player who has to complete the goal
      */
-    private synchronized void diagonalEvaluator(Integer gameID, DiagonalGoal goal, Player player) {
+    private synchronized void diagonalEvaluator(Integer gameID, DiagonalGoal goal, String nickname) throws UnexistentUserException {
+        Player player = null;
+        for (Player p : gh.getUsers()) {
+            if (p.getNickname().equals(nickname)) player = p;
+        }
+        if (player == null) throw new UnexistentUserException();
         Game game=gh.getActiveGames().get(gameID);
         HashMap<Coords, Card> field = player.getField().getMatrix();
         HashSet<Coords> done = new HashSet<>(); // indicates the cards already used for the goal
@@ -660,9 +694,14 @@ public class Controller implements Serializable {
      * checks the presence of the Resource goal in the field and adds the points to the scoreboard
      * @param gameID index of the game where the evaluation is done
      * @param goal goal that needs to be found in the field
-     * @param player player who has to complete the goal
+     * @param nickname player who has to complete the goal
      */
-    private synchronized void resourceEvaluator(Integer gameID, ResourceGoal goal, Player player) {
+    private synchronized void resourceEvaluator(Integer gameID, ResourceGoal goal, String nickname) throws UnexistentUserException {
+        Player player = null;
+        for (Player p : gh.getUsers()) {
+            if (p.getNickname().equals(nickname)) player = p;
+        }
+        if (player == null) throw new UnexistentUserException();
         Game game = gh.getActiveGames().get(gameID);
         HashMap<ItemBox, Integer> totalResources = player.getField().getTotalResources();
         while (true) {
@@ -679,38 +718,45 @@ public class Controller implements Serializable {
      * checks the presence of the L_Shape goal in the field and adds the points to the scoreboard
      * @param gameID index of the game where the evaluation is done
      * @param goal goal that needs to be found in the field
-     * @param player player who has to complete the goal
+     * @param nickname player who has to complete the goal
      */
-    private synchronized void L_ShapeEvaluator(Integer gameID,L_ShapeGoal goal,Player player){
-        HashSet<Coords> done=new HashSet<>();
-        HashMap<Coords, Card> field=player.getField().getMatrix();
+    private synchronized void L_ShapeEvaluator(Integer gameID, L_ShapeGoal goal, String nickname) throws UnexistentUserException {
+        Player player = null;
+        for (Player p : gh.getUsers()) {
+            if (p.getNickname().equals(nickname)) player = p;
+        }
+        if (player == null) throw new UnexistentUserException();
+
+        HashSet<Coords> done = new HashSet<>();
+        HashMap<Coords, Card> field = player.getField().getMatrix();
+
         switch (goal.getType()){
             case UP_RIGHT -> {
-                for(Coords coords: field.keySet()){
-                    Coords secondCard=new Coords(coords.getX()-1,coords.getY());
-                    Coords thirdCard=new Coords(coords.getX()-2,coords.getY()-1);
-                    genericL_ShapeEvaluator(gameID,goal,player,coords,secondCard,thirdCard,done);
+                for(Coords coords : field.keySet()) {
+                    Coords secondCard = new Coords(coords.getX() - 1, coords.getY());
+                    Coords thirdCard = new Coords(coords.getX() - 2, coords.getY() - 1);
+                    genericL_ShapeEvaluator(gameID, goal, player.getNickname(), coords, secondCard, thirdCard, done);
                 }
             }
             case UP_LEFT -> {
-                for(Coords coords: field.keySet()){
-                    Coords secondCard=new Coords(coords.getX(),coords.getY()-1);
-                    Coords thirdCard=new Coords(coords.getX()-1,coords.getY()-2);
-                    genericL_ShapeEvaluator(gameID,goal,player,coords,secondCard,thirdCard,done);
+                for(Coords coords : field.keySet()) {
+                    Coords secondCard = new Coords(coords.getX(), coords.getY() - 1);
+                    Coords thirdCard = new Coords(coords.getX() - 1, coords.getY() - 2);
+                    genericL_ShapeEvaluator(gameID, goal, player.getNickname(), coords, secondCard, thirdCard, done);
                 }
             }
             case DOWN_LEFT -> {
-                for(Coords coords: field.keySet()){
-                    Coords secondCard=new Coords(coords.getX()+1,coords.getY());
-                    Coords thirdCard=new Coords(coords.getX()+2,coords.getY()+1);
-                    genericL_ShapeEvaluator(gameID,goal,player,coords,secondCard,thirdCard,done);
+                for(Coords coords : field.keySet()) {
+                    Coords secondCard = new Coords(coords.getX() + 1, coords.getY());
+                    Coords thirdCard=new Coords(coords.getX() + 2, coords.getY() + 1);
+                    genericL_ShapeEvaluator(gameID, goal, player.getNickname(), coords, secondCard, thirdCard, done);
                 }
             }
             case DOWN_RIGHT -> {
-                for(Coords coords: field.keySet()){
-                    Coords secondCard=new Coords(coords.getX(),coords.getY()+1);
-                    Coords thirdCard=new Coords(coords.getX()+1,coords.getY()+2);
-                    genericL_ShapeEvaluator(gameID,goal,player,coords,secondCard,thirdCard,done);
+                for(Coords coords: field.keySet()) {
+                    Coords secondCard = new Coords(coords.getX(),coords.getY() + 1);
+                    Coords thirdCard = new Coords(coords.getX() + 1,coords.getY() + 2);
+                    genericL_ShapeEvaluator(gameID, goal, player.getNickname(), coords, secondCard, thirdCard, done);
                 }
             }
         }
@@ -720,16 +766,21 @@ public class Controller implements Serializable {
      * useful method to avoid repetition of code based on the direction of L_Shape goal
      * @param gameID index of the game where the evaluation is done
      * @param goal goal that needs to be found in the field
-     * @param player player who has to complete the goal
+     * @param nickname player who has to complete the goal
      * @param firstCard coordinates of the card with a different color from the other two in the L_Shape
      * @param secondCard coordinates of one of the cards with the main L_Shape color
      * @param thirdCard coordinates of one of the cards with the main L_Shape color
      * @param done HashMap that maps the cards already used to complete the goal
      */
-    private synchronized void genericL_ShapeEvaluator(Integer gameID,L_ShapeGoal goal,Player player,Coords firstCard,Coords secondCard,Coords thirdCard,HashSet<Coords> done){
-        Game game=gh.getActiveGames().get(gameID);
-        HashMap<Coords, Card> field=player.getField().getMatrix();
-        if(!done.contains(firstCard)&&!done.contains(secondCard)&&!done.contains(thirdCard)&&field.get(firstCard).getKingdom()==goal.getSecondaryColor()&&field.containsKey(secondCard)&&field.containsKey(thirdCard)&&field.get(secondCard).getKingdom()==goal.getMainColor()&&field.get(thirdCard).getKingdom()==goal.getMainColor()){
+    private synchronized void genericL_ShapeEvaluator(Integer gameID, L_ShapeGoal goal, String nickname, Coords firstCard, Coords secondCard, Coords thirdCard, HashSet<Coords> done) throws UnexistentUserException {
+        Player player = null;
+        for (Player p : gh.getUsers()) {
+            if (p.getNickname().equals(nickname)) player = p;
+        }
+        if (player == null) throw new UnexistentUserException();
+        Game game = gh.getActiveGames().get(gameID);
+        HashMap<Coords, Card> field = player.getField().getMatrix();
+        if(!done.contains(firstCard) && !done.contains(secondCard) && !done.contains(thirdCard) && field.get(firstCard).getKingdom() == goal.getSecondaryColor() && field.containsKey(secondCard) && field.containsKey(thirdCard) && field.get(secondCard).getKingdom() == goal.getMainColor() && field.get(thirdCard).getKingdom() == goal.getMainColor()) {
             done.add(firstCard);
             done.add(secondCard);
             done.add(thirdCard);
