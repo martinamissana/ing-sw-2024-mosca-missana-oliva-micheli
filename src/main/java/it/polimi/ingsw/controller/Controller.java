@@ -60,7 +60,13 @@ public class Controller implements Serializable {
      * @param creator - the player that created the lobby
      * @throws LobbyDoesNotExistsException - this will never be thrown
      */
-    public synchronized void createLobby(int numOfPlayers, Player lobbyCreator) throws LobbyDoesNotExistsException {
+    public synchronized void createLobby(int numOfPlayers, String creator) throws LobbyDoesNotExistsException {
+        Player lobbyCreator = null;
+        for (Player p : gh.getUsers()) {
+            if (p.getNickname().equals(creator)) lobbyCreator = p;
+        }
+        if (lobbyCreator == null) throw new UnexistentUserException();
+
         try {
             gh.getLobbies().put(gh.getNumOfLobbies(), new Lobby(numOfPlayers));
             gh.getLobby(gh.getNumOfLobbies()).addPlayer(lobbyCreator);
@@ -72,13 +78,18 @@ public class Controller implements Serializable {
     /**
      * adds the player to the specified lobby
      * when the chosen number or player for the game is reached, a game is created
-     * @param player - the player that will be added to the lobby
+     * @param nickname - the player that will be added to the lobby
      * @param lobbyID - the lobby the player wants to join
      * @throws FullLobbyException - if the lobby is already  full
      * @throws NicknameAlreadyTakenException -  if the nickname is already taken
      * @throws LobbyDoesNotExistsException - if the lobby does not exist
      */
-    public synchronized void joinLobby(Player player, int lobbyID) throws FullLobbyException, NicknameAlreadyTakenException, LobbyDoesNotExistsException, IOException, CannotJoinMultipleLobbiesException {
+    public synchronized void joinLobby(String nickname, int lobbyID) throws FullLobbyException, NicknameAlreadyTakenException, LobbyDoesNotExistsException, IOException, CannotJoinMultipleLobbiesException {
+        Player player = null;
+        for (Player p : gh.getUsers()) {
+            if (p.getNickname().equals(nickname)) player = p;
+        }
+        if (player == null) throw new UnexistentUserException();
         //lobbyID is the index in lobbies
         for (Lobby l :gh.getLobbies().values()){
             if(l.getPlayers().contains(player)) throw new CannotJoinMultipleLobbiesException();
@@ -93,11 +104,16 @@ public class Controller implements Serializable {
 
     /**
      * the specified player will be removed from the lobby, automatically deletes the lobby if there are no players left
-     * @param player - the player that will leave the lobby
+     * @param nickname  the player that will leave the lobby
      * @param lobbyID - the ID of the lobby from which the player will be deleted
      * @throws LobbyDoesNotExistsException - if the lobby does not exist
      */
-    public synchronized void leaveLobby(Player player,int lobbyID) throws LobbyDoesNotExistsException, GameDoesNotExistException, IOException {
+    public synchronized void leaveLobby(String nickname,int lobbyID) throws LobbyDoesNotExistsException, GameDoesNotExistException, IOException {
+        Player player = null;
+        for (Player p : gh.getUsers()) {
+            if (p.getNickname().equals(nickname)) player = p;
+        }
+        if (player == null) throw new UnexistentUserException();
         if(gh.getLobbies().containsKey(lobbyID)) {
            gh.getLobbies().get(lobbyID).getPlayers().remove(player);
            gh.notify(new LobbyLeftEvent(player,gh.getLobby(lobbyID),lobbyID));
@@ -157,11 +173,16 @@ public class Controller implements Serializable {
     /**
      * removes a player from a game and terminates said game
      * @param gameID ID of the player's game
-     * @param player player who's leaving the game
+     * @param nickname who's leaving the game
      * @throws GameDoesNotExistException thrown if the specified ID doesn't correspond to any game
      * @throws LobbyDoesNotExistsException thrown if the specified ID doesn't correspond to any game, thus having no lobby
      */
-    public synchronized void leaveGame(Integer gameID,Player player) throws GameDoesNotExistException, LobbyDoesNotExistsException  {
+    public synchronized void leaveGame(Integer gameID,String nickname) throws GameDoesNotExistException, LobbyDoesNotExistsException  {
+        Player player = null;
+        for (Player p : gh.getUsers()) {
+            if (p.getNickname().equals(nickname)) player = p;
+        }
+        if (player == null) throw new UnexistentUserException();
         if(gh.getActiveGames().containsKey(gameID)) {
             gh.getActiveGames().get(gameID).getPlayers().remove(player);
             terminateGame(gameID);
@@ -269,10 +290,13 @@ public class Controller implements Serializable {
      * @throws LobbyDoesNotExistsException if lobbyID does not correspond to a lobby in game handler
      *
      */
-    public synchronized void choosePawn (Integer lobbyID, Player player, Pawn color) throws PawnAlreadyTakenException, LobbyDoesNotExistsException, GameAlreadyStartedException, IOException, GameDoesNotExistException {
-        if(gh.getActiveGames().containsKey(lobbyID)) throw new GameAlreadyStartedException();
-        Lobby lobby = gh.getLobby(lobbyID);
-        PawnBuffer pawnList = lobby.getPawnBuffer();
+    public synchronized void choosePawn (Integer lobbyID, String nickname,Pawn color) throws PawnAlreadyTakenException, LobbyDoesNotExistsException, GameAlreadyStartedException, IOException, GameDoesNotExistException {
+        Player player = null;
+        for (Player p : gh.getUsers()) {
+             if (p.getNickname().equals(nickname)) player = nicknamef (player == null) throw new UnexistentUserException();
+            if (gh.getActiveGames().containsKey(lobbyID)) throw new GameAlreadyStartedException();
+            Lobby lobby = gh.getLobby(lobbyID);
+            PawnBuffer pawnList = lobby.getPawnBuffer();
 
             if (pawnList.getPawnList().contains(color) || player.getPawn() != null) {
                 pawnList.getPawnList().remove(color);
