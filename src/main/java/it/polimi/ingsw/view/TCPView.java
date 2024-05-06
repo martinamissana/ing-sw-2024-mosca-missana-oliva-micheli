@@ -1,14 +1,14 @@
 package it.polimi.ingsw.view;
 
+import it.polimi.ingsw.controller.exceptions.GameAlreadyStartedException;
 import it.polimi.ingsw.model.exceptions.FullLobbyException;
 import it.polimi.ingsw.model.exceptions.LobbyDoesNotExistsException;
 import it.polimi.ingsw.model.exceptions.NicknameAlreadyTakenException;
+import it.polimi.ingsw.model.exceptions.PawnAlreadyTakenException;
+import it.polimi.ingsw.model.player.Pawn;
 import it.polimi.ingsw.model.player.Player;
 import it.polimi.ingsw.network.netMessage.NetMessage;
-import it.polimi.ingsw.network.netMessage.c2s.CreateLobbyMessage;
-import it.polimi.ingsw.network.netMessage.c2s.DisconnectMessage;
-import it.polimi.ingsw.network.netMessage.c2s.LobbyJoinedMessage;
-import it.polimi.ingsw.network.netMessage.c2s.MyNickname;
+import it.polimi.ingsw.network.netMessage.c2s.*;
 import it.polimi.ingsw.network.netMessage.s2c.*;
 
 import java.io.IOException;
@@ -38,7 +38,7 @@ public class TCPView extends View {
             NetMessage deserialized;
 
             do {
-                System.out.println("waiting for next message");
+                //System.out.println("waiting for next message");
                 deserialized = (NetMessage) in.readObject();
                 elaborate(deserialized);
             } while (deserialized.getClass() != DisconnectMessage.class);
@@ -58,10 +58,12 @@ public class TCPView extends View {
         switch (message) {
             case LoginMessage m -> {
                 setNickname(m.getNickname());
+                setPlayer(new Player(m.getNickname()));
                 System.out.println("you are logged in!");
             }
             case LobbyCreatedMessage m -> {
                 super.getLobbies().put(m.getID(),m.getLobby());
+                super.setID(m.getID());
                 if(m.getCreator()==super.getPlayer()) System.out.println("your lobby was created, allowed players: "+ m.getLobby().getNumOfPlayers() );
                 else System.out.println("A lobby was created, allowed players: "+ m.getLobby().getNumOfPlayers() );
             }
@@ -78,6 +80,16 @@ public class TCPView extends View {
             }
             case FailMessage m -> {
                 super.getErrorMessages().add(m.getMessage());
+                System.out.println(m.getMessage());
+            }
+            case LobbyLeftMessage m -> {
+                if(m.getPlayer().getNickname().equals(super.getNickname())){ System.out.println("you left the lobby!");}
+                else {System.out.println("someone left a lobby !");}
+                super.getLobbies().get(m.getID()).removePlayer(m.getPlayer());
+            }
+            case LobbyDeletedMessage m ->{
+                super.getLobbies().remove(m.getID());
+                System.out.println("a lobby was deleted!");
             }
             default -> throw new IllegalStateException("Unexpected value: " + message);
         }
@@ -98,9 +110,21 @@ public class TCPView extends View {
     }
 
     @Override
-    public void joinLobby(Player player, int lobbyID) throws FullLobbyException, NicknameAlreadyTakenException, LobbyDoesNotExistsException, IOException {
-        JoinLobbyMessage m = new JoinLobbyMessage(player,lobbyID);
+    public void joinLobby( int lobbyID) throws FullLobbyException, NicknameAlreadyTakenException, LobbyDoesNotExistsException, IOException {
+        JoinLobbyMessage m = new JoinLobbyMessage(super.getPlayer(),lobbyID);
         out.writeObject(m);
         System.out.println("you tried to join a lobby");
+    }
+
+    @Override
+    public void leaveLobby() throws GameAlreadyStartedException, LobbyDoesNotExistsException, IOException {
+        LeaveLobbyMessage m = new LeaveLobbyMessage(super.getPlayer(),super.getID());
+        out.writeObject(m);
+        System.out.println("you tried to leave a lobby");
+    }
+
+    @Override
+    public void choosePawn(Integer lobbyID, Pawn color) throws LobbyDoesNotExistsException, PawnAlreadyTakenException {
+
     }
 }

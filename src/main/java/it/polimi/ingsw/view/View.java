@@ -238,7 +238,7 @@ public abstract class View {
 
     }
 
-    public void leaveLobby(int lobbyID) throws GameAlreadyStartedException, LobbyDoesNotExistsException {
+    public void leaveLobby() throws GameAlreadyStartedException, LobbyDoesNotExistsException,IOException {
 
     }
 
@@ -254,7 +254,7 @@ public abstract class View {
 
     }
 
-    public void leaveGame(Integer gameID) throws LobbyDoesNotExistsException, GameDoesNotExistException {
+    public void leaveGame(Integer gameID) throws LobbyDoesNotExistsException, GameDoesNotExistException,IOException {
 
     }
 

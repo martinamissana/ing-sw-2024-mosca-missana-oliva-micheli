@@ -1,14 +1,15 @@
-package it.polimi.ingsw.model.observer.events;
+package it.polimi.ingsw.network.netMessage.s2c;
 
 import it.polimi.ingsw.model.game.Lobby;
 import it.polimi.ingsw.model.player.Player;
+import it.polimi.ingsw.network.netMessage.NetMessage;
 
-public class LobbyLeftEvent extends Event{
+public class LobbyLeftMessage extends NetMessage {
     private final Player player;
     private final Lobby lobby;
     private final Integer ID;
 
-    public LobbyLeftEvent(Player player ,Lobby lobby,Integer ID) {
+    public LobbyLeftMessage(Player player, Lobby lobby,Integer ID) {
         this.player = player;
         this.lobby = lobby;
         this.ID=ID;
