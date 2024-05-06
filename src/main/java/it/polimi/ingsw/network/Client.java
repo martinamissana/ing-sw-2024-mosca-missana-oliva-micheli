@@ -1,6 +1,8 @@
 package it.polimi.ingsw.network;
 
 import it.polimi.ingsw.model.exceptions.LobbyDoesNotExistsException;
+import it.polimi.ingsw.model.exceptions.PawnAlreadyTakenException;
+import it.polimi.ingsw.model.player.Pawn;
 import it.polimi.ingsw.view.TCPView;
 
 import java.io.IOException;
@@ -13,13 +15,10 @@ public class Client {
             TCPView client = new TCPView("127.0.0.1", 4321);
             try {
                 client.login("Carlos");
-
                 new Thread(() -> {
                     try {
                         client.startClient();
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    } catch (ClassNotFoundException e) {
+                    } catch (IOException | ClassNotFoundException e) {
                         throw new RuntimeException(e);
                     }
 
@@ -27,14 +26,14 @@ public class Client {
 
                 new Thread(() -> {
                     try {
-                        TimeUnit.SECONDS.sleep(10);
-                        client.createLobby(3);
+                        client.getCurrentStatus();
+                        client.createLobby(2);
+                        TimeUnit.SECONDS.sleep(3);
+                        client.choosePawn(client.getID(), Pawn.RED);
+                        //client.leaveLobby();
                         //new CLIGame(c,client);
-                    } catch (InterruptedException e) {
-                        throw new RuntimeException(e);
-                    } catch (LobbyDoesNotExistsException e) {
-                        throw new RuntimeException(e);
-                    } catch (IOException e) {
+                    } catch (IOException | LobbyDoesNotExistsException | PawnAlreadyTakenException |
+                             InterruptedException e) {
                         throw new RuntimeException(e);
                     }
                 }).start();

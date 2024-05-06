@@ -1,13 +1,14 @@
-package it.polimi.ingsw.model.observer.events;
+package it.polimi.ingsw.network.netMessage.s2c;
 
 import it.polimi.ingsw.model.player.Pawn;
 import it.polimi.ingsw.model.player.Player;
+import it.polimi.ingsw.network.netMessage.NetMessage;
 
-public class PawnAssignedEvent extends Event{
+public class PawnAssignedMessage extends NetMessage {
     Player player;
     Pawn color;
 
-    public PawnAssignedEvent(Player player, Pawn color) {
+    public PawnAssignedMessage(Player player, Pawn color) {
         this.player = player;
         this.color = color;
     }

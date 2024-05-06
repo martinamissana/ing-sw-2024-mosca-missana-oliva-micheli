@@ -117,4 +117,9 @@ public class Player implements Serializable {
     public ArrayList<Goal> getChoosableGoals() {
         return choosableGoals;
     }
+
+    public boolean equals(Player p) {
+        if(this.nickname.equals(p.getNickname()))return true;
+        else return false;
+    }
 }
