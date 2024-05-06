@@ -373,14 +373,17 @@ public class Controller implements Serializable {
     /**
      * flips a card in a player's hand
      * @param gameID ID of the player's game
-     * @param player player who's flipping the card
+     * @param playerName nickname of the player who's flipping the card
      * @param handPos position of the card in the player's hand
      * @throws GameDoesNotExistException thrown if the specified ID doesn't correspond to any active game
      */
-    public void flipCard(Integer gameID, Player player, int handPos) throws GameDoesNotExistException {
+    public synchronized void flipCard(Integer gameID, String playerName, int handPos) throws GameDoesNotExistException {
 
-        // get game from ID
+        // get game from ID and player from nickname
         Game game = gh.getGame(gameID);
+        Player player = game.getPlayers().stream()
+                                         .filter(p -> p.getNickname().equals(playerName))
+                                         .findFirst().orElseThrow(UnexistentUserException);
 
         // flip the card
         if(game.getPlayers().contains(player))
