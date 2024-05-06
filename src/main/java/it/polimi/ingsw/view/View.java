@@ -23,7 +23,7 @@ import java.util.HashMap;
 
 public abstract class View {
     private String nickname;
-    protected final HashMap<Integer, Lobby> lobbies = new HashMap<>();
+    private HashMap<Integer, Lobby> lobbies = new HashMap<>();
     private Player player;
     private Integer ID; // both game and lobby ID
     private Hand hand;
@@ -34,7 +34,7 @@ public abstract class View {
     private Chat chat;
     private Goal privateGoal;
     private Pawn pawn;
-    private HashMap<Player, Pawn> pawns; // all other players' pawns
+    private HashMap<Player, Pawn> pawns=new HashMap<>(); // all other players' pawns
     private boolean firstPlayer;
     private boolean lastRound;
     private ArrayList<Goal> personalGoalChoices;
@@ -144,6 +144,7 @@ public abstract class View {
         return commonGoal2;
     }
 
+
     public void setPlayer(Player player) {
         this.player = player;
     }
@@ -162,6 +163,10 @@ public abstract class View {
 
     public void setFields(HashMap<Player, Field> fields) {
         this.fields = fields;
+    }
+
+    public void setLobbies(HashMap<Integer, Lobby> lobbies) {
+        this.lobbies = lobbies;
     }
 
     public void setYourTurn(boolean yourTurn) {
@@ -230,23 +235,24 @@ public abstract class View {
 
     public void setNickname(String nickname) { this.nickname = nickname; }
 
-    public void createLobby(int numOfPlayers) throws LobbyDoesNotExistsException, IOException {
+
+    public synchronized void createLobby(int numOfPlayers) throws LobbyDoesNotExistsException, IOException {
 
     }
 
-    public void joinLobby(int lobbyID) throws FullLobbyException, NicknameAlreadyTakenException, LobbyDoesNotExistsException, IOException {
+    public synchronized void joinLobby(int lobbyID) throws FullLobbyException, NicknameAlreadyTakenException, LobbyDoesNotExistsException, IOException {
 
     }
 
-    public void leaveLobby() throws GameAlreadyStartedException, LobbyDoesNotExistsException,IOException {
+    public synchronized void leaveLobby() throws GameAlreadyStartedException, LobbyDoesNotExistsException,IOException {
 
     }
 
-    public void sendMessage(Integer gameID, Message message) throws LobbyDoesNotExistsException, GameDoesNotExistException {
+    public synchronized void sendMessage(Integer gameID, Message message) throws LobbyDoesNotExistsException, GameDoesNotExistException {
 
     }
 
-    public void choosePawn(Integer lobbyID,Pawn color) throws LobbyDoesNotExistsException, PawnAlreadyTakenException {
+    public synchronized void choosePawn(Integer lobbyID,Pawn color) throws LobbyDoesNotExistsException, PawnAlreadyTakenException, IOException {
 
     }
 
@@ -271,6 +277,9 @@ public abstract class View {
     }
 
     public void flipCard(Integer gameID, int handPos) throws GameDoesNotExistException {
+
+    }
+    public void getCurrentStatus() throws IOException {
 
     }
 }
