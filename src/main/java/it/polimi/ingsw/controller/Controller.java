@@ -59,17 +59,16 @@ public class Controller implements Serializable {
      * the creator needs to specify the desired amount of player for the game,
      * the creator will automatically join the lobby
      * @param numOfPlayers - the number of player needed for the game to starts
-     * @param lobbyCreator - the player that created the lobby
+     * @param creator - the player that created the lobby
      * @throws LobbyDoesNotExistsException - this will never be thrown
      */
     public synchronized void createLobby(int numOfPlayers, Player lobbyCreator) throws LobbyDoesNotExistsException {
         try {
             gh.getLobbies().put(gh.getNumOfLobbies(), new Lobby(numOfPlayers));
             gh.getLobby(gh.getNumOfLobbies()).addPlayer(lobbyCreator);
-            gh.notify( new LobbyCreatedEvent(lobbyCreator,gh.getLobbies().get(gh.getNumOfLobbies()),gh.getNumOfLobbies()));
+            gh.notify( new LobbyCreatedEvent(lobbyCreator, gh.getLobbies().get(gh.getNumOfLobbies()),gh.getNumOfLobbies()));
             gh.setNumOfLobbies(gh.getNumOfLobbies() + 1);
-        } catch (FullLobbyException | NicknameAlreadyTakenException | IOException e) {}
-
+        } catch (FullLobbyException | NicknameAlreadyTakenException | IOException ignored) {}
     }
 
     /**
@@ -277,12 +276,11 @@ public class Controller implements Serializable {
         Lobby lobby = gh.getLobby(lobbyID);
         PawnBuffer pawnList = lobby.getPawnBuffer();
 
-        if(pawnList.getPawnList().contains(color)|| player.getPawn()!=null) {
-            pawnList.getPawnList().remove(color);
-            player.setPawn(color);
-            gh.notify(new PawnAssignedEvent(player,color));
-        }
-        else throw new PawnAlreadyTakenException();
+            if (pawnList.getPawnList().contains(color) || player.getPawn() != null) {
+                pawnList.getPawnList().remove(color);
+                player.setPawn(color);
+                // gh.notify(new PawnAssignedEvent(player,color));
+            } else throw new PawnAlreadyTakenException();
 
         for(Player p: lobby.getPlayers()){
             if(p.getPawn()!=Pawn.BLUE&&p.getPawn()!=Pawn.YELLOW&&p.getPawn()!=Pawn.RED&&p.getPawn()!=Pawn.GREEN)return;

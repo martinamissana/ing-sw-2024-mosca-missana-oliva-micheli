@@ -1,6 +1,7 @@
 package it.polimi.ingsw.view.CLI;
 
 import it.polimi.ingsw.controller.Controller;
+import it.polimi.ingsw.controller.exceptions.CannotJoinMultipleLobbiesException;
 import it.polimi.ingsw.controller.exceptions.GameAlreadyStartedException;
 import it.polimi.ingsw.controller.exceptions.IllegalActionException;
 import it.polimi.ingsw.controller.exceptions.NotYourTurnException;
@@ -9,24 +10,43 @@ import it.polimi.ingsw.model.deck.DeckBufferType;
 import it.polimi.ingsw.model.deck.DeckType;
 import it.polimi.ingsw.model.exceptions.*;
 import it.polimi.ingsw.model.game.GameHandler;
+import it.polimi.ingsw.model.game.Lobby;
 import it.polimi.ingsw.model.player.Coords;
 import it.polimi.ingsw.model.player.Pawn;
 import it.polimi.ingsw.model.player.Player;
+import it.polimi.ingsw.view.RMIView;
+import it.polimi.ingsw.view.TCPView;
+import it.polimi.ingsw.view.View;
 
 import java.io.IOException;
 
 public class Main {
-    public static void main(String[] args) throws FullLobbyException, LobbyDoesNotExistsException, NicknameAlreadyTakenException, IOException, GameDoesNotExistException, EmptyDeckException, HandIsFullException, PawnAlreadyTakenException, GameAlreadyStartedException, IllegalActionException, NotYourTurnException, IllegalMoveException, EmptyBufferException {
-        CLI cli = new CLI();
-        CLIGame cliG = new CLIGame();
-        GameHandler gh = new GameHandler();
-        Controller controller = new Controller(gh);
+    public static void main(String[] args) throws FullLobbyException, LobbyDoesNotExistsException, NicknameAlreadyTakenException, IOException, GameDoesNotExistException, EmptyDeckException, HandIsFullException, PawnAlreadyTakenException, IllegalActionException, NotYourTurnException, IllegalMoveException, EmptyBufferException, CannotJoinMultipleLobbiesException, GameAlreadyStartedException {
+        TCPView client1 = new TCPView("127.0.0.1", 4321);
+        TCPView client2 = new TCPView("127.0.0.1", 4321);
 
-        cli.setController(controller);
-        cli.setGameHandler(gh);
-        cliG.setController(controller);
-        cliG.setGameHandler(gh);
+        CLI cli1 = new CLI(client1);
+        CLI cli2 = new CLI(client2);
 
+        client1.getLobbies().put(0, new Lobby(4));
+        client2.getLobbies().put(0, new Lobby(4));
+
+        new Thread(() -> {
+            try {
+                client1.startClient();
+                client2.startClient();
+            } catch (IOException | ClassNotFoundException e) {
+                throw new RuntimeException(e);
+            }
+
+        }).start();
+
+        new Thread(() -> {
+            cli1.run();
+            cli2.run();
+        }).start();
+
+        /*
         Player creator1 = new Player("creator1");
         gh.addUser(creator1);
         controller.createLobby(2, creator1);
@@ -98,6 +118,6 @@ public class Main {
         for (int i = gh.getGame(gameID).getDeck(DeckType.RESOURCE).getCards().size(); i > 0; i--) gh.getGame(gameID).getDeck(DeckType.RESOURCE).draw();
         gh.getGame(gameID).getDeckBuffer(DeckBufferType.RES1).draw();
         cliG.printGameArea(gameID);
-
+        */
     }
 }

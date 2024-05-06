@@ -1,169 +1,177 @@
 package it.polimi.ingsw.view.CLI;
 
-import it.polimi.ingsw.controller.Controller;
 import it.polimi.ingsw.controller.exceptions.GameAlreadyStartedException;
 import it.polimi.ingsw.model.exceptions.*;
-import it.polimi.ingsw.model.game.GameHandler;
 import it.polimi.ingsw.model.game.Lobby;
 import it.polimi.ingsw.model.player.Pawn;
 import it.polimi.ingsw.model.player.Player;
+import it.polimi.ingsw.view.View;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Scanner;
 
-public class CLI {
-    private static GameHandler gh;
-    private Controller controller;
+public class CLI implements Runnable {
+    private final View view;
+    private final CLIGame gameAction;
     private final Scanner input = new Scanner(System.in);
-    public static final String warningColor = "\u001B[31m";
-    public static final String reset = "\u001B[0m";
-    public static final String cli = "\u001B[38;2;255;165;0m" + "\n[+] " + "\u001B[0m";
-    public static final String user = "\u001B[38;2;255;165;0m" + "\n[-] " + "\u001B[0m";
-    public static final String green = "\u001B[32m";
+    private static final String warningColor = "\u001B[31m";
+    private static final String reset = "\u001B[0m";
+    private static final String cli = "\u001B[38;2;255;165;0m" + "\n[+] " + "\u001B[0m";
+    private static final String user = "\u001B[38;2;255;165;0m" + "\n[-] " + "\u001B[0m";
+    private static final String green = "\u001B[32m";
+    private static final String blue = "\u001B[34m";
+    private static final String yellow = "\u001B[93m";
+    private static final String red = "\u001B[31m";
 
-    public void setGameHandler(GameHandler gh) {
-        CLI.gh = gh;
+    public CLI(View view) {
+        this.view = view;
+        this.gameAction = new CLIGame(view);
     }
 
-    public void setController(Controller controller) {
-        this.controller = controller;
-    }
+    @Override
+    public void run() {
+        printHello();
 
-    public void printHello() {
-        // prepare for the ASCII ART!!!!!!
-        System.out.println(cli + "Welcome to \"Codex Naturalis\"");
-    }
+        try {
+            Thread.sleep(1500);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+        System.out.println("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
 
-    public void askLogin() {
-        String username;
-        boolean availableUsername = false;
-        Player you = null;
-
+        String s;
         do {
-            System.out.print(cli + "Insert username to proceed:" + user);
-            username = input.nextLine();
-
-            try {
-                you = new Player(username);
-                gh.addUser(you);
-                availableUsername = true;
-            } catch (NicknameAlreadyTakenException e) {
-                System.out.println(warningColor + "\n[ERROR]: Username already taken!\n" + reset);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
+            int ID = -1;
+            int lobbyAction = chooseAction();
+            switch (lobbyAction) {
+                case 1 ->  ID = createLobby();
+                case 2 -> {
+                    printOpenLobbies();
+                    ID = chooseLobby();
+                }
             }
-        } while (!availableUsername);
+            if (ID != -1) {
+                lobbyAction = waiting();
+                switch(lobbyAction) {
+                    case 1 -> setPawnColor(ID);
+                    case 2 -> sendMessage();
+                    case 3 -> quitLobby();
+                }
+            } else System.out.println(cli + "Returning to selection\n");
+            s = input.nextLine();
+        } while (!s.equals("quit"));
 
-        System.out.println(cli + "Hello " + you.getNickname() + "!");
     }
 
-    public void chooseAction(Player you) {
+    private void printHello() {
+        // TODO: I need to stretch it out
+        System.out.println("                          .##.          .-.  ..#####-.    .-+..+..    .+.                       ");
+        System.out.println("                  ...   .#####-.      .-#...-....-#####+. .... .#+.  .-#-                       ");
+        System.out.println("             .-+##-...+#########++---+##.. ..     ..-#####+-.  -##-...##+.-.                    ");
+        System.out.println("          .-####.. .+#################+.          ..  ..     ..+##+..+###-#+.   .-#.            ");
+        System.out.println("       ..+####-  .++..-+############+.         ..++.         .-###-..+#####+.  ..+#+.+-         ");
+        System.out.println("     ..#####+. .-##.    .++#####++..           .##-.           .+- ..#######+-...-+.-++.        ");
+        System.out.println("   ..######+. .+###-.       ..+.               -####+...        ..------------------------..    ");
+        System.out.println("  .-######+.  -#####-        .+.               .########.                                       ");
+        System.out.println(" .+#######-. .#+#####+.      .+.      ..-.     ..+########-.          .+.      ...     ..       ");
+        System.out.println(" -########.  .#########.     .+.    .+####+..    ..+########-.     ..+###-.  ..+##-.  .##+++    ");
+        System.out.println(".########+.  .#+########-.   .+. .-+#+######+.   .+#+.-####+#-.  .-#######-..+#++###-.####+.    ");
+        System.out.println("-########+   .+##########+.  .+..+###..-#####+..+###+...+####+..-##+.-####+-...+#++###+++..     ");
+        System.out.println("+########+.   -###########+. .+.+####.  .#####.-#+##+.  .####+.-###+  +###-    .##+###. .       ");
+        System.out.println("+#+######+.    .###########-..+.+####.  .+####.-#+##+.  .###++.+###+  -##+.   ..+#+###.-+       ");
+        System.out.println("+#+#######.     .###########..+.+####.  .+####.-#+##+.  .####+.+###+  -#+.   .####+#####.       ");
+        System.out.println("+#########-.     .+########+..+.+####.  .+####.-#+##+.  .####+.+###+.-#..   .++-+#+###..        ");
+        System.out.println("-##+######+.      ..#######...+.+####-  .+####.-#+##+.  .####+.+#####..     .. .+#+###.         ");
+        System.out.println(".##########-.       .+####+. .+.-#####-..+###+.-#+###-. .####-.+####+.         .+#+###-  ...    ");
+        System.out.println(".+##+#######..       .+###.. .+..+#####+.+#+-  .+#++##+..###.. -######...-..-###++#+###+---     ");
+        System.out.println(" .+##+#######-.....   .##.   .+. .+#####+-.     .-##+####+..   ..#######-.-####+..-#+###+.      ");
+        System.out.println("  .#############++#+-.+#-.   .+.   .-##..         .-###..        .+###-. .+..+#.  ..+##..       ");
+        System.out.println("  ..###+########+..-###.     .+.    ...-+. ..       ....          ....   ..  ..     ...         ");
+        System.out.println("   ..###+#########+....      .+.    .-#+.. .++###--##+..                                        ");
+        System.out.println("    .--###+##########++-......++..-+##-.   ....##..#-....--#-.            .-#.#+.####...        ");
+        System.out.println("   .+. .-####+######################-.       ..###.#..###.###.#.#..#.#.###.-#---##--..+++.      ");
+        System.out.println("   .-.    .+####++###############+..         ..#.###..#-#.+#..#.#..##..#-#.-#+#.--##..--..      ");
+        System.out.println("   ..        .-++###########++-.            ...#..##..####.#..####.#...####-#+#+###+.+#--.      ");
+
+        // System.out.println(cli + "Welcome to \"Codex Naturalis\"");
+    }
+
+    private int chooseAction() {
         int choice;
         do {
             System.out.print(cli + "What would you like to do?" + cli +
                              "1. Create a lobby and wait for other players to join" + cli +
-                             "2. Join an already open lobby" + cli +
-                             "3. Change username" + user);
+                             "2. Join an already open lobby" + user);
             choice = input.nextInt();
 
-            switch(choice) {
-                case 1 -> createLobby(you);
-                case 2 -> {
-                    if (gh.getNumOfLobbies() == 0) {
-                        System.out.println(warningColor + "\n[ERROR]: There are no open lobbies!\n" + reset);
-                    } else {
-                        if (!chooseLobby(you)) choice = -1;
-                    }
+            if (choice == 2) {
+                if (view.getLobbies().isEmpty()) {
+                    System.out.println(warningColor + "\n[ERROR]: There are no open lobbies!\n" + reset);
+                    choice = -1;
                 }
-                case 3 -> {
-                    gh.removeUser(you);
-                    askLogin();
-                }
-                default -> System.out.println(warningColor + "\n[ERROR]: Invalid choice!!\n" + reset);
+            } else if (choice != 1) {
+                System.out.println(warningColor + "\n[ERROR]: Invalid choice!!\n" + reset);
+                choice = -1;
             }
-        } while (choice != 1 && choice != 2 && choice != 3 || (choice == 2 && gh.getNumOfLobbies() == 0));
+        } while (choice == -1);
+        return choice;
     }
 
-    public void printOpenLobbies() {
+    private void printOpenLobbies() {
         System.out.print(cli + "Open lobbies:");
+        HashMap<Integer, Lobby> lobbies = view.getLobbies();
 
-        for (Integer i : gh.getLobbies().keySet()) {
-            try {
-                if (gh.getLobby(i).getPlayers().size() != gh.getLobby(i).getNumOfPlayers()) {
-                    System.out.print(cli + "-> Lobby " + green + "#" + i + reset + ": " + gh.getLobby(i).getPlayers().size() + "/" + gh.getLobby(i).getNumOfPlayers() + " - [");
+        for (Integer i : lobbies.keySet()) {
+            if (lobbies.get(i).getPlayers().size() != lobbies.get(i).getNumOfPlayers()) {
+                System.out.print(cli + "-> Lobby " + green + "#" + i + reset + ": " + lobbies.get(i).getPlayers().size() + "/" + lobbies.get(i).getNumOfPlayers());
 
-                    for (Player p : gh.getLobby(i).getPlayers()) {
-                        if (p.equals(gh.getLobby(i).getPlayers().getLast())) {
-                            System.out.print(p.getNickname() + "]");
-                        } else {
-                            System.out.print(p.getNickname() + " - ");
-                        }
-                    }
-                } else System.out.print(cli + "-> Lobby " + warningColor + "#" + i + reset + ": FULL");
-            } catch (LobbyDoesNotExistsException ignored) {}
-        }
-        System.out.println();
-    }
-
-    public void printActiveGames() {
-        System.out.print(cli + "Games:");
-
-        for (Integer i : gh.getActiveGames().keySet()) {
-            try {
-                System.out.print(cli + "-> Game " + green + "#" + i + reset + ": " + " - [");
-
-                for (Player p : gh.getGame(i).getPlayers()) {
-                    switch (p.getPawn()) {
-                        case Pawn.BLUE -> System.out.print(blue + "● " + reset);
-                        case Pawn.RED -> System.out.print(red + "● " + reset);
-                        case Pawn.GREEN -> System.out.print(green + "● " + reset);
-                        case Pawn.YELLOW -> System.out.print(yellow + "● " + reset);
-                        default -> System.out.print("● " + reset);
-                    }
-
-                    if (p.equals(gh.getLobby(i).getPlayers().getLast())) {
+                for (Player p : lobbies.get(i).getPlayers()) {
+                    if (p.equals(lobbies.get(i).getPlayers().getLast())) {
                         System.out.print(p.getNickname() + "]");
                     } else {
                         System.out.print(p.getNickname() + " - ");
                     }
                 }
-            } catch (GameDoesNotExistException | LobbyDoesNotExistsException ignored) {}
+            } else System.out.print(cli + "-> Lobby " + warningColor + "#" + i + reset + ": FULL");
         }
         System.out.println();
     }
 
-    private boolean chooseLobby(Player you) {
+    private int chooseLobby() {
         boolean chosen = false;
-        int lobbyID = -1;
+        int ID = -1;
+        HashMap<Integer, Lobby> lobbies = view.getLobbies();
 
+        printOpenLobbies();
         do {
-            try {
-                System.out.print("\n" + cli + "Which lobby do you want to join? (-1 to return to selection)" + user + "#");
-                lobbyID = input.nextInt();
+            System.out.print("\n" + cli + "Which lobby do you want to join? (-1 to return to selection)" + user + "#");
+            ID = input.nextInt();
+            if (ID == -1) return -1;
 
-                if (lobbyID == -1) return false;
-                controller.joinLobby(you, lobbyID);
+            try {
+                view.joinLobby(ID);
                 chosen = true;
 
-            } catch (LobbyDoesNotExistsException | FullLobbyException | NicknameAlreadyTakenException | IOException e) {
-                if (e.getClass().getName().equals("it.polimi.ingsw.model.exceptions.LobbyDoesNotExistsException")) System.out.println(warningColor + "\n[ERROR]: Lobby with ID \"#"+ lobbyID + "\" does not exist!!\n" + reset);
-                else if(e.getClass().getName().equals("it.polimi.ingsw.model.exceptions.FullLobbyException")) System.out.println(warningColor + "\n[ERROR]: Lobby full. Cannot join this lobby!!\n" + reset);
-            }
+            } catch (LobbyDoesNotExistsException e) {
+                System.out.println(warningColor + "\n[ERROR]: Lobby with ID \"#" + ID + "\" does not exist!!\n" + reset);
+            } catch (FullLobbyException e) {
+                System.out.println(warningColor + "\n[ERROR]: Lobby full. Cannot join this lobby!!\n" + reset);
+            } catch (NicknameAlreadyTakenException | IOException ignored) {}
         } while (!chosen);
 
-        try {
-            int remaining = gh.getLobby(lobbyID).getNumOfPlayers() - gh.getLobby(lobbyID).getPlayers().size();
-            switch (remaining) {
-                case 0 -> System.out.println(cli + "The lobby has the number of players required. Game is now starting...\n");
-                case 1 -> System.out.println(cli + "Entered lobby #" + lobbyID + "!" + cli + "Waiting for last player to join...\n");
-                default -> System.out.println(cli + "Entered lobby #" + lobbyID + "!" + cli + "Waiting for " + remaining + " players to join...\n");
-            }
+        int remaining = lobbies.get(ID).getNumOfPlayers() - lobbies.get(ID).getPlayers().size();
+        switch (remaining) {
+            case 0 -> System.out.println(cli + "The lobby has the number of players required. Game is now starting...\n");
+            case 1 -> System.out.println(cli + "Entered lobby #" + ID + "!" + cli + "Waiting for last player to join...\n");
+            default -> System.out.println(cli + "Entered lobby #" + ID + "!" + cli + "Waiting for " + remaining + " players to join...\n");
         }
-        catch (LobbyDoesNotExistsException ignored) {}
-        return true;
+
+        return ID;
     }
 
-    private void createLobby(Player you) {
+    private int createLobby() {
+        int ID = -1;
         try {
             int numOfPlayers;
             do {
@@ -174,49 +182,43 @@ public class CLI {
                     System.out.print(warningColor + "\n[ERROR]: Invalid number of players inserted!!\n" + reset);
             } while (numOfPlayers < 2 || numOfPlayers > 4);
 
-            controller.createLobby(numOfPlayers, you);
-            int lobbyID = gh.getNumOfLobbies() - 1;
-            System.out.print(cli + "Lobby successfully created! ID: " + lobbyID);
-            waiting(lobbyID, you);
+            view.createLobby(numOfPlayers);
+            ID = view.getLobbies().size() - 1;
+            System.out.print(cli + "Lobby successfully created! ID: " + ID);
 
-        } catch (LobbyDoesNotExistsException ignored) {}
+        } catch (LobbyDoesNotExistsException | IOException ignored) {}
+        return ID;
     }
 
-    public void waiting(Integer lobbyID, Player you) throws LobbyDoesNotExistsException {
+    private int waiting() {
         int choice;
         System.out.println(cli + "Waiting for players..." + cli + "1. Set pawn color" + cli + "2. Send message" + cli + "3. Quit lobby");
         choice = input.nextInt();
 
-        switch (choice) {
-            case 1 -> setPawnColor(lobbyID, you);
-            case 2 -> sendMessage(lobbyID, you);
-            case 3 -> quitLobby(lobbyID, you);
-        }
+        return choice;
     }
 
-    public static final String blue = "\u001B[34m";
-    public static final String yellow = "\u001B[93m";
-    public static final String red = "\u001B[31m";
-
-    public void printAvailablePawns(int lobbyID) throws LobbyDoesNotExistsException {
-        Lobby lobby = gh.getLobby(lobbyID);
+    private void printAvailablePawns() {
+        HashMap<Player, Pawn> pawns = view.getPawns();
 
         System.out.print(cli + "Available pawns: ");
-        for (Pawn p : lobby.getPawnBuffer().getPawnList()) {
-            switch (p) {
-                case Pawn.BLUE -> System.out.print(blue + "● " + reset);
-                case Pawn.RED -> System.out.print(red + "● " + reset);
-                case Pawn.GREEN -> System.out.print(green + "● " + reset);
-                case Pawn.YELLOW -> System.out.print(yellow + "● " + reset);
+        for (Pawn p : Pawn.values()) {
+            if (!pawns.containsValue(p)) {
+                switch (p) {
+                    case Pawn.BLUE -> System.out.print(blue + "● " + reset);
+                    case Pawn.RED -> System.out.print(red + "● " + reset);
+                    case Pawn.GREEN -> System.out.print(green + "● " + reset);
+                    case Pawn.YELLOW -> System.out.print(yellow + "● " + reset);
+                }
             }
         }
         System.out.println();
     }
 
-    public void printPlayers(int lobbyID) throws LobbyDoesNotExistsException {
-        Lobby lobby = gh.getLobby(lobbyID);
+    private void printPlayers(int ID) {
+        Lobby lobby = view.getLobbies().get(ID);
 
-        System.out.print(cli + "Players (lobby " + green + "#" + lobbyID + reset + "): " + lobby.getPlayers().size() + "/" + lobby.getNumOfPlayers());
+        System.out.print(cli + "Players (lobby " + green + "#" + ID + reset + "): " + lobby.getPlayers().size() + "/" + lobby.getNumOfPlayers());
         for (Player p : lobby.getPlayers()) {
             switch (p.getPawn()) {
                 case Pawn.BLUE -> System.out.print(cli + blue + "● " + reset);
@@ -230,50 +232,59 @@ public class CLI {
         System.out.println();
     }
 
-    public void setPawnColor(Integer lobbyID, Player you) throws LobbyDoesNotExistsException {
+    private void setPawnColor(Integer ID) {
         Pawn pawn;
 
         do {
-            printAvailablePawns(lobbyID);
-            System.out.print(cli + "Which pawn do you want to choose? (");
-            for (int i = 0; i < gh.getLobby(lobbyID).getPawnBuffer().getPawnList().size(); i++) {
-                if (i != gh.getLobby(lobbyID).getPawnBuffer().getPawnList().size() - 1) System.out.print(gh.getLobby(lobbyID).getPawnBuffer().getPawnList().get(i) + " - ");
-                else System.out.print(gh.getLobby(lobbyID).getPawnBuffer().getPawnList().get(i) + ")" + user);
-            }
+            printAvailablePawns();
+            System.out.print(cli + "Which pawn do you want to choose?");
 
             pawn = switch (input.nextLine().toUpperCase()) {
-                case "RED", "R" -> Pawn.RED;
-                case "GREEN", "G", "SHREK", "ANTONIO" -> Pawn.GREEN;    // Easter egg
-                case "BLUE", "B", "GIORGIO" -> Pawn.BLUE;               // Easter egg
-                case "YELLOW", "Y", "BANANA" -> Pawn.YELLOW;            // Easter egg
+                case "RED", "R", "SILVIA" -> Pawn.RED;                      // Easter egg
+                case "GREEN", "G", "SHREK", "ANTONIO" -> Pawn.GREEN;        // Easter egg
+                case "BLUE", "B", "GIORGIO" -> Pawn.BLUE;                   // Easter egg
+                case "YELLOW", "Y", "BANANA", "MARTINA" -> Pawn.YELLOW;     // Easter egg
                 default -> null;
             };
 
             if(pawn != null) {
                 try {
-                    controller.choosePawn(lobbyID, you, pawn);
+                     view.choosePawn(ID, pawn);
                 } catch (PawnAlreadyTakenException e) {
                     System.out.print(cli + "Pawn already taken!\n");
                     pawn = null;
-                }
+                } catch (Exception ignored) {}
             } else System.out.print(cli + "Color chosen does not exist!\n");
         } while(pawn == null);
     }
 
-    public void sendMessage(int lobbyID, Player you) {
+    private void sendMessage() {}
 
-    }
-
-    public void quitLobby(int lobbyID, Player you) throws LobbyDoesNotExistsException {
-        System.out.print("\n" + cli + "Trying leaving lobby " + green + "#" + lobbyID + reset + "...");
+    private void quitLobby() {
+        System.out.print("\n" + cli + "Trying leaving lobby");
         try {
-            controller.leaveLobby(you, lobbyID);
-        } catch (GameAlreadyStartedException ignored) {
-            System.out.print(cli + "The game is already started! Cannot leave the lobby!");
-            return;
+            Thread.sleep(500);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
         }
+        for (int i = 0; i < 3; i++) {
+            System.out.print(".");
+            try {
+                Thread.sleep(500);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        } System.out.println();
 
-        System.out.print(cli + "Successfully leaved the lobby\n");
+        try {
+            view.leaveLobby();
+            System.out.print(cli + "Successfully left the lobby\n");
+        } catch (GameAlreadyStartedException e) {
+            System.out.print(cli + "The game is already started! Cannot leave the lobby!");
+        } catch (LobbyDoesNotExistsException ignored) {}
+        catch (IOException e) {
+            throw new RuntimeException();
+        }
     }
 }
 
