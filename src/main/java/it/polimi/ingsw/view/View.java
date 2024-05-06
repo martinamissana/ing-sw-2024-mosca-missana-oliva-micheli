@@ -234,11 +234,11 @@ public abstract class View {
 
     }
 
-    public void joinLobby(Player player, int lobbyID) throws FullLobbyException, NicknameAlreadyTakenException, LobbyDoesNotExistsException, IOException {
+    public void joinLobby(int lobbyID) throws FullLobbyException, NicknameAlreadyTakenException, LobbyDoesNotExistsException, IOException {
 
     }
 
-    public void leaveLobby(Player player, int lobbyID) throws GameAlreadyStartedException, LobbyDoesNotExistsException {
+    public void leaveLobby(int lobbyID) throws GameAlreadyStartedException, LobbyDoesNotExistsException {
 
     }
 
@@ -246,31 +246,31 @@ public abstract class View {
 
     }
 
-    public void choosePawn(Integer lobbyID, Player player, Pawn color) throws LobbyDoesNotExistsException, PawnAlreadyTakenException {
+    public void choosePawn(Integer lobbyID,Pawn color) throws LobbyDoesNotExistsException, PawnAlreadyTakenException {
 
     }
 
-    public void choosePersonalGoal(Player player, Goal goal) {
+    public void choosePersonalGoal(Goal goal) {
 
     }
 
-    public void leaveGame(Integer gameID, Player player) throws LobbyDoesNotExistsException, GameDoesNotExistException {
+    public void leaveGame(Integer gameID) throws LobbyDoesNotExistsException, GameDoesNotExistException {
 
     }
 
-    public void chooseCardSide(Integer gameID, Player player, CardSide side) {
+    public void chooseCardSide(Integer gameID, CardSide side) {
 
     }
 
-    public void playCard(Integer gameID, Player player, int handPos, Coords coords) throws IllegalActionException, NotYourTurnException, IllegalMoveException, GameDoesNotExistException {
+    public void playCard(Integer gameID, int handPos, Coords coords) throws IllegalActionException, NotYourTurnException, IllegalMoveException, GameDoesNotExistException {
 
     }
 
-    public void drawCard(Integer gameID, Player player, DeckTypeBox deckTypeBox) throws IllegalActionException, EmptyBufferException, NotYourTurnException, EmptyDeckException, GameDoesNotExistException, HandIsFullException {
+    public void drawCard(Integer gameID, DeckTypeBox deckTypeBox) throws IllegalActionException, EmptyBufferException, NotYourTurnException, EmptyDeckException, GameDoesNotExistException, HandIsFullException {
 
     }
 
-    public void flipCard(Integer gameID, Player player, int handPos) throws GameDoesNotExistException {
+    public void flipCard(Integer gameID, int handPos) throws GameDoesNotExistException {
 
     }
 }

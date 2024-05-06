@@ -105,6 +105,8 @@ public class Controller implements Serializable {
     public void leaveLobby(Player player,int lobbyID) throws LobbyDoesNotExistsException, GameAlreadyStartedException, GameDoesNotExistException {
         if(gh.getLobbies().containsKey(lobbyID)) {
             gh.getLobbies().get(lobbyID).getPlayers().remove(player);
+           if( gh.getActiveGames().containsKey(lobbyID) && gh.getGame(lobbyID).getPlayers().contains(player))
+               leaveGame(lobbyID, player);
             if(gh.getLobbies().get(lobbyID).getPlayers().isEmpty()) deleteLobby(lobbyID);
         }
         else throw new LobbyDoesNotExistsException("Lobby with ID " + lobbyID + " does not exist");
