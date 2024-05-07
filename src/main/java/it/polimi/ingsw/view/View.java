@@ -236,7 +236,7 @@ public abstract class View {
     public void setNickname(String nickname) { this.nickname = nickname; }
 
 
-    public synchronized void createLobby(int numOfPlayers) throws LobbyDoesNotExistsException, IOException {
+    public synchronized void createLobby(int numOfPlayers) throws LobbyDoesNotExistsException, IOException, FullLobbyException, NicknameAlreadyTakenException {
 
     }
 
@@ -244,7 +244,7 @@ public abstract class View {
 
     }
 
-    public synchronized void leaveLobby() throws GameAlreadyStartedException, LobbyDoesNotExistsException,IOException {
+    public synchronized void leaveLobby() throws GameAlreadyStartedException, LobbyDoesNotExistsException, IOException, FullLobbyException, NicknameAlreadyTakenException {
 
     }
 
@@ -252,7 +252,7 @@ public abstract class View {
 
     }
 
-    public synchronized void choosePawn(Pawn color) throws LobbyDoesNotExistsException, PawnAlreadyTakenException, IOException {
+    public synchronized void choosePawn(Pawn color) throws LobbyDoesNotExistsException, PawnAlreadyTakenException, IOException, FullLobbyException, NicknameAlreadyTakenException {
 
     }
 
@@ -279,7 +279,7 @@ public abstract class View {
     public void flipCard(Integer gameID, int handPos) throws GameDoesNotExistException {
 
     }
-    public void getCurrentStatus() throws IOException {
+    public void getCurrentStatus() throws IOException, FullLobbyException, NicknameAlreadyTakenException {
 
     }
 }
