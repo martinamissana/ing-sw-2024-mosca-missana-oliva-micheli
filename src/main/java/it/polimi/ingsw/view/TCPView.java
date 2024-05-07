@@ -92,7 +92,7 @@ public class TCPView extends View {
             }
             case LobbyLeftMessage m -> {
                 if(m.getPlayer().getNickname().equals(super.getNickname())){
-                    System.out.println("you left the lobby!");
+                    //System.out.println("you left the lobby!");
                     super.setID(null);
                 }
                // else {System.out.println("someone left a lobby !");}
@@ -144,7 +144,7 @@ public class TCPView extends View {
     @Override
     public void joinLobby( int lobbyID) throws FullLobbyException, NicknameAlreadyTakenException, LobbyDoesNotExistsException, IOException, ClassNotFoundException {
         JoinLobbyMessage m = new JoinLobbyMessage(super.getPlayer(),lobbyID);
-        System.out.println("JoinLobby");
+        //System.out.println("JoinLobby");
         out.writeObject(m);
      //   System.out.println("you tried to join a lobby");
     }
