@@ -69,6 +69,7 @@ public class TCPView extends View {
                 if(m.getCreator().equals(super.getPlayer()))System.out.println("your lobby was created,"+ m.getID() +" allowed players: "+ m.getLobby().getNumOfPlayers() );
              //   else System.out.println("A lobby was created, allowed players: "+ m.getLobby().getNumOfPlayers() );
                 super.getLobbies().put(m.getID(),m.getLobby());
+
             }
             //TODO: REVIEW THIS WITH DISCONNECTION LOGIC
             case LoginFail_NicknameAlreadyTaken m -> {
@@ -122,6 +123,7 @@ public class TCPView extends View {
             }
             default -> throw new IllegalStateException("Unexpected value: " + message);
         }
+        notify(message);
     }
 
     public void login(String nickname) throws IOException, FullLobbyException, NicknameAlreadyTakenException, ClassNotFoundException {

@@ -15,14 +15,14 @@ import it.polimi.ingsw.model.game.Action;
 import it.polimi.ingsw.model.game.GamePhase;
 import it.polimi.ingsw.model.game.Lobby;
 import it.polimi.ingsw.model.goal.Goal;
-import it.polimi.ingsw.model.observer.Observable;
 import it.polimi.ingsw.model.player.*;
+import it.polimi.ingsw.network.netMessage.NetMessage;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public abstract class View extends Observable<Event> {
+public abstract class View extends ViewObservable<NetMessage> {
     private String nickname;
     private HashMap<Integer, Lobby> lobbies = new HashMap<>();
     private Player player;
