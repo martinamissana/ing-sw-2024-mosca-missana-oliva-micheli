@@ -60,55 +60,55 @@ public class TCPView extends View {
         //System.out.println("elaborate has been called");
         switch (message) {
             case LoginMessage m -> {
-                System.out.println("you are logged in!");
+              //  System.out.println("you are logged in!");
             }
             case LobbyCreatedMessage m -> {
                 //super.getLobbies().put(m.getID(),m.getLobby());
                 if(m.getCreator().equals(super.getPlayer()))super.setID(m.getID());
                 if(m.getCreator().equals(super.getPlayer()))System.out.println("your lobby was created,"+ m.getID() +" allowed players: "+ m.getLobby().getNumOfPlayers() );
-                else System.out.println("A lobby was created, allowed players: "+ m.getLobby().getNumOfPlayers() );
+             //   else System.out.println("A lobby was created, allowed players: "+ m.getLobby().getNumOfPlayers() );
                 super.getLobbies().put(m.getID(),m.getLobby());
             }
             //TODO: REVIEW THIS WITH DISCONNECTION LOGIC
             case LoginFail_NicknameAlreadyTaken m -> {
-               System.out.println("you are not logged in, disconnection");
+               // System.out.println("you are not logged in, disconnection");
                 DisconnectMessage disconnectMessage= new DisconnectMessage();
                 out.writeObject(disconnectMessage);
             }
             case LobbyJoinedMessage m -> {
                 if(m.getPlayer().getNickname().equals(super.getPlayer().getNickname())){
-                    System.out.println("you joined the lobby! "+ m.getID());
+                //    System.out.println("you joined the lobby! "+ m.getID());
                     super.setID(m.getID());
                 }
-                else System.out.println("someone joined a lobby!");
+              //  else System.out.println("someone joined a lobby!");
                 super.getLobbies().get(m.getID()).addPlayer( m.getPlayer());
 
             }
             case FailMessage m -> {
                 super.getErrorMessages().add(m.getMessage());
-                System.out.println(m.getMessage());
+              //  System.out.println(m.getMessage());
             }
             case LobbyLeftMessage m -> {
                 if(m.getPlayer().getNickname().equals(super.getNickname())){
                     System.out.println("you left the lobby!");
                     super.setID(null);
                 }
-                else {System.out.println("someone left a lobby !");}
+               // else {System.out.println("someone left a lobby !");}
                 super.getLobbies().get(m.getID()).removePlayer(m.getPlayer());
 
             }
             case LobbyDeletedMessage m ->{
                 super.getLobbies().remove(m.getID());
-                System.out.println("a lobby was deleted!");
+              //  System.out.println("a lobby was deleted!");
             }
             case PawnAssignedMessage m ->{
                 if(m.getPlayer().getNickname().equals(super.getNickname())){
                         super.setPawn(m.getColor());
-                        System.out.println("you were assigned pawn:"+ super.getPawn());
+                      //  System.out.println("you were assigned pawn:"+ super.getPawn());
                     }
                     else{
                         super.getPawns().put(m.getPlayer(),m.getColor());
-                        System.out.println(m.getPlayer().getNickname()+" was assigned"+ super.getPawn());
+                      //  System.out.println(m.getPlayer().getNickname()+" was assigned"+ super.getPawn());
                     }
             }
             case CurrentStatusMessage m ->{
@@ -155,9 +155,9 @@ public class TCPView extends View {
 
     @Override
     public void choosePawn(Pawn color) throws LobbyDoesNotExistsException, PawnAlreadyTakenException, IOException {
-        System.out.println(this.getPlayer().getNickname()+" ID is "+this.getID());
+      //  System.out.println(this.getPlayer().getNickname()+" ID is "+this.getID());
         ChoosePawnMessage m= new ChoosePawnMessage(super.getID(),super.getPlayer(),color);
-        System.out.println("ChoosePawn");
+       // System.out.println("ChoosePawn");
         out.writeObject(m);
        // System.out.println("you tried to choose a pawn");
     }
