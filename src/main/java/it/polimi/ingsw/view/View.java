@@ -252,7 +252,7 @@ public abstract class View {
 
     }
 
-    public synchronized void choosePawn(Integer lobbyID,Pawn color) throws LobbyDoesNotExistsException, PawnAlreadyTakenException, IOException {
+    public synchronized void choosePawn(Pawn color) throws LobbyDoesNotExistsException, PawnAlreadyTakenException, IOException {
 
     }
 
