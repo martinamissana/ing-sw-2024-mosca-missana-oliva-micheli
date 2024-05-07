@@ -24,7 +24,6 @@ public class TCPView extends View {
     private final ObjectOutputStream out;
     private final Socket socket;
     //private boolean reading;
-    private NetMessage deserialized;
 
     public TCPView(String ip, int port) throws IOException {
         super();
@@ -39,11 +38,12 @@ public class TCPView extends View {
     public void startClient() throws IOException, ClassNotFoundException {
         try {
 
-            //NetMessage deserialized;
+            NetMessage deserialized;
 
             do {
                 //System.out.println("waiting for next message");
                 deserialized = (NetMessage) in.readObject();
+                elaborate(deserialized);
 
             } while (deserialized.getClass() != DisconnectMessage.class);
 
@@ -52,7 +52,7 @@ public class TCPView extends View {
             socket.close();
         } catch (IOException e) {
             System.err.println(e.getMessage());
-        } catch (ClassNotFoundException e) {
+        } catch (ClassNotFoundException | FullLobbyException | NicknameAlreadyTakenException e) {
             throw new RuntimeException(e);
         }
     }
@@ -124,54 +124,49 @@ public class TCPView extends View {
         }
     }
 
-    public void login(String nickname) throws IOException, FullLobbyException, NicknameAlreadyTakenException {
+    public void login(String nickname) throws IOException, FullLobbyException, NicknameAlreadyTakenException, ClassNotFoundException {
         MyNickname m= new MyNickname(nickname);
         super.setPlayer(new Player(nickname));
         super.setNickname(nickname);
         out.writeObject(m);
-        elaborate(deserialized);
      //   System.out.println("you tried to login");
     }
 
     @Override
-    public void createLobby(int numOfPlayers) throws LobbyDoesNotExistsException, IOException, FullLobbyException, NicknameAlreadyTakenException {
+    public void createLobby(int numOfPlayers) throws LobbyDoesNotExistsException, IOException, FullLobbyException, NicknameAlreadyTakenException, ClassNotFoundException {
         CreateLobbyMessage m=new CreateLobbyMessage(numOfPlayers,super.getPlayer());
         out.writeObject(m);
-        elaborate(deserialized);
       //  System.out.println("you tried to create a lobby");
     }
 
     @Override
-    public void joinLobby( int lobbyID) throws FullLobbyException, NicknameAlreadyTakenException, LobbyDoesNotExistsException, IOException {
+    public void joinLobby( int lobbyID) throws FullLobbyException, NicknameAlreadyTakenException, LobbyDoesNotExistsException, IOException, ClassNotFoundException {
         JoinLobbyMessage m = new JoinLobbyMessage(super.getPlayer(),lobbyID);
         System.out.println("JoinLobby");
         out.writeObject(m);
-        elaborate(deserialized);
      //   System.out.println("you tried to join a lobby");
     }
 
     @Override
-    public void leaveLobby() throws GameAlreadyStartedException, LobbyDoesNotExistsException, IOException, FullLobbyException, NicknameAlreadyTakenException {
+    public void leaveLobby() throws GameAlreadyStartedException, LobbyDoesNotExistsException, IOException, FullLobbyException, NicknameAlreadyTakenException, ClassNotFoundException {
         LeaveLobbyMessage m = new LeaveLobbyMessage(super.getPlayer(),super.getID());
         out.writeObject(m);
-        elaborate(deserialized);
       //  System.out.println("you tried to leave a lobby");
     }
 
     @Override
-    public void choosePawn(Pawn color) throws LobbyDoesNotExistsException, PawnAlreadyTakenException, IOException, FullLobbyException, NicknameAlreadyTakenException {
+    public void choosePawn(Pawn color) throws LobbyDoesNotExistsException, PawnAlreadyTakenException, IOException, FullLobbyException, NicknameAlreadyTakenException, ClassNotFoundException {
       //  System.out.println(this.getPlayer().getNickname()+" ID is "+this.getID());
         ChoosePawnMessage m= new ChoosePawnMessage(super.getID(),super.getPlayer(),color);
        // System.out.println("ChoosePawn");
         out.writeObject(m);
        // System.out.println("you tried to choose a pawn");
-        elaborate(deserialized);
     }
 
     @Override
-    public void getCurrentStatus() throws IOException, FullLobbyException, NicknameAlreadyTakenException {
+    public void getCurrentStatus() throws IOException, FullLobbyException, NicknameAlreadyTakenException, ClassNotFoundException {
         GetCurrentStatusMessage m =new GetCurrentStatusMessage();
         out.writeObject(m);
-        elaborate(deserialized);
+
     }
 }

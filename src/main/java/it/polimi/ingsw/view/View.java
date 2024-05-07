@@ -15,13 +15,14 @@ import it.polimi.ingsw.model.game.Action;
 import it.polimi.ingsw.model.game.GamePhase;
 import it.polimi.ingsw.model.game.Lobby;
 import it.polimi.ingsw.model.goal.Goal;
+import it.polimi.ingsw.model.observer.Observable;
 import it.polimi.ingsw.model.player.*;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public abstract class View {
+public abstract class View extends Observable<Event> {
     private String nickname;
     private HashMap<Integer, Lobby> lobbies = new HashMap<>();
     private Player player;
@@ -236,15 +237,15 @@ public abstract class View {
     public void setNickname(String nickname) { this.nickname = nickname; }
 
 
-    public synchronized void createLobby(int numOfPlayers) throws LobbyDoesNotExistsException, IOException, FullLobbyException, NicknameAlreadyTakenException {
+    public synchronized void createLobby(int numOfPlayers) throws LobbyDoesNotExistsException, IOException, FullLobbyException, NicknameAlreadyTakenException, ClassNotFoundException {
 
     }
 
-    public synchronized void joinLobby(int lobbyID) throws FullLobbyException, NicknameAlreadyTakenException, LobbyDoesNotExistsException, IOException {
+    public synchronized void joinLobby(int lobbyID) throws FullLobbyException, NicknameAlreadyTakenException, LobbyDoesNotExistsException, IOException, ClassNotFoundException {
 
     }
 
-    public synchronized void leaveLobby() throws GameAlreadyStartedException, LobbyDoesNotExistsException, IOException, FullLobbyException, NicknameAlreadyTakenException {
+    public synchronized void leaveLobby() throws GameAlreadyStartedException, LobbyDoesNotExistsException, IOException, FullLobbyException, NicknameAlreadyTakenException, ClassNotFoundException {
 
     }
 
@@ -252,7 +253,7 @@ public abstract class View {
 
     }
 
-    public synchronized void choosePawn(Pawn color) throws LobbyDoesNotExistsException, PawnAlreadyTakenException, IOException, FullLobbyException, NicknameAlreadyTakenException {
+    public synchronized void choosePawn(Pawn color) throws LobbyDoesNotExistsException, PawnAlreadyTakenException, IOException, FullLobbyException, NicknameAlreadyTakenException, ClassNotFoundException {
 
     }
 
@@ -279,7 +280,7 @@ public abstract class View {
     public void flipCard(Integer gameID, int handPos) throws GameDoesNotExistException {
 
     }
-    public void getCurrentStatus() throws IOException, FullLobbyException, NicknameAlreadyTakenException {
+    public void getCurrentStatus() throws IOException, FullLobbyException, NicknameAlreadyTakenException, ClassNotFoundException {
 
     }
 }
