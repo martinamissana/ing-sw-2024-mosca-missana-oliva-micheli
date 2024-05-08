@@ -117,6 +117,8 @@ public class Controller implements Serializable {
         if (player == null) throw new UnexistentUserException();
         if(gh.getLobbies().containsKey(lobbyID)) {
            gh.getLobbies().get(lobbyID).getPlayers().remove(player);
+           gh.getLobby(lobbyID).getPawnBuffer().getPawnList().add(player.getPawn());
+           player.setPawn(null);
            gh.notify(new LobbyLeftEvent(player,gh.getLobby(lobbyID),lobbyID));
            if(gh.getActiveGames().containsKey(lobbyID) && gh.getGame(lobbyID).getPlayers().contains(player)) leaveGame(lobbyID, player.getNickname());
            if(gh.getLobbies().get(lobbyID).getPlayers().isEmpty()) {
