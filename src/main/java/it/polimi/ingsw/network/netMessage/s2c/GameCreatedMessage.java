@@ -1,4 +1,4 @@
-package it.polimi.ingsw.model.observer.events;
+package it.polimi.ingsw.network.netMessage.s2c;
 
 import it.polimi.ingsw.model.card.Card;
 import it.polimi.ingsw.model.deck.DeckBuffer;
@@ -6,10 +6,11 @@ import it.polimi.ingsw.model.deck.DeckBufferType;
 import it.polimi.ingsw.model.game.GamePhase;
 import it.polimi.ingsw.model.goal.Goal;
 import it.polimi.ingsw.model.player.Player;
+import it.polimi.ingsw.network.netMessage.NetMessage;
 
 import java.util.HashMap;
 
-public class GameCreatedEvent extends Event {
+public class GameCreatedMessage extends NetMessage {
     private final Integer ID;
     private final Player firstPlayer;
     private final HashMap<Player, Integer> scoreboard;
@@ -21,8 +22,8 @@ public class GameCreatedEvent extends Event {
     private final GamePhase gamePhase;
 
 
-    public GameCreatedEvent(Integer ID, Player firstPlayer, HashMap<Player, Integer> scoreboard, Card topResourceCard, Card topGoldenCard, Goal commonGoal1, Goal commonGoal2, GamePhase gamePhase, DeckBuffer d1, DeckBuffer d2, DeckBuffer d3, DeckBuffer d4) {
-        this.ID = ID;
+    public GameCreatedMessage(Integer ID, Player firstPlayer, HashMap<Player, Integer> scoreboard, Card topResourceCard, Card topGoldenCard, Goal commonGoal1, Goal commonGoal2, GamePhase gamePhase,DeckBuffer d1,DeckBuffer d2,DeckBuffer d3,DeckBuffer d4) {
+        this.ID=ID;
         this.firstPlayer = firstPlayer;
         this.scoreboard = scoreboard;
         this.topResourceCard = topResourceCard;
@@ -30,15 +31,13 @@ public class GameCreatedEvent extends Event {
         this.commonGoal1 = commonGoal1;
         this.commonGoal2 = commonGoal2;
         this.gamePhase = gamePhase;
-        this.deckBuffers.put(DeckBufferType.RES1, d1);
-        this.deckBuffers.put(DeckBufferType.RES2, d2);
-        this.deckBuffers.put(DeckBufferType.GOLD1, d3);
-        this.deckBuffers.put(DeckBufferType.GOLD2, d4);
+        this.deckBuffers.put(DeckBufferType.RES1,d1);
+        this.deckBuffers.put(DeckBufferType.RES2,d2);
+        this.deckBuffers.put(DeckBufferType.GOLD1,d3);
+        this.deckBuffers.put(DeckBufferType.GOLD2,d4);
     }
 
-    public Integer getID() {
-        return ID;
-    }
+    public Integer getID() {return ID;}
 
     public Player getFirstPlayer() {
         return firstPlayer;

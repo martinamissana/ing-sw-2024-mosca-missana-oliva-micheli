@@ -5,6 +5,7 @@ import it.polimi.ingsw.controller.exceptions.CannotJoinMultipleLobbiesException;
 import it.polimi.ingsw.controller.exceptions.GameAlreadyStartedException;
 import it.polimi.ingsw.controller.exceptions.PlayerChatMismatchException;
 import it.polimi.ingsw.controller.exceptions.UnexistentUserException;
+import it.polimi.ingsw.model.deck.DeckBufferType;
 import it.polimi.ingsw.model.exceptions.*;
 import it.polimi.ingsw.model.observer.Observer;
 import it.polimi.ingsw.model.observer.events.*;
@@ -30,14 +31,12 @@ public class TCPVirtualView implements Runnable, Observer {
         this.in = new ObjectInputStream(socket.getInputStream());
         this.c = c;
         c.getGh().addObserver(this);
-
     }
 
     public void run() {
         try {
             NetMessage deserialized;
             do {
-                //System.out.println("waiting for next message");
                 deserialized = (NetMessage) in.readObject();
                 elaborate(deserialized);
             } while (deserialized.getClass() != DisconnectMessage.class);
@@ -45,11 +44,10 @@ public class TCPVirtualView implements Runnable, Observer {
             in.close();
             out.close();
             socket.close();
-        } catch (IOException e) {
-            //  System.err.println(e.getMessage());
-        } catch (ClassNotFoundException | GameAlreadyStartedException | GameDoesNotExistException |
+        } catch (IOException | ClassNotFoundException | GameAlreadyStartedException | GameDoesNotExistException |
                  InterruptedException | NicknameAlreadyTakenException | LobbyDoesNotExistsException |
-                 CannotJoinMultipleLobbiesException | FullLobbyException | UnexistentUserException e) {
+                 CannotJoinMultipleLobbiesException | FullLobbyException | UnexistentUserException |
+                 PlayerChatMismatchException e) {
             throw new RuntimeException(e);
         }
     }
@@ -80,11 +78,15 @@ public class TCPVirtualView implements Runnable, Observer {
                     out.writeObject(m);
                 }
                 case PawnAssignedEvent e -> {
-                    PawnAssignedMessage m = new PawnAssignedMessage(e.getPlayer(), e.getColor(),e.getLobbyID());
+                    PawnAssignedMessage m = new PawnAssignedMessage(e.getPlayer(), e.getColor(), e.getLobbyID());
                     out.writeObject(m);
                 }
                 case ChatMessageAddedEvent e -> {
-                    ChatMessageAddedEvent m = new ChatMessageAddedEvent(e.getM(),e.getLobbyID());
+                    ChatMessageAddedEvent m = new ChatMessageAddedEvent(e.getM(), e.getLobbyID());
+                    out.writeObject(m);
+                }
+                case GameCreatedEvent e -> {
+                    GameCreatedMessage m = new GameCreatedMessage(e.getID(),e.getFirstPlayer(),e.getScoreboard(),e.getTopResourceCard(),e.getTopGoldenCard(),e.getCommonGoal1(),e.getCommonGoal2(),e.getGamePhase(),e.getDeckBuffers().get(DeckBufferType.RES1),e.getDeckBuffers().get(DeckBufferType.RES2),e.getDeckBuffers().get(DeckBufferType.GOLD1),e.getDeckBuffers().get(DeckBufferType.GOLD2) );
                     out.writeObject(m);
                 }
                 default -> throw new IllegalStateException("Unexpected value: " + event);
@@ -148,9 +150,10 @@ public class TCPVirtualView implements Runnable, Observer {
                 }
             }
             case SendMessage m -> {
-                try{
-                    c.send(m.getM(),m.getLobbyID());
-                }catch (GameDoesNotExistException| LobbyDoesNotExistsException| PlayerChatMismatchException| UnexistentUserException e){
+                try {
+                    c.send(m.getM(), m.getLobbyID());
+                } catch (GameDoesNotExistException | LobbyDoesNotExistsException | PlayerChatMismatchException |
+                         UnexistentUserException e) {
                     FailMessage failMessage = new FailMessage(e.toString(), m.getM().getSender());
                     out.writeObject(failMessage);
                 }

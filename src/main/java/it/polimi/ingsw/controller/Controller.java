@@ -160,7 +160,7 @@ public class Controller implements Serializable {
      * @param lobbyID ID of the lobby that starts the game
      * @throws IOException produced by failed or interrupted I/O operations
      */
-    private synchronized void createGame(Integer lobbyID) throws IOException, LobbyDoesNotExistsException {
+    private synchronized void createGame(Integer lobbyID) throws IOException, LobbyDoesNotExistsException, GameDoesNotExistException {
         Lobby lobby = gh.getLobby(lobbyID);
 
         ArrayList<Player> players = lobby.getPlayers();
@@ -169,17 +169,18 @@ public class Controller implements Serializable {
         Collections.rotate(players, i);
         players.getFirst().setGoesFirst(true);
 
-
         //scoreboard initialization->all values set at 0
         HashMap<Player, Integer> scoreboard = new HashMap<>();
         for (Player p : players) {
             scoreboard.put(p, 0);
         }
+
         //the game is instantiated and added to the list to active games
         gh.getActiveGames().put(lobbyID, new Game(lobbyID, lobby.getNumOfPlayers(), players, scoreboard));
+        setGameArea(lobbyID);
+        Game g=gh.getGame(lobbyID);
+        gh.notify(new GameCreatedEvent(lobbyID,g.getPlayers().getFirst(),g.getScoreboard(), g.getResourceDeck().getCards().getLast(),g.getGoldenDeck().getCards().getLast(),g.getCommonGoal1(),g.getCommonGoal2(),g.getGamePhase(),g.getDeckBuffer(DeckBufferType.RES1),g.getDeckBuffer(DeckBufferType.RES2),g.getDeckBuffer(DeckBufferType.GOLD1),g.getDeckBuffer(DeckBufferType.GOLD2)));
     }
-
-    //TODO testing e javadoc
 
     /**
      * removes a player from a game and terminates said game
@@ -335,7 +336,6 @@ public class Controller implements Serializable {
         }
         if (gh.getLobby(lobbyID).getPlayers().size() == gh.getLobby(lobbyID).getNumOfPlayers()) {
             createGame(lobbyID);
-            setGameArea(lobbyID);
         }
     }
 

@@ -48,6 +48,9 @@ public abstract class View extends ViewObservable<NetMessage> {
     private final ArrayList<String> errorMessages = new ArrayList<>();
 
     public View() {
+        this.lastRound=false;
+        this.firstPlayer=false;
+        this.yourTurn=false;
     }
 
     public String getNickname() {

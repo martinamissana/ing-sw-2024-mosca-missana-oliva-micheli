@@ -73,8 +73,10 @@ public class TCPView extends View {
                 super.getLobbies().get(m.getID()).addPlayer(m.getPlayer());
             }
             case LobbyLeftMessage m -> {
-                if (m.getPlayer().getNickname().equals(super.getNickname()))
+                if (m.getPlayer().getNickname().equals(super.getNickname())) {
                     super.setID(null);
+                    super.setPawn(null);
+                }
                 super.getLobbies().get(m.getID()).removePlayer(m.getPlayer());
             }
             case LobbyDeletedMessage m -> {
@@ -97,6 +99,21 @@ public class TCPView extends View {
                     super.getChat().getSentMessages().add(m.getM());
                 } else if (m.getM().isGlobal() || m.getM().getReceiver().equals(super.getPlayer())) {
                     super.getChat().getReceivedMessages().add(m.getM());
+                }
+            }
+            case GameCreatedMessage m -> {
+                if(m.getID().equals(super.getID())){
+                    if(m.getFirstPlayer().equals(super.getPlayer())){
+                        super.setFirstPlayer(true);
+                        super.setYourTurn(true);
+                    }
+                    super.setScoreboard(m.getScoreboard());
+                    super.setDeckBuffers(m.getDeckBuffers());
+                    super.setTopResourceCard(m.getTopResourceCard());
+                    super.setTopGoldenCard(m.getTopGoldenCard());
+                    super.setCommonGoal1(m.getCommonGoal1());
+                    super.setCommonGoal2(m.getCommonGoal2());
+                    super.setGamePhase(m.getGamePhase());
                 }
             }
             case FailMessage m -> {
