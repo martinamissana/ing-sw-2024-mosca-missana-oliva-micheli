@@ -7,10 +7,12 @@ import it.polimi.ingsw.network.netMessage.NetMessage;
 public class PawnAssignedMessage extends NetMessage {
     Player player;
     Pawn color;
+    Integer lobbyID;
 
-    public PawnAssignedMessage(Player player, Pawn color) {
+    public PawnAssignedMessage(Player player, Pawn color,Integer lobbyID) {
         this.player = player;
         this.color = color;
+        this.lobbyID=lobbyID;
     }
 
     public Player getPlayer() {
@@ -19,5 +21,9 @@ public class PawnAssignedMessage extends NetMessage {
 
     public Pawn getColor() {
         return color;
+    }
+
+    public Integer getLobbyID() {
+        return lobbyID;
     }
 }

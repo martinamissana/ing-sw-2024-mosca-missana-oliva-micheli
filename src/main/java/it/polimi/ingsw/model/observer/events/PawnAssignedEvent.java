@@ -6,10 +6,12 @@ import it.polimi.ingsw.model.player.Player;
 public class PawnAssignedEvent extends Event{
     Player player;
     Pawn color;
+    Integer lobbyID;
 
-    public PawnAssignedEvent(Player player, Pawn color) {
+    public PawnAssignedEvent(Player player, Pawn color,Integer lobbyID) {
         this.player = player;
         this.color = color;
+        this.lobbyID=lobbyID;
     }
 
     public Player getPlayer() {
@@ -18,5 +20,9 @@ public class PawnAssignedEvent extends Event{
 
     public Pawn getColor() {
         return color;
+    }
+
+    public Integer getLobbyID() {
+        return lobbyID;
     }
 }

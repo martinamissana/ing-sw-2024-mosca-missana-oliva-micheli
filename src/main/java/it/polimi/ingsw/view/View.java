@@ -35,7 +35,6 @@ public abstract class View extends ViewObservable<NetMessage> {
     private Chat chat;
     private Goal privateGoal;
     private Pawn pawn;
-    private HashMap<Player, Pawn> pawns=new HashMap<>(); // all other players' pawns
     private boolean firstPlayer;
     private boolean lastRound;
     private ArrayList<Goal> personalGoalChoices;
@@ -46,7 +45,7 @@ public abstract class View extends ViewObservable<NetMessage> {
     private Goal commonGoal1;
     private Goal commonGoal2;
     private GamePhase gamePhase;
-    private final ArrayList<String> errorMessages=new ArrayList<>();
+    private final ArrayList<String> errorMessages = new ArrayList<>();
 
     public View() {
     }
@@ -103,14 +102,12 @@ public abstract class View extends ViewObservable<NetMessage> {
         return privateGoal;
     }
 
-    public ArrayList<String> getErrorMessages() {return errorMessages;}
+    public ArrayList<String> getErrorMessages() {
+        return errorMessages;
+    }
 
     public Pawn getPawn() {
         return pawn;
-    }
-
-    public HashMap<Player, Pawn> getPawns() {
-        return pawns;
     }
 
     public boolean isFirstPlayer() {
@@ -190,10 +187,6 @@ public abstract class View extends ViewObservable<NetMessage> {
         this.pawn = pawn;
     }
 
-    public void setPawns(HashMap<Player, Pawn> pawns) {
-        this.pawns = pawns;
-    }
-
     public void setFirstPlayer(boolean firstPlayer) {
         this.firstPlayer = firstPlayer;
     }
@@ -234,7 +227,9 @@ public abstract class View extends ViewObservable<NetMessage> {
         this.commonGoal2 = commonGoal2;
     }
 
-    public void setNickname(String nickname) { this.nickname = nickname; }
+    public void setNickname(String nickname) {
+        this.nickname = nickname;
+    }
 
 
     public synchronized void createLobby(int numOfPlayers) throws LobbyDoesNotExistsException, IOException, FullLobbyException, NicknameAlreadyTakenException, ClassNotFoundException {
@@ -249,11 +244,11 @@ public abstract class View extends ViewObservable<NetMessage> {
 
     }
 
-    public synchronized void sendMessage(Integer gameID, Message message) throws LobbyDoesNotExistsException, GameDoesNotExistException {
+    public synchronized void sendMessage(Integer gameID, Message message) {
 
     }
 
-    public synchronized void choosePawn(Pawn color) throws LobbyDoesNotExistsException, PawnAlreadyTakenException, IOException, FullLobbyException, NicknameAlreadyTakenException, ClassNotFoundException {
+    public synchronized void choosePawn(Pawn color) throws  PawnAlreadyTakenException, IOException {
 
     }
 
@@ -261,7 +256,7 @@ public abstract class View extends ViewObservable<NetMessage> {
 
     }
 
-    public void leaveGame(Integer gameID) throws LobbyDoesNotExistsException, GameDoesNotExistException,IOException {
+    public void leaveGame(Integer gameID) throws LobbyDoesNotExistsException, GameDoesNotExistException, IOException {
 
     }
 
@@ -280,7 +275,7 @@ public abstract class View extends ViewObservable<NetMessage> {
     public void flipCard(Integer gameID, int handPos) throws GameDoesNotExistException {
 
     }
-    public void getCurrentStatus() throws IOException, FullLobbyException, NicknameAlreadyTakenException, ClassNotFoundException {
 
+    public void getCurrentStatus() throws IOException, FullLobbyException, NicknameAlreadyTakenException, ClassNotFoundException {
     }
 }
