@@ -1,7 +1,6 @@
 package it.polimi.ingsw.model.game;
 
 import it.polimi.ingsw.model.exceptions.FullLobbyException;
-import it.polimi.ingsw.model.exceptions.NicknameAlreadyTakenException;
 import it.polimi.ingsw.model.player.PawnBuffer;
 import it.polimi.ingsw.model.player.Player;
 
@@ -54,15 +53,10 @@ public class Lobby implements Serializable {
      * method to add players to the lobby
      * @param  player - player to add to the lobby
      * @throws FullLobbyException - the lobby is full
-     * @throws NicknameAlreadyTakenException - someone in the lobby has the same nickname
      */
-    public void addPlayer(Player player) throws FullLobbyException, NicknameAlreadyTakenException {
+    public void addPlayer(Player player) throws FullLobbyException{
         if (lobbyFull()) {
             throw new FullLobbyException();
-        }
-        for (Player p: players){
-            if(p.getNickname().equals(player.getNickname()))
-               throw new NicknameAlreadyTakenException();
         }
         players.add(player);
     }

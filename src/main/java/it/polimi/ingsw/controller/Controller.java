@@ -74,7 +74,7 @@ public class Controller implements Serializable {
             gh.getLobby(gh.getNumOfLobbies()).addPlayer(lobbyCreator);
             gh.notify( new LobbyCreatedEvent(lobbyCreator, gh.getLobby(getGh().getNumOfLobbies()),gh.getNumOfLobbies()));
             gh.setNumOfLobbies(gh.getNumOfLobbies() + 1);
-        } catch (FullLobbyException | NicknameAlreadyTakenException | IOException ignored) {}
+        } catch (FullLobbyException | IOException ignored) {}
     }
 
     /**
@@ -83,10 +83,9 @@ public class Controller implements Serializable {
      * @param nickname - the player that will be added to the lobby
      * @param lobbyID - the lobby the player wants to join
      * @throws FullLobbyException - if the lobby is already  full
-     * @throws NicknameAlreadyTakenException -  if the nickname is already taken
      * @throws LobbyDoesNotExistsException - if the lobby does not exist
      */
-    public synchronized void joinLobby(String nickname, int lobbyID) throws FullLobbyException, NicknameAlreadyTakenException, LobbyDoesNotExistsException, IOException, CannotJoinMultipleLobbiesException, UnexistentUserException {
+    public synchronized void joinLobby(String nickname, int lobbyID) throws FullLobbyException, LobbyDoesNotExistsException, IOException, CannotJoinMultipleLobbiesException, UnexistentUserException {
         Player player = null;
         for (Player p : gh.getUsers()) {
             if (p.getNickname().equals(nickname)) player = p;
