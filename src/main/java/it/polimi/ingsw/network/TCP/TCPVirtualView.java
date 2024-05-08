@@ -3,6 +3,7 @@ package it.polimi.ingsw.network.TCP;
 import it.polimi.ingsw.controller.Controller;
 import it.polimi.ingsw.controller.exceptions.CannotJoinMultipleLobbiesException;
 import it.polimi.ingsw.controller.exceptions.GameAlreadyStartedException;
+import it.polimi.ingsw.controller.exceptions.PlayerChatMismatchException;
 import it.polimi.ingsw.controller.exceptions.UnexistentUserException;
 import it.polimi.ingsw.model.exceptions.*;
 import it.polimi.ingsw.model.observer.Observer;
@@ -82,13 +83,17 @@ public class TCPVirtualView implements Runnable, Observer {
                     PawnAssignedMessage m = new PawnAssignedMessage(e.getPlayer(), e.getColor(),e.getLobbyID());
                     out.writeObject(m);
                 }
+                case ChatMessageAddedEvent e -> {
+                    ChatMessageAddedEvent m = new ChatMessageAddedEvent(e.getM(),e.getLobbyID());
+                    out.writeObject(m);
+                }
                 default -> throw new IllegalStateException("Unexpected value: " + event);
             }
         }
 
     }
 
-    private void elaborate(NetMessage message) throws InterruptedException, NicknameAlreadyTakenException, IOException, LobbyDoesNotExistsException, CannotJoinMultipleLobbiesException, FullLobbyException, GameAlreadyStartedException, GameDoesNotExistException, UnexistentUserException {
+    private void elaborate(NetMessage message) throws InterruptedException, NicknameAlreadyTakenException, IOException, LobbyDoesNotExistsException, CannotJoinMultipleLobbiesException, FullLobbyException, GameAlreadyStartedException, GameDoesNotExistException, UnexistentUserException, PlayerChatMismatchException {
         switch (message) {
             case MyNickname m -> {
                 try {
@@ -126,7 +131,7 @@ public class TCPVirtualView implements Runnable, Observer {
                 try {
                     c.leaveLobby(m.getPlayer().getNickname(), m.getID());
                 } catch (LobbyDoesNotExistsException e) {
-                    FailMessage failMessage = new FailMessage("you can't join an inexistant lobby", m.getPlayer());
+                    FailMessage failMessage = new FailMessage("you can't leave an inexistant lobby", m.getPlayer());
                     out.writeObject(failMessage);
                 }
             }
@@ -141,6 +146,15 @@ public class TCPVirtualView implements Runnable, Observer {
                     FailMessage failMessage = new FailMessage(e.toString(), m.getPlayer());
                     out.writeObject(failMessage);
                 }
+            }
+            case SendMessage m -> {
+                try{
+                    c.send(m.getM(),m.getLobbyID());
+                }catch (GameDoesNotExistException| LobbyDoesNotExistsException| PlayerChatMismatchException| UnexistentUserException e){
+                    FailMessage failMessage = new FailMessage(e.toString(), m.getM().getSender());
+                    out.writeObject(failMessage);
+                }
+
             }
             case GetCurrentStatusMessage m -> {
                 CurrentStatusMessage status = new CurrentStatusMessage(c.getGh().getLobbies());

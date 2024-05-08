@@ -244,7 +244,7 @@ public abstract class View extends ViewObservable<NetMessage> {
 
     }
 
-    public synchronized void sendMessage(Integer gameID, Message message) {
+    public synchronized void sendMessage(Message message) throws IOException {
 
     }
 

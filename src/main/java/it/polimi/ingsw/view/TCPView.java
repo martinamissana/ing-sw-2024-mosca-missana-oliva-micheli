@@ -1,5 +1,6 @@
 package it.polimi.ingsw.view;
 
+import it.polimi.ingsw.model.chat.Message;
 import it.polimi.ingsw.model.exceptions.FullLobbyException;
 import it.polimi.ingsw.model.exceptions.NicknameAlreadyTakenException;
 import it.polimi.ingsw.model.player.Pawn;
@@ -54,6 +55,11 @@ public class TCPView extends View {
         switch (message) {
             case LoginMessage m -> {
             }
+            //TODO: REVIEW THIS WITH DISCONNECTION LOGIC
+            case LoginFail_NicknameAlreadyTaken m -> {
+                DisconnectMessage disconnectMessage = new DisconnectMessage();
+                out.writeObject(disconnectMessage);
+            }
             case LobbyCreatedMessage m -> {
                 if (m.getCreator().equals(super.getPlayer())) {
                     super.setID(m.getID());
@@ -61,24 +67,15 @@ public class TCPView extends View {
                 } else System.out.println("A lobby was created, allowed players: " + m.getLobby().getNumOfPlayers());
                 super.getLobbies().put(m.getID(), m.getLobby());
             }
-            //TODO: REVIEW THIS WITH DISCONNECTION LOGIC
-            case LoginFail_NicknameAlreadyTaken m -> {
-                DisconnectMessage disconnectMessage = new DisconnectMessage();
-                out.writeObject(disconnectMessage);
-            }
             case LobbyJoinedMessage m -> {
                 if (m.getPlayer().getNickname().equals(super.getPlayer().getNickname()))
                     super.setID(m.getID());
                 super.getLobbies().get(m.getID()).addPlayer(m.getPlayer());
             }
-            case FailMessage m -> {
-                super.getErrorMessages().add(m.getMessage());
-            }
             case LobbyLeftMessage m -> {
                 if (m.getPlayer().getNickname().equals(super.getNickname()))
                     super.setID(null);
                 super.getLobbies().get(m.getID()).removePlayer(m.getPlayer());
-
             }
             case LobbyDeletedMessage m -> {
                 super.getLobbies().remove(m.getID());
@@ -87,13 +84,23 @@ public class TCPView extends View {
                 if (m.getPlayer().getNickname().equals(super.getNickname()))
                     super.setPawn(m.getColor());
                 else {
-                    for(Player p: super.getLobbies().get(m.getLobbyID()).getPlayers()){
-                        if(p.equals(m.getPlayer()))p.setPawn(m.getColor());
+                    for (Player p : super.getLobbies().get(m.getLobbyID()).getPlayers()) {
+                        if (p.equals(m.getPlayer())) p.setPawn(m.getColor());
                     }
                 }
             }
             case CurrentStatusMessage m -> {
                 super.getLobbies().putAll(m.getLobbies());
+            }
+            case ChatMessageAddedMessage m -> {
+                if (m.getM().getSender().equals(super.getPlayer())) {
+                    super.getChat().getSentMessages().add(m.getM());
+                } else if (m.getM().isGlobal() || m.getM().getReceiver().equals(super.getPlayer())) {
+                    super.getChat().getReceivedMessages().add(m.getM());
+                }
+            }
+            case FailMessage m -> {
+                super.getErrorMessages().add(m.getMessage());
             }
             default -> throw new IllegalStateException("Unexpected value: " + message);
         }
@@ -134,6 +141,12 @@ public class TCPView extends View {
     @Override
     public void getCurrentStatus() throws IOException {
         GetCurrentStatusMessage m = new GetCurrentStatusMessage();
+        out.writeObject(m);
+    }
+
+    @Override
+    public synchronized void sendMessage(Message message) throws IOException {
+        SendMessage m = new SendMessage(message, super.getID());
         out.writeObject(m);
     }
 }
