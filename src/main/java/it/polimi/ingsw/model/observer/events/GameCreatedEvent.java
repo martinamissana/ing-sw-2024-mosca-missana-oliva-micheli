@@ -3,6 +3,7 @@ package it.polimi.ingsw.model.observer.events;
 import it.polimi.ingsw.model.card.Card;
 import it.polimi.ingsw.model.deck.DeckBuffer;
 import it.polimi.ingsw.model.deck.DeckBufferType;
+import it.polimi.ingsw.model.game.Action;
 import it.polimi.ingsw.model.game.GamePhase;
 import it.polimi.ingsw.model.goal.Goal;
 import it.polimi.ingsw.model.player.Player;
@@ -19,6 +20,7 @@ public class GameCreatedEvent extends Event {
     private final Goal commonGoal1;
     private final Goal commonGoal2;
     private final GamePhase gamePhase;
+    private final Action action;
 
 
     public GameCreatedEvent(Integer ID, Player firstPlayer, HashMap<Player, Integer> scoreboard, Card topResourceCard, Card topGoldenCard, Goal commonGoal1, Goal commonGoal2, GamePhase gamePhase, DeckBuffer d1, DeckBuffer d2, DeckBuffer d3, DeckBuffer d4) {
@@ -34,6 +36,7 @@ public class GameCreatedEvent extends Event {
         this.deckBuffers.put(DeckBufferType.RES2, d2);
         this.deckBuffers.put(DeckBufferType.GOLD1, d3);
         this.deckBuffers.put(DeckBufferType.GOLD2, d4);
+        this.action=Action.PLAY;
     }
 
     public Integer getID() {
@@ -71,4 +74,6 @@ public class GameCreatedEvent extends Event {
     public GamePhase getGamePhase() {
         return gamePhase;
     }
+
+    public Action getAction() { return action; }
 }

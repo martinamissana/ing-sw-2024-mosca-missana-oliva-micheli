@@ -119,6 +119,7 @@ public class TCPView extends View {
                     super.setCommonGoal1(m.getCommonGoal1());
                     super.setCommonGoal2(m.getCommonGoal2());
                     super.setGamePhase(m.getGamePhase());
+                    super.setAction(m.getAction());
                 }
             }
             case CardAddedToHandMessage m -> {
@@ -141,6 +142,10 @@ public class TCPView extends View {
                             p.getField().addCard((ResourceCard) m.getCard(),m.getCoords());
                     }
                 }
+            }
+            case GamePhaseChangedMessage m -> {
+                if(m.getID().equals(super.getID()))
+                    super.setGamePhase(m.getGamePhase());
             }
             case FailMessage m -> {
                 super.getErrorMessages().add(m.getMessage());

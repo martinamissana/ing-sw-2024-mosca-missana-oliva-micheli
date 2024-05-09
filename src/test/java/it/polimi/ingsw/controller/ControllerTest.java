@@ -232,7 +232,7 @@ public class ControllerTest {
     }
 
     @Test
-    public void PlayDrawTurnTest() throws FullLobbyException, LobbyDoesNotExistsException, NicknameAlreadyTakenException, IOException, GameDoesNotExistException, PawnAlreadyTakenException, EmptyDeckException, HandIsFullException, IllegalActionException, NotYourTurnException, IllegalMoveException, EmptyBufferException, CannotJoinMultipleLobbiesException, GameAlreadyStartedException, UnexistentUserException {
+    public void PlayDrawTurnTest() throws FullLobbyException, LobbyDoesNotExistsException, NicknameAlreadyTakenException, IOException, GameDoesNotExistException, PawnAlreadyTakenException, EmptyDeckException, HandIsFullException, IllegalActionException, NotYourTurnException, IllegalMoveException, EmptyBufferException, CannotJoinMultipleLobbiesException, GameAlreadyStartedException, UnexistentUserException, WrongGamePhaseException {
         GameHandler gh = new GameHandler();
         Controller con = new Controller(gh);
 
@@ -274,7 +274,7 @@ public class ControllerTest {
     }
 
     @Test
-    public void winnerTest() throws FullLobbyException, LobbyDoesNotExistsException, NicknameAlreadyTakenException, GameDoesNotExistException, IOException, IllegalMoveException, EmptyDeckException, HandIsFullException, CannotJoinMultipleLobbiesException, UnexistentUserException {
+    public void winnerTest() throws FullLobbyException, LobbyDoesNotExistsException, NicknameAlreadyTakenException, GameDoesNotExistException, IOException, IllegalMoveException, EmptyDeckException, HandIsFullException, CannotJoinMultipleLobbiesException, UnexistentUserException, WrongGamePhaseException {
         GameHandler gh = new GameHandler();
         Controller c = new Controller(gh);
 

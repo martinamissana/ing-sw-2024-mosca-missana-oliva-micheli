@@ -1,10 +1,7 @@
 package it.polimi.ingsw.network.TCP;
 
 import it.polimi.ingsw.controller.Controller;
-import it.polimi.ingsw.controller.exceptions.CannotJoinMultipleLobbiesException;
-import it.polimi.ingsw.controller.exceptions.GameAlreadyStartedException;
-import it.polimi.ingsw.controller.exceptions.PlayerChatMismatchException;
-import it.polimi.ingsw.controller.exceptions.UnexistentUserException;
+import it.polimi.ingsw.controller.exceptions.*;
 import it.polimi.ingsw.model.deck.DeckBufferType;
 import it.polimi.ingsw.model.exceptions.*;
 import it.polimi.ingsw.model.observer.Observer;
@@ -47,7 +44,7 @@ public class TCPVirtualView implements Runnable, Observer {
         } catch (IOException | ClassNotFoundException | GameAlreadyStartedException | GameDoesNotExistException |
                  InterruptedException | NicknameAlreadyTakenException | LobbyDoesNotExistsException |
                  CannotJoinMultipleLobbiesException | FullLobbyException | UnexistentUserException |
-                 PlayerChatMismatchException | EmptyDeckException | HandIsFullException e) {
+                 PlayerChatMismatchException | EmptyDeckException | HandIsFullException | WrongGamePhaseException e) {
             throw new RuntimeException(e);
         }
     }
@@ -101,13 +98,16 @@ public class TCPVirtualView implements Runnable, Observer {
                     CardPlacedOnFieldMessage m = new CardPlacedOnFieldMessage(e.getCoords(), e.getID(), e.getCard(), e.getNickname());
                     out.writeObject(m);
                 }
+                case GamePhaseChangedEvent e -> {
+                    GamePhaseChangedMessage m = new GamePhaseChangedMessage(e.getID(),e.getGamePhase());
+                }
                 default -> throw new IllegalStateException("Unexpected value: " + event);
             }
         }
 
     }
 
-    private void elaborate(NetMessage message) throws InterruptedException, NicknameAlreadyTakenException, IOException, LobbyDoesNotExistsException, CannotJoinMultipleLobbiesException, FullLobbyException, GameAlreadyStartedException, GameDoesNotExistException, UnexistentUserException, PlayerChatMismatchException, EmptyDeckException, HandIsFullException {
+    private void elaborate(NetMessage message) throws InterruptedException, NicknameAlreadyTakenException, IOException, LobbyDoesNotExistsException, CannotJoinMultipleLobbiesException, FullLobbyException, GameAlreadyStartedException, GameDoesNotExistException, UnexistentUserException, PlayerChatMismatchException, EmptyDeckException, HandIsFullException, WrongGamePhaseException {
         switch (message) {
             case MyNickname m -> {
                 try {

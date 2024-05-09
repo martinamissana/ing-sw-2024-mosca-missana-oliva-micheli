@@ -3,6 +3,7 @@ package it.polimi.ingsw.network.netMessage.s2c;
 import it.polimi.ingsw.model.card.Card;
 import it.polimi.ingsw.model.deck.DeckBuffer;
 import it.polimi.ingsw.model.deck.DeckBufferType;
+import it.polimi.ingsw.model.game.Action;
 import it.polimi.ingsw.model.game.GamePhase;
 import it.polimi.ingsw.model.goal.Goal;
 import it.polimi.ingsw.model.player.Player;
@@ -20,6 +21,7 @@ public class GameCreatedMessage extends NetMessage {
     private final Goal commonGoal1;
     private final Goal commonGoal2;
     private final GamePhase gamePhase;
+    private final Action action;
 
 
     public GameCreatedMessage(Integer ID, Player firstPlayer, HashMap<Player, Integer> scoreboard, Card topResourceCard, Card topGoldenCard, Goal commonGoal1, Goal commonGoal2, GamePhase gamePhase,DeckBuffer d1,DeckBuffer d2,DeckBuffer d3,DeckBuffer d4) {
@@ -35,6 +37,7 @@ public class GameCreatedMessage extends NetMessage {
         this.deckBuffers.put(DeckBufferType.RES2,d2);
         this.deckBuffers.put(DeckBufferType.GOLD1,d3);
         this.deckBuffers.put(DeckBufferType.GOLD2,d4);
+        this.action=Action.PLAY;
     }
 
     public Integer getID() {return ID;}
@@ -69,5 +72,9 @@ public class GameCreatedMessage extends NetMessage {
 
     public GamePhase getGamePhase() {
         return gamePhase;
+    }
+
+    public Action getAction() {
+        return action;
     }
 }

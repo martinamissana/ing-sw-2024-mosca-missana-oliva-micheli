@@ -347,14 +347,14 @@ public class Controller implements Serializable {
      * @param nickname who is playing the card
      * @param side     side chosen by the player
      */
-    public synchronized void chooseCardSide(Integer ID, String nickname, CardSide side) throws GameDoesNotExistException, EmptyDeckException, HandIsFullException, UnexistentUserException, IOException {
+    public synchronized void chooseCardSide(Integer ID, String nickname, CardSide side) throws GameDoesNotExistException, EmptyDeckException, HandIsFullException, UnexistentUserException, IOException, WrongGamePhaseException {
 
         Player player = null;
         for (Player p : gh.getUsers()) {
             if (p.getNickname().equals(nickname)) player = p;
         }
         if (player == null) throw new UnexistentUserException();
-        if (gh.getGame(ID).getGamePhase() != GamePhase.PLACING_STARTER_CARD) throw new WrongThreadException();
+        if (gh.getGame(ID).getGamePhase() != GamePhase.PLACING_STARTER_CARD) throw new WrongGamePhaseException();
         StarterCard card = (StarterCard) player.getHand().getCard(0);
         if (!card.getSide().equals(side)) card.flip();
         player.getField().addCard(card);
@@ -365,6 +365,7 @@ public class Controller implements Serializable {
             if (p.getHand().getSize() != 0) return;
         }
         gh.getGame(ID).setGamePhase(GamePhase.CHOOSING_PRIVATE_GOAL);
+        gh.notify(new GamePhaseChangedEvent(ID,GamePhase.CHOOSING_PRIVATE_GOAL));
         fillHands(ID);
     }
 
@@ -424,7 +425,7 @@ public class Controller implements Serializable {
      * @param nickname who is choosing the personal goal
      * @param goalID   goal chosen by the player
      */
-    public synchronized void choosePersonalGoal(Integer ID, String nickname, int goalID) throws IllegalGoalChosenException, GameDoesNotExistException, WrongGamePhaseException, UnexistentUserException {
+    public synchronized void choosePersonalGoal(Integer ID, String nickname, int goalID) throws IllegalGoalChosenException, GameDoesNotExistException, WrongGamePhaseException, UnexistentUserException, IOException {
         Player player = null;
         for (Player p : gh.getUsers()) {
             if (p.getNickname().equals(nickname)) player = p;
@@ -442,6 +443,8 @@ public class Controller implements Serializable {
             if (p.getPrivateGoal() == null) return;
         }
         gh.getGame(ID).setGamePhase(GamePhase.PLAYING_GAME);
+        gh.notify(new GamePhaseChangedEvent(ID,GamePhase.PLAYING_GAME));
+
     }
 
     // GAME
