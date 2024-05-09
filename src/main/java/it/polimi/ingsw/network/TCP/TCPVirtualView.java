@@ -97,6 +97,10 @@ public class TCPVirtualView implements Runnable, Observer {
                     CardRemovedFromHandMessage m = new CardRemovedFromHandMessage(e.getPlayer(), e.getCard());
                     out.writeObject(m);
                 }
+                case CardPlacedOnFieldEvent e -> {
+                    CardPlacedOnFieldMessage m = new CardPlacedOnFieldMessage(e.getCoords(), e.getID(), e.getCard(), e.getNickname());
+                    out.writeObject(m);
+                }
                 default -> throw new IllegalStateException("Unexpected value: " + event);
             }
         }
@@ -171,7 +175,7 @@ public class TCPVirtualView implements Runnable, Observer {
                 out.writeObject(status);
             }
             case ChooseCardSideMessage m -> {
-                c.chooseCardSide(m.getID(),m.getNickname(),m.getSide());
+                c.chooseCardSide(m.getID(), m.getNickname(), m.getSide());
             }
             default -> throw new IllegalStateException("Unexpected value: " + message);
         }

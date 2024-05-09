@@ -358,8 +358,9 @@ public class Controller implements Serializable {
         StarterCard card = (StarterCard) player.getHand().getCard(0);
         if (!card.getSide().equals(side)) card.flip();
         player.getField().addCard(card);
+        gh.notify(new CardPlacedOnFieldEvent(new Coords(0, 0), ID, card, nickname));
         player.getHand().removeCard(card);
-        gh.notify(new CardRemovedFromHandEvent(player,card));
+        gh.notify(new CardRemovedFromHandEvent(player, card));
         for (Player p : gh.getGame(ID).getPlayers()) {
             if (p.getHand().getSize() != 0) return;
         }
@@ -501,6 +502,7 @@ public class Controller implements Serializable {
 
         // place card in the field and calculate points
         int points = player.getField().addCard(card, coords);
+        gh.notify(new CardPlacedOnFieldEvent(coords, gameID, card, nickname));
 
         // remove card from player's hand
         player.getHand().removeCard(card);

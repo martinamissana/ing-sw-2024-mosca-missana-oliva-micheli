@@ -1,9 +1,11 @@
 package it.polimi.ingsw.view;
 
 import it.polimi.ingsw.model.card.CardSide;
+import it.polimi.ingsw.model.card.ResourceCard;
 import it.polimi.ingsw.model.chat.Message;
 import it.polimi.ingsw.model.exceptions.FullLobbyException;
 import it.polimi.ingsw.model.exceptions.HandIsFullException;
+import it.polimi.ingsw.model.exceptions.IllegalMoveException;
 import it.polimi.ingsw.model.exceptions.NicknameAlreadyTakenException;
 import it.polimi.ingsw.model.player.Pawn;
 import it.polimi.ingsw.model.player.Player;
@@ -48,12 +50,13 @@ public class TCPView extends View {
             socket.close();
         } catch (IOException e) {
             System.err.println(e.getMessage());
-        } catch (ClassNotFoundException | FullLobbyException | NicknameAlreadyTakenException | HandIsFullException e) {
+        } catch (ClassNotFoundException | FullLobbyException | NicknameAlreadyTakenException | HandIsFullException |
+                 IllegalMoveException e) {
             throw new RuntimeException(e);
         }
     }
 
-    private void elaborate(NetMessage message) throws IOException, FullLobbyException, NicknameAlreadyTakenException, HandIsFullException {
+    private void elaborate(NetMessage message) throws IOException, FullLobbyException, NicknameAlreadyTakenException, HandIsFullException, IllegalMoveException {
         switch (message) {
             case LoginMessage m -> {
             }
@@ -126,6 +129,17 @@ public class TCPView extends View {
             case CardRemovedFromHandMessage m -> {
                 if (m.getPlayer().equals(super.getPlayer())) {
                     super.getHand().removeCard(m.getCard());
+                }
+            }
+            case CardPlacedOnFieldMessage m -> {
+                if (m.getNickname().equals(super.getNickname())){
+                    super.getMyField().addCard((ResourceCard) m.getCard(),m.getCoords());
+                }
+                else {
+                    for(Player p: super.getFields().keySet()){
+                        if(m.getNickname().equals(p.getNickname()))
+                            p.getField().addCard((ResourceCard) m.getCard(),m.getCoords());
+                    }
                 }
             }
             case FailMessage m -> {
