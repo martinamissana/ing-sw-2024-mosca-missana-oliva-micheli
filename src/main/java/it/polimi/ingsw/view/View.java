@@ -48,9 +48,9 @@ public abstract class View extends ViewObservable<NetMessage> {
     private final ArrayList<String> errorMessages = new ArrayList<>();
 
     public View() {
-        this.lastRound=false;
-        this.firstPlayer=false;
-        this.yourTurn=false;
+        this.lastRound = false;
+        this.firstPlayer = false;
+        this.yourTurn = false;
     }
 
     public String getNickname() {
@@ -251,7 +251,7 @@ public abstract class View extends ViewObservable<NetMessage> {
 
     }
 
-    public synchronized void choosePawn(Pawn color) throws  PawnAlreadyTakenException, IOException {
+    public synchronized void choosePawn(Pawn color) throws PawnAlreadyTakenException, IOException {
 
     }
 
@@ -259,23 +259,23 @@ public abstract class View extends ViewObservable<NetMessage> {
 
     }
 
-    public void leaveGame(Integer gameID) throws LobbyDoesNotExistsException, GameDoesNotExistException, IOException {
+    public void leaveGame() throws LobbyDoesNotExistsException, GameDoesNotExistException, IOException {
 
     }
 
-    public void chooseCardSide(Integer gameID, CardSide side) {
+    public void chooseCardSide(CardSide side) throws IOException {
 
     }
 
-    public void playCard(Integer gameID, int handPos, Coords coords) throws IllegalActionException, NotYourTurnException, IllegalMoveException, GameDoesNotExistException {
+    public void playCard(int handPos, Coords coords) throws IllegalActionException, NotYourTurnException, IllegalMoveException, GameDoesNotExistException {
 
     }
 
-    public void drawCard(Integer gameID, DeckTypeBox deckTypeBox) throws IllegalActionException, EmptyBufferException, NotYourTurnException, EmptyDeckException, GameDoesNotExistException, HandIsFullException {
+    public void drawCard(DeckTypeBox deckTypeBox) throws IllegalActionException, EmptyBufferException, NotYourTurnException, EmptyDeckException, GameDoesNotExistException, HandIsFullException {
 
     }
 
-    public void flipCard(Integer gameID, int handPos) throws GameDoesNotExistException {
+    public void flipCard(int handPos) throws GameDoesNotExistException {
 
     }
 

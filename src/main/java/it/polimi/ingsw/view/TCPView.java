@@ -180,7 +180,8 @@ public class TCPView extends View {
     }
 
     @Override
-    public void chooseCardSide(Integer gameID, CardSide side) {
-
+    public void chooseCardSide(CardSide side) throws IOException {
+        ChooseCardSideMessage m =new ChooseCardSideMessage(super.getID(),super.getNickname(),side);
+        out.writeObject(m);
     }
 }

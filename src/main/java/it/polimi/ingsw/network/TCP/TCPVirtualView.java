@@ -47,7 +47,7 @@ public class TCPVirtualView implements Runnable, Observer {
         } catch (IOException | ClassNotFoundException | GameAlreadyStartedException | GameDoesNotExistException |
                  InterruptedException | NicknameAlreadyTakenException | LobbyDoesNotExistsException |
                  CannotJoinMultipleLobbiesException | FullLobbyException | UnexistentUserException |
-                 PlayerChatMismatchException e) {
+                 PlayerChatMismatchException | EmptyDeckException | HandIsFullException e) {
             throw new RuntimeException(e);
         }
     }
@@ -86,15 +86,15 @@ public class TCPVirtualView implements Runnable, Observer {
                     out.writeObject(m);
                 }
                 case GameCreatedEvent e -> {
-                    GameCreatedMessage m = new GameCreatedMessage(e.getID(),e.getFirstPlayer(),e.getScoreboard(),e.getTopResourceCard(),e.getTopGoldenCard(),e.getCommonGoal1(),e.getCommonGoal2(),e.getGamePhase(),e.getDeckBuffers().get(DeckBufferType.RES1),e.getDeckBuffers().get(DeckBufferType.RES2),e.getDeckBuffers().get(DeckBufferType.GOLD1),e.getDeckBuffers().get(DeckBufferType.GOLD2) );
+                    GameCreatedMessage m = new GameCreatedMessage(e.getID(), e.getFirstPlayer(), e.getScoreboard(), e.getTopResourceCard(), e.getTopGoldenCard(), e.getCommonGoal1(), e.getCommonGoal2(), e.getGamePhase(), e.getDeckBuffers().get(DeckBufferType.RES1), e.getDeckBuffers().get(DeckBufferType.RES2), e.getDeckBuffers().get(DeckBufferType.GOLD1), e.getDeckBuffers().get(DeckBufferType.GOLD2));
                     out.writeObject(m);
                 }
                 case CardAddedToHandEvent e -> {
-                    CardAddedToHandMessage m = new CardAddedToHandMessage(e.getPlayer(),e.getCard());
+                    CardAddedToHandMessage m = new CardAddedToHandMessage(e.getPlayer(), e.getCard());
                     out.writeObject(m);
                 }
                 case CardRemovedFromHandEvent e -> {
-                    CardRemovedFromHandMessage m= new CardRemovedFromHandMessage(e.getPlayer(),e.getCard());
+                    CardRemovedFromHandMessage m = new CardRemovedFromHandMessage(e.getPlayer(), e.getCard());
                     out.writeObject(m);
                 }
                 default -> throw new IllegalStateException("Unexpected value: " + event);
@@ -103,7 +103,7 @@ public class TCPVirtualView implements Runnable, Observer {
 
     }
 
-    private void elaborate(NetMessage message) throws InterruptedException, NicknameAlreadyTakenException, IOException, LobbyDoesNotExistsException, CannotJoinMultipleLobbiesException, FullLobbyException, GameAlreadyStartedException, GameDoesNotExistException, UnexistentUserException, PlayerChatMismatchException {
+    private void elaborate(NetMessage message) throws InterruptedException, NicknameAlreadyTakenException, IOException, LobbyDoesNotExistsException, CannotJoinMultipleLobbiesException, FullLobbyException, GameAlreadyStartedException, GameDoesNotExistException, UnexistentUserException, PlayerChatMismatchException, EmptyDeckException, HandIsFullException {
         switch (message) {
             case MyNickname m -> {
                 try {
@@ -165,11 +165,13 @@ public class TCPVirtualView implements Runnable, Observer {
                     FailMessage failMessage = new FailMessage(e.toString(), m.getM().getSender());
                     out.writeObject(failMessage);
                 }
-
             }
             case GetCurrentStatusMessage m -> {
                 CurrentStatusMessage status = new CurrentStatusMessage(c.getGh().getLobbies());
                 out.writeObject(status);
+            }
+            case ChooseCardSideMessage m -> {
+                c.chooseCardSide(m.getID(),m.getNickname(),m.getSide());
             }
             default -> throw new IllegalStateException("Unexpected value: " + message);
         }
