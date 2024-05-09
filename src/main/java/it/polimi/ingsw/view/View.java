@@ -251,4 +251,6 @@ public abstract class View extends ViewObservable<NetMessage> {
     public abstract void flipCard(int handPos) throws GameDoesNotExistException, UnexistentUserException, RemoteException;
 
     public abstract void getCurrentStatus() throws IOException, FullLobbyException, NicknameAlreadyTakenException, ClassNotFoundException;
+
+    public abstract void heartbeat() throws RemoteException;
 }
