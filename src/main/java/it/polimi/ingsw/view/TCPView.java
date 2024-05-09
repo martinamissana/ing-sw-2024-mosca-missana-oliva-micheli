@@ -1,12 +1,13 @@
 package it.polimi.ingsw.view;
 
+import it.polimi.ingsw.controller.exceptions.IllegalActionException;
+import it.polimi.ingsw.controller.exceptions.NotYourTurnException;
 import it.polimi.ingsw.model.card.CardSide;
 import it.polimi.ingsw.model.card.ResourceCard;
 import it.polimi.ingsw.model.chat.Message;
-import it.polimi.ingsw.model.exceptions.FullLobbyException;
-import it.polimi.ingsw.model.exceptions.HandIsFullException;
-import it.polimi.ingsw.model.exceptions.IllegalMoveException;
-import it.polimi.ingsw.model.exceptions.NicknameAlreadyTakenException;
+import it.polimi.ingsw.model.deck.DeckTypeBox;
+import it.polimi.ingsw.model.exceptions.*;
+import it.polimi.ingsw.model.player.Coords;
 import it.polimi.ingsw.model.player.Pawn;
 import it.polimi.ingsw.model.player.Player;
 import it.polimi.ingsw.network.netMessage.NetMessage;
@@ -17,6 +18,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.rmi.RemoteException;
 
 public class TCPView extends View {
     private String ip;
@@ -68,8 +70,8 @@ public class TCPView extends View {
             case LobbyCreatedMessage m -> {
                 if (m.getCreator().equals(super.getPlayer())) {
                     super.setID(m.getID());
-                    System.out.println("your lobby was created," + m.getID() + " allowed players: " + m.getLobby().getNumOfPlayers());
-                } else System.out.println("A lobby was created, allowed players: " + m.getLobby().getNumOfPlayers());
+                    //System.out.println("your lobby was created," + m.getID() + " allowed players: " + m.getLobby().getNumOfPlayers());
+                }// else System.out.println("A lobby was created, allowed players: " + m.getLobby().getNumOfPlayers());
                 super.getLobbies().put(m.getID(), m.getLobby());
             }
             case LobbyJoinedMessage m -> {
@@ -147,6 +149,10 @@ public class TCPView extends View {
                 if(m.getID().equals(super.getID()))
                     super.setGamePhase(m.getGamePhase());
             }
+            case PrivateGoalsListAssignedMessage m -> {
+                if (m.getPlayer().equals(super.getPlayer()))
+                    super.setPersonalGoalChoices(m.getList());
+            }
             case FailMessage m -> {
                 super.getErrorMessages().add(m.getMessage());
             }
@@ -155,7 +161,7 @@ public class TCPView extends View {
         notify(message);
     }
 
-    public void login(String nickname) throws IOException, FullLobbyException, NicknameAlreadyTakenException, ClassNotFoundException {
+    public void login(String nickname) throws NicknameAlreadyTakenException, IOException {
         MyNickname m = new MyNickname(nickname);
         super.setPlayer(new Player(nickname));
         super.setNickname(nickname);
@@ -187,9 +193,24 @@ public class TCPView extends View {
     }
 
     @Override
+    public void choosePersonalGoal(int goalID) throws RemoteException {
+
+    }
+
+    @Override
+    public void leaveGame() throws LobbyDoesNotExistsException, GameDoesNotExistException, IOException {
+
+    }
+
+    @Override
     public void getCurrentStatus() throws IOException {
         GetCurrentStatusMessage m = new GetCurrentStatusMessage();
         out.writeObject(m);
+    }
+
+    @Override
+    public void heartbeat() throws RemoteException {
+
     }
 
     @Override
@@ -202,5 +223,20 @@ public class TCPView extends View {
     public void chooseCardSide(CardSide side) throws IOException {
         ChooseCardSideMessage m =new ChooseCardSideMessage(super.getID(),super.getNickname(),side);
         out.writeObject(m);
+    }
+
+    @Override
+    public void playCard(int handPos, Coords coords) throws IllegalActionException, NotYourTurnException, IllegalMoveException, GameDoesNotExistException {
+
+    }
+
+    @Override
+    public void drawCard(DeckTypeBox deckTypeBox) throws IllegalActionException, EmptyBufferException, NotYourTurnException, EmptyDeckException, GameDoesNotExistException, HandIsFullException {
+
+    }
+
+    @Override
+    public void flipCard(int handPos) throws GameDoesNotExistException {
+
     }
 }

@@ -408,12 +408,13 @@ public class Controller implements Serializable {
      *
      * @param gameID ID of the game played
      */
-    public synchronized void giveGoals(Integer gameID) throws GameDoesNotExistException {
+    public synchronized void giveGoals(Integer gameID) throws GameDoesNotExistException, IOException {
         Game game = gh.getGame(gameID);
 
         for (Player p : game.getPlayers()) {
             p.getChoosableGoals().add(gh.getGame(gameID).getGoals().getGoal());
             p.getChoosableGoals().add(gh.getGame(gameID).getGoals().getGoal());
+            gh.notify(new PrivateGoalsListAssignedEvent(p.getChoosableGoals(),p));
         }
 
     }
