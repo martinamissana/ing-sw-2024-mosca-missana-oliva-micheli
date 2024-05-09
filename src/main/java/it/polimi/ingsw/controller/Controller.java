@@ -178,8 +178,8 @@ public class Controller implements Serializable {
         //the game is instantiated and added to the list to active games
         gh.getActiveGames().put(lobbyID, new Game(lobbyID, lobby.getNumOfPlayers(), players, scoreboard));
         setGameArea(lobbyID);
-        Game g=gh.getGame(lobbyID);
-        gh.notify(new GameCreatedEvent(lobbyID,g.getPlayers().getFirst(),g.getScoreboard(), g.getResourceDeck().getCards().getLast(),g.getGoldenDeck().getCards().getLast(),g.getCommonGoal1(),g.getCommonGoal2(),g.getGamePhase(),g.getDeckBuffer(DeckBufferType.RES1),g.getDeckBuffer(DeckBufferType.RES2),g.getDeckBuffer(DeckBufferType.GOLD1),g.getDeckBuffer(DeckBufferType.GOLD2)));
+        Game g = gh.getGame(lobbyID);
+        gh.notify(new GameCreatedEvent(lobbyID, g.getPlayers().getFirst(), g.getScoreboard(), g.getResourceDeck().getCards().getLast(), g.getGoldenDeck().getCards().getLast(), g.getCommonGoal1(), g.getCommonGoal2(), g.getGamePhase(), g.getDeckBuffer(DeckBufferType.RES1), g.getDeckBuffer(DeckBufferType.RES2), g.getDeckBuffer(DeckBufferType.GOLD1), g.getDeckBuffer(DeckBufferType.GOLD2)));
     }
 
     /**
@@ -299,6 +299,7 @@ public class Controller implements Serializable {
         for (Player p : players) {
             try {
                 p.getHand().addCard(starter.removeLast());
+                gh.notify(new CardAddedToHandEvent(p, p.getHand().getCard(0)));
             } catch (HandIsFullException ignored) {
             }   // isn't supposed to happen
         }
@@ -346,7 +347,7 @@ public class Controller implements Serializable {
      * @param nickname who is playing the card
      * @param side     side chosen by the player
      */
-    public synchronized void chooseCardSide(Integer ID, String nickname, CardSide side) throws GameDoesNotExistException, EmptyDeckException, HandIsFullException, UnexistentUserException {
+    public synchronized void chooseCardSide(Integer ID, String nickname, CardSide side) throws GameDoesNotExistException, EmptyDeckException, HandIsFullException, UnexistentUserException, IOException {
 
         Player player = null;
         for (Player p : gh.getUsers()) {
@@ -373,13 +374,16 @@ public class Controller implements Serializable {
      * @throws EmptyDeckException        (isn't supposed to happen)
      * @throws HandIsFullException       if in hands are already present other cards
      */
-    public synchronized void fillHands(Integer gameID) throws GameDoesNotExistException, EmptyDeckException, HandIsFullException {
+    public synchronized void fillHands(Integer gameID) throws GameDoesNotExistException, EmptyDeckException, HandIsFullException, IOException {
         Game game = gh.getGame(gameID);
 
         for (Player p : game.getPlayers()) {
             p.getHand().addCard(game.getResourceDeck().draw());
+            gh.notify(new CardAddedToHandEvent(p, p.getHand().getCard(0)));
             p.getHand().addCard(game.getResourceDeck().draw());
+            gh.notify(new CardAddedToHandEvent(p, p.getHand().getCard(1)));
             p.getHand().addCard(game.getGoldenDeck().draw());
+            gh.notify(new CardAddedToHandEvent(p, p.getHand().getCard(2)));
         }
     }
 
@@ -545,6 +549,7 @@ public class Controller implements Serializable {
         // draw a card and add it to the current player's hand
         ResourceCard newCard = game.drawFromSource(deckTypeBox);
         player.getHand().addCard(newCard);
+        gh.notify(new CardAddedToHandEvent(player, newCard));
 
         // set the game's current action to PLAY after drawing a card
         game.setAction(Action.PLAY);

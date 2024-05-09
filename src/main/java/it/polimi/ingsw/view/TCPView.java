@@ -1,7 +1,9 @@
 package it.polimi.ingsw.view;
 
+import it.polimi.ingsw.model.card.CardSide;
 import it.polimi.ingsw.model.chat.Message;
 import it.polimi.ingsw.model.exceptions.FullLobbyException;
+import it.polimi.ingsw.model.exceptions.HandIsFullException;
 import it.polimi.ingsw.model.exceptions.NicknameAlreadyTakenException;
 import it.polimi.ingsw.model.player.Pawn;
 import it.polimi.ingsw.model.player.Player;
@@ -46,12 +48,12 @@ public class TCPView extends View {
             socket.close();
         } catch (IOException e) {
             System.err.println(e.getMessage());
-        } catch (ClassNotFoundException | FullLobbyException | NicknameAlreadyTakenException e) {
+        } catch (ClassNotFoundException | FullLobbyException | NicknameAlreadyTakenException | HandIsFullException e) {
             throw new RuntimeException(e);
         }
     }
 
-    private void elaborate(NetMessage message) throws IOException, FullLobbyException, NicknameAlreadyTakenException {
+    private void elaborate(NetMessage message) throws IOException, FullLobbyException, NicknameAlreadyTakenException, HandIsFullException {
         switch (message) {
             case LoginMessage m -> {
             }
@@ -116,6 +118,15 @@ public class TCPView extends View {
                     super.setGamePhase(m.getGamePhase());
                 }
             }
+            case CardAddedToHandMessage m -> {
+                if(m.getPlayer().equals(super.getPlayer())){
+                    try {
+                        super.getHand().addCard(m.getCard());
+                    } catch (HandIsFullException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+            }
             case FailMessage m -> {
                 super.getErrorMessages().add(m.getMessage());
             }
@@ -165,5 +176,10 @@ public class TCPView extends View {
     public synchronized void sendMessage(Message message) throws IOException {
         SendMessage m = new SendMessage(message, super.getID());
         out.writeObject(m);
+    }
+
+    @Override
+    public void chooseCardSide(Integer gameID, CardSide side) {
+
     }
 }

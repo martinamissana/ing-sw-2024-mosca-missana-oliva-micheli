@@ -1,13 +1,14 @@
-package it.polimi.ingsw.model.observer.events;
+package it.polimi.ingsw.network.netMessage.s2c;
 
 import it.polimi.ingsw.model.card.Card;
 import it.polimi.ingsw.model.player.Player;
+import it.polimi.ingsw.network.netMessage.NetMessage;
 
-public class CardAddedToHandEvent extends Event {
+public class CardAddedToHandMessage extends NetMessage {
     private final Player player;
     private final Card card;
 
-    public CardAddedToHandEvent(Player player, Card card) {
+    public CardAddedToHandMessage(Player player, Card card) {
         this.player = player;
         this.card = card;
     }
@@ -15,7 +16,6 @@ public class CardAddedToHandEvent extends Event {
     public Player getPlayer() {
         return player;
     }
-
     public Card getCard() {
         return card;
     }
