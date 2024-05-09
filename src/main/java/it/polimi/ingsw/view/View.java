@@ -1,8 +1,6 @@
 package it.polimi.ingsw.view;
 
-import it.polimi.ingsw.controller.exceptions.GameAlreadyStartedException;
-import it.polimi.ingsw.controller.exceptions.IllegalActionException;
-import it.polimi.ingsw.controller.exceptions.NotYourTurnException;
+import it.polimi.ingsw.controller.exceptions.*;
 import it.polimi.ingsw.model.card.Card;
 import it.polimi.ingsw.model.card.CardSide;
 import it.polimi.ingsw.model.chat.Chat;
@@ -228,30 +226,29 @@ public abstract class View extends ViewObservable<NetMessage> {
 
     public void setNickname(String nickname) { this.nickname = nickname; }
 
-    public abstract void login(String nickname) throws NicknameAlreadyTakenException, RemoteException;
+    public abstract void login(String nickname) throws NicknameAlreadyTakenException, RemoteException, IOException, FullLobbyException, ClassNotFoundException;
 
-    public abstract void createLobby(int numOfPlayers) throws LobbyDoesNotExistsException, IOException, FullLobbyException, NicknameAlreadyTakenException, ClassNotFoundException;
+    public abstract void createLobby(int numOfPlayers) throws LobbyDoesNotExistsException, IOException, FullLobbyException, NicknameAlreadyTakenException, ClassNotFoundException, CannotJoinMultipleLobbiesException, UnexistentUserException;
 
-    public abstract void joinLobby(int lobbyID) throws FullLobbyException, NicknameAlreadyTakenException, LobbyDoesNotExistsException, IOException, ClassNotFoundException;
+    public abstract void joinLobby(int lobbyID) throws FullLobbyException, NicknameAlreadyTakenException, LobbyDoesNotExistsException, IOException, ClassNotFoundException, CannotJoinMultipleLobbiesException, UnexistentUserException;
 
-    public abstract void leaveLobby() throws GameAlreadyStartedException, LobbyDoesNotExistsException, IOException, FullLobbyException, NicknameAlreadyTakenException, ClassNotFoundException;
+    public abstract void leaveLobby() throws GameAlreadyStartedException, LobbyDoesNotExistsException, IOException, FullLobbyException, NicknameAlreadyTakenException, ClassNotFoundException, GameDoesNotExistException, UnexistentUserException;
 
-    public abstract void sendMessage(Message message) throws IOException;
+    public abstract void sendMessage(Message message) throws IOException, LobbyDoesNotExistsException, GameDoesNotExistException, UnexistentUserException, PlayerChatMismatchException;
 
-    public abstract void choosePawn(Pawn color) throws PawnAlreadyTakenException, IOException;
+    public abstract void choosePawn(Pawn color) throws PawnAlreadyTakenException, IOException, LobbyDoesNotExistsException, GameAlreadyStartedException, GameDoesNotExistException, UnexistentUserException;
 
-    public abstract void choosePersonalGoal(int goalID) throws RemoteException;
+    public abstract void choosePersonalGoal(int goalID) throws RemoteException, IllegalGoalChosenException, WrongGamePhaseException, GameDoesNotExistException, UnexistentUserException;
 
-    public abstract void leaveGame() throws LobbyDoesNotExistsException, GameDoesNotExistException, IOException;
+    public abstract void leaveGame() throws LobbyDoesNotExistsException, GameDoesNotExistException, IOException, UnexistentUserException;
 
-    public abstract void chooseCardSide(CardSide side) throws IOException;
+    public abstract void chooseCardSide(CardSide side) throws IOException, EmptyDeckException, GameDoesNotExistException, HandIsFullException, UnexistentUserException;
 
-    public abstract void playCard(int handPos, Coords coords) throws IllegalActionException, NotYourTurnException, IllegalMoveException, GameDoesNotExistException;
+    public abstract void playCard(int handPos, Coords coords) throws IllegalActionException, NotYourTurnException, IllegalMoveException, GameDoesNotExistException, LobbyDoesNotExistsException, UnexistentUserException, IOException;
 
-    public abstract void drawCard(DeckTypeBox deckTypeBox) throws IllegalActionException, EmptyBufferException, NotYourTurnException, EmptyDeckException, GameDoesNotExistException, HandIsFullException;
+    public abstract void drawCard(DeckTypeBox deckTypeBox) throws IllegalActionException, EmptyBufferException, NotYourTurnException, EmptyDeckException, GameDoesNotExistException, HandIsFullException, LobbyDoesNotExistsException, IOException, UnexistentUserException;
 
-    public abstract void flipCard(int handPos) throws GameDoesNotExistException;
-
+    public abstract void flipCard(int handPos) throws GameDoesNotExistException, UnexistentUserException, RemoteException;
 
     public abstract void getCurrentStatus() throws IOException, FullLobbyException, NicknameAlreadyTakenException, ClassNotFoundException;
 }
