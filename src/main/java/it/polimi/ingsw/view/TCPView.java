@@ -104,8 +104,8 @@ public class TCPView extends View {
                 }
             }
             case GameCreatedMessage m -> {
-                if(m.getID().equals(super.getID())){
-                    if(m.getFirstPlayer().equals(super.getPlayer())){
+                if (m.getID().equals(super.getID())) {
+                    if (m.getFirstPlayer().equals(super.getPlayer())) {
                         super.setFirstPlayer(true);
                         super.setYourTurn(true);
                     }
@@ -119,12 +119,13 @@ public class TCPView extends View {
                 }
             }
             case CardAddedToHandMessage m -> {
-                if(m.getPlayer().equals(super.getPlayer())){
-                    try {
-                        super.getHand().addCard(m.getCard());
-                    } catch (HandIsFullException e) {
-                        throw new RuntimeException(e);
-                    }
+                if (m.getPlayer().equals(super.getPlayer())) {
+                    super.getHand().addCard(m.getCard());
+                }
+            }
+            case CardRemovedFromHandMessage m -> {
+                if (m.getPlayer().equals(super.getPlayer())) {
+                    super.getHand().removeCard(m.getCard());
                 }
             }
             case FailMessage m -> {

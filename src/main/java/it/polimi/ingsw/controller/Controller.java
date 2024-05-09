@@ -359,6 +359,7 @@ public class Controller implements Serializable {
         if (!card.getSide().equals(side)) card.flip();
         player.getField().addCard(card);
         player.getHand().removeCard(card);
+        gh.notify(new CardRemovedFromHandEvent(player,card));
         for (Player p : gh.getGame(ID).getPlayers()) {
             if (p.getHand().getSize() != 0) return;
         }

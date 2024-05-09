@@ -93,6 +93,10 @@ public class TCPVirtualView implements Runnable, Observer {
                     CardAddedToHandMessage m = new CardAddedToHandMessage(e.getPlayer(),e.getCard());
                     out.writeObject(m);
                 }
+                case CardRemovedFromHandEvent e -> {
+                    CardRemovedFromHandMessage m= new CardRemovedFromHandMessage(e.getPlayer(),e.getCard());
+                    out.writeObject(m);
+                }
                 default -> throw new IllegalStateException("Unexpected value: " + event);
             }
         }
