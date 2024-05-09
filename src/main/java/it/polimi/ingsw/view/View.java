@@ -228,52 +228,30 @@ public abstract class View extends ViewObservable<NetMessage> {
 
     public void setNickname(String nickname) { this.nickname = nickname; }
 
+    public abstract void login(String nickname) throws NicknameAlreadyTakenException, RemoteException;
 
-    public synchronized void createLobby(int numOfPlayers) throws LobbyDoesNotExistsException, IOException, FullLobbyException, NicknameAlreadyTakenException, ClassNotFoundException {
+    public abstract void createLobby(int numOfPlayers) throws LobbyDoesNotExistsException, IOException, FullLobbyException, NicknameAlreadyTakenException, ClassNotFoundException;
 
-    }
+    public abstract void joinLobby(int lobbyID) throws FullLobbyException, NicknameAlreadyTakenException, LobbyDoesNotExistsException, IOException, ClassNotFoundException;
 
-    public synchronized void joinLobby(int lobbyID) throws FullLobbyException, NicknameAlreadyTakenException, LobbyDoesNotExistsException, IOException, ClassNotFoundException {
+    public abstract void leaveLobby() throws GameAlreadyStartedException, LobbyDoesNotExistsException, IOException, FullLobbyException, NicknameAlreadyTakenException, ClassNotFoundException;
 
-    }
+    public abstract void sendMessage(Message message) throws IOException;
 
-    public synchronized void leaveLobby() throws GameAlreadyStartedException, LobbyDoesNotExistsException, IOException, FullLobbyException, NicknameAlreadyTakenException, ClassNotFoundException {
+    public abstract void choosePawn(Pawn color) throws PawnAlreadyTakenException, IOException;
 
-    }
+    public abstract void choosePersonalGoal(int goalID) throws RemoteException;
 
-    public synchronized void sendMessage(Message message) throws IOException {
+    public abstract void leaveGame() throws LobbyDoesNotExistsException, GameDoesNotExistException, IOException;
 
-    }
+    public abstract void chooseCardSide(CardSide side) throws IOException;
 
-    public synchronized void choosePawn(Pawn color) throws PawnAlreadyTakenException, IOException {
+    public abstract void playCard(int handPos, Coords coords) throws IllegalActionException, NotYourTurnException, IllegalMoveException, GameDoesNotExistException;
 
-    }
+    public abstract void drawCard(DeckTypeBox deckTypeBox) throws IllegalActionException, EmptyBufferException, NotYourTurnException, EmptyDeckException, GameDoesNotExistException, HandIsFullException;
 
-    public void choosePersonalGoal(int goalID) throws RemoteException {
-
-    }
-
-    public void leaveGame() throws LobbyDoesNotExistsException, GameDoesNotExistException, IOException {
-
-    }
-
-    public void chooseCardSide(CardSide side) throws IOException {
-
-    }
-
-    public void playCard(int handPos, Coords coords) throws IllegalActionException, NotYourTurnException, IllegalMoveException, GameDoesNotExistException {
-
-    }
-
-    public void drawCard(DeckTypeBox deckTypeBox) throws IllegalActionException, EmptyBufferException, NotYourTurnException, EmptyDeckException, GameDoesNotExistException, HandIsFullException {
-
-    }
-
-    public void flipCard(int handPos) throws GameDoesNotExistException {
-
-    }
+    public abstract void flipCard(int handPos) throws GameDoesNotExistException;
 
 
-    public void getCurrentStatus() throws IOException, FullLobbyException, NicknameAlreadyTakenException, ClassNotFoundException {
-    }
+    public abstract void getCurrentStatus() throws IOException, FullLobbyException, NicknameAlreadyTakenException, ClassNotFoundException;
 }
