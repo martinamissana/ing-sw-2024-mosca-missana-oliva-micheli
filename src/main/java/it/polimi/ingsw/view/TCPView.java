@@ -165,6 +165,7 @@ public class TCPView extends View {
         notify(message);
     }
 
+    @Override
     public void login(String nickname) throws NicknameAlreadyTakenException, IOException {
         MyNickname m = new MyNickname(nickname);
         super.setPlayer(new Player(nickname));
@@ -203,19 +204,9 @@ public class TCPView extends View {
     }
 
     @Override
-    public void leaveGame() throws LobbyDoesNotExistsException, GameDoesNotExistException, IOException {
-
-    }
-
-    @Override
     public void getCurrentStatus() throws IOException {
         GetCurrentStatusMessage m = new GetCurrentStatusMessage();
         out.writeObject(m);
-    }
-
-    @Override
-    public void heartbeat() throws RemoteException {
-
     }
 
     @Override
@@ -242,6 +233,10 @@ public class TCPView extends View {
 
     @Override
     public void flipCard(int handPos) throws GameDoesNotExistException {
+
+    }
+    @Override
+    public void heartbeat() throws RemoteException {
 
     }
 }
