@@ -1,13 +1,12 @@
 package it.polimi.ingsw.network.netMessage.s2c;
 
-import it.polimi.ingsw.model.player.Player;
 import it.polimi.ingsw.network.netMessage.NetMessage;
 
 public class FailMessage extends NetMessage {
     private final String message;
-    private final Player player;
-    public FailMessage(String message,Player player) {
-        this.player=player;
+    private final String string;
+    public FailMessage(String message, String string) {
+        this.string = string;
         this.message = message;
     }
 
@@ -15,7 +14,7 @@ public class FailMessage extends NetMessage {
         return message;
     }
 
-    public Player getPlayer() {
-        return player;
+    public String getString() {
+        return string;
     }
 }

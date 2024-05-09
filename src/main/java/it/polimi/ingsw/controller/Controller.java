@@ -414,7 +414,7 @@ public class Controller implements Serializable {
         for (Player p : game.getPlayers()) {
             p.getChoosableGoals().add(gh.getGame(gameID).getGoals().getGoal());
             p.getChoosableGoals().add(gh.getGame(gameID).getGoals().getGoal());
-            gh.notify(new PrivateGoalsListAssignedEvent(p.getChoosableGoals(),p));
+            gh.notify(new PersonalGoalsListAssignedEvent(p.getChoosableGoals(),p));
         }
 
     }
@@ -434,10 +434,14 @@ public class Controller implements Serializable {
         if (player == null) throw new UnexistentUserException();
 
         if (gh.getGame(ID).getGamePhase() != GamePhase.CHOOSING_PRIVATE_GOAL) throw new WrongGamePhaseException();
-        if (player.getChoosableGoals().get(0).getGoalID() == goalID)
+        if (player.getChoosableGoals().get(0).getGoalID() == goalID){
             player.setPrivateGoal(player.getChoosableGoals().get(0));
-        else if (player.getChoosableGoals().get(1).getGoalID() == goalID)
+            gh.notify(new PersonalGoalAssignedEvent(player,player.getChoosableGoals().get(0)));
+        }
+        else if (player.getChoosableGoals().get(1).getGoalID() == goalID){
             player.setPrivateGoal(player.getChoosableGoals().get(1));
+            gh.notify(new PersonalGoalAssignedEvent(player,player.getChoosableGoals().get(1)));
+        }
         else throw new IllegalGoalChosenException();
 
         for (Player p : gh.getGame(ID).getPlayers()) {

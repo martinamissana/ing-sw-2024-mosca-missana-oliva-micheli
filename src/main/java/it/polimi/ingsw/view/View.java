@@ -238,7 +238,7 @@ public abstract class View extends ViewObservable<NetMessage> {
 
     public abstract void choosePawn(Pawn color) throws PawnAlreadyTakenException, IOException, LobbyDoesNotExistsException, GameAlreadyStartedException, GameDoesNotExistException, UnexistentUserException;
 
-    public abstract void choosePersonalGoal(int goalID) throws RemoteException, IllegalGoalChosenException, WrongGamePhaseException, GameDoesNotExistException, UnexistentUserException;
+    public abstract void choosePersonalGoal(int goalID) throws IOException, IllegalGoalChosenException, WrongGamePhaseException, GameDoesNotExistException, UnexistentUserException;
 
     public abstract void leaveGame() throws LobbyDoesNotExistsException, GameDoesNotExistException, IOException, UnexistentUserException;
 

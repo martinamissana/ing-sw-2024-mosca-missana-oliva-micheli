@@ -1,15 +1,16 @@
-package it.polimi.ingsw.model.observer.events;
+package it.polimi.ingsw.network.netMessage.s2c;
 
 import it.polimi.ingsw.model.goal.Goal;
 import it.polimi.ingsw.model.player.Player;
+import it.polimi.ingsw.network.netMessage.NetMessage;
 
 import java.util.ArrayList;
 
-public class PrivateGoalsListAssignedEvent extends Event{
+public class PersonalGoalsListAssignedMessage extends NetMessage {
     private final ArrayList<Goal> list;
     private final Player player;
 
-    public PrivateGoalsListAssignedEvent(ArrayList<Goal> list, Player player) {
+    public PersonalGoalsListAssignedMessage(ArrayList<Goal> list, Player player) {
         this.list = list;
         this.player = player;
     }
