@@ -9,4 +9,14 @@ module PSP001 {
     opens it.polimi.ingsw.model.card;
     opens it.polimi.ingsw.model.commonItem;
     opens it.polimi.ingsw.model.goal;
+
+    exports it.polimi.ingsw.network.RMI;
+    exports it.polimi.ingsw.controller.exceptions;
+    exports it.polimi.ingsw.model.exceptions;
+    exports it.polimi.ingsw.controller;
+    exports it.polimi.ingsw.model.chat;
+    exports it.polimi.ingsw.model.deck;
+    exports it.polimi.ingsw.model.card;
+    exports it.polimi.ingsw.model.player;
+
 }

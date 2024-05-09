@@ -19,6 +19,7 @@ import it.polimi.ingsw.model.player.*;
 import it.polimi.ingsw.network.netMessage.NetMessage;
 
 import java.io.IOException;
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -48,9 +49,6 @@ public abstract class View extends ViewObservable<NetMessage> {
     private final ArrayList<String> errorMessages = new ArrayList<>();
 
     public View() {
-        this.lastRound = false;
-        this.firstPlayer = false;
-        this.yourTurn = false;
     }
 
     public String getNickname() {
@@ -105,9 +103,7 @@ public abstract class View extends ViewObservable<NetMessage> {
         return privateGoal;
     }
 
-    public ArrayList<String> getErrorMessages() {
-        return errorMessages;
-    }
+    public ArrayList<String> getErrorMessages() {return errorMessages;}
 
     public Pawn getPawn() {
         return pawn;
@@ -230,9 +226,7 @@ public abstract class View extends ViewObservable<NetMessage> {
         this.commonGoal2 = commonGoal2;
     }
 
-    public void setNickname(String nickname) {
-        this.nickname = nickname;
-    }
+    public void setNickname(String nickname) { this.nickname = nickname; }
 
 
     public synchronized void createLobby(int numOfPlayers) throws LobbyDoesNotExistsException, IOException, FullLobbyException, NicknameAlreadyTakenException, ClassNotFoundException {
@@ -255,7 +249,7 @@ public abstract class View extends ViewObservable<NetMessage> {
 
     }
 
-    public void choosePersonalGoal(int goalID) {
+    public void choosePersonalGoal(int goalID) throws RemoteException {
 
     }
 
@@ -278,6 +272,7 @@ public abstract class View extends ViewObservable<NetMessage> {
     public void flipCard(int handPos) throws GameDoesNotExistException {
 
     }
+
 
     public void getCurrentStatus() throws IOException, FullLobbyException, NicknameAlreadyTakenException, ClassNotFoundException {
     }
