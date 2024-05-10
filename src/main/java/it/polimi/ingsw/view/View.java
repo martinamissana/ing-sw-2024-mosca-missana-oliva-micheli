@@ -44,6 +44,7 @@ public abstract class View extends ViewObservable<NetMessage> {
     private Goal commonGoal1;
     private Goal commonGoal2;
     private GamePhase gamePhase;
+    private ArrayList<Player> winners = new ArrayList<>();
     private final ArrayList<String> errorMessages = new ArrayList<>();
 
     public View() {
@@ -101,7 +102,11 @@ public abstract class View extends ViewObservable<NetMessage> {
         return privateGoal;
     }
 
-    public ArrayList<String> getErrorMessages() {return errorMessages;}
+    public ArrayList<Player> getWinners() { return winners; }
+
+    public ArrayList<String> getErrorMessages() {
+        return errorMessages;
+    }
 
     public Pawn getPawn() {
         return pawn;
@@ -224,7 +229,13 @@ public abstract class View extends ViewObservable<NetMessage> {
         this.commonGoal2 = commonGoal2;
     }
 
-    public void setNickname(String nickname) { this.nickname = nickname; }
+    public void setNickname(String nickname) {
+        this.nickname = nickname;
+    }
+
+    public void setWinners(ArrayList<Player> winners) {
+        this.winners = winners;
+    }
 
     public abstract void login(String nickname) throws NicknameAlreadyTakenException, RemoteException, IOException, FullLobbyException, ClassNotFoundException;
 

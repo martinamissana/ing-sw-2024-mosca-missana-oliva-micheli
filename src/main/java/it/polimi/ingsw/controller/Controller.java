@@ -686,7 +686,7 @@ public class Controller implements Serializable {
      *
      * @param gameID index of the game where the evaluation is done
      */
-    public synchronized void winner(Integer gameID) {
+    public synchronized void winner(Integer gameID) throws IOException {
         Game game = gh.getActiveGames().get(gameID);
         evaluatePrivateGoal(gameID);
         evaluateCommonGoal(gameID);
@@ -702,6 +702,7 @@ public class Controller implements Serializable {
             if (scoreboard.get(p) == maxValue) winners.add(p);
         }
         game.setWinners(winners);
+        gh.notify(new GameWinnersAnnouncedEvent(gameID,game.getWinners()));
     }
 
     /**

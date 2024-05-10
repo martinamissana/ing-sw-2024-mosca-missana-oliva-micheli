@@ -1,14 +1,15 @@
-package it.polimi.ingsw.model.observer.events;
+package it.polimi.ingsw.network.netMessage.s2c;
 
 import it.polimi.ingsw.model.player.Player;
+import it.polimi.ingsw.network.netMessage.NetMessage;
 
 import java.util.ArrayList;
 
-public class GameWinnersAnnouncedEvent  extends Event {
+public class GameWinnersAnnouncedMessage extends NetMessage {
     private Integer ID;
     private ArrayList<Player> winners=new ArrayList<>();
 
-    public GameWinnersAnnouncedEvent(Integer ID, ArrayList<Player> winners) {
+    public GameWinnersAnnouncedMessage(Integer ID, ArrayList<Player> winners) {
         this.ID = ID;
         this.winners = winners;
     }

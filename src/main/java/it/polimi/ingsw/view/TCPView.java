@@ -173,6 +173,10 @@ public class TCPView extends View {
                 else if (m.getID().equals(super.getID()) && !m.getNickname().equals(super.getNickname()))
                     super.setYourTurn(false);
             }
+            case GameWinnersAnnouncedMessage m -> {
+                if (m.getID().equals(super.getID()))
+                    super.setWinners(m.getWinners());
+            }
             case FailMessage m -> {
                 super.getErrorMessages().add(m.getMessage());
             }
