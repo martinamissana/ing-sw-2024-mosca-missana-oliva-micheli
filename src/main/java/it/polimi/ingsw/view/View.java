@@ -3,6 +3,7 @@ package it.polimi.ingsw.view;
 import it.polimi.ingsw.controller.exceptions.*;
 import it.polimi.ingsw.model.card.Card;
 import it.polimi.ingsw.model.card.CardSide;
+import it.polimi.ingsw.model.card.ResourceCard;
 import it.polimi.ingsw.model.chat.Chat;
 import it.polimi.ingsw.model.chat.Message;
 import it.polimi.ingsw.model.deck.DeckBuffer;
@@ -102,7 +103,9 @@ public abstract class View extends ViewObservable<NetMessage> {
         return privateGoal;
     }
 
-    public ArrayList<Player> getWinners() { return winners; }
+    public ArrayList<Player> getWinners() {
+        return winners;
+    }
 
     public ArrayList<String> getErrorMessages() {
         return errorMessages;
@@ -211,6 +214,12 @@ public abstract class View extends ViewObservable<NetMessage> {
 
     public void setDeckBuffers(HashMap<DeckBufferType, DeckBuffer> deckBuffers) {
         this.deckBuffers = deckBuffers;
+    }
+
+    public void setCardInDeckBuffer(DeckBufferType deckBufferType, Card card) {
+        DeckBuffer d = new DeckBuffer(null);
+        d.setCard((ResourceCard) card);
+        this.deckBuffers.put(deckBufferType, d);
     }
 
     public void setTopResourceCard(Card topResourceCard) {

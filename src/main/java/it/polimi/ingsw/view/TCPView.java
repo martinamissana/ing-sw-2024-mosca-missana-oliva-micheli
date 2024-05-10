@@ -5,6 +5,8 @@ import it.polimi.ingsw.controller.exceptions.NotYourTurnException;
 import it.polimi.ingsw.model.card.CardSide;
 import it.polimi.ingsw.model.card.ResourceCard;
 import it.polimi.ingsw.model.chat.Message;
+import it.polimi.ingsw.model.deck.DeckBufferType;
+import it.polimi.ingsw.model.deck.DeckType;
 import it.polimi.ingsw.model.deck.DeckTypeBox;
 import it.polimi.ingsw.model.exceptions.*;
 import it.polimi.ingsw.model.player.Coords;
@@ -189,6 +191,17 @@ public class TCPView extends View {
                     super.setCommonGoal2(null);
                     super.setGamePhase(null);
                     super.setAction(null);
+                    super.setID(null);
+                    super.setPawn(null);
+                }
+            }
+            case CardDrawnFromSourceMessage m -> {
+                if (m.getID().equals(super.getID())) {
+                    if(m.getType().equals(DeckType.RESOURCE))
+                        super.setTopResourceCard(m.getCard());
+                    if(m.getType().equals(DeckType.GOLDEN))
+                        super.setTopGoldenCard(m.getCard());
+                    else super.setCardInDeckBuffer((DeckBufferType) m.getType(),m.getCard());
                 }
             }
             case FailMessage m -> {

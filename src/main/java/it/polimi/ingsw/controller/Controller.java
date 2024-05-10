@@ -8,6 +8,7 @@ import it.polimi.ingsw.model.card.StarterCard;
 import it.polimi.ingsw.model.chat.Message;
 import it.polimi.ingsw.model.commonItem.ItemBox;
 import it.polimi.ingsw.model.deck.DeckBufferType;
+import it.polimi.ingsw.model.deck.DeckType;
 import it.polimi.ingsw.model.deck.DeckTypeBox;
 import it.polimi.ingsw.model.exceptions.*;
 import it.polimi.ingsw.model.game.*;
@@ -563,6 +564,14 @@ public class Controller implements Serializable {
         ResourceCard newCard = game.drawFromSource(deckTypeBox);
         player.getHand().addCard(newCard);
         gh.notify(new CardAddedToHandEvent(player, newCard));
+
+        if (deckTypeBox.equals(DeckType.RESOURCE) || deckTypeBox.equals(DeckType.GOLDEN)) {
+            DeckType d = (DeckType) deckTypeBox;
+            gh.notify(new CardDrawnFromSourceEvent(gameID, deckTypeBox, game.getDeck(d).getCards().getLast()));
+        } else if (deckTypeBox.equals(DeckBufferType.RES1) || deckTypeBox.equals(DeckBufferType.RES2) || deckTypeBox.equals(DeckBufferType.GOLD1) || deckTypeBox.equals(DeckBufferType.GOLD2)) {
+            DeckBufferType d = (DeckBufferType) deckTypeBox;
+            gh.notify(new CardDrawnFromSourceEvent(gameID, deckTypeBox, game.getDeckBuffer(d).getCard()));
+        }
 
         // set the game's current action to PLAY after drawing a card
         game.setAction(Action.PLAY);

@@ -30,6 +30,8 @@ public class DeckBuffer implements Drawable, Serializable {
         return card;
     }
 
+    public void setCard(ResourceCard card) { this.card = card; }
+
     /**
      * Put a card in the deck buffer (if empty)
      */

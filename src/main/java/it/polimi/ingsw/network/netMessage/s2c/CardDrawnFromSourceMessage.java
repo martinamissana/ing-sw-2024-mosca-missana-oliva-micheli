@@ -1,14 +1,15 @@
-package it.polimi.ingsw.model.observer.events;
+package it.polimi.ingsw.network.netMessage.s2c;
 
 import it.polimi.ingsw.model.card.Card;
 import it.polimi.ingsw.model.deck.DeckTypeBox;
+import it.polimi.ingsw.network.netMessage.NetMessage;
 
-public class CardDrawnFromSourceEvent  extends Event{
+public class CardDrawnFromSourceMessage extends NetMessage {
     private final Integer ID;
     private final DeckTypeBox type;
     private final Card card; //the new card on top
 
-    public CardDrawnFromSourceEvent(Integer ID, DeckTypeBox type, Card card) {
+    public CardDrawnFromSourceMessage(Integer ID, DeckTypeBox type, Card card) {
         this.ID = ID;
         this.type = type;
         this.card = card;
