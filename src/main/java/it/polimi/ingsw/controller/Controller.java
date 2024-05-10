@@ -212,6 +212,7 @@ public class Controller implements Serializable {
         if (gh.getActiveGames().containsKey(gameID)) {
             gh.getActiveGames().remove(gameID);
             deleteLobby(gameID);
+            gh.notify(new GameTerminatedEvent(gameID));
         } else throw new GameDoesNotExistException("Game with ID " + gameID + " does not exist");
     }
 
@@ -702,7 +703,7 @@ public class Controller implements Serializable {
             if (scoreboard.get(p) == maxValue) winners.add(p);
         }
         game.setWinners(winners);
-        gh.notify(new GameWinnersAnnouncedEvent(gameID,game.getWinners()));
+        gh.notify(new GameWinnersAnnouncedEvent(gameID, game.getWinners()));
     }
 
     /**

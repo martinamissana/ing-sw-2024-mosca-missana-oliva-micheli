@@ -127,6 +127,10 @@ public class TCPVirtualView implements Runnable, Observer {
                     GameWinnersAnnouncedMessage m = new GameWinnersAnnouncedMessage(e.getID(),e.getWinners());
                     out.writeObject(m);
                 }
+                case GameTerminatedEvent e -> {
+                    GameTerminatedMessage m = new GameTerminatedMessage(e.getID());
+                    out.writeObject(m);
+                }
                 default -> throw new IllegalStateException("Unexpected value: " + event);
             }
         }

@@ -177,6 +177,20 @@ public class TCPView extends View {
                 if (m.getID().equals(super.getID()))
                     super.setWinners(m.getWinners());
             }
+            case GameTerminatedMessage m -> {
+                if (m.getID().equals(super.getID())) {
+                    super.setFirstPlayer(false);
+                    super.setYourTurn(false);
+                    super.setScoreboard(null);
+                    super.setDeckBuffers(null);
+                    super.setTopResourceCard(null);
+                    super.setTopGoldenCard(null);
+                    super.setCommonGoal1(null);
+                    super.setCommonGoal2(null);
+                    super.setGamePhase(null);
+                    super.setAction(null);
+                }
+            }
             case FailMessage m -> {
                 super.getErrorMessages().add(m.getMessage());
             }
