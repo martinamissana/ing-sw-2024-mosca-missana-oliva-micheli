@@ -219,6 +219,20 @@ public class TCPVirtualView implements Runnable, Observer {
                     out.writeObject(failMessage);
                 }
             }
+            case PlayCardMessage m -> {
+                try{
+                    c.playCard(m.getGameID(),m.getNickname(),m.getHandPos(),m.getCoords());
+                } catch (IllegalActionException e) {
+                    FailMessage failMessage = new FailMessage("You cannot play a card now", m.getNickname());
+                    out.writeObject(failMessage);
+                } catch (NotYourTurnException e) {
+                    FailMessage failMessage = new FailMessage("it's not your turn", m.getNickname());
+                    out.writeObject(failMessage);
+                } catch (IllegalMoveException e) {
+                    FailMessage failMessage = new FailMessage("you can't place the card on those coordinates", m.getNickname());
+                    out.writeObject(failMessage);
+                }
+            }
 
             default -> throw new IllegalStateException("Unexpected value: " + message);
         }

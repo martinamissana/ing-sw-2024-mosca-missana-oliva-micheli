@@ -197,11 +197,11 @@ public class TCPView extends View {
             }
             case CardDrawnFromSourceMessage m -> {
                 if (m.getID().equals(super.getID())) {
-                    if(m.getType().equals(DeckType.RESOURCE))
+                    if (m.getType().equals(DeckType.RESOURCE))
                         super.setTopResourceCard(m.getCard());
-                    if(m.getType().equals(DeckType.GOLDEN))
+                    if (m.getType().equals(DeckType.GOLDEN))
                         super.setTopGoldenCard(m.getCard());
-                    else super.setCardInDeckBuffer((DeckBufferType) m.getType(),m.getCard());
+                    else super.setCardInDeckBuffer((DeckBufferType) m.getType(), m.getCard());
                 }
             }
             case FailMessage m -> {
@@ -269,8 +269,9 @@ public class TCPView extends View {
     }
 
     @Override
-    public void playCard(int handPos, Coords coords) throws IllegalActionException, NotYourTurnException, IllegalMoveException, GameDoesNotExistException {
-
+    public void playCard(int handPos, Coords coords) throws IOException {
+        PlayCardMessage m = new PlayCardMessage(super.getID(), super.getNickname(), handPos, coords);
+        out.writeObject(m);
     }
 
     @Override
