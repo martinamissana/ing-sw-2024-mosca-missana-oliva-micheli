@@ -45,7 +45,7 @@ public class TCPView extends View {
                 deserialized = (NetMessage) in.readObject();
                 elaborate(deserialized);
 
-            } while (deserialized.getClass() != DisconnectMessage.class);
+            } while (deserialized.getClass() != LoginFail_NicknameAlreadyTaken.class && deserialized.getClass()!= DisconnectMessage.class);
 
             in.close();
             out.close();
@@ -62,7 +62,6 @@ public class TCPView extends View {
         switch (message) {
             case LoginMessage m -> {
             }
-            //TODO: REVIEW THIS WITH DISCONNECTION LOGIC
             case LoginFail_NicknameAlreadyTaken m -> {
                 DisconnectMessage disconnectMessage = new DisconnectMessage();
                 out.writeObject(disconnectMessage);
@@ -70,8 +69,7 @@ public class TCPView extends View {
             case LobbyCreatedMessage m -> {
                 if (m.getCreator().equals(super.getPlayer())) {
                     super.setID(m.getID());
-                    //System.out.println("your lobby was created," + m.getID() + " allowed players: " + m.getLobby().getNumOfPlayers());
-                }// else System.out.println("A lobby was created, allowed players: " + m.getLobby().getNumOfPlayers());
+                }
                 super.getLobbies().put(m.getID(), m.getLobby());
             }
             case LobbyJoinedMessage m -> {

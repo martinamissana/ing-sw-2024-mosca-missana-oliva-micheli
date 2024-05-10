@@ -21,6 +21,9 @@ public class TCPVirtualView implements Runnable, Observer {
 
     private final ObjectOutputStream out;
     private final Controller c;
+    private Integer ID;
+    private String nickname;
+
 
     public TCPVirtualView(Socket socket, Controller c) throws IOException {
         this.socket = socket;
@@ -80,60 +83,89 @@ public class TCPVirtualView implements Runnable, Observer {
                     out.writeObject(m);
                 }
                 case ChatMessageAddedEvent e -> {
-                    ChatMessageAddedEvent m = new ChatMessageAddedEvent(e.getM(), e.getLobbyID());
-                    out.writeObject(m);
+                    if(e.getLobbyID().equals(ID)) {
+                        ChatMessageAddedEvent m = new ChatMessageAddedEvent(e.getM(), e.getLobbyID());
+                        out.writeObject(m);
+                    }
                 }
                 case GameCreatedEvent e -> {
-                    GameCreatedMessage m = new GameCreatedMessage(e.getID(), e.getFirstPlayer(), e.getScoreboard(), e.getTopResourceCard(), e.getTopGoldenCard(), e.getCommonGoal1(), e.getCommonGoal2(), e.getGamePhase(), e.getDeckBuffers().get(DeckBufferType.RES1), e.getDeckBuffers().get(DeckBufferType.RES2), e.getDeckBuffers().get(DeckBufferType.GOLD1), e.getDeckBuffers().get(DeckBufferType.GOLD2));
-                    out.writeObject(m);
+                    if(e.getID().equals(ID)){
+                        GameCreatedMessage m = new GameCreatedMessage(e.getID(), e.getFirstPlayer(), e.getScoreboard(), e.getTopResourceCard(), e.getTopGoldenCard(), e.getCommonGoal1(), e.getCommonGoal2(), e.getGamePhase(), e.getDeckBuffers().get(DeckBufferType.RES1), e.getDeckBuffers().get(DeckBufferType.RES2), e.getDeckBuffers().get(DeckBufferType.GOLD1), e.getDeckBuffers().get(DeckBufferType.GOLD2));
+                        out.writeObject(m);
+                    }
+
                 }
                 case CardAddedToHandEvent e -> {
-                    CardAddedToHandMessage m = new CardAddedToHandMessage(e.getPlayer(), e.getCard());
-                    out.writeObject(m);
+                    if(e.getPlayer().getNickname().equals(nickname)) {
+                        CardAddedToHandMessage m = new CardAddedToHandMessage(e.getPlayer(), e.getCard());
+                        out.writeObject(m);
+                    }
                 }
                 case CardRemovedFromHandEvent e -> {
-                    CardRemovedFromHandMessage m = new CardRemovedFromHandMessage(e.getPlayer(), e.getCard());
-                    out.writeObject(m);
+                    if(e.getPlayer().getNickname().equals(nickname)) {
+                        CardRemovedFromHandMessage m = new CardRemovedFromHandMessage(e.getPlayer(), e.getCard());
+                        out.writeObject(m);
+                    }
                 }
                 case CardPlacedOnFieldEvent e -> {
-                    CardPlacedOnFieldMessage m = new CardPlacedOnFieldMessage(e.getCoords(), e.getID(), e.getCard(), e.getNickname());
-                    out.writeObject(m);
+                    if(e.getID().equals(ID)) {
+                        CardPlacedOnFieldMessage m = new CardPlacedOnFieldMessage(e.getCoords(), e.getID(), e.getCard(), e.getNickname());
+                        out.writeObject(m);
+                    }
                 }
                 case GamePhaseChangedEvent e -> {
-                    GamePhaseChangedMessage m = new GamePhaseChangedMessage(e.getID(), e.getGamePhase());
-                    out.writeObject(m);
+                    if(e.getID().equals(ID)) {
+                        GamePhaseChangedMessage m = new GamePhaseChangedMessage(e.getID(), e.getGamePhase());
+                        out.writeObject(m);
+                    }
                 }
                 case PersonalGoalsListAssignedEvent e -> {
-                    PersonalGoalsListAssignedMessage m = new PersonalGoalsListAssignedMessage(e.getList(), e.getPlayer());
-                    out.writeObject(m);
+                    if(e.getPlayer().getNickname().equals(nickname)) {
+                        PersonalGoalsListAssignedMessage m = new PersonalGoalsListAssignedMessage(e.getList(), e.getPlayer());
+                        out.writeObject(m);
+                    }
                 }
                 case PersonalGoalAssignedEvent e -> {
-                    PersonalGoalAssignedMessage m = new PersonalGoalAssignedMessage(e.getPlayer(), e.getGoal());
-                    out.writeObject(m);
+                    if(e.getPlayer().getNickname().equals(nickname)) {
+                        PersonalGoalAssignedMessage m = new PersonalGoalAssignedMessage(e.getPlayer(), e.getGoal());
+                        out.writeObject(m);
+                    }
                 }
                 case GameActionSwitchedEvent e -> {
-                    GameActionSwitchedMessage m = new GameActionSwitchedMessage(e.getID(), e.getAction());
-                    out.writeObject(m);
+                    if(e.getID().equals(ID)) {
+                        GameActionSwitchedMessage m = new GameActionSwitchedMessage(e.getID(), e.getAction());
+                        out.writeObject(m);
+                    }
                 }
                 case LastRoundStartedEvent e -> {
-                    LastRoundStartedMessage m = new LastRoundStartedMessage(e.getID());
-                    out.writeObject(m);
+                    if(e.getID().equals(ID)) {
+                        LastRoundStartedMessage m = new LastRoundStartedMessage(e.getID());
+                        out.writeObject(m);
+                    }
                 }
                 case TurnChangedEvent e -> {
-                    TurnChangedMessage m = new TurnChangedMessage(e.getID(), e.getNickname());
-                    out.writeObject(m);
+                    if(e.getID().equals(ID)) {
+                        TurnChangedMessage m = new TurnChangedMessage(e.getID(), e.getNickname());
+                        out.writeObject(m);
+                    }
                 }
                 case GameWinnersAnnouncedEvent e -> {
-                    GameWinnersAnnouncedMessage m = new GameWinnersAnnouncedMessage(e.getID(), e.getWinners());
-                    out.writeObject(m);
+                    if(e.getID().equals(ID)) {
+                        GameWinnersAnnouncedMessage m = new GameWinnersAnnouncedMessage(e.getID(), e.getWinners());
+                        out.writeObject(m);
+                    }
                 }
                 case GameTerminatedEvent e -> {
-                    GameTerminatedMessage m = new GameTerminatedMessage(e.getID());
-                    out.writeObject(m);
+                    if(e.getID().equals(ID)) {
+                        GameTerminatedMessage m = new GameTerminatedMessage(e.getID());
+                        out.writeObject(m);
+                    }
                 }
                 case CardDrawnFromSourceEvent e -> {
-                    CardDrawnFromSourceMessage m = new CardDrawnFromSourceMessage(e.getID(), e.getType(), e.getCard());
-                    out.writeObject(m);
+                    if(e.getID().equals(ID)) {
+                        CardDrawnFromSourceMessage m = new CardDrawnFromSourceMessage(e.getID(), e.getType(), e.getCard());
+                        out.writeObject(m);
+                    }
                 }
                 default -> throw new IllegalStateException("Unexpected value: " + event);
             }
@@ -146,6 +178,7 @@ public class TCPVirtualView implements Runnable, Observer {
             case MyNickname m -> {
                 try {
                     c.login(m.getNickname());
+                    setNickname(m.getNickname());
                 } catch (NicknameAlreadyTakenException e) {
                     LoginFail_NicknameAlreadyTaken errorMessage = new LoginFail_NicknameAlreadyTaken();
                     out.writeObject(m);
@@ -154,6 +187,7 @@ public class TCPVirtualView implements Runnable, Observer {
             case CreateLobbyMessage m -> {
                 try {
                     c.createLobby(m.getNumOfPlayers(), m.getCreator().getNickname());
+                    setID(c.getGh().getNumOfLobbies()-1);
                 } catch (CannotJoinMultipleLobbiesException e) {
                     FailMessage failMessage = new FailMessage("you can't create a lobby when you are already in one", m.getCreator().getNickname());
                     out.writeObject(failMessage);
@@ -162,6 +196,7 @@ public class TCPVirtualView implements Runnable, Observer {
             case JoinLobbyMessage m -> {
                 try {
                     c.joinLobby(m.getPlayer().getNickname(), m.getID());
+                    setID(m.getID());
                 } catch (FullLobbyException e) {
                     FailMessage failMessage = new FailMessage("you couldn't join the lobby because it was full", m.getPlayer().getNickname());
                     out.writeObject(failMessage);
@@ -178,6 +213,7 @@ public class TCPVirtualView implements Runnable, Observer {
             case LeaveLobbyMessage m -> {
                 try {
                     c.leaveLobby(m.getPlayer().getNickname(), m.getID());
+                    setID(null);
                 } catch (LobbyDoesNotExistsException e) {
                     FailMessage failMessage = new FailMessage("you can't leave an inexistant lobby", m.getPlayer().getNickname());
                     out.writeObject(failMessage);
@@ -255,5 +291,13 @@ public class TCPVirtualView implements Runnable, Observer {
             }
             default -> throw new IllegalStateException("Unexpected value: " + message);
         }
+    }
+
+    public void setID(Integer ID) {
+        this.ID = ID;
+    }
+
+    public void setNickname(String nickname) {
+        this.nickname = nickname;
     }
 }

@@ -21,7 +21,7 @@ import java.util.concurrent.Executors;
             try {
                 serverSocket = new ServerSocket(port);
             } catch (IOException e) {
-                System.err.println(e.getMessage()); // Porta non disponibile
+                System.err.println(e.getMessage());
                 return;
             }
             System.out.println("Server ready");
@@ -32,7 +32,7 @@ import java.util.concurrent.Executors;
                     executor.submit(new TCPVirtualView(socket,c));
 
                 } catch(IOException e) {
-                    break; // Entrerei qui se serverSocket venisse chiuso
+                    break; //if a socket is closed
                 }
             }
             executor.shutdown();
