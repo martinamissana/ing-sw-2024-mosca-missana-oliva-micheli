@@ -120,11 +120,11 @@ public class TCPVirtualView implements Runnable, Observer {
                     out.writeObject(m);
                 }
                 case TurnChangedEvent e -> {
-                    TurnChangedMessage m = new TurnChangedMessage(e.getID(),e.getNickname());
+                    TurnChangedMessage m = new TurnChangedMessage(e.getID(), e.getNickname());
                     out.writeObject(m);
                 }
                 case GameWinnersAnnouncedEvent e -> {
-                    GameWinnersAnnouncedMessage m = new GameWinnersAnnouncedMessage(e.getID(),e.getWinners());
+                    GameWinnersAnnouncedMessage m = new GameWinnersAnnouncedMessage(e.getID(), e.getWinners());
                     out.writeObject(m);
                 }
                 case GameTerminatedEvent e -> {
@@ -132,7 +132,7 @@ public class TCPVirtualView implements Runnable, Observer {
                     out.writeObject(m);
                 }
                 case CardDrawnFromSourceEvent e -> {
-                    CardDrawnFromSourceMessage m = new CardDrawnFromSourceMessage(e.getID(),e.getType(),e.getCard());
+                    CardDrawnFromSourceMessage m = new CardDrawnFromSourceMessage(e.getID(), e.getType(), e.getCard());
                     out.writeObject(m);
                 }
                 default -> throw new IllegalStateException("Unexpected value: " + event);
@@ -220,10 +220,10 @@ public class TCPVirtualView implements Runnable, Observer {
                 }
             }
             case PlayCardMessage m -> {
-                try{
-                    c.playCard(m.getGameID(),m.getNickname(),m.getHandPos(),m.getCoords());
+                try {
+                    c.playCard(m.getGameID(), m.getNickname(), m.getHandPos(), m.getCoords());
                 } catch (IllegalActionException e) {
-                    FailMessage failMessage = new FailMessage("You cannot play a card now", m.getNickname());
+                    FailMessage failMessage = new FailMessage("you cannot play a card now", m.getNickname());
                     out.writeObject(failMessage);
                 } catch (NotYourTurnException e) {
                     FailMessage failMessage = new FailMessage("it's not your turn", m.getNickname());
@@ -233,7 +233,26 @@ public class TCPVirtualView implements Runnable, Observer {
                     out.writeObject(failMessage);
                 }
             }
-
+            case DrawCardMessage m -> {
+                try {
+                    c.drawCard(m.getGameID(), m.getNickname(), m.getDeckTypeBox());
+                } catch (IllegalActionException e) {
+                    FailMessage failMessage = new FailMessage("you can't draw a card now", m.getNickname());
+                    out.writeObject(failMessage);
+                } catch (EmptyBufferException e) {
+                    FailMessage failMessage = new FailMessage("the deck buffer you want to draw from is empty", m.getNickname());
+                    out.writeObject(failMessage);
+                } catch (NotYourTurnException e) {
+                    FailMessage failMessage = new FailMessage("it's not your turn", m.getNickname());
+                    out.writeObject(failMessage);
+                } catch (EmptyDeckException e) {
+                    FailMessage failMessage = new FailMessage("the deck you want to draw from is empty", m.getNickname());
+                    out.writeObject(failMessage);
+                }
+            }
+            case FlipCardMessage m -> {
+                c.flipCard(m.getGameID(), m.getNickname(), m.getHandPos());
+            }
             default -> throw new IllegalStateException("Unexpected value: " + message);
         }
     }

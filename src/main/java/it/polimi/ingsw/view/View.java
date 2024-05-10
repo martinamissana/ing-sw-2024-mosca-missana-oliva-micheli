@@ -267,7 +267,7 @@ public abstract class View extends ViewObservable<NetMessage> {
 
     public abstract void drawCard(DeckTypeBox deckTypeBox) throws IllegalActionException, EmptyBufferException, NotYourTurnException, EmptyDeckException, GameDoesNotExistException, HandIsFullException, LobbyDoesNotExistsException, IOException, UnexistentUserException;
 
-    public abstract void flipCard(int handPos) throws GameDoesNotExistException, UnexistentUserException, RemoteException;
+    public abstract void flipCard(int handPos) throws GameDoesNotExistException, UnexistentUserException, IOException;
 
     public abstract void getCurrentStatus() throws IOException, FullLobbyException, NicknameAlreadyTakenException, ClassNotFoundException;
 

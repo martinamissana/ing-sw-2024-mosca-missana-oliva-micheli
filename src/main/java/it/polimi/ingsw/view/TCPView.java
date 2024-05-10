@@ -1,7 +1,5 @@
 package it.polimi.ingsw.view;
 
-import it.polimi.ingsw.controller.exceptions.IllegalActionException;
-import it.polimi.ingsw.controller.exceptions.NotYourTurnException;
 import it.polimi.ingsw.model.card.CardSide;
 import it.polimi.ingsw.model.card.ResourceCard;
 import it.polimi.ingsw.model.chat.Message;
@@ -275,13 +273,16 @@ public class TCPView extends View {
     }
 
     @Override
-    public void drawCard(DeckTypeBox deckTypeBox) throws IllegalActionException, EmptyBufferException, NotYourTurnException, EmptyDeckException, GameDoesNotExistException, HandIsFullException {
-
+    public void drawCard(DeckTypeBox deckTypeBox) throws IOException {
+        DrawCardMessage m =new DrawCardMessage(super.getID(),super.getNickname(),deckTypeBox);
+        out.writeObject(m);
     }
 
     @Override
-    public void flipCard(int handPos) throws GameDoesNotExistException {
-
+    public void flipCard(int handPos) throws IOException {
+       FlipCardMessage m =new FlipCardMessage(super.getID(),super.getNickname(),handPos);
+        out.writeObject(m);
+        super.getHand().getCard(handPos).flip();
     }
 
     @Override
