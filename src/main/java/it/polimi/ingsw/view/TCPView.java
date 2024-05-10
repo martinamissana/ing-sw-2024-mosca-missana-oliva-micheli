@@ -157,6 +157,10 @@ public class TCPView extends View {
                 if (m.getPlayer().equals(super.getPlayer()))
                     super.setPrivateGoal(m.getGoal());
             }
+            case GameActionSwitchedMessage m -> {
+                if(m.getID().equals(super.getID()))
+                    super.setAction(m.getAction());
+            }
             case FailMessage m -> {
                 super.getErrorMessages().add(m.getMessage());
             }

@@ -100,15 +100,19 @@ public class TCPVirtualView implements Runnable, Observer {
                     out.writeObject(m);
                 }
                 case GamePhaseChangedEvent e -> {
-                    GamePhaseChangedMessage m = new GamePhaseChangedMessage(e.getID(),e.getGamePhase());
+                    GamePhaseChangedMessage m = new GamePhaseChangedMessage(e.getID(), e.getGamePhase());
                     out.writeObject(m);
                 }
                 case PersonalGoalsListAssignedEvent e -> {
-                    PersonalGoalsListAssignedMessage m =new PersonalGoalsListAssignedMessage(e.getList(),e.getPlayer());
+                    PersonalGoalsListAssignedMessage m = new PersonalGoalsListAssignedMessage(e.getList(), e.getPlayer());
                     out.writeObject(m);
                 }
                 case PersonalGoalAssignedEvent e -> {
-                    PersonalGoalAssignedMessage m = new PersonalGoalAssignedMessage(e.getPlayer(),e.getGoal());
+                    PersonalGoalAssignedMessage m = new PersonalGoalAssignedMessage(e.getPlayer(), e.getGoal());
+                    out.writeObject(m);
+                }
+                case GameActionSwitchedEvent e -> {
+                    GameActionSwitchedMessage m = new GameActionSwitchedMessage(e.getID(), e.getAction());
                     out.writeObject(m);
                 }
                 default -> throw new IllegalStateException("Unexpected value: " + event);
@@ -188,10 +192,10 @@ public class TCPVirtualView implements Runnable, Observer {
                 c.chooseCardSide(m.getID(), m.getNickname(), m.getSide());
             }
             case ChoosePersonalGoalMessage m -> {
-                try{
+                try {
                     c.choosePersonalGoal(m.getID(), m.getNickname(), m.getGoalID());
-                }catch(IllegalGoalChosenException e){
-                    FailMessage failMessage = new FailMessage( "the goal you chose is not valid",m.getNickname());
+                } catch (IllegalGoalChosenException e) {
+                    FailMessage failMessage = new FailMessage("the goal you chose is not valid", m.getNickname());
                     out.writeObject(failMessage);
                 }
             }

@@ -521,8 +521,10 @@ public class Controller implements Serializable {
         // set the game's current action to DRAW after playing a card
         // only if it's not the last round (because if it is,
         // players cannot draw cards and should pass instead)
-        if (!game.isLastRound())
+        if (!game.isLastRound()){
             game.setAction(Action.DRAW);
+            gh.notify(new GameActionSwitchedEvent(gameID,Action.DRAW));
+        }
         else
             nextTurn(gameID); // on the last round, place a card and pass. and if this is the last player, terminate game
     }
@@ -564,6 +566,7 @@ public class Controller implements Serializable {
 
         // set the game's current action to PLAY after drawing a card
         game.setAction(Action.PLAY);
+        gh.notify(new GameActionSwitchedEvent(gameID,Action.PLAY));
 
         // update the game's current player and check
         // whether the game's last round has been reached or not
