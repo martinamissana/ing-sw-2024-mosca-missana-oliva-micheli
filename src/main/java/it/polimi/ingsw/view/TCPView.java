@@ -113,6 +113,9 @@ public class TCPView extends View {
                     if (m.getFirstPlayer().equals(super.getPlayer())) {
                         super.setFirstPlayer(true);
                         super.setYourTurn(true);
+                    } else {
+                        super.setFirstPlayer(false);
+                        super.setYourTurn(false);
                     }
                     super.setScoreboard(m.getScoreboard());
                     super.setDeckBuffers(m.getDeckBuffers());
@@ -135,18 +138,17 @@ public class TCPView extends View {
                 }
             }
             case CardPlacedOnFieldMessage m -> {
-                if (m.getNickname().equals(super.getNickname())){
-                    super.getMyField().addCard((ResourceCard) m.getCard(),m.getCoords());
-                }
-                else {
-                    for(Player p: super.getFields().keySet()){
-                        if(m.getNickname().equals(p.getNickname()))
-                            p.getField().addCard((ResourceCard) m.getCard(),m.getCoords());
+                if (m.getNickname().equals(super.getNickname())) {
+                    super.getMyField().addCard((ResourceCard) m.getCard(), m.getCoords());
+                } else {
+                    for (Player p : super.getFields().keySet()) {
+                        if (m.getNickname().equals(p.getNickname()))
+                            p.getField().addCard((ResourceCard) m.getCard(), m.getCoords());
                     }
                 }
             }
             case GamePhaseChangedMessage m -> {
-                if(m.getID().equals(super.getID()))
+                if (m.getID().equals(super.getID()))
                     super.setGamePhase(m.getGamePhase());
             }
             case PersonalGoalsListAssignedMessage m -> {
@@ -158,8 +160,18 @@ public class TCPView extends View {
                     super.setPrivateGoal(m.getGoal());
             }
             case GameActionSwitchedMessage m -> {
-                if(m.getID().equals(super.getID()))
+                if (m.getID().equals(super.getID()))
                     super.setAction(m.getAction());
+            }
+            case LastRoundStartedMessage m -> {
+                if (m.getID().equals(super.getID()))
+                    super.setLastRound(true);
+            }
+            case TurnChangedMessage m -> {
+                if (m.getID().equals(super.getID()) && m.getNickname().equals(super.getNickname()))
+                    super.setYourTurn(true);
+                else if (m.getID().equals(super.getID()) && !m.getNickname().equals(super.getNickname()))
+                    super.setYourTurn(false);
             }
             case FailMessage m -> {
                 super.getErrorMessages().add(m.getMessage());
@@ -203,7 +215,7 @@ public class TCPView extends View {
 
     @Override
     public void choosePersonalGoal(int goalID) throws IOException {
-        ChoosePersonalGoalMessage m =new ChoosePersonalGoalMessage(super.getID(),super.getNickname(),goalID);
+        ChoosePersonalGoalMessage m = new ChoosePersonalGoalMessage(super.getID(), super.getNickname(), goalID);
         out.writeObject(m);
     }
 
@@ -221,7 +233,7 @@ public class TCPView extends View {
 
     @Override
     public void chooseCardSide(CardSide side) throws IOException {
-        ChooseCardSideMessage m =new ChooseCardSideMessage(super.getID(),super.getNickname(),side);
+        ChooseCardSideMessage m = new ChooseCardSideMessage(super.getID(), super.getNickname(), side);
         out.writeObject(m);
     }
 
@@ -239,6 +251,7 @@ public class TCPView extends View {
     public void flipCard(int handPos) throws GameDoesNotExistException {
 
     }
+
     @Override
     public void heartbeat() throws RemoteException {
 

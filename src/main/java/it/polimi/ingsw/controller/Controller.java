@@ -365,7 +365,7 @@ public class Controller implements Serializable {
             if (p.getHand().getSize() != 0) return;
         }
         gh.getGame(ID).setGamePhase(GamePhase.CHOOSING_PRIVATE_GOAL);
-        gh.notify(new GamePhaseChangedEvent(ID,GamePhase.CHOOSING_PRIVATE_GOAL));
+        gh.notify(new GamePhaseChangedEvent(ID, GamePhase.CHOOSING_PRIVATE_GOAL));
         fillHands(ID);
     }
 
@@ -414,7 +414,7 @@ public class Controller implements Serializable {
         for (Player p : game.getPlayers()) {
             p.getChoosableGoals().add(gh.getGame(gameID).getGoals().getGoal());
             p.getChoosableGoals().add(gh.getGame(gameID).getGoals().getGoal());
-            gh.notify(new PersonalGoalsListAssignedEvent(p.getChoosableGoals(),p));
+            gh.notify(new PersonalGoalsListAssignedEvent(p.getChoosableGoals(), p));
         }
 
     }
@@ -434,21 +434,19 @@ public class Controller implements Serializable {
         if (player == null) throw new UnexistentUserException();
 
         if (gh.getGame(ID).getGamePhase() != GamePhase.CHOOSING_PRIVATE_GOAL) throw new WrongGamePhaseException();
-        if (player.getChoosableGoals().get(0).getGoalID() == goalID){
+        if (player.getChoosableGoals().get(0).getGoalID() == goalID) {
             player.setPrivateGoal(player.getChoosableGoals().get(0));
-            gh.notify(new PersonalGoalAssignedEvent(player,player.getChoosableGoals().get(0)));
-        }
-        else if (player.getChoosableGoals().get(1).getGoalID() == goalID){
+            gh.notify(new PersonalGoalAssignedEvent(player, player.getChoosableGoals().get(0)));
+        } else if (player.getChoosableGoals().get(1).getGoalID() == goalID) {
             player.setPrivateGoal(player.getChoosableGoals().get(1));
-            gh.notify(new PersonalGoalAssignedEvent(player,player.getChoosableGoals().get(1)));
-        }
-        else throw new IllegalGoalChosenException();
+            gh.notify(new PersonalGoalAssignedEvent(player, player.getChoosableGoals().get(1)));
+        } else throw new IllegalGoalChosenException();
 
         for (Player p : gh.getGame(ID).getPlayers()) {
             if (p.getPrivateGoal() == null) return;
         }
         gh.getGame(ID).setGamePhase(GamePhase.PLAYING_GAME);
-        gh.notify(new GamePhaseChangedEvent(ID,GamePhase.PLAYING_GAME));
+        gh.notify(new GamePhaseChangedEvent(ID, GamePhase.PLAYING_GAME));
 
     }
 
@@ -521,12 +519,13 @@ public class Controller implements Serializable {
         // set the game's current action to DRAW after playing a card
         // only if it's not the last round (because if it is,
         // players cannot draw cards and should pass instead)
-        if (!game.isLastRound()){
+        if (!game.isLastRound()) {
             game.setAction(Action.DRAW);
-            gh.notify(new GameActionSwitchedEvent(gameID,Action.DRAW));
-        }
-        else
+            gh.notify(new GameActionSwitchedEvent(gameID, Action.DRAW));
+        } else {
             nextTurn(gameID); // on the last round, place a card and pass. and if this is the last player, terminate game
+        }
+
     }
 
     /**
@@ -566,7 +565,7 @@ public class Controller implements Serializable {
 
         // set the game's current action to PLAY after drawing a card
         game.setAction(Action.PLAY);
-        gh.notify(new GameActionSwitchedEvent(gameID,Action.PLAY));
+        gh.notify(new GameActionSwitchedEvent(gameID, Action.PLAY));
 
         // update the game's current player and check
         // whether the game's last round has been reached or not
@@ -600,6 +599,7 @@ public class Controller implements Serializable {
 
         // update turn counter
         game.setWhoseTurn((game.getWhoseTurn() + 1) % game.getNumOfPlayers());
+        gh.notify(new TurnChangedEvent(gameID, game.getPlayers().get(game.getWhoseTurn()).getNickname()));
     }
 
     /**
@@ -608,21 +608,24 @@ public class Controller implements Serializable {
      *
      * @param gameID - the ID of the game where the status is checked
      */
-    public synchronized void updateLastRound(Integer gameID) {
+    public synchronized void updateLastRound(Integer gameID) throws IOException {
         Game game = gh.getActiveGames().get(gameID);
 
         // if it's already last round there's no need to update
         if (game.isLastRound()) return;
 
         // if both decks are empty
-        if (game.getResourceDeck().getCards().isEmpty() &&
-                game.getGoldenDeck().getCards().isEmpty())
+        if (game.getResourceDeck().getCards().isEmpty() && game.getGoldenDeck().getCards().isEmpty()) {
             game.setLastRound(true);
+            gh.notify(new LastRoundStartedEvent(gameID));
+        }
 
         // if someone has reached 20 points
         for (Map.Entry<Player, Integer> entry : game.getScoreboard().entrySet())
-            if (entry.getValue() >= 20)
+            if (entry.getValue() >= 20) {
                 game.setLastRound(true);
+                gh.notify(new LastRoundStartedEvent(gameID));
+            }
     }
 
     // FINAL PHASE
