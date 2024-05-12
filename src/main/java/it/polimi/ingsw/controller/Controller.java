@@ -230,13 +230,16 @@ public class Controller implements Serializable {
     public synchronized void send(Message message, int ID) throws GameDoesNotExistException, LobbyDoesNotExistsException, PlayerChatMismatchException, UnexistentUserException {
         Player sender = null;
         Player receiver = null;
+
+        if (message.getSender() == null) throw new UnexistentUserException();
+
         for (Player p : gh.getUsers()) {
             if (p.getNickname().equals(message.getSender().getNickname())) sender = p;
-            if (p.getNickname().equals(message.getReceiver().getNickname())) receiver = p;
+            if (message.getReceiver() != null && p.getNickname().equals(message.getReceiver().getNickname()))
+                receiver = p;
         }
-        if (sender == null || receiver == null) throw new UnexistentUserException();
 
-        if ((!gh.getLobby(ID).getPlayers().contains(receiver)) || !gh.getLobby(ID).getPlayers().contains(sender))
+        if ( ( message.getReceiver() != null && !gh.getLobby(ID).getPlayers().contains(receiver) ) || ( message.getReceiver() != null && !gh.getLobby(ID).getPlayers().contains(sender)) )
             throw new PlayerChatMismatchException();
         try {
             if (!message.isGlobal()) {
@@ -466,13 +469,10 @@ public class Controller implements Serializable {
 
         // get game from ID and player from nickname
         Game game = gh.getGame(gameID);
-        Player player = game.getPlayers().stream()
-                .filter(p -> p.getNickname().equals(nickname))
-                .findFirst().orElseThrow(UnexistentUserException::new);
+        Player player = game.getPlayers().stream().filter(p -> p.getNickname().equals(nickname)).findFirst().orElseThrow(UnexistentUserException::new);
 
         // flip the card
-        if (game.getPlayers().contains(player))
-            player.getHand().getCard(handPos).flip();
+        if (game.getPlayers().contains(player)) player.getHand().getCard(handPos).flip();
     }
 
     /**
@@ -493,17 +493,13 @@ public class Controller implements Serializable {
 
         // get game from ID and player from nickname
         Game game = gh.getGame(gameID);
-        Player player = game.getPlayers().stream()
-                .filter(p -> p.getNickname().equals(nickname))
-                .findFirst().orElseThrow(UnexistentUserException::new);
+        Player player = game.getPlayers().stream().filter(p -> p.getNickname().equals(nickname)).findFirst().orElseThrow(UnexistentUserException::new);
 
         // if it's not this player's turn
-        if (!player.getNickname().equals(game.getCurrPlayer().getNickname()))
-            throw new NotYourTurnException();
+        if (!player.getNickname().equals(game.getCurrPlayer().getNickname())) throw new NotYourTurnException();
 
         // if the game's state isn't PLAY
-        if (game.getAction() != Action.PLAY)
-            throw new IllegalActionException();
+        if (game.getAction() != Action.PLAY) throw new IllegalActionException();
 
         // get card in player's specified hand position
         ResourceCard card = (ResourceCard) player.getHand().getCard(handPos);
@@ -548,17 +544,13 @@ public class Controller implements Serializable {
 
         // get game from ID and player from nickname
         Game game = gh.getGame(gameID);
-        Player player = game.getPlayers().stream()
-                .filter(p -> p.getNickname().equals(nickname))
-                .findFirst().orElseThrow(UnexistentUserException::new);
+        Player player = game.getPlayers().stream().filter(p -> p.getNickname().equals(nickname)).findFirst().orElseThrow(UnexistentUserException::new);
 
         // if it's not this player's turn
-        if (!player.getNickname().equals(game.getCurrPlayer().getNickname()))
-            throw new NotYourTurnException();
+        if (!player.getNickname().equals(game.getCurrPlayer().getNickname())) throw new NotYourTurnException();
 
         // if the game's state isn't DRAW
-        if (game.getAction() != Action.DRAW)
-            throw new IllegalActionException();
+        if (game.getAction() != Action.DRAW) throw new IllegalActionException();
 
         // draw a card and add it to the current player's hand
         ResourceCard newCard = game.drawFromSource(deckTypeBox);
@@ -604,8 +596,7 @@ public class Controller implements Serializable {
 
         // if the current player is the last in the round,
         // update the game's status to last round if needed
-        if (game.getWhoseTurn() == game.getNumOfPlayers() - 1)
-            updateLastRound(gameID);
+        if (game.getWhoseTurn() == game.getNumOfPlayers() - 1) updateLastRound(gameID);
 
         // update turn counter
         game.setWhoseTurn((game.getWhoseTurn() + 1) % game.getNumOfPlayers());

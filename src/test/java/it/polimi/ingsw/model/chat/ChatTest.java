@@ -25,10 +25,13 @@ public class ChatTest {
 
         gameHandler= new GameHandler();
         c=new Controller(gameHandler);
-        gameHandler.getLobbies().clear();
         anna=new Player("anna");
         eric=new Player("eric");
         giorgio=new Player("giorgio");
+        c.getGh().getUsers().add(anna);
+        c.getGh().getUsers().add(eric);
+        c.getGh().getUsers().add(giorgio);
+        gameHandler.getLobbies().clear();
         c.createLobby(3,anna.getNickname());
         c.joinLobby(eric.getNickname(),0);
         c.joinLobby(giorgio.getNickname(),0);
