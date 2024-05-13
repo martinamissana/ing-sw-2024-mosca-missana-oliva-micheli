@@ -1,6 +1,9 @@
 package it.polimi.ingsw.network.TCP;
 
 import it.polimi.ingsw.controller.Controller;
+import it.polimi.ingsw.controller.exceptions.UnexistentUserException;
+import it.polimi.ingsw.model.exceptions.GameDoesNotExistException;
+import it.polimi.ingsw.model.exceptions.LobbyDoesNotExistsException;
 
 import java.io.IOException;
 import java.net.Socket;
@@ -12,12 +15,20 @@ public class HeartBeatDetector  {
     long start;
     Thread thread;
     public HeartBeatDetector(TCPVirtualView vv, Controller c, Socket socket) {
+        System.out.println("Detector created: " + vv.getNickname());
         this.vv = vv;
         this.c = c;
         this.socket = socket;
         start = System.currentTimeMillis();
         new Thread(() -> {
-            while(check()){}
+            while(true){
+                try {
+                    if (!check()) break;
+                } catch (LobbyDoesNotExistsException | IOException | GameDoesNotExistException |
+                         UnexistentUserException e) {
+                    throw new RuntimeException(e);
+                }
+            }
         }).start();
     }
 
@@ -30,7 +41,7 @@ public class HeartBeatDetector  {
         return socket;
     }
 
-    public synchronized boolean check() {
+    public boolean check() throws LobbyDoesNotExistsException, IOException, GameDoesNotExistException, UnexistentUserException {
         if (System.currentTimeMillis() - start > 10000) {
             System.out.println("no heartbeat");
             try {
@@ -40,6 +51,7 @@ public class HeartBeatDetector  {
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
+            if(vv.getID()!=null)c.leaveLobby(vv.getNickname(),vv.getID());
             c.getGh().removeUser(vv.getNickname());
             return false;
         }

@@ -47,6 +47,10 @@ public class TCPVirtualView implements Runnable, Observer {
         return nickname;
     }
 
+    public Integer getID() {
+        return ID;
+    }
+
     public void run() {
         try {
             NetMessage deserialized;
@@ -57,6 +61,7 @@ public class TCPVirtualView implements Runnable, Observer {
             in.close();
             out.close();
             socket.close();
+            if(ID!=null)c.leaveLobby(nickname,ID);
             c.getGh().removeUser(nickname);
             Thread.currentThread().interrupt();
         } catch (IOException | ClassNotFoundException | GameAlreadyStartedException | GameDoesNotExistException |
@@ -76,7 +81,7 @@ public class TCPVirtualView implements Runnable, Observer {
                 case LoginEvent e -> {
                     LoginMessage m = new LoginMessage(((LoginEvent) event).getNickname());
                     out.writeObject(m);
-                    this.heartBeatDetector = new HeartBeatDetector(this, c, socket);
+
                 }
                 case LobbyCreatedEvent e -> {
                     LobbyCreatedMessage m = new LobbyCreatedMessage(e.getCreator(), e.getLobby(), e.getID());
@@ -196,6 +201,7 @@ public class TCPVirtualView implements Runnable, Observer {
                 try {
                     c.login(m.getNickname());
                     setNickname(m.getNickname());
+                    this.heartBeatDetector = new HeartBeatDetector(this, c, socket);
                 } catch (NicknameAlreadyTakenException e) {
                     LoginFail_NicknameAlreadyTaken errorMessage = new LoginFail_NicknameAlreadyTaken();
                     out.writeObject(m);
