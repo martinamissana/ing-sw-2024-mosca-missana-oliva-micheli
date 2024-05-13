@@ -85,8 +85,7 @@ public class CLIGame {
     }
 
     protected void chooseSecretGoal () {
-        ArrayList<Goal> goals = view.getPersonalGoalChoices();
-
+        ArrayList<Goal> goals = view.getSecretGoalChoices();
     }
 
     protected void playCard() {
