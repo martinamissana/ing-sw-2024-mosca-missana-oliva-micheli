@@ -25,13 +25,13 @@ public interface RemoteInterface extends Remote {
 
     void joinLobby(int lobbyID,String nickname) throws FullLobbyException, NicknameAlreadyTakenException, LobbyDoesNotExistsException, IOException, CannotJoinMultipleLobbiesException, UnexistentUserException;
 
-    void leaveLobby(int ID,String nickname) throws GameAlreadyStartedException, LobbyDoesNotExistsException, RemoteException, GameDoesNotExistException, IOException, UnexistentUserException;
+    void leaveLobby(int ID,String nickname) throws GameAlreadyStartedException, LobbyDoesNotExistsException, GameDoesNotExistException, IOException, UnexistentUserException;
 
     void choosePawn(Integer lobbyID,String nickname, Pawn color) throws LobbyDoesNotExistsException, PawnAlreadyTakenException, GameAlreadyStartedException, IOException, GameDoesNotExistException, UnexistentUserException;
 
     void sendMessage(Message message, int ID) throws LobbyDoesNotExistsException, GameDoesNotExistException, RemoteException, PlayerChatMismatchException, UnexistentUserException;
 
-    void chooseSecretGoal(Integer ID, String nickname, int goalID) throws RemoteException, IllegalGoalChosenException, WrongGamePhaseException, GameDoesNotExistException, UnexistentUserException, IOException;
+    void chooseSecretGoal(Integer ID, String nickname, int goalID) throws IllegalGoalChosenException, WrongGamePhaseException, GameDoesNotExistException, UnexistentUserException, IOException;
 
     void leaveGame(Integer gameID,String nickname) throws LobbyDoesNotExistsException, GameDoesNotExistException, IOException, UnexistentUserException;
 
