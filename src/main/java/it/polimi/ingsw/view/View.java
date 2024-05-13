@@ -33,7 +33,7 @@ public abstract class View extends ViewObservable<NetMessage> {
     private boolean yourTurn;
     private Action action;
     private Chat chat;
-    private Goal privateGoal;
+    private Goal secretGoal;
     private Pawn pawn;
     private boolean firstPlayer;
     private boolean lastRound;
@@ -51,170 +51,88 @@ public abstract class View extends ViewObservable<NetMessage> {
     public View() {
     }
 
-    public String getNickname() {
-        return nickname;
-    }
+    public String getNickname() { return nickname; }
 
-    public HashMap<DeckBufferType, DeckBuffer> getDeckBuffers() {
-        return deckBuffers;
-    }
+    public HashMap<DeckBufferType, DeckBuffer> getDeckBuffers() { return deckBuffers; }
 
-    public Card getTopResourceCard() {
-        return topResourceCard;
-    }
+    public Card getTopResourceCard() { return topResourceCard; }
 
-    public HashMap<Integer, Lobby> getLobbies() {
-        return lobbies;
-    }
+    public HashMap<Integer, Lobby> getLobbies(){ return lobbies; }
 
-    public Player getPlayer() {
-        return player;
-    }
+    public Player getPlayer() { return player; }
 
-    public Integer getID() {
-        return ID;
-    }
+    public Integer getID() { return ID; }
 
-    public Hand getHand() {
-        return hand;
-    }
+    public Hand getHand() { return hand; }
 
-    public Field getMyField() {
-        return myField;
-    }
+    public Field getMyField() { return myField; }
 
-    public HashMap<Player, Field> getFields() {
-        return fields;
-    }
+    public HashMap<Player, Field> getFields() { return fields; }
 
-    public boolean isYourTurn() {
-        return yourTurn;
-    }
+    public boolean isYourTurn() { return yourTurn; }
 
-    public Action getAction() {
-        return action;
-    }
+    public Action getAction() { return action; }
 
-    public Chat getChat() {
-        return chat;
-    }
+    public Chat getChat() { return chat; }
 
-    public Goal getPrivateGoal() {
-        return privateGoal;
-    }
+    public Goal getSecretGoal() { return secretGoal; }
 
-    public ArrayList<Player> getWinners() {
-        return winners;
-    }
+    public ArrayList<Player> getWinners() { return winners; }
 
-    public ArrayList<String> getErrorMessages() {
-        return errorMessages;
-    }
+    public ArrayList<String> getErrorMessages() { return errorMessages; }
 
-    public Pawn getPawn() {
-        return pawn;
-    }
+    public Pawn getPawn() { return pawn; }
 
-    public boolean isFirstPlayer() {
-        return firstPlayer;
-    }
+    public boolean isFirstPlayer() { return firstPlayer; }
 
-    public boolean isLastRound() {
-        return lastRound;
-    }
+    public boolean isLastRound() { return lastRound; }
 
-    public ArrayList<Goal> getPersonalGoalChoices() {
-        return personalGoalChoices;
-    }
+    public ArrayList<Goal> getSecretGoalChoices() { return personalGoalChoices; }
 
-    public HashMap<Player, Integer> getScoreboard() {
-        return scoreboard;
-    }
+    public HashMap<Player, Integer> getScoreboard() { return scoreboard; }
 
-    public GamePhase getGamePhase() {
-        return gamePhase;
-    }
+    public GamePhase getGamePhase() { return gamePhase; }
 
-    public Card getTopGoldenCard() {
-        return topGoldenCard;
-    }
+    public Card getTopGoldenCard() { return topGoldenCard; }
 
-    public Goal getCommonGoal1() {
-        return commonGoal1;
-    }
+    public Goal getCommonGoal1() { return commonGoal1; }
 
-    public Goal getCommonGoal2() {
-        return commonGoal2;
-    }
+    public Goal getCommonGoal2() { return commonGoal2; }
 
 
-    public void setPlayer(Player player) {
-        this.player = player;
-    }
+    public void setPlayer(Player player) { this.player = player; }
 
-    public void setID(Integer ID) {
-        this.ID = ID;
-    }
+    public void setID(Integer ID) { this.ID = ID; }
 
-    public void setHand(Hand hand) {
-        this.hand = hand;
-    }
+    public void setHand(Hand hand) { this.hand = hand; }
 
-    public void setMyField(Field myField) {
-        this.myField = myField;
-    }
+    public void setMyField(Field myField) { this.myField = myField; }
 
-    public void setFields(HashMap<Player, Field> fields) {
-        this.fields = fields;
-    }
+    public void setFields(HashMap<Player, Field> fields) { this.fields = fields; }
 
-    public void setLobbies(HashMap<Integer, Lobby> lobbies) {
-        this.lobbies = lobbies;
-    }
+    public void setLobbies(HashMap<Integer, Lobby> lobbies) { this.lobbies = lobbies; }
 
-    public void setYourTurn(boolean yourTurn) {
-        this.yourTurn = yourTurn;
-    }
+    public void setYourTurn(boolean yourTurn) { this.yourTurn = yourTurn; }
 
-    public void setAction(Action action) {
-        this.action = action;
-    }
+    public void setAction(Action action) { this.action = action; }
 
-    public void setChat(Chat chat) {
-        this.chat = chat;
-    }
+    public void setChat(Chat chat) { this.chat = chat; }
 
-    public void setPrivateGoal(Goal privateGoal) {
-        this.privateGoal = privateGoal;
-    }
+    public void setSecretGoal(Goal secretGoal) { this.secretGoal = secretGoal; }
 
-    public void setPawn(Pawn pawn) {
-        this.pawn = pawn;
-    }
+    public void setPawn(Pawn pawn) { this.pawn = pawn; }
 
-    public void setFirstPlayer(boolean firstPlayer) {
-        this.firstPlayer = firstPlayer;
-    }
+    public void setFirstPlayer(boolean firstPlayer) { this.firstPlayer = firstPlayer; }
 
-    public void setLastRound(boolean lastRound) {
-        this.lastRound = lastRound;
-    }
+    public void setLastRound(boolean lastRound) { this.lastRound = lastRound; }
 
-    public void setPersonalGoalChoices(ArrayList<Goal> personalGoalChoices) {
-        this.personalGoalChoices = personalGoalChoices;
-    }
+    public void setPersonalGoalChoices(ArrayList<Goal> personalGoalChoices) { this.personalGoalChoices = personalGoalChoices; }
 
-    public void setScoreboard(HashMap<Player, Integer> scoreboard) {
-        this.scoreboard = scoreboard;
-    }
+    public void setScoreboard(HashMap<Player, Integer> scoreboard) { this.scoreboard = scoreboard; }
 
-    public void setGamePhase(GamePhase gamePhase) {
-        this.gamePhase = gamePhase;
-    }
+    public void setGamePhase(GamePhase gamePhase) { this.gamePhase = gamePhase; }
 
-    public void setDeckBuffers(HashMap<DeckBufferType, DeckBuffer> deckBuffers) {
-        this.deckBuffers = deckBuffers;
-    }
+    public void setDeckBuffers(HashMap<DeckBufferType, DeckBuffer> deckBuffers) { this.deckBuffers = deckBuffers; }
 
     public void setCardInDeckBuffer(DeckBufferType deckBufferType, Card card) {
         DeckBuffer d = new DeckBuffer(null);
@@ -222,25 +140,15 @@ public abstract class View extends ViewObservable<NetMessage> {
         this.deckBuffers.put(deckBufferType, d);
     }
 
-    public void setTopResourceCard(Card topResourceCard) {
-        this.topResourceCard = topResourceCard;
-    }
+    public void setTopResourceCard(Card topResourceCard) { this.topResourceCard = topResourceCard; }
 
-    public void setTopGoldenCard(Card topGoldenCard) {
-        this.topGoldenCard = topGoldenCard;
-    }
+    public void setTopGoldenCard(Card topGoldenCard) { this.topGoldenCard = topGoldenCard; }
 
-    public void setCommonGoal1(Goal commonGoal1) {
-        this.commonGoal1 = commonGoal1;
-    }
+    public void setCommonGoal1(Goal commonGoal1) { this.commonGoal1 = commonGoal1; }
 
-    public void setCommonGoal2(Goal commonGoal2) {
-        this.commonGoal2 = commonGoal2;
-    }
+    public void setCommonGoal2(Goal commonGoal2) { this.commonGoal2 = commonGoal2; }
 
-    public void setNickname(String nickname) {
-        this.nickname = nickname;
-    }
+    public void setNickname(String nickname) { this.nickname = nickname; }
 
     public void setWinners(ArrayList<Player> winners) {
         this.winners = winners;
@@ -258,8 +166,7 @@ public abstract class View extends ViewObservable<NetMessage> {
 
     public abstract void choosePawn(Pawn color) throws PawnAlreadyTakenException, IOException, LobbyDoesNotExistsException, GameAlreadyStartedException, GameDoesNotExistException, UnexistentUserException;
 
-    public abstract void choosePersonalGoal(int goalID) throws IOException, IllegalGoalChosenException, WrongGamePhaseException, GameDoesNotExistException, UnexistentUserException;
-
+    public abstract void chooseSecretGoal(int goalID) throws IOException, IllegalGoalChosenException, WrongGamePhaseException, GameDoesNotExistException, UnexistentUserException;
 
     public abstract void chooseCardSide(CardSide side) throws IOException, EmptyDeckException, GameDoesNotExistException, HandIsFullException, UnexistentUserException;
 

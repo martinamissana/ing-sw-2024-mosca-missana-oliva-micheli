@@ -12,7 +12,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Field Class
+ * Field Class -
  * each player has an associated field to play their cards onto
  */
 public class Field implements Serializable {

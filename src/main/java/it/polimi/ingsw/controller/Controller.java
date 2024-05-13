@@ -369,8 +369,8 @@ public class Controller implements Serializable {
         for (Player p : gh.getGame(ID).getPlayers()) {
             if (p.getHand().getSize() != 0) return;
         }
-        gh.getGame(ID).setGamePhase(GamePhase.CHOOSING_PRIVATE_GOAL);
-        gh.notify(new GamePhaseChangedEvent(ID, GamePhase.CHOOSING_PRIVATE_GOAL));
+        gh.getGame(ID).setGamePhase(GamePhase.CHOOSING_SECRET_GOAL);
+        gh.notify(new GamePhaseChangedEvent(ID, GamePhase.CHOOSING_SECRET_GOAL));
         fillHands(ID);
     }
 
@@ -438,7 +438,7 @@ public class Controller implements Serializable {
         }
         if (player == null) throw new UnexistentUserException();
 
-        if (gh.getGame(ID).getGamePhase() != GamePhase.CHOOSING_PRIVATE_GOAL) throw new WrongGamePhaseException();
+        if (gh.getGame(ID).getGamePhase() != GamePhase.CHOOSING_SECRET_GOAL) throw new WrongGamePhaseException();
         if (player.getChoosableGoals().get(0).getGoalID() == goalID) {
             player.setPrivateGoal(player.getChoosableGoals().get(0));
             gh.notify(new PersonalGoalAssignedEvent(player, player.getChoosableGoals().get(0)));
@@ -477,7 +477,8 @@ public class Controller implements Serializable {
 
     /**
      * plays a card from the hand of a player to their field, at the specified position.
-     * if it's the game's last round
+     * if it's the game's last round, players won't be able to draw cards after playing one, and will pass their turn.
+     * at the end of the last round, the game's winner is declared and the game is terminated.
      *
      * @param gameID   ID of the calling player's game
      * @param nickname nickname of the player who's playing the card

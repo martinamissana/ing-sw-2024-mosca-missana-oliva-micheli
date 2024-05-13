@@ -243,7 +243,7 @@ public class TCPView extends View {
     }
 
     @Override
-    public void choosePersonalGoal(int goalID) throws IOException {
+    public void chooseSecretGoal(int goalID) throws IOException {
         ChoosePersonalGoalMessage m = new ChoosePersonalGoalMessage(super.getID(), super.getNickname(), goalID);
         out.writeObject(m);
     }
