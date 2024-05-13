@@ -10,13 +10,15 @@ import java.io.IOException;
 import java.rmi.NotBoundException;
 import java.util.Scanner;
 
+import static java.lang.System.exit;
+
 public class Client {
     public static void main(String[] args) throws IOException, NotBoundException, NotBoundException {
         Scanner scanner=new Scanner(System.in);
         System.out.println("Insert your connection type: [TCP|RMI]");
-        String choice =scanner.nextLine();
+        String choice = scanner.nextLine();
         Scanner input = new Scanner(System.in);
-        if (choice.equals("TCP")) {
+        if (choice.equalsIgnoreCase("TCP")) {
             TCPView client = new TCPView("127.0.0.1", 4321);
             try {
                 System.out.print("\u001B[38;2;255;165;0m" + "\n[+] " + "\u001B[0m" + "Insert username:" + "\u001B[38;2;255;165;0m" + "\n[-] " + "\u001B[0m");
@@ -31,10 +33,10 @@ public class Client {
                 }).start();
 
                 new Thread(() -> {
-                    /*client.getCurrentStatus();
+                    /* client.getCurrentStatus();
                     client.createLobby(2);
                     TimeUnit.SECONDS.sleep(3);
-                    client.choosePawn(client.getID(), Pawn.RED);*/
+                    client.choosePawn(client.getID(), Pawn.RED); */
                     //client.leaveLobby();
                     CLI cli = new CLI(client);
                     cli.run();
@@ -42,14 +44,10 @@ public class Client {
 
             } catch (IOException e) {
                 System.err.println(e.getMessage());
-            } catch (FullLobbyException e) {
-                throw new RuntimeException(e);
             } catch (NicknameAlreadyTakenException e) {
                 throw new RuntimeException(e);
-            } catch (ClassNotFoundException e) {
-                throw new RuntimeException(e);
             }
-        } else {
+        } else if (choice.equalsIgnoreCase("RMI")) {
             RMIView client = new RMIView();
             try {
                 client.login("Carlos");
@@ -61,6 +59,6 @@ public class Client {
                 CLI cli = new CLI(client);
                 cli.run();
             }).start();
-        }
+        } else exit(1);
     }
 }

@@ -1,5 +1,9 @@
 package it.polimi.ingsw.view.CLI;
 
+import it.polimi.ingsw.controller.exceptions.IllegalActionException;
+import it.polimi.ingsw.controller.exceptions.NotYourTurnException;
+import it.polimi.ingsw.controller.exceptions.UnexistentUserException;
+import it.polimi.ingsw.controller.exceptions.WrongGamePhaseException;
 import it.polimi.ingsw.model.card.Card;
 import it.polimi.ingsw.model.card.CardSide;
 import it.polimi.ingsw.model.card.CornerType;
@@ -13,15 +17,27 @@ import it.polimi.ingsw.model.commonItem.Kingdom;
 import it.polimi.ingsw.model.commonItem.Resource;
 import it.polimi.ingsw.model.deck.DeckBuffer;
 import it.polimi.ingsw.model.deck.DeckBufferType;
+import it.polimi.ingsw.model.deck.DeckType;
+import it.polimi.ingsw.model.deck.DeckTypeBox;
+import it.polimi.ingsw.model.exceptions.*;
+import it.polimi.ingsw.model.game.Action;
+import it.polimi.ingsw.model.goal.Goal;
+import it.polimi.ingsw.model.player.Coords;
 import it.polimi.ingsw.model.player.Hand;
 import it.polimi.ingsw.model.player.Player;
 import it.polimi.ingsw.view.View;
 
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Scanner;
 
 public class CLIGame {
     private final View view;
+    private final Scanner input = new Scanner(System.in);
     private static final String reset = "\u001B[0m";
+    private static final String warningColor = "\u001B[31m";
     private static final String FungiColor = "\u001B[30;41m"; // Red
     private static final String PlantColor = "\u001B[30;42m"; // Green
     private static final String InsectColor = "\u001B[30;45m"; // Purple
@@ -36,7 +52,132 @@ public class CLIGame {
         this.view = view;
     }
 
-    public String ItemsToColor(ItemBox item) {
+    protected void placeStarterCard() {
+        if (!view.getHand().getCard(0).getClass().equals(StarterCard.class)) return;
+        StarterCard card = (StarterCard) view.getHand().getCard(0);
+        System.out.print(cli + "FRONT SIDE:");
+        printCard(card);
+        card.flip();
+        System.out.print(cli + "BACK SIDE:");
+        printCard(card);
+
+        CardSide side;
+
+        do {
+            System.out.print(cli + "Which side do you prefer?" + user);
+            String choice = input.nextLine();
+
+            side = switch (choice.toUpperCase()) {
+                case "FRONT", "F" -> CardSide.FRONT;
+                case "BACK", "B" -> CardSide.BACK;
+                default -> null;
+            };
+            if (side == null) System.out.println(warningColor + "\n[ERROR]: Invalid choice!!\n" + reset);
+        } while (side == null);
+
+        System.out.print(cli + "Positioning starter card");
+        printDots();
+
+        try {
+            view.chooseCardSide(side);
+        } catch (IOException | GameDoesNotExistException | EmptyDeckException | HandIsFullException |
+                 UnexistentUserException | WrongGamePhaseException ignored) {}
+    }
+
+    protected void chooseSecretGoal () {
+        ArrayList<Goal> goals = view.getPersonalGoalChoices();
+
+    }
+
+    protected void playCard() {
+        if (!view.isYourTurn()) {
+            System.out.println(warningColor + "[ERROR]: Cannot play card because it's not your turn!!" + reset);
+            return;
+        }
+        if (!view.getAction().equals(Action.PLAY)) {
+            System.out.println(warningColor + "[ERROR]: Cannot play card because you have to draw!!" + reset);
+            return;
+        }
+        int choice;
+        Coords coords = null;
+
+        do {
+            printHand();
+            System.out.print(cli + "Which card do you want to play?" + user);
+            choice = input.nextInt();
+
+            if (choice < 0 && choice >= view.getHand().getSize()) {
+                System.out.println(warningColor + "\n[ERROR]: Invalid choice!!\n" + reset);
+                choice = -1;
+            } else {
+                // printField();
+                System.out.print(cli + "In which position you want to put this card? Select X:" + user);
+                int X = input.nextInt();
+                System.out.print(cli + "Now select Y:" + user);
+                int Y = input.nextInt();
+                coords = new Coords(X, Y);
+
+
+                try {
+                    view.playCard(choice, coords);
+                    Thread.sleep(500);
+                } catch (IllegalActionException | NotYourTurnException | LobbyDoesNotExistsException |
+                         GameDoesNotExistException ignored) {}
+                catch (IllegalMoveException e) {
+                    System.out.println(warningColor + "[ERROR]: Illegal placement. Cannot play card in this spot!!" + reset);
+                    coords = null;
+                } catch (UnexistentUserException | IOException | InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        } while (choice == -1 && coords == null);
+    }
+
+    protected void drawCard() {
+        if (!view.isYourTurn()) {
+            System.out.println(warningColor + "[ERROR]: Cannot draw card because it's not your turn!!" + reset);
+            return;
+        }
+        if (!view.getAction().equals(Action.DRAW)) {
+            System.out.println(warningColor + "[ERROR]: Cannot draw card because you have to play one first!!" + reset);
+            return;
+        }
+
+        String choice;
+        DeckTypeBox type;
+        do {
+            System.out.print(cli + "From where do you want to draw?" +
+                    cli + "Resource Deck -> ResDeck" +
+                    cli + "Golden Deck -> GoldDeck" +
+                    cli + "Resource card spaces -> RES1 - RES2" +
+                    cli + "Golden card spaces -> GOLD1 - GOLD2" + user);
+            choice = input.nextLine();
+
+            type = switch (choice.toUpperCase()) {      // RD, GD help with testing
+                case "RD", "RESDECK", "RESOURCE DECK" -> DeckType.RESOURCE;
+                case "GD", "GOLDDECK", "GOLDEN DECK" -> DeckType.GOLDEN;
+                case "R1", "RES1" -> DeckBufferType.RES1;
+                case "R2", "RES2" -> DeckBufferType.RES2;
+                case "G1", "GOLD1" -> DeckBufferType.GOLD1;
+                case "G2", "GOLD2" -> DeckBufferType.GOLD2;
+                default -> null;
+            };
+
+            if (type == null) System.out.print(warningColor + "\n[ERROR]: Invalid choice!!\n" + reset);
+        } while (type == null);
+
+        try {
+            view.drawCard(type);
+        } catch (IllegalActionException | HandIsFullException | EmptyBufferException | NotYourTurnException |
+                 LobbyDoesNotExistsException | GameDoesNotExistException ignored) {
+        } catch (EmptyDeckException e) {
+            System.out.println(warningColor + "[ERROR]: Cannot draw from this deck. Reason: empty!!" + reset);
+        } catch (IOException | UnexistentUserException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private String ItemsToColor(ItemBox item) {
         return switch(item) {
             case Kingdom.ANIMAL -> AnimalColor;
             case Kingdom.FUNGI -> FungiColor;
@@ -106,7 +247,7 @@ public class CLIGame {
             }
         }
 
-        return west + " " + points + " " + north;
+        return west + points + north;
     }
 
     private String printMiddle(Card card) {
@@ -188,27 +329,21 @@ public class CLIGame {
         System.out.println(cli + printUpper(card) + cli + printMiddle(card) + cli + printLower(card) + "\n");
     }
 
-    public void printHand(Player player) {
+    public void printHand() {
         Hand hand = view.getHand();
 
-        System.out.print("\n" + cli + player.getNickname());
-        if (player.getNickname().toUpperCase().charAt(player.getNickname().length() - 1) == 'S') System.out.print("' hand:" + cli);
-        else System.out.print("'s hand:" + cli);
-
+        System.out.print(cli);
         for(int i = 0; i < hand.getSize(); i++)
-            if (i != hand.getSize() - 1) {
-                System.out.print(printUpper(hand.getCard(i)) + "\t");
-            } else System.out.print(printUpper(hand.getCard(i)) + cli);
+            System.out.print("\t" + printUpper(hand.getCard(i)));
 
+        System.out.print(cli);
         for(int i = 0; i < hand.getSize(); i++)
-            if (i != hand.getSize() - 1) {
-                System.out.print(printMiddle(hand.getCard(i)) + "\t");
-            } else System.out.print(printMiddle(hand.getCard(i)) + cli);
+            System.out.print("\t" + printMiddle(hand.getCard(i)));
 
+        System.out.print(cli);
         for(int i = 0; i < hand.getSize(); i++)
-            if (i != hand.getSize() - 1) {
-                System.out.print(printLower(hand.getCard(i)) + "\t");
-            } else System.out.println(printLower(hand.getCard(i)));
+            System.out.print(i + ":\t" + printLower(hand.getCard(i)));
+
     }
 
     public void printGameArea() {
@@ -271,6 +406,22 @@ public class CLIGame {
         HashMap<Player, Integer> scoreboard = view.getScoreboard();
         for (Player p : scoreboard.keySet()) {
             System.out.print(cli + "[" + p.getNickname() + " - " + scoreboard.get(p) + "]");
+        }
+    }
+
+    private void printDots() {
+        try {
+            Thread.sleep(500);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+        for (int i = 0; i < 3; i++) {
+            System.out.print(".");
+            try {
+                Thread.sleep(500);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
         }
     }
 }
