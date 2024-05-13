@@ -63,7 +63,7 @@ public class CLI implements Runnable, ViewObserver {
             switch (lobbyAction) {
                 case 1 -> createLobby();
                 case 2 -> chooseLobby();
-                case 3 -> exit(0);
+                case 3 -> Thread.currentThread().interrupt();
             }
 
             if (view.getID() != null) {
@@ -76,28 +76,26 @@ public class CLI implements Runnable, ViewObserver {
                         case 2 -> quitLobby();
                     }
                 }
-                if (lobbyAction == 2) break;
+                if (lobbyAction != 2) {
+                    GamePhase phase = view.getGamePhase();
 
-                GamePhase phase = view.getGamePhase();
-
-                do {
-                    switch (phase) {
-                        case PLACING_STARTER_CARD -> game.placeStarterCard();
-                        case CHOOSING_PRIVATE_GOAL -> game.chooseSecretGoal();
-                        case PLAYING_GAME -> {
-                            if (!view.isYourTurn()) System.out.print(cli + "Waiting for your turn");
-                            else if (view.getAction().equals(Action.PLAY)) game.playCard();
-                            else if (view.getAction().equals(Action.DRAW)) game.drawCard();
-                            else System.out.print(cli + "wtf?");
+                    do {
+                        switch (phase) {
+                            case PLACING_STARTER_CARD -> game.placeStarterCard();
+                            case CHOOSING_PRIVATE_GOAL -> game.chooseSecretGoal();
+                            case PLAYING_GAME -> {
+                                if (!view.isYourTurn()) System.out.print(cli + "Waiting for your turn");
+                                else if (view.getAction().equals(Action.PLAY)) game.playCard();
+                                else if (view.getAction().equals(Action.DRAW)) game.drawCard();
+                                else System.out.print(cli + "wtf?");
+                            }
                         }
-                    }
 
-                    phase = view.getGamePhase();
-                } while (phase != GamePhase.GAME_FINISHED);
+                        phase = view.getGamePhase();
+                    } while (phase != GamePhase.GAME_FINISHED);
+                }
             }
         } while(true);
-
-        Thread.currentThread().interrupt();
     }
 
     private int chooseAction() {
@@ -112,7 +110,8 @@ public class CLI implements Runnable, ViewObserver {
             if (choice == 3) {
                 System.out.print(cli + "Exiting game");
                 printDots();
-                exit(0);
+                Thread.currentThread().interrupt();
+
             }
             if (choice == 2) {
                 if (view.getLobbies().isEmpty()) {
@@ -421,7 +420,7 @@ public class CLI implements Runnable, ViewObserver {
             case LoginFail_NicknameAlreadyTaken m -> {
                 System.out.print(cli + "Cannot login. Quitting");
                 printDots();
-                exit(0);
+                Thread.currentThread().interrupt();
             }
 
             case LobbyJoinedMessage m -> {
