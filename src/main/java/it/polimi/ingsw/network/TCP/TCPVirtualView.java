@@ -58,6 +58,7 @@ public class TCPVirtualView implements Runnable, Observer {
             out.close();
             socket.close();
             c.getGh().removeUser(nickname);
+            Thread.currentThread().interrupt();
         } catch (IOException | ClassNotFoundException | GameAlreadyStartedException | GameDoesNotExistException |
                  InterruptedException | NicknameAlreadyTakenException | LobbyDoesNotExistsException |
                  CannotJoinMultipleLobbiesException | FullLobbyException | UnexistentUserException |

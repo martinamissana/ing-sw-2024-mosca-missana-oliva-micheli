@@ -6,10 +6,14 @@ import it.polimi.ingsw.model.chat.Message;
 import it.polimi.ingsw.model.deck.DeckBufferType;
 import it.polimi.ingsw.model.deck.DeckType;
 import it.polimi.ingsw.model.deck.DeckTypeBox;
-import it.polimi.ingsw.model.exceptions.*;
+import it.polimi.ingsw.model.exceptions.FullLobbyException;
+import it.polimi.ingsw.model.exceptions.HandIsFullException;
+import it.polimi.ingsw.model.exceptions.IllegalMoveException;
+import it.polimi.ingsw.model.exceptions.NicknameAlreadyTakenException;
 import it.polimi.ingsw.model.player.Coords;
 import it.polimi.ingsw.model.player.Pawn;
 import it.polimi.ingsw.model.player.Player;
+import it.polimi.ingsw.network.netMessage.HeartBeatMessage;
 import it.polimi.ingsw.network.netMessage.NetMessage;
 import it.polimi.ingsw.network.netMessage.c2s.*;
 import it.polimi.ingsw.network.netMessage.s2c.*;
@@ -18,7 +22,6 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
-import java.rmi.RemoteException;
 
 public class TCPView extends View {
     private String ip;
@@ -44,8 +47,7 @@ public class TCPView extends View {
             do {
                 deserialized = (NetMessage) in.readObject();
                 elaborate(deserialized);
-
-            } while (deserialized.getClass() != LoginFail_NicknameAlreadyTaken.class && deserialized.getClass()!= DisconnectMessage.class);
+            } while (!socket.isClosed() && deserialized.getClass() != LoginFail_NicknameAlreadyTaken.class && deserialized.getClass() != DisconnectMessage.class);
 
             in.close();
             out.close();
@@ -272,19 +274,24 @@ public class TCPView extends View {
 
     @Override
     public void drawCard(DeckTypeBox deckTypeBox) throws IOException {
-        DrawCardMessage m =new DrawCardMessage(super.getID(),super.getNickname(),deckTypeBox);
+        DrawCardMessage m = new DrawCardMessage(super.getID(), super.getNickname(), deckTypeBox);
         out.writeObject(m);
     }
 
     @Override
     public void flipCard(int handPos) throws IOException {
-       FlipCardMessage m =new FlipCardMessage(super.getID(),super.getNickname(),handPos);
+        FlipCardMessage m = new FlipCardMessage(super.getID(), super.getNickname(), handPos);
         out.writeObject(m);
         super.getHand().getCard(handPos).flip();
     }
 
     @Override
-    public void heartbeat() throws RemoteException {
+    public void heartbeat() throws IOException, ClassNotFoundException {
+        HeartBeatMessage m = new HeartBeatMessage();
+        out.writeObject(m);
+    }
 
+    public Socket getSocket() {
+        return socket;
     }
 }

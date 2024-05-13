@@ -271,5 +271,5 @@ public abstract class View extends ViewObservable<NetMessage> {
 
     public abstract void getCurrentStatus() throws IOException, FullLobbyException, NicknameAlreadyTakenException, ClassNotFoundException;
 
-    public abstract void heartbeat() throws RemoteException;
+    public abstract void heartbeat() throws IOException, ClassNotFoundException;
 }

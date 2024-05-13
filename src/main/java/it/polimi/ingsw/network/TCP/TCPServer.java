@@ -29,10 +29,10 @@ import java.util.concurrent.Executors;
                 try {
                     Socket socket = serverSocket.accept();
                     System.out.println("New connection!");
-                    executor.submit(new TCPVirtualView(socket,c));
-
+                    TCPVirtualView vv = new TCPVirtualView(socket,c);
+                    executor.submit(vv);
                 } catch(IOException e) {
-                    break; //if a socket is closed
+                    break;
                 }
             }
             executor.shutdown();
