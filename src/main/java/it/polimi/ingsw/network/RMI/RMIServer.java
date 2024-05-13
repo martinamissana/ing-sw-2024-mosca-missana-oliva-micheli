@@ -61,7 +61,7 @@ public class RMIServer extends UnicastRemoteObject implements RemoteInterface,Ru
     }
 
     @Override
-    public void chooseSecretGoal(Integer ID, String nickname, int goalID) throws RemoteException, IllegalGoalChosenException, WrongGamePhaseException, GameDoesNotExistException, UnexistentUserException {
+    public void chooseSecretGoal(Integer ID, String nickname, int goalID) throws IOException, IllegalGoalChosenException, WrongGamePhaseException, GameDoesNotExistException, UnexistentUserException {
         c.chooseSecretGoal(ID,nickname,goalID);
     }
 
@@ -76,7 +76,7 @@ public class RMIServer extends UnicastRemoteObject implements RemoteInterface,Ru
     }
 
     @Override
-    public void chooseCardSide(Integer gameID,String nickname, CardSide side) throws IOException, EmptyDeckException, GameDoesNotExistException, HandIsFullException, UnexistentUserException {
+    public void chooseCardSide(Integer gameID,String nickname, CardSide side) throws IOException, EmptyDeckException, GameDoesNotExistException, HandIsFullException, UnexistentUserException, WrongGamePhaseException {
         c.chooseCardSide(gameID,nickname,side);
     }
 

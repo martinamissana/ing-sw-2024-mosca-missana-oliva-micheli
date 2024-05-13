@@ -68,7 +68,7 @@ public class RMIView extends View {
     }
 
     @Override
-    public void chooseSecretGoal(int goalID) throws RemoteException, IllegalGoalChosenException, WrongGamePhaseException, GameDoesNotExistException, UnexistentUserException {
+    public void chooseSecretGoal(int goalID) throws IOException, IllegalGoalChosenException, WrongGamePhaseException, GameDoesNotExistException, UnexistentUserException {
         RMIServer.chooseSecretGoal(super.getID(), super.getPlayer().getNickname(), goalID);
     }
 
@@ -78,7 +78,7 @@ public class RMIView extends View {
     }
 
     @Override
-    public void chooseCardSide(CardSide side) throws EmptyDeckException, GameDoesNotExistException, HandIsFullException, UnexistentUserException, IOException {
+    public void chooseCardSide(CardSide side) throws EmptyDeckException, GameDoesNotExistException, HandIsFullException, UnexistentUserException, IOException, WrongGamePhaseException {
         RMIServer.chooseCardSide(super.getID(), super.getPlayer().getNickname(), side);
     }
 

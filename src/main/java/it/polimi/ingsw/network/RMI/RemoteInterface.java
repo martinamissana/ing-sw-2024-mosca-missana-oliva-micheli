@@ -31,13 +31,13 @@ public interface RemoteInterface extends Remote {
 
     void sendMessage(Message message, int ID) throws LobbyDoesNotExistsException, GameDoesNotExistException, RemoteException, PlayerChatMismatchException, UnexistentUserException;
 
-    void chooseSecretGoal(Integer ID, String nickname, int goalID) throws RemoteException, IllegalGoalChosenException, WrongGamePhaseException, GameDoesNotExistException, UnexistentUserException;
+    void chooseSecretGoal(Integer ID, String nickname, int goalID) throws RemoteException, IllegalGoalChosenException, WrongGamePhaseException, GameDoesNotExistException, UnexistentUserException, IOException;
 
     void leaveGame(Integer gameID,String nickname) throws LobbyDoesNotExistsException, GameDoesNotExistException, IOException, UnexistentUserException;
 
     void drawCard(Integer gameID,String nickname, DeckTypeBox deckTypeBox) throws IllegalActionException, EmptyBufferException, NotYourTurnException, EmptyDeckException, GameDoesNotExistException, HandIsFullException, IOException, LobbyDoesNotExistsException, UnexistentUserException;
 
-    void chooseCardSide(Integer gameID,String nickname, CardSide side) throws IOException, EmptyDeckException, GameDoesNotExistException, HandIsFullException, UnexistentUserException;
+    void chooseCardSide(Integer gameID,String nickname, CardSide side) throws IOException, EmptyDeckException, GameDoesNotExistException, HandIsFullException, UnexistentUserException, WrongGamePhaseException;
 
     void flipCard(Integer gameID,String nickname, int handPos) throws GameDoesNotExistException,RemoteException,UnexistentUserException;
 

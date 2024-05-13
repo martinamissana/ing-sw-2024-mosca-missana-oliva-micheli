@@ -272,7 +272,7 @@ public class TCPVirtualView implements Runnable, Observer {
             }
             case ChooseSecretGoalMessage m -> {
                 try {
-                    c.choosePersonalGoal(m.getID(), m.getNickname(), m.getGoalID());
+                    c.chooseSecretGoal(m.getID(), m.getNickname(), m.getGoalID());
                 } catch (IllegalGoalChosenException e) {
                     FailMessage failMessage = new FailMessage("the goal you chose is not valid", m.getNickname());
                     out.writeObject(failMessage);
