@@ -55,6 +55,9 @@ public class GameHandlerTest {
     }
     @Test
     public void testSaveAndLoad() throws IOException, ClassNotFoundException, GameDoesNotExistException, FullLobbyException, NicknameAlreadyTakenException, LobbyDoesNotExistsException, HandIsFullException, CannotJoinMultipleLobbiesException, GameAlreadyStartedException, PawnAlreadyTakenException, UnexistentUserException {
+        c.getGh().getUsers().add(anna);
+        c.getGh().getUsers().add(eric);
+        c.getGh().getUsers().add(giorgio);
         c.createLobby(3,anna.getNickname());
         c.joinLobby(eric.getNickname(),0);
         c.joinLobby(giorgio.getNickname(),0);

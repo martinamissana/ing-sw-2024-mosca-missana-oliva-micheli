@@ -1,8 +1,9 @@
 package it.polimi.ingsw.model.player;
 
-import java.io.Serializable;
 import it.polimi.ingsw.model.card.Card;
 import it.polimi.ingsw.model.exceptions.HandIsFullException;
+
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.NoSuchElementException;
 
@@ -11,7 +12,7 @@ import java.util.NoSuchElementException;
  * each player has an associated hand containing all their available cards
  */
 public class Hand implements Serializable {
-    private final ArrayList<Card> handList = new ArrayList<>();
+    private ArrayList<Card> handList = new ArrayList<>();
 
     /**
      * returns number of cards in hand
@@ -48,5 +49,13 @@ public class Hand implements Serializable {
     public void removeCard(Card card) {
         if (!this.handList.remove(card))
             throw new NoSuchElementException();
+    }
+
+    /**
+     * remove all the cards from the hand, used for the testing of this class
+     */
+    public void removeAllCards(){
+        handList = new ArrayList<>();
+
     }
 }

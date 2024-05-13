@@ -10,6 +10,7 @@ import it.polimi.ingsw.model.player.Player;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 
 /**
@@ -35,7 +36,7 @@ public class GameHandler extends Observable implements Serializable  {
      * getter
      * @return activeGames - the HashMap with the active games
      */
-    public HashMap<Integer, Game> getActiveGames() {
+    public synchronized HashMap<Integer, Game> getActiveGames() {
         return activeGames;
     }
 
@@ -43,29 +44,21 @@ public class GameHandler extends Observable implements Serializable  {
      * getter
      * @return lobbies - the HashMap with the  current lobbies
      */
-    public HashMap<Integer, Lobby> getLobbies() { return lobbies; }
+    public synchronized HashMap<Integer, Lobby> getLobbies() { return lobbies; }
 
     /**
      * getter
      * @return users - the list of users connected
      */
-    public ArrayList<Player> getUsers() {
+    public synchronized ArrayList<Player> getUsers() {
         return users;
-    }
-
-    /**
-     * removes a user from the user list
-     * @param user - is the user you want to remove
-     */
-    public void removeUser(Player user){
-        this.users.remove(user);
     }
 
     /**
      * getter
      * @return numOfLobbies - the number of lobbies that have been created
      */
-    public int getNumOfLobbies() { return numOfLobbies; }
+    public synchronized int getNumOfLobbies() { return numOfLobbies; }
 
     /**
      * used to get a specific game
@@ -73,7 +66,7 @@ public class GameHandler extends Observable implements Serializable  {
      * @return the specified game
      * @throws GameDoesNotExistException if the game doesn't exist
      */
-    public Game getGame(Integer ID) throws GameDoesNotExistException {
+    public synchronized Game getGame(Integer ID) throws GameDoesNotExistException {
         if (activeGames.containsKey(ID)) {
             return activeGames.get(ID);
         } else {
@@ -87,7 +80,7 @@ public class GameHandler extends Observable implements Serializable  {
      * @return the specified lobby
      * @throws LobbyDoesNotExistsException if the lobby doesn't exist
      */
-    public Lobby getLobby(Integer ID) throws LobbyDoesNotExistsException {
+    public synchronized Lobby getLobby(Integer ID) throws LobbyDoesNotExistsException {
         if (lobbies.containsKey(ID)) {
             return lobbies.get(ID);
         } else {
@@ -99,14 +92,14 @@ public class GameHandler extends Observable implements Serializable  {
      * setter
      * @param numOfLobbies - the value you want to set for the number of lobbies
      */
-    public void setNumOfLobbies(int numOfLobbies) { this.numOfLobbies = numOfLobbies; }
+    public synchronized void setNumOfLobbies(int numOfLobbies) { this.numOfLobbies = numOfLobbies; }
 
     /**
      * used to add users to user list
      * @param user - the user that will be added to the user list
      * @throws NicknameAlreadyTakenException - when in user list there is already a user with the same nickname
      */
-    public void addUser(Player user) throws NicknameAlreadyTakenException, IOException {
+    public synchronized void addUser(Player user) throws NicknameAlreadyTakenException, IOException {
         for (Player u: this.users){
             if(u.getNickname().equals(user.getNickname())) throw new NicknameAlreadyTakenException();
         }
@@ -114,11 +107,21 @@ public class GameHandler extends Observable implements Serializable  {
         notify(new LoginEvent(user.getNickname()));
     }
 
+    public synchronized void removeUser(String nickname){
+        Player player = null;
+        List<Player> copiedUsers = new ArrayList<>(users);
+
+        for (Player p : copiedUsers) {
+            if (p.getNickname().equals(nickname)) users.remove(p);
+        }
+    }
+
+
     /**
      * used to save the GameHandler status with all the data about all active games and lobbies
      * @throws IOException - produced by failed or interrupted I/O operations
      */
-    public void save() throws IOException {
+    public synchronized void save() throws IOException {
         FileOutputStream fileOutputStream = new FileOutputStream("./data.ser");
         ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream);
         objectOutputStream.writeObject(this);
@@ -131,7 +134,7 @@ public class GameHandler extends Observable implements Serializable  {
      * @throws IOException - produced by failed or interrupted I/O operations
      * @throws ClassNotFoundException  -  if no definition for the class with the specified name could be found
      */
-    public void load() throws IOException, ClassNotFoundException {
+    public synchronized void load() throws IOException, ClassNotFoundException {
         FileInputStream fileInputStream = new FileInputStream("./data.ser");
         ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
         GameHandler deserialized = (GameHandler) objectInputStream.readObject();

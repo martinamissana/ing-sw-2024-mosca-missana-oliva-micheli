@@ -1,6 +1,5 @@
 package it.polimi.ingsw.network;
 
-import it.polimi.ingsw.model.exceptions.FullLobbyException;
 import it.polimi.ingsw.model.exceptions.NicknameAlreadyTakenException;
 import it.polimi.ingsw.view.CLI.CLI;
 import it.polimi.ingsw.view.RMIView;
@@ -9,6 +8,7 @@ import it.polimi.ingsw.view.TCPView;
 import java.io.IOException;
 import java.rmi.NotBoundException;
 import java.util.Scanner;
+import java.util.concurrent.TimeUnit;
 
 import static java.lang.System.exit;
 
@@ -33,11 +33,17 @@ public class Client {
                 }).start();
 
                 new Thread(() -> {
-                    /* client.getCurrentStatus();
-                    client.createLobby(2);
-                    TimeUnit.SECONDS.sleep(3);
-                    client.choosePawn(client.getID(), Pawn.RED); */
-                    //client.leaveLobby();
+                    try {
+                        do{
+                            client.heartbeat();
+                            TimeUnit.SECONDS.sleep(3);
+                        }while(!client.getSocket().isClosed());
+                    } catch (IOException | ClassNotFoundException | InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
+                }).start();
+
+                new Thread(() -> {
                     CLI cli = new CLI(client);
                     cli.run();
                 }).start();
