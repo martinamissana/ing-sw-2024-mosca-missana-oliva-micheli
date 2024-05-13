@@ -6,6 +6,7 @@ import it.polimi.ingsw.model.deck.DeckBufferType;
 import it.polimi.ingsw.model.exceptions.*;
 import it.polimi.ingsw.model.observer.Observer;
 import it.polimi.ingsw.model.observer.events.*;
+import it.polimi.ingsw.network.netMessage.HeartBeatMessage;
 import it.polimi.ingsw.network.netMessage.NetMessage;
 import it.polimi.ingsw.network.netMessage.c2s.*;
 import it.polimi.ingsw.network.netMessage.s2c.*;
@@ -23,6 +24,7 @@ public class TCPVirtualView implements Runnable, Observer {
     private final Controller c;
     private Integer ID;
     private String nickname;
+    private HeartBeatDetector heartBeatDetector = null;
 
 
     public TCPVirtualView(Socket socket, Controller c) throws IOException {
@@ -33,17 +35,29 @@ public class TCPVirtualView implements Runnable, Observer {
         c.getGh().addObserver(this);
     }
 
+    public ObjectInputStream getIn() {
+        return in;
+    }
+
+    public ObjectOutputStream getOut() {
+        return out;
+    }
+
+    public String getNickname() {
+        return nickname;
+    }
+
     public void run() {
         try {
             NetMessage deserialized;
             do {
                 deserialized = (NetMessage) in.readObject();
                 elaborate(deserialized);
-            } while (deserialized.getClass() != DisconnectMessage.class);
-
+            } while (!socket.isClosed() && deserialized.getClass() != DisconnectMessage.class );
             in.close();
             out.close();
             socket.close();
+            c.getGh().removeUser(nickname);
         } catch (IOException | ClassNotFoundException | GameAlreadyStartedException | GameDoesNotExistException |
                  InterruptedException | NicknameAlreadyTakenException | LobbyDoesNotExistsException |
                  CannotJoinMultipleLobbiesException | FullLobbyException | UnexistentUserException |
@@ -61,6 +75,7 @@ public class TCPVirtualView implements Runnable, Observer {
                 case LoginEvent e -> {
                     LoginMessage m = new LoginMessage(((LoginEvent) event).getNickname());
                     out.writeObject(m);
+                    this.heartBeatDetector = new HeartBeatDetector(this, c, socket);
                 }
                 case LobbyCreatedEvent e -> {
                     LobbyCreatedMessage m = new LobbyCreatedMessage(e.getCreator(), e.getLobby(), e.getID());
@@ -84,7 +99,7 @@ public class TCPVirtualView implements Runnable, Observer {
                 }
                 case ChatMessageAddedEvent e -> {
                     if(e.getLobbyID().equals(ID)) {
-                        ChatMessageAddedEvent m = new ChatMessageAddedEvent(e.getM(), e.getLobbyID());
+                        ChatMessageAddedMessage m = new ChatMessageAddedMessage(e.getM(), e.getLobbyID());
                         out.writeObject(m);
                     }
                 }
@@ -174,6 +189,7 @@ public class TCPVirtualView implements Runnable, Observer {
     }
 
     private void elaborate(NetMessage message) throws InterruptedException, NicknameAlreadyTakenException, IOException, LobbyDoesNotExistsException, CannotJoinMultipleLobbiesException, FullLobbyException, GameAlreadyStartedException, GameDoesNotExistException, UnexistentUserException, PlayerChatMismatchException, EmptyDeckException, HandIsFullException, WrongGamePhaseException, IllegalGoalChosenException {
+        if(heartBeatDetector != null) heartBeatDetector.resetTimer();
         switch (message) {
             case MyNickname m -> {
                 try {
@@ -288,6 +304,10 @@ public class TCPVirtualView implements Runnable, Observer {
             }
             case FlipCardMessage m -> {
                 c.flipCard(m.getGameID(), m.getNickname(), m.getHandPos());
+            }
+            case HeartBeatMessage  m -> {
+                System.out.println("heartbeat detected");
+
             }
             default -> throw new IllegalStateException("Unexpected value: " + message);
         }
