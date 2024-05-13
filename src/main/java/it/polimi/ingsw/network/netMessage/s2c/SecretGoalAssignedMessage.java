@@ -1,13 +1,14 @@
-package it.polimi.ingsw.model.observer.events;
+package it.polimi.ingsw.network.netMessage.s2c;
 
 import it.polimi.ingsw.model.goal.Goal;
 import it.polimi.ingsw.model.player.Player;
+import it.polimi.ingsw.network.netMessage.NetMessage;
 
-public class PersonalGoalAssignedEvent extends Event{
+public class SecretGoalAssignedMessage extends NetMessage {
     private final Player player;
     private final Goal goal;
 
-    public PersonalGoalAssignedEvent(Player player, Goal goal) {
+    public SecretGoalAssignedMessage(Player player, Goal goal) {
         this.player = player;
         this.goal = goal;
     }

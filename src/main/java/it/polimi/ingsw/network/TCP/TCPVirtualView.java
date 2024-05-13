@@ -140,15 +140,15 @@ public class TCPVirtualView implements Runnable, Observer {
                         out.writeObject(m);
                     }
                 }
-                case PersonalGoalsListAssignedEvent e -> {
+                case SecretGoalsListAssignedEvent e -> {
                     if(e.getPlayer().getNickname().equals(nickname)) {
-                        PersonalGoalsListAssignedMessage m = new PersonalGoalsListAssignedMessage(e.getList(), e.getPlayer());
+                        SecretGoalsListAssignedMessage m = new SecretGoalsListAssignedMessage(e.getList(), e.getPlayer());
                         out.writeObject(m);
                     }
                 }
-                case PersonalGoalAssignedEvent e -> {
+                case SecretGoalAssignedEvent e -> {
                     if(e.getPlayer().getNickname().equals(nickname)) {
-                        PersonalGoalAssignedMessage m = new PersonalGoalAssignedMessage(e.getPlayer(), e.getGoal());
+                        SecretGoalAssignedMessage m = new SecretGoalAssignedMessage(e.getPlayer(), e.getGoal());
                         out.writeObject(m);
                     }
                 }
@@ -270,7 +270,7 @@ public class TCPVirtualView implements Runnable, Observer {
             case ChooseCardSideMessage m -> {
                 c.chooseCardSide(m.getID(), m.getNickname(), m.getSide());
             }
-            case ChoosePersonalGoalMessage m -> {
+            case ChooseSecretGoalMessage m -> {
                 try {
                     c.choosePersonalGoal(m.getID(), m.getNickname(), m.getGoalID());
                 } catch (IllegalGoalChosenException e) {

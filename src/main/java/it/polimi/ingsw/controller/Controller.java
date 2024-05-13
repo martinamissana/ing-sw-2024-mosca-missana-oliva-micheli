@@ -419,19 +419,19 @@ public class Controller implements Serializable {
         for (Player p : game.getPlayers()) {
             p.getChoosableGoals().add(gh.getGame(gameID).getGoals().getGoal());
             p.getChoosableGoals().add(gh.getGame(gameID).getGoals().getGoal());
-            gh.notify(new PersonalGoalsListAssignedEvent(p.getChoosableGoals(), p));
+            gh.notify(new SecretGoalsListAssignedEvent(p.getChoosableGoals(), p));
         }
 
     }
 
     /**
-     * Allows the player to choose his personal goal
+     * Allows the player to choose their secret goal
      *
      * @param ID       ID of the game played
-     * @param nickname who is choosing the personal goal
+     * @param nickname who is choosing the secret goal
      * @param goalID   goal chosen by the player
      */
-    public synchronized void choosePersonalGoal(Integer ID, String nickname, int goalID) throws IllegalGoalChosenException, GameDoesNotExistException, WrongGamePhaseException, UnexistentUserException, IOException {
+    public synchronized void chooseSecretGoal(Integer ID, String nickname, int goalID) throws IllegalGoalChosenException, GameDoesNotExistException, WrongGamePhaseException, UnexistentUserException, IOException {
         Player player = null;
         for (Player p : gh.getUsers()) {
             if (p.getNickname().equals(nickname)) player = p;
@@ -441,10 +441,10 @@ public class Controller implements Serializable {
         if (gh.getGame(ID).getGamePhase() != GamePhase.CHOOSING_SECRET_GOAL) throw new WrongGamePhaseException();
         if (player.getChoosableGoals().get(0).getGoalID() == goalID) {
             player.setPrivateGoal(player.getChoosableGoals().get(0));
-            gh.notify(new PersonalGoalAssignedEvent(player, player.getChoosableGoals().get(0)));
+            gh.notify(new SecretGoalAssignedEvent(player, player.getChoosableGoals().get(0)));
         } else if (player.getChoosableGoals().get(1).getGoalID() == goalID) {
             player.setPrivateGoal(player.getChoosableGoals().get(1));
-            gh.notify(new PersonalGoalAssignedEvent(player, player.getChoosableGoals().get(1)));
+            gh.notify(new SecretGoalAssignedEvent(player, player.getChoosableGoals().get(1)));
         } else throw new IllegalGoalChosenException();
 
         for (Player p : gh.getGame(ID).getPlayers()) {

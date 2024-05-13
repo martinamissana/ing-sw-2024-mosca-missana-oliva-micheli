@@ -69,7 +69,7 @@ public class RMIView extends View {
 
     @Override
     public void chooseSecretGoal(int goalID) throws RemoteException, IllegalGoalChosenException, WrongGamePhaseException, GameDoesNotExistException, UnexistentUserException {
-        RMIServer.choosePersonalGoal(super.getID(), super.getPlayer().getNickname(), goalID);
+        RMIServer.chooseSecretGoal(super.getID(), super.getPlayer().getNickname(), goalID);
     }
 
     @Override

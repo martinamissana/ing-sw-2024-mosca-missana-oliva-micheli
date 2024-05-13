@@ -31,7 +31,7 @@ public interface RemoteInterface extends Remote {
 
     void sendMessage(Message message, int ID) throws LobbyDoesNotExistsException, GameDoesNotExistException, RemoteException, PlayerChatMismatchException, UnexistentUserException;
 
-    void choosePersonalGoal(Integer ID,String nickname, int goalID) throws RemoteException, IllegalGoalChosenException, WrongGamePhaseException, GameDoesNotExistException, UnexistentUserException;
+    void chooseSecretGoal(Integer ID, String nickname, int goalID) throws RemoteException, IllegalGoalChosenException, WrongGamePhaseException, GameDoesNotExistException, UnexistentUserException;
 
     void leaveGame(Integer gameID,String nickname) throws LobbyDoesNotExistsException, GameDoesNotExistException, IOException, UnexistentUserException;
 

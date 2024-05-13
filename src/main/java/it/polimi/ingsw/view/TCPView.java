@@ -151,13 +151,13 @@ public class TCPView extends View {
                 if (m.getID().equals(super.getID()))
                     super.setGamePhase(m.getGamePhase());
             }
-            case PersonalGoalsListAssignedMessage m -> {
+            case SecretGoalsListAssignedMessage m -> {
                 if (m.getPlayer().equals(super.getPlayer()))
                     super.setPersonalGoalChoices(m.getList());
             }
-            case PersonalGoalAssignedMessage m -> {
+            case SecretGoalAssignedMessage m -> {
                 if (m.getPlayer().equals(super.getPlayer()))
-                    super.setPrivateGoal(m.getGoal());
+                    super.setSecretGoal(m.getGoal());
             }
             case GameActionSwitchedMessage m -> {
                 if (m.getID().equals(super.getID()))
@@ -244,7 +244,7 @@ public class TCPView extends View {
 
     @Override
     public void chooseSecretGoal(int goalID) throws IOException {
-        ChoosePersonalGoalMessage m = new ChoosePersonalGoalMessage(super.getID(), super.getNickname(), goalID);
+        ChooseSecretGoalMessage m = new ChooseSecretGoalMessage(super.getID(), super.getNickname(), goalID);
         out.writeObject(m);
     }
 

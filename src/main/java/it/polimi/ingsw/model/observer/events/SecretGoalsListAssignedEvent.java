@@ -5,11 +5,11 @@ import it.polimi.ingsw.model.player.Player;
 
 import java.util.ArrayList;
 
-public class PersonalGoalsListAssignedEvent extends Event{
+public class SecretGoalsListAssignedEvent extends Event{
     private final ArrayList<Goal> list;
     private final Player player;
 
-    public PersonalGoalsListAssignedEvent(ArrayList<Goal> list, Player player) {
+    public SecretGoalsListAssignedEvent(ArrayList<Goal> list, Player player) {
         this.list = list;
         this.player = player;
     }

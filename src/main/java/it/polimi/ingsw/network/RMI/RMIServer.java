@@ -61,8 +61,8 @@ public class RMIServer extends UnicastRemoteObject implements RemoteInterface,Ru
     }
 
     @Override
-    public void choosePersonalGoal(Integer ID,String nickname, int goalID) throws RemoteException, IllegalGoalChosenException, WrongGamePhaseException, GameDoesNotExistException, UnexistentUserException {
-        c.choosePersonalGoal(ID,nickname,goalID);
+    public void chooseSecretGoal(Integer ID, String nickname, int goalID) throws RemoteException, IllegalGoalChosenException, WrongGamePhaseException, GameDoesNotExistException, UnexistentUserException {
+        c.chooseSecretGoal(ID,nickname,goalID);
     }
 
     @Override

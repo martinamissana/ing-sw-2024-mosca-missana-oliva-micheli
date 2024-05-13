@@ -26,8 +26,6 @@ import java.util.HashMap;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
-import static java.lang.System.exit;
-
 public class CLI implements Runnable, ViewObserver {
     private final View view;
     private CLIGame game;
@@ -82,7 +80,7 @@ public class CLI implements Runnable, ViewObserver {
                     do {
                         switch (phase) {
                             case PLACING_STARTER_CARD -> game.placeStarterCard();
-                            case CHOOSING_PRIVATE_GOAL -> game.chooseSecretGoal();
+                            case CHOOSING_SECRET_GOAL -> game.chooseSecretGoal();
                             case PLAYING_GAME -> {
                                 if (!view.isYourTurn()) System.out.print(cli + "Waiting for your turn");
                                 else if (view.getAction().equals(Action.PLAY)) game.playCard();
@@ -537,10 +535,10 @@ public class CLI implements Runnable, ViewObserver {
                 }
             }
 
-            case PersonalGoalsListAssignedMessage m -> {
+            case SecretGoalsListAssignedMessage m -> {
             }
 
-            case PersonalGoalAssignedMessage m -> {
+            case SecretGoalAssignedMessage m -> {
             }
 
             case GameActionSwitchedMessage m -> {
