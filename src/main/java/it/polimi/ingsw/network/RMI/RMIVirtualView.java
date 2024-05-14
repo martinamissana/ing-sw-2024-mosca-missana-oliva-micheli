@@ -141,20 +141,20 @@ public class RMIVirtualView implements VirtualView {
                     }
                 }
             }
-            case PersonalGoalsListAssignedEvent e -> {
+            case SecretGoalsListAssignedEvent e -> {
                 if(e.getPlayer().getNickname().equals(nickname)) {
                     try {
-                        view.elaborate(new PersonalGoalsListAssignedMessage(e.getList(), e.getPlayer()));
+                        view.elaborate(new SecretGoalsListAssignedMessage(e.getList(), e.getPlayer()));
                     } catch (FullLobbyException | NicknameAlreadyTakenException | HandIsFullException |
                              IllegalMoveException ex) {
                         throw new RuntimeException(ex);
                     }
                 }
             }
-            case PersonalGoalAssignedEvent e -> {
+            case SecretGoalAssignedEvent e -> {
                 if(e.getPlayer().getNickname().equals(nickname)) {
                     try {
-                        view.elaborate(new PersonalGoalAssignedMessage(e.getPlayer(), e.getGoal()));
+                        view.elaborate(new SecretGoalAssignedMessage(e.getPlayer(), e.getGoal()));
                     } catch (FullLobbyException | NicknameAlreadyTakenException | HandIsFullException |
                              IllegalMoveException ex) {
                         throw new RuntimeException(ex);
