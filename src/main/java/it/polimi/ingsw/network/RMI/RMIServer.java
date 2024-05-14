@@ -8,18 +8,26 @@ import it.polimi.ingsw.model.deck.DeckTypeBox;
 import it.polimi.ingsw.model.exceptions.*;
 import it.polimi.ingsw.model.player.Coords;
 import it.polimi.ingsw.model.player.Pawn;
+import it.polimi.ingsw.view.RMIView;
 
 import java.io.IOException;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.concurrent.ExecutorService;
 
 public class RMIServer extends UnicastRemoteObject implements RemoteInterface,Runnable {
     private final Controller c;
+    ExecutorService executor;
+
     public RMIServer(Controller c) throws RemoteException {
       this.c=c;
-
     }
 
+    @Override
+    public void connect(Integer gameID,RMIView client) {
+        System.out.println("New connection!");
+        executor.submit(new RMIVirtualView(c, client));
+    }
     @Override
     public void login(String username) throws NicknameAlreadyTakenException, IOException {
         c.login(username);
@@ -65,10 +73,6 @@ public class RMIServer extends UnicastRemoteObject implements RemoteInterface,Ru
         c.chooseSecretGoal(ID,nickname,goalID);
     }
 
-    @Override
-    public void leaveGame(Integer gameID,String nickname) throws LobbyDoesNotExistsException, GameDoesNotExistException, IOException, UnexistentUserException {
-        c.leaveGame(gameID,nickname);
-    }
 
     @Override
     public void drawCard(Integer gameID,String nickname, DeckTypeBox deckTypeBox) throws IllegalActionException, EmptyBufferException, NotYourTurnException, EmptyDeckException, GameDoesNotExistException, HandIsFullException, IOException, LobbyDoesNotExistsException, UnexistentUserException {

@@ -35,4 +35,9 @@ public abstract class Goal implements Serializable {
     public int getGoalID() {
         return GoalID;
     }
+
+    @Override
+    public String toString() {
+        return "1709659025650-fa69fadb-c647-4aa4-a049-05e38017b96d_" + (87 + getGoalID());
+    }
 }

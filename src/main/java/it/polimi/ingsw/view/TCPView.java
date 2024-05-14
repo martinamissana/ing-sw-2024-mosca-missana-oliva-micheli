@@ -2,6 +2,7 @@ package it.polimi.ingsw.view;
 
 import it.polimi.ingsw.model.card.CardSide;
 import it.polimi.ingsw.model.card.ResourceCard;
+import it.polimi.ingsw.model.card.StarterCard;
 import it.polimi.ingsw.model.chat.Message;
 import it.polimi.ingsw.model.deck.DeckBufferType;
 import it.polimi.ingsw.model.deck.DeckType;
@@ -139,11 +140,14 @@ public class TCPView extends View {
             }
             case CardPlacedOnFieldMessage m -> {
                 if (m.getNickname().equals(super.getNickname())) {
-                    super.getMyField().addCard((ResourceCard) m.getCard(), m.getCoords());
+                    if (m.getCard().getClass().equals(StarterCard.class)) super.getMyField().addCard((StarterCard) m.getCard());
+                    else super.getMyField().addCard((ResourceCard) m.getCard(), m.getCoords());
                 } else {
                     for (Player p : super.getFields().keySet()) {
-                        if (m.getNickname().equals(p.getNickname()))
-                            p.getField().addCard((ResourceCard) m.getCard(), m.getCoords());
+                        if (m.getNickname().equals(p.getNickname())) {
+                            if (m.getCard().getClass().equals(StarterCard.class)) p.getField().addCard((StarterCard) m.getCard());
+                            else p.getField().addCard((ResourceCard) m.getCard(), m.getCoords());
+                        }
                     }
                 }
             }

@@ -21,7 +21,8 @@ import it.polimi.ingsw.model.deck.DeckType;
 import it.polimi.ingsw.model.deck.DeckTypeBox;
 import it.polimi.ingsw.model.exceptions.*;
 import it.polimi.ingsw.model.game.Action;
-import it.polimi.ingsw.model.goal.Goal;
+import it.polimi.ingsw.model.game.GamePhase;
+import it.polimi.ingsw.model.goal.*;
 import it.polimi.ingsw.model.player.Coords;
 import it.polimi.ingsw.model.player.Hand;
 import it.polimi.ingsw.model.player.Player;
@@ -43,6 +44,8 @@ public class CLIGame {
     private static final String InsectColor = "\u001B[30;45m"; // Purple
     private static final String AnimalColor = "\u001B[30;46m"; // Cyan
     private static final String StarterColor = "\u001B[30;48;2;245;200;157m"; // Meat
+    private static final String cornerColor = "\u001B[30;48;2;200;150;100m"; // Meat
+
     private static final String GoldColor = "\u001B[30;43m"; // Gold
     private static final String CardBlockColor = "\u001B[40m";   // Black
     private static final String cli = "\u001B[38;2;255;165;0m" + "\n[+] " + "\u001B[0m";
@@ -53,7 +56,7 @@ public class CLIGame {
     }
 
     protected void placeStarterCard() {
-        if (!view.getHand().getCard(0).getClass().equals(StarterCard.class)) return;
+        if (view.getHand().getSize() == 0 || !view.getHand().getCard(0).getClass().equals(StarterCard.class)) return;
         StarterCard card = (StarterCard) view.getHand().getCard(0);
         System.out.print(cli + "FRONT SIDE:");
         printCard(card);
@@ -73,19 +76,49 @@ public class CLIGame {
                 default -> null;
             };
             if (side == null) System.out.println(warningColor + "\n[ERROR]: Invalid choice!!\n" + reset);
+            else {
+                System.out.print(cli + "Positioning starter card");
+                printDots();
+
+                try {
+                    view.chooseCardSide(side);
+                }
+                catch (IOException | GameDoesNotExistException | EmptyDeckException | HandIsFullException |
+                       UnexistentUserException | WrongGamePhaseException e) {
+                    System.out.print(e.getClass().getName());
+                }
+            }
         } while (side == null);
 
-        System.out.print(cli + "Positioning starter card");
-        printDots();
-
         try {
-            view.chooseCardSide(side);
-        } catch (IOException | GameDoesNotExistException | EmptyDeckException | HandIsFullException |
-                 UnexistentUserException | WrongGamePhaseException ignored) {}
+            Thread.sleep(500);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     protected void chooseSecretGoal () {
         ArrayList<Goal> goals = view.getSecretGoalChoices();
+        goals.stream().mapToInt(Goal::getGoalID).forEach(System.out::println);
+        System.out.print(cli + "You can choose between these two goals:");
+        printGoal(goals.getFirst());
+        printGoal(goals.getLast());
+
+        int ID;
+        do {
+            System.out.print(cli + "Select ID of the goal you want:" + user);
+            ID = input.nextInt();
+
+            try {
+                view.chooseSecretGoal(ID);
+            } catch (IOException | UnexistentUserException e) {
+                throw new RuntimeException(e);
+            } catch (WrongGamePhaseException | GameDoesNotExistException ignored) {
+            } catch (IllegalGoalChosenException e) {
+                System.out.print(warningColor + "[ERROR]: Invalid choice!!" + reset);
+                ID = -1;
+            }
+        } while (ID == -1);
     }
 
     protected void playCard() {
@@ -142,6 +175,7 @@ public class CLIGame {
             return;
         }
 
+        printGameArea();
         String choice;
         DeckTypeBox type;
         do {
@@ -183,7 +217,7 @@ public class CLIGame {
             case Kingdom.INSECT -> InsectColor;
             case Kingdom.PLANT -> PlantColor;
             case Resource.INKWELL, Resource.MANUSCRIPT, Resource.QUILL -> GoldColor;
-            case CornerStatus.EMPTY -> StarterColor;
+            case CornerStatus.EMPTY -> cornerColor;
             case null -> StarterColor;
             default -> throw new IllegalStateException("Unexpected value: " + item);
         };
@@ -196,7 +230,7 @@ public class CLIGame {
         if (item.equals(Resource.INKWELL)) return GoldColor + " I " + reset;
         if (item.equals(Resource.MANUSCRIPT)) return GoldColor + " M " + reset;
         if (item.equals(Resource.QUILL)) return GoldColor + " Q " + reset;
-        if (item.equals(CornerStatus.EMPTY)) return StarterColor + "   " + reset;
+        if (item.equals(CornerStatus.EMPTY)) return cornerColor + "   " + reset;
 
         if (card.getClass().getName().equals("it.polimi.ingsw.model.card.StarterCard")) return switch (item) {
             case Kingdom.FUNGI -> ItemsToColor(item) + " F ";
@@ -215,13 +249,26 @@ public class CLIGame {
         } + reset;
     }
 
+    private void printGoal(Goal goal) {
+        if (goal.getClass().equals(L_ShapeGoal.class)) {
+            System.out.print(cli + "L-Shape Goal " + goal.getGoalID() + ": " + ((L_ShapeGoal) goal).getType() + " with two " + ((L_ShapeGoal) goal).getMainColor() + " and " + ((L_ShapeGoal) goal).getSecondaryColor() + ". Points = " + goal.getPoints());
+        } else if (goal.getClass().equals(DiagonalGoal.class)) {
+            System.out.print(cli + "Diagonal Goal " + goal.getGoalID() + ": " + ((DiagonalGoal) goal).getType() + " of " + ((DiagonalGoal) goal).getColor() + ". Points = " + goal.getPoints());
+        } else {
+            System.out.print(cli + "Resource Goal " + goal.getGoalID() + ": " + goal.getPoints() + " points if you have: ");
+            for (ItemBox item : ((ResourceGoal) goal).getResourceList()) {
+                System.out.print(item);
+            }
+        }
+    }
+
     private String printUpper(Card card) {
         if (card.getClass().getName().equals("it.polimi.ingsw.model.card.CardBlock"))
             return CardBlockColor + "             " + reset;
 
         String kingdom = ItemsToColor(card.getKingdom());
         String north = ItemToString(card, CornerType.NORTH);
-        String west = ItemToString(card, CornerType.WEST);
+        String east = ItemToString(card, CornerType.EAST);
         String points = kingdom + "       " + reset;
 
         if (card.getSide().equals(CardSide.FRONT)) {
@@ -243,10 +290,11 @@ public class CLIGame {
                         };
                     } else points = GoldColor + " " + directPoints + " " + reset;
                 } else points = GoldColor + " " + directPoints + " " + reset;
+                return north + kingdom + "  " + reset + points + kingdom + "  " + reset + east;
             }
         }
 
-        return west + points + north;
+        return north + points + east;
     }
 
     private String printMiddle(Card card) {
@@ -299,7 +347,7 @@ public class CLIGame {
         String kingdom = ItemsToColor(card.getKingdom());
 
         String south = ItemToString(card, CornerType.SOUTH);
-        String east = ItemToString(card, CornerType.EAST);
+        String west = ItemToString(card, CornerType.WEST);
 
         if (card.getClass().getName().equals("it.polimi.ingsw.model.card.GoldenCard") && card.getSide().equals(CardSide.FRONT)) {
             StringBuilder requirements = new StringBuilder();
@@ -312,40 +360,41 @@ public class CLIGame {
                 }
             }
 
-            return south + kingdom + switch (requirements.toString().length()) {
+            return west + kingdom + switch (requirements.toString().length()) {
                 case 1 -> "   " + reset + StarterColor + requirements + reset + kingdom + "   ";
                 case 2 -> "  " + reset + StarterColor + requirements + reset + kingdom + "   ";
                 case 3 -> "  " + reset + StarterColor + requirements + reset + kingdom + "  ";
                 case 4 -> " " + reset + StarterColor + requirements + reset + kingdom + "  ";
                 case 5 -> " " + reset + StarterColor + requirements + reset + kingdom + " ";
                 default -> throw new IllegalStateException("Unexpected value: " + requirements.toString().length());
-            } + reset + east;
+            } + reset + south;
         }
-        return south + kingdom + "       " + reset + east;
+        return west + kingdom + "       " + reset + south;
     }
 
     public void printCard(Card card) {
         System.out.println(cli + printUpper(card) + cli + printMiddle(card) + cli + printLower(card) + "\n");
     }
 
-    public void printHand() {
+    protected void printHand() {
         Hand hand = view.getHand();
 
         System.out.print(cli);
         for(int i = 0; i < hand.getSize(); i++)
-            System.out.print("\t" + printUpper(hand.getCard(i)));
+            System.out.print("\t\t" + printUpper(hand.getCard(i)));
 
         System.out.print(cli);
         for(int i = 0; i < hand.getSize(); i++)
-            System.out.print("\t" + printMiddle(hand.getCard(i)));
+            System.out.print("\t\t" + printMiddle(hand.getCard(i)));
 
         System.out.print(cli);
         for(int i = 0; i < hand.getSize(); i++)
-            System.out.print(i + ":\t" + printLower(hand.getCard(i)));
+            System.out.print("\t" + i + ":\t" + printLower(hand.getCard(i)));
 
+        System.out.println();
     }
 
-    public void printGameArea() {
+    private void printGameArea() {
         Card next = view.getTopResourceCard();
         HashMap<DeckBufferType, DeckBuffer> cardSpaces = view.getDeckBuffers();
 
@@ -401,7 +450,7 @@ public class CLIGame {
         else System.out.print("\t\t\t\t");
     }
 
-    public void printScoreboard() {
+    protected void printScoreboard() {
         HashMap<Player, Integer> scoreboard = view.getScoreboard();
         for (Player p : scoreboard.keySet()) {
             System.out.print(cli + "[" + p.getNickname() + " - " + scoreboard.get(p) + "]");
