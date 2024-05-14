@@ -83,10 +83,10 @@ public class ControllerTest {
         c.chooseCardSide(1,eric1.getNickname(),CardSide.BACK);
         c.chooseCardSide(1,giorgio1.getNickname(),CardSide.FRONT);
 
-        assertEquals(gameHandler.getGame(1).getGamePhase(), GamePhase.CHOOSING_PRIVATE_GOAL);
-        c.choosePersonalGoal(1,anna1.getNickname(),anna1.getChoosableGoals().get(1).getGoalID());
-        c.choosePersonalGoal(1,eric1.getNickname(),eric1.getChoosableGoals().get(0).getGoalID());
-        c.choosePersonalGoal(1,giorgio1.getNickname(),giorgio1.getChoosableGoals().get(1).getGoalID());
+        assertEquals(gameHandler.getGame(1).getGamePhase(), GamePhase.CHOOSING_SECRET_GOAL);
+        c.chooseSecretGoal(1,anna1.getNickname(),anna1.getChoosableGoals().get(1).getGoalID());
+        c.chooseSecretGoal(1,eric1.getNickname(),eric1.getChoosableGoals().get(0).getGoalID());
+        c.chooseSecretGoal(1,giorgio1.getNickname(),giorgio1.getChoosableGoals().get(1).getGoalID());
 
         assertEquals(gameHandler.getGame(1).getGamePhase(), GamePhase.PLAYING_GAME);
 
@@ -155,7 +155,7 @@ public class ControllerTest {
         for(Player p : players) c.chooseCardSide(0,p.getNickname(), CardSide.FRONT);
 
         for (Player p : players) {
-            c.choosePersonalGoal(0,p.getNickname(), p.getChoosableGoals().getFirst().getGoalID());
+            c.chooseSecretGoal(0,p.getNickname(), p.getChoosableGoals().getFirst().getGoalID());
         }
 
         // Player + Pawn + Hand printing:
@@ -218,8 +218,8 @@ public class ControllerTest {
         con.chooseCardSide(game.getGameID(),players.get(0).getNickname(),CardSide.FRONT);
         con.chooseCardSide(game.getGameID(),players.get(1).getNickname(),CardSide.FRONT);
 
-        con.choosePersonalGoal(0,players.get(0).getNickname(),players.get(0).getChoosableGoals().getFirst().getGoalID());
-        con.choosePersonalGoal(0,players.get(1).getNickname(),players.get(1).getChoosableGoals().getLast().getGoalID());
+        con.chooseSecretGoal(0,players.get(0).getNickname(),players.get(0).getChoosableGoals().getFirst().getGoalID());
+        con.chooseSecretGoal(0,players.get(1).getNickname(),players.get(1).getChoosableGoals().getLast().getGoalID());
 
         // card flipping
         con.flipCard(0, game.getPlayers().get(0).getNickname(), 0);
