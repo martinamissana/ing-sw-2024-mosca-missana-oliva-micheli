@@ -1,12 +1,17 @@
 package it.polimi.ingsw.network;
 
 import it.polimi.ingsw.model.exceptions.NicknameAlreadyTakenException;
+import it.polimi.ingsw.network.RMI.ClientRemoteInterface;
 import it.polimi.ingsw.view.CLI.CLI;
 import it.polimi.ingsw.view.RMIView;
 import it.polimi.ingsw.view.TCPView;
 
 import java.io.IOException;
+import java.rmi.AlreadyBoundException;
 import java.rmi.NotBoundException;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
+import java.rmi.server.UnicastRemoteObject;
 import java.util.Scanner;
 import java.util.concurrent.TimeUnit;
 
@@ -55,12 +60,20 @@ public class Client {
             }
         } else if (choice.equalsIgnoreCase("RMI")) {
             RMIView client = new RMIView();
+            System.out.print("\u001B[38;2;255;165;0m" + "\n[+] " + "\u001B[0m" + "Insert username:" + "\u001B[38;2;255;165;0m" + "\n[-] " + "\u001B[0m");
             try {
-                client.login("Carlos");
-                System.out.println("Client created");
+                client.login(input.nextLine());
             } catch (NicknameAlreadyTakenException e) {
                 throw new RuntimeException(e);
             }
+            ClientRemoteInterface view = (ClientRemoteInterface) UnicastRemoteObject.exportObject(client, 0);
+            Registry registry = LocateRegistry.getRegistry();
+            try {
+                registry.bind("Client", client);
+            } catch (AlreadyBoundException e) {
+                throw new RuntimeException(e);
+            }
+            System.out.println("Remote Client is ready");
             new Thread(() -> {
                 CLI cli = new CLI(client);
                 cli.run();
