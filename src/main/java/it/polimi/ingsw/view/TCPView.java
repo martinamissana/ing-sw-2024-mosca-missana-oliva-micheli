@@ -158,7 +158,7 @@ public class TCPView extends View {
             }
             case SecretGoalsListAssignedMessage m -> {
                 if (m.getPlayer().equals(super.getPlayer()))
-                    super.setPersonalGoalChoices(m.getList());
+                    super.setSecretGoalChoices(m.getList());
             }
             case SecretGoalAssignedMessage m -> {
                 if (m.getPlayer().equals(super.getPlayer()))
