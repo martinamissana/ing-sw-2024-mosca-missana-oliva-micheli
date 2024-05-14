@@ -10,17 +10,16 @@ import it.polimi.ingsw.model.observer.events.*;
 import it.polimi.ingsw.network.VirtualView;
 import it.polimi.ingsw.network.netMessage.c2s.LobbyJoinedMessage;
 import it.polimi.ingsw.network.netMessage.s2c.*;
-import it.polimi.ingsw.view.RMIView;
-
 import java.io.IOException;
+import java.rmi.RemoteException;
 
 public class RMIVirtualView implements VirtualView {
     private final Controller c;
-    private Integer ID;
-    private String nickname;
-    private RMIView view;
+    private final Integer ID;
+    private final String nickname;
+    private final ClientRemoteInterface view;
 
-    public RMIVirtualView(Controller c, RMIView view) {
+    public RMIVirtualView(Controller c, ClientRemoteInterface view) throws RemoteException {
         this.c = c;
         c.getGh().addObserver(this);
         this.view=view;

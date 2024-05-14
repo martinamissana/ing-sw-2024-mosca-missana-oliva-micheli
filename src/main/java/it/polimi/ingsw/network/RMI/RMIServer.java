@@ -11,7 +11,10 @@ import it.polimi.ingsw.model.player.Pawn;
 import it.polimi.ingsw.view.RMIView;
 
 import java.io.IOException;
+import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.concurrent.ExecutorService;
 
@@ -24,9 +27,18 @@ public class RMIServer extends UnicastRemoteObject implements RemoteInterface,Ru
     }
 
     @Override
-    public void connect(Integer gameID,RMIView client) {
-        System.out.println("New connection!");
+    public void connect() throws RemoteException, NotBoundException {
+        Registry registry = LocateRegistry.getRegistry();
+        System.out.println("RMI registry bindings: ");
+        String[] e = registry.list();
+        for (String string : e) {
+            System.out.println(string);
+        }
+        String remoteObjectName = "Client";
+        ClientRemoteInterface client= (ClientRemoteInterface) registry.lookup(remoteObjectName);
         executor.submit(new RMIVirtualView(c, client));
+
+
     }
     @Override
     public void login(String username) throws NicknameAlreadyTakenException, IOException {

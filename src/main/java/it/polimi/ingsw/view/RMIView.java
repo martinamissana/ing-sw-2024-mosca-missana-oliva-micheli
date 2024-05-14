@@ -11,9 +11,9 @@ import it.polimi.ingsw.model.exceptions.*;
 import it.polimi.ingsw.model.player.Coords;
 import it.polimi.ingsw.model.player.Pawn;
 import it.polimi.ingsw.model.player.Player;
+import it.polimi.ingsw.network.RMI.ClientRemoteInterface;
 import it.polimi.ingsw.network.RMI.RemoteInterface;
 import it.polimi.ingsw.network.netMessage.NetMessage;
-import it.polimi.ingsw.network.netMessage.c2s.CurrentStatusMessage;
 import it.polimi.ingsw.network.netMessage.c2s.DisconnectMessage;
 import it.polimi.ingsw.network.netMessage.c2s.LobbyJoinedMessage;
 import it.polimi.ingsw.network.netMessage.s2c.*;
@@ -23,14 +23,15 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.io.IOException;
+import java.rmi.server.UnicastRemoteObject;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 
-public class RMIView extends View {
+public class RMIView extends View implements ClientRemoteInterface {
 
-    private final Registry registry;
+    private Registry registry;
     private final RemoteInterface RMIServer;
 
     public RMIView() throws RemoteException, NotBoundException {
@@ -42,7 +43,6 @@ public class RMIView extends View {
         }
         String remoteObjectName = "RMIServer";
         RMIServer = (RemoteInterface) registry.lookup(remoteObjectName);
-        RMIServer.connect(super.getID(),this);
     }
 
     public void login(String nickname) throws NicknameAlreadyTakenException, IOException {
@@ -200,7 +200,7 @@ public class RMIView extends View {
                 }
                 case SecretGoalsListAssignedMessage m -> {
                     if (m.getPlayer().equals(super.getPlayer()))
-                        super.setPersonalGoalChoices(m.getList());
+                        super.setSecretGoalChoices(m.getList());
                 }
                 case SecretGoalAssignedMessage m -> {
                     if (m.getPlayer().equals(super.getPlayer()))

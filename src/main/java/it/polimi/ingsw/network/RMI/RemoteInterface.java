@@ -10,13 +10,13 @@ import it.polimi.ingsw.model.player.Pawn;
 import it.polimi.ingsw.view.RMIView;
 
 import java.io.IOException;
+import java.rmi.NotBoundException;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 
 public interface RemoteInterface extends Remote {
 
-    void connect(Integer gameID,RMIView client); //send to the server a clientremoteinterface in order to send messages from server to client
-
+    void connect() throws RemoteException, NotBoundException; //send to the server a clientremoteinterface in order to send messages from server to client
 
     void login(String username) throws NicknameAlreadyTakenException, IOException;
 
