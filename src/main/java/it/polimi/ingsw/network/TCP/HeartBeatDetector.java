@@ -24,9 +24,10 @@ public class HeartBeatDetector  {
             while(true){
                 try {
                     if (!check()) break;
-                } catch (LobbyDoesNotExistsException | IOException | GameDoesNotExistException |
-                         UnexistentUserException e) {
+                } catch (IOException e ) {
                     throw new RuntimeException(e);
+                } catch (GameDoesNotExistException | UnexistentUserException | LobbyDoesNotExistsException e){
+
                 }
             }
         }).start();
