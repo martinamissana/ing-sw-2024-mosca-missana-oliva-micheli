@@ -26,7 +26,7 @@ public class RMIServer extends UnicastRemoteObject implements RemoteInterface,Ru
     @Override
     public void connect(Integer gameID,RMIView client) {
         System.out.println("New connection!");
-        executor.submit(new RMIVirtualView(c,client));
+        executor.submit(new RMIVirtualView(c, client));
     }
     @Override
     public void login(String username) throws NicknameAlreadyTakenException, IOException {

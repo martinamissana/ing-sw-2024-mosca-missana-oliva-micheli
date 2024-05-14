@@ -198,11 +198,11 @@ public class RMIView extends View {
                     if (m.getID().equals(super.getID()))
                         super.setGamePhase(m.getGamePhase());
                 }
-                case PersonalGoalsListAssignedMessage m -> {
+                case SecretGoalsListAssignedMessage m -> {
                     if (m.getPlayer().equals(super.getPlayer()))
                         super.setPersonalGoalChoices(m.getList());
                 }
-                case PersonalGoalAssignedMessage m -> {
+                case SecretGoalAssignedMessage m -> {
                     if (m.getPlayer().equals(super.getPlayer()))
                         super.setSecretGoal(m.getGoal());
                 }
