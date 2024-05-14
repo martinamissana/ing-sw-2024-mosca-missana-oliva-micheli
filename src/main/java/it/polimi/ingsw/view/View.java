@@ -27,18 +27,18 @@ public abstract class View extends ViewObservable<NetMessage> {
     private HashMap<Integer, Lobby> lobbies = new HashMap<>();
     private Player player;
     private Integer ID; // both game and lobby ID
-    private Hand hand;
-    private Field myField;
-    private HashMap<Player, Field> fields; // all other players' fields
-    private boolean yourTurn;
+    private Hand hand = new Hand();
+    private Field myField = new Field();
+    private HashMap<Player, Field> fields = new HashMap<>(); // all other players' fields
+    private boolean yourTurn = false;
     private Action action;
-    private Chat chat;
+    private Chat chat = new Chat();
     private Goal secretGoal;
     private Pawn pawn;
-    private boolean firstPlayer;
+    private boolean firstPlayer = false;
     private boolean lastRound;
-    private ArrayList<Goal> personalGoalChoices;
-    private HashMap<Player, Integer> scoreboard;
+    private ArrayList<Goal> personalGoalChoices = new ArrayList<>();
+    private HashMap<Player, Integer> scoreboard = new HashMap<>();
     private HashMap<DeckBufferType, DeckBuffer> deckBuffers = new HashMap<>();
     private Card topResourceCard;
     private Card topGoldenCard;

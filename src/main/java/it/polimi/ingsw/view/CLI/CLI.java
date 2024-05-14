@@ -4,7 +4,6 @@ import it.polimi.ingsw.controller.exceptions.CannotJoinMultipleLobbiesException;
 import it.polimi.ingsw.controller.exceptions.GameAlreadyStartedException;
 import it.polimi.ingsw.controller.exceptions.PlayerChatMismatchException;
 import it.polimi.ingsw.controller.exceptions.UnexistentUserException;
-import it.polimi.ingsw.model.card.StarterCard;
 import it.polimi.ingsw.model.chat.Chat;
 import it.polimi.ingsw.model.chat.Message;
 import it.polimi.ingsw.model.exceptions.*;
@@ -18,6 +17,7 @@ import it.polimi.ingsw.network.netMessage.c2s.CurrentStatusMessage;
 import it.polimi.ingsw.network.netMessage.c2s.LobbyJoinedMessage;
 import it.polimi.ingsw.network.netMessage.s2c.*;
 import it.polimi.ingsw.view.View;
+import it.polimi.ingsw.view.ViewController;
 import it.polimi.ingsw.view.ViewObserver;
 
 import java.io.IOException;
@@ -28,6 +28,7 @@ import java.util.Scanner;
 
 public class CLI implements Runnable, ViewObserver {
     private final View view;
+    private final ViewController check;
     private CLIGame game;
     private final Scanner input = new Scanner(System.in);
     private static final String warningColor = "\u001B[31m";
@@ -38,16 +39,18 @@ public class CLI implements Runnable, ViewObserver {
     private static final String blue = "\u001B[34m";
     private static final String yellow = "\u001B[93m";
     private static final String red = "\u001B[31m";
+    private static final String GoldColor = "\u001B[30;43m"; // Gold
 
     public CLI(View view) {
         this.view = view;
         this.game = new CLIGame(view);
+        this.check = new ViewController(view);
         this.view.addObserver(this);
     }
 
     @Override
     public void run() {
-        int lobbyAction;
+        int lobbyAction = 0;
         printHello();
 
         try {
@@ -57,15 +60,17 @@ public class CLI implements Runnable, ViewObserver {
         }
 
         do {
-            lobbyAction = chooseAction();
-            switch (lobbyAction) {
-                case 1 -> createLobby();
-                case 2 -> chooseLobby();
-                case 3 -> Thread.currentThread().interrupt();
-            }
+            if (view.getID() == null) {
+                lobbyAction = chooseAction();
+                switch (lobbyAction) {
+                    case 1 -> createLobby();
+                    case 2 -> chooseLobby();
+                    case 3 -> Thread.currentThread().interrupt();
+                }
+                lobbyAction = -1;
 
-            if (view.getID() != null) {
-                if (view.getPawn() == null) setPawnColor();
+            } else {
+                while (view.getPawn() == null) setPawnColor();
 
                 while (lobbyAction != 2 && view.getLobbies().get(view.getID()).getPlayers().size() < view.getLobbies().get(view.getID()).getNumOfPlayers() && view.getLobbies().get(view.getID()).getPawnBuffer().getPawnList().size() > Pawn.values().length - view.getLobbies().get(view.getID()).getNumOfPlayers()) {
                     lobbyAction = waiting();
@@ -74,23 +79,45 @@ public class CLI implements Runnable, ViewObserver {
                         case 2 -> quitLobby();
                     }
                 }
+
+                try {
+                    view.getCurrentStatus();
+                } catch (IOException | ClassNotFoundException e) {
+                    throw new RuntimeException(e);
+                } catch (FullLobbyException | NicknameAlreadyTakenException ignored) {}
+
                 if (lobbyAction != 2) {
+                    // Game CLI
                     GamePhase phase = view.getGamePhase();
+                    if (phase != null) {
 
-                    do {
-                        switch (phase) {
-                            case PLACING_STARTER_CARD -> game.placeStarterCard();
-                            case CHOOSING_SECRET_GOAL -> game.chooseSecretGoal();
-                            case PLAYING_GAME -> {
-                                if (!view.isYourTurn()) System.out.print(cli + "Waiting for your turn");
-                                else if (view.getAction().equals(Action.PLAY)) game.playCard();
-                                else if (view.getAction().equals(Action.DRAW)) game.drawCard();
-                                else System.out.print(cli + "wtf?");
+                        do {
+                            switch (phase) {
+                                case PLACING_STARTER_CARD -> game.placeStarterCard();
+                                case CHOOSING_SECRET_GOAL -> game.chooseSecretGoal();
+                                case PLAYING_GAME -> {
+                                    if (!view.isYourTurn()) System.out.print(cli + "Waiting for your turn");
+                                    else if (view.getAction().equals(Action.PLAY)) game.playCard();
+                                    else if (view.getAction().equals(Action.DRAW)) game.drawCard();
+                                    else System.out.print(cli + "wtf?");
+                                }
+                                case GAME_FINISHED -> {
+                                    // TODO: See if this is the only thing to do
+                                    ArrayList<Player> winners = view.getWinners();
+                                    if (winners.size() == 1)
+                                        System.out.println(cli + "The winner is " + GoldColor + winners.getFirst().getNickname() + reset + "!!");
+                                    else {
+                                        System.out.print(cli + "The winners are ");
+                                        for (int i = winners.size() - 1; i >= 0; i--)
+                                            System.out.print(cli + GoldColor + winners.get(i).getNickname() + reset);
+                                        System.out.println(cli + "GG");
+                                    }
+                                }
                             }
-                        }
 
-                        phase = view.getGamePhase();
-                    } while (phase != GamePhase.GAME_FINISHED);
+                            phase = view.getGamePhase();
+                        } while (phase != GamePhase.GAME_FINISHED);
+                    }
                 }
             }
         } while(true);
@@ -109,7 +136,6 @@ public class CLI implements Runnable, ViewObserver {
                 System.out.print(cli + "Exiting game");
                 printDots();
                 Thread.currentThread().interrupt();
-
             }
             if (choice == 2) {
                 if (view.getLobbies().isEmpty()) {
@@ -213,13 +239,14 @@ public class CLI implements Runnable, ViewObserver {
     private int waiting() {
         int choice;
         do {
-                System.out.print(cli + "Waiting for players..." + cli + "1. Send message" + cli + "2. Quit lobby" + user);
-
+            if (view.getLobbies().get(view.getID()).getPlayers().size() < view.getLobbies().get(view.getID()).getNumOfPlayers()) {
+                System.out.print(cli + "Waiting for players..." + cli + "1. Open chat" + cli + "2. Quit lobby" + user);
                 choice = input.nextInt();
+            } else choice = 3;      // 3 is set to 'exit' the waiting
 
-                if (choice != 1 && choice != 2)
-                    System.out.println(warningColor + "\n[ERROR]: Invalid choice\n" + reset);
-        } while (choice != 1 && choice != 2);
+            if (choice != 1 && choice != 2 && choice != 3)
+                System.out.println(warningColor + "\n[ERROR]: Invalid choice\n" + reset);
+        } while (choice != 1 && choice != 2 && choice != 3);
 
         return choice;
     }
@@ -266,7 +293,6 @@ public class CLI implements Runnable, ViewObserver {
             return;
         }
 
-
         Pawn pawn;
         do {
             printAvailablePawns();
@@ -275,10 +301,10 @@ public class CLI implements Runnable, ViewObserver {
             String color = "";
             while (color.isEmpty()) color = input.nextLine();
             pawn = switch (color.toUpperCase()) {
-                case "RED", "R", "SILVIA" -> Pawn.RED;                      // Easter egg
-                case "GREEN", "G", "SHREK", "ANTONIO" -> Pawn.GREEN;        // Easter egg
-                case "BLUE", "B", "GIORGIO" -> Pawn.BLUE;                   // Easter egg
-                case "YELLOW", "Y", "BANANA", "MARTINA" -> Pawn.YELLOW;     // Easter egg
+                case "RED", "R" -> Pawn.RED;
+                case "GREEN", "G" -> Pawn.GREEN;
+                case "BLUE", "B" -> Pawn.BLUE;
+                case "YELLOW", "Y", "BANANA" -> Pawn.YELLOW;
                 default -> null;
             };
 
@@ -320,6 +346,7 @@ public class CLI implements Runnable, ViewObserver {
         for (int i = 0; i < players.size(); i++) {
             System.out.print(cli + (i + 2) + ". Private chat with " + players.get(i).getNickname());
         }
+        System.out.print(user);
         int choice = input.nextInt();
 
         System.out.println(cli + "Opening chat (write \"quit chat\" to return to selection)");
@@ -338,8 +365,10 @@ public class CLI implements Runnable, ViewObserver {
     }
 
     private void sendMessage(Player player) {
-        System.out.print(user);
-        String text = input.nextLine();
+        System.out.print("\u001B[38;2;255;165;0m" + "\n[" + view.getNickname() + "] " + "\u001B[0m ");
+        String text = "";
+        while (text.isEmpty()) text = input.nextLine();
+
         if (text.equalsIgnoreCase("quit chat")) return;
         Message msg;
 
@@ -493,17 +522,17 @@ public class CLI implements Runnable, ViewObserver {
             case ChatMessageAddedMessage m -> {
                 if (m.getM().isGlobal()) {
                     if (m.getM().getSender().equals(view.getPlayer())) {
-                        System.out.print(cli + "Message sent: \"" + m.getM().getText() + "\" to everyone");
+                        System.out.print(cli + "Message sent: \"" + m.getM().getText() + "\" to everyone\n");
                     }
                     else if (m.getLobbyID().equals(view.getID())) {
-                        System.out.print(cli + "[" + m.getM().getSender().getNickname() + "]: \"" + m.getM().getText() + "\"");
+                        System.out.print(cli + "[" + m.getM().getSender().getNickname() + "]: \"" + m.getM().getText() + "\"\n");
                     }
                 } else {
                     if (m.getM().getSender().equals(view.getPlayer())) {
-                        System.out.print(cli + "Message sent: \"" + m.getM().getText() + "\" to " + m.getM().getReceiver().getNickname());
+                        System.out.print(cli + "Message sent: \"" + m.getM().getText() + "\" to " + m.getM().getReceiver().getNickname() + "\n");
                     }
                     else if (m.getLobbyID().equals(view.getID())) {
-                        System.out.print(cli + "[PRIVATE | " + m.getM().getSender().getNickname() + "]: \"" + m.getM().getText() + "\"");
+                        System.out.print(cli + "[PRIVATE | " + m.getM().getSender().getNickname() + "]: \"" + m.getM().getText() + "\"\n");
                     }
                 }
             }
@@ -511,7 +540,7 @@ public class CLI implements Runnable, ViewObserver {
             case CardAddedToHandMessage m -> {
                 if (m.getPlayer().equals(view.getPlayer())) {
                     System.out.print(cli + "Card added to hand\n");
-                    if (!m.getCard().getClass().equals(StarterCard.class)) {
+                    if (view.getHand().getSize() == 3) {
                         System.out.print(cli + "Your hand:");
                         game.printHand();
                     }
@@ -523,19 +552,15 @@ public class CLI implements Runnable, ViewObserver {
             case CardPlacedOnFieldMessage m -> {
                 if (m.getNickname().equals(view.getPlayer().getNickname())) {
                     System.out.println(cli + "Card added to field in position: (" + m.getCoords().getX() + ", " + m.getCoords().getY() + ")");
-
                 }
             }
 
             case GamePhaseChangedMessage m -> {
-                if (m.getGamePhase().equals(GamePhase.PLAYING_GAME)) {
-                    if (!view.isYourTurn()) {
-                        System.out.print(cli + "Waiting for your turn\n");
-                    }
-                }
+                System.out.println(cli + "New game phase: " + m.getGamePhase());
             }
 
             case SecretGoalsListAssignedMessage m -> {
+                System.out.println("egdsrbtsfrnaeg");
             }
 
             case SecretGoalAssignedMessage m -> {
