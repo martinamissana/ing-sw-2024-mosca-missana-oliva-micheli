@@ -7,11 +7,11 @@ import it.polimi.ingsw.network.netMessage.NetMessage;
 import java.util.ArrayList;
 
 public class SecretGoalsListAssignedMessage extends NetMessage {
-    private final ArrayList<Goal> list = new ArrayList<>();
+    private final ArrayList<Goal> list;
     private final Player player;
 
     public SecretGoalsListAssignedMessage(ArrayList<Goal> list, Player player) {
-        this.list.addAll(list);
+        this.list = new ArrayList<>(list);
         this.player = player;
     }
 
