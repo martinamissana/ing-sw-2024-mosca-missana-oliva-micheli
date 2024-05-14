@@ -37,7 +37,7 @@ public abstract class View extends ViewObservable<NetMessage> {
     private Pawn pawn;
     private boolean firstPlayer = false;
     private boolean lastRound;
-    private ArrayList<Goal> personalGoalChoices = new ArrayList<>();
+    private ArrayList<Goal> secretGoalChoices = new ArrayList<>();
     private HashMap<Player, Integer> scoreboard = new HashMap<>();
     private HashMap<DeckBufferType, DeckBuffer> deckBuffers = new HashMap<>();
     private Card topResourceCard;
@@ -87,7 +87,7 @@ public abstract class View extends ViewObservable<NetMessage> {
 
     public boolean isLastRound() { return lastRound; }
 
-    public ArrayList<Goal> getSecretGoalChoices() { return personalGoalChoices; }
+    public ArrayList<Goal> getSecretGoalChoices() { return secretGoalChoices; }
 
     public HashMap<Player, Integer> getScoreboard() { return scoreboard; }
 
@@ -126,7 +126,7 @@ public abstract class View extends ViewObservable<NetMessage> {
 
     public void setLastRound(boolean lastRound) { this.lastRound = lastRound; }
 
-    public void setPersonalGoalChoices(ArrayList<Goal> personalGoalChoices) { this.personalGoalChoices = personalGoalChoices; }
+    public void setSecretGoalChoices(ArrayList<Goal> secretGoalChoices) { this.secretGoalChoices = secretGoalChoices; }
 
     public void setScoreboard(HashMap<Player, Integer> scoreboard) { this.scoreboard = scoreboard; }
 
