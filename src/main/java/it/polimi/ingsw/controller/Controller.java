@@ -347,7 +347,7 @@ public class Controller implements Serializable {
 
     /**
      * Allows the player to choose the side of the starter card before placing it down
-     * if all the players have placed the started card the game phase changes to CHOOSING PRIVATE GOAL and the hand of each player is filled
+     * if all the players have placed the started card the game phase changes to CHOOSING SECRET GOAL and the hand of each player is filled
      *
      * @param nickname who is playing the card
      * @param side     side chosen by the player
@@ -440,15 +440,15 @@ public class Controller implements Serializable {
 
         if (gh.getGame(ID).getGamePhase() != GamePhase.CHOOSING_SECRET_GOAL) throw new WrongGamePhaseException();
         if (player.getChoosableGoals().get(0).getGoalID() == goalID) {
-            player.setPrivateGoal(player.getChoosableGoals().get(0));
+            player.setSecretGoal(player.getChoosableGoals().get(0));
             gh.notify(new SecretGoalAssignedEvent(player, player.getChoosableGoals().get(0)));
         } else if (player.getChoosableGoals().get(1).getGoalID() == goalID) {
-            player.setPrivateGoal(player.getChoosableGoals().get(1));
+            player.setSecretGoal(player.getChoosableGoals().get(1));
             gh.notify(new SecretGoalAssignedEvent(player, player.getChoosableGoals().get(1)));
         } else throw new IllegalGoalChosenException();
 
         for (Player p : gh.getGame(ID).getPlayers()) {
-            if (p.getPrivateGoal() == null) return;
+            if (p.getSecretGoal() == null) return;
         }
         gh.getGame(ID).setGamePhase(GamePhase.PLAYING_GAME);
         gh.notify(new GamePhaseChangedEvent(ID, GamePhase.PLAYING_GAME));
@@ -633,20 +633,20 @@ public class Controller implements Serializable {
     // FINAL PHASE
 
     /**
-     * checks in the field the private goal of the players and adds the points to the scoreboard
+     * checks in the field the secret goal of the players and adds the points to the scoreboard
      *
      * @param gameID index of the game where the evaluation is done
      */
-    private synchronized void evaluatePrivateGoal(Integer gameID) {
+    private synchronized void evaluateSecretGoal(Integer gameID) {
         Game game = gh.getActiveGames().get(gameID);
         for (Player p : game.getPlayers()) {
             try {
-                if (p.getPrivateGoal().getClass() == ResourceGoal.class) {
-                    resourceEvaluator(gameID, (ResourceGoal) p.getPrivateGoal(), p.getNickname());
-                } else if (p.getPrivateGoal().getClass() == L_ShapeGoal.class) {
-                    L_ShapeEvaluator(gameID, (L_ShapeGoal) p.getPrivateGoal(), p.getNickname());
+                if (p.getSecretGoal().getClass() == ResourceGoal.class) {
+                    resourceEvaluator(gameID, (ResourceGoal) p.getSecretGoal(), p.getNickname());
+                } else if (p.getSecretGoal().getClass() == L_ShapeGoal.class) {
+                    L_ShapeEvaluator(gameID, (L_ShapeGoal) p.getSecretGoal(), p.getNickname());
                 } else {
-                    diagonalEvaluator(gameID, (DiagonalGoal) p.getPrivateGoal(), p.getNickname());
+                    diagonalEvaluator(gameID, (DiagonalGoal) p.getSecretGoal(), p.getNickname());
                 }
             } catch (UnexistentUserException ignored) {
             }
@@ -684,13 +684,13 @@ public class Controller implements Serializable {
     }
 
     /**
-     * adds the list of winners (players with the highest score) of the game after the evaluation of the private and the common goals
+     * adds the list of winners (players with the highest score) of the game after the evaluation of the secret and the common goals
      *
      * @param gameID index of the game where the evaluation is done
      */
     public synchronized void winner(Integer gameID) throws IOException {
         Game game = gh.getActiveGames().get(gameID);
-        evaluatePrivateGoal(gameID);
+        evaluateSecretGoal(gameID);
         evaluateCommonGoal(gameID);
         HashMap<Player, Integer> scoreboard = game.getScoreboard();
         ArrayList<Player> winners = new ArrayList<>();
