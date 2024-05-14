@@ -38,8 +38,8 @@ public class CLIGame {
     private static final String PlantColor = "\u001B[30;42m"; // Green
     private static final String InsectColor = "\u001B[30;45m"; // Purple
     private static final String AnimalColor = "\u001B[30;46m"; // Cyan
-    private static final String StarterColor = "\u001B[30;48;2;245;200;157m"; // Meat
-    private static final String cornerColor = "\u001B[30;48;2;200;150;100m"; // Meat
+    private static final String StarterColor = "\u001B[30;48;2;245;200;157m"; // Skin
+    private static final String cornerColor = "\u001B[30;48;2;200;150;100m"; // Darker skin
 
     private static final String GoldColor = "\u001B[30;43m"; // Gold
     private static final String CardBlockColor = "\u001B[40m";   // Black
@@ -94,6 +94,13 @@ public class CLIGame {
 
     protected void chooseSecretGoal () {
         ArrayList<Goal> goals = view.getSecretGoalChoices();
+
+        try {
+            Thread.sleep(500);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+
         goals.stream().mapToInt(Goal::getGoalID).forEach(System.out::println);
         System.out.print(cli + "You can choose between these two goals:");
         printGoal(goals.getFirst());
@@ -371,7 +378,7 @@ public class CLIGame {
         System.out.println(cli + printUpper(card) + cli + printMiddle(card) + cli + printLower(card) + "\n");
     }
 
-    protected void printHand() {
+    protected synchronized void printHand() {
         Hand hand = view.getHand();
 
         System.out.print(cli);

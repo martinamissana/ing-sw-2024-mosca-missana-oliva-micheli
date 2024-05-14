@@ -98,7 +98,6 @@ public class CLI implements Runnable, ViewObserver {
                                     if (!view.isYourTurn()) System.out.print(cli + "Waiting for your turn");
                                     else if (view.getAction().equals(Action.PLAY)) game.playCard();
                                     else if (view.getAction().equals(Action.DRAW)) game.drawCard();
-                                    else System.out.print(cli + "wtf?");
                                 }
                                 case GAME_FINISHED -> {
                                     // TODO: See if this is the only thing to do
@@ -109,7 +108,6 @@ public class CLI implements Runnable, ViewObserver {
                                         System.out.print(cli + "The winners are ");
                                         for (int i = winners.size() - 1; i >= 0; i--)
                                             System.out.print(cli + GoldColor + winners.get(i).getNickname() + reset);
-                                        System.out.println(cli + "GG");
                                     }
                                 }
                             }
@@ -128,7 +126,7 @@ public class CLI implements Runnable, ViewObserver {
             System.out.print(cli + "What would you like to do?" + cli +
                     "1. Create a lobby and wait for other players to join" + cli +
                     "2. Join an already open lobby" + cli +
-                    "3. Quit game" + user);
+                    "3. Quit" + user);
             choice = input.nextInt();
 
             if (choice == 3) {
@@ -513,6 +511,7 @@ public class CLI implements Runnable, ViewObserver {
                 System.out.print(cli + "Game starting");
                 printDots();
                 game = new CLIGame(view);
+                input.close();
             }
 
             case CurrentStatusMessage m -> {
@@ -538,7 +537,7 @@ public class CLI implements Runnable, ViewObserver {
 
             case CardAddedToHandMessage m -> {
                 if (m.getPlayer().equals(view.getPlayer())) {
-                    System.out.print(cli + "Card added to hand\n");
+                    System.out.print(cli + "Card added to hand");
                     if (view.getHand().getSize() == 3) {
                         System.out.print(cli + "Your hand:");
                         game.printHand();
@@ -559,7 +558,6 @@ public class CLI implements Runnable, ViewObserver {
             }
 
             case SecretGoalsListAssignedMessage m -> {
-                System.out.println("egdsrbtsfrnaeg");
             }
 
             case SecretGoalAssignedMessage m -> {
