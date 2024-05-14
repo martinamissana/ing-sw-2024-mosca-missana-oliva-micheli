@@ -14,7 +14,7 @@ import java.util.HashMap;
 public class GameCreatedMessage extends NetMessage {
     private final Integer ID;
     private final Player firstPlayer;
-    private final HashMap<Player, Integer> scoreboard;
+    private final HashMap<Player, Integer> scoreboard = new HashMap<>();
     private final HashMap<DeckBufferType, DeckBuffer> deckBuffers = new HashMap<>();
     private final Card topResourceCard;
     private final Card topGoldenCard;
@@ -27,7 +27,7 @@ public class GameCreatedMessage extends NetMessage {
     public GameCreatedMessage(Integer ID, Player firstPlayer, HashMap<Player, Integer> scoreboard, Card topResourceCard, Card topGoldenCard, Goal commonGoal1, Goal commonGoal2, GamePhase gamePhase,DeckBuffer d1,DeckBuffer d2,DeckBuffer d3,DeckBuffer d4) {
         this.ID=ID;
         this.firstPlayer = firstPlayer;
-        this.scoreboard = scoreboard;
+        this.scoreboard.putAll(scoreboard);
         this.topResourceCard = topResourceCard;
         this.topGoldenCard = topGoldenCard;
         this.commonGoal1 = commonGoal1;

@@ -11,7 +11,7 @@ public class GameWinnersAnnouncedMessage extends NetMessage {
 
     public GameWinnersAnnouncedMessage(Integer ID, ArrayList<Player> winners) {
         this.ID = ID;
-        this.winners = winners;
+        this.winners.addAll(winners);
     }
 
     public Integer getID() {
