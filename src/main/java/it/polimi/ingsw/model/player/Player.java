@@ -12,7 +12,7 @@ public class Player implements Serializable {
     private final Field field;
     private final Chat chat;
     private boolean goesFirst;
-    private Goal privateGoal;
+    private Goal secretGoal;
     private Pawn pawn;
     private ArrayList<Goal> choosableGoals;
 
@@ -26,7 +26,7 @@ public class Player implements Serializable {
         this.field = new Field();
         this.chat = new Chat();
         this.goesFirst = false;
-        this.privateGoal = null;
+        this.secretGoal = null;
         this.pawn = null;
         this.choosableGoals = new ArrayList<>();
     }
@@ -44,7 +44,7 @@ public class Player implements Serializable {
         this.field = new Field();
         this.chat = new Chat();
         this.goesFirst = goesFirst;
-        this.privateGoal = null;
+        this.secretGoal = null;
         this.pawn = pawn;
     }
 
@@ -55,10 +55,10 @@ public class Player implements Serializable {
     public void setGoesFirst(boolean goesFirst) { this.goesFirst = goesFirst; }
 
     /**
-     * sets the player's private goal
+     * sets the player's secret goal
      * @param goal goal to set as the player's private goal
      */
-    public void setPrivateGoal(Goal goal) { this.privateGoal = goal; }
+    public void setSecretGoal(Goal goal) { this.secretGoal = goal; }
 
     /**
      * sets the player's pawn
@@ -97,11 +97,11 @@ public class Player implements Serializable {
     public boolean getGoesFirst() { return goesFirst; }
 
     /**
-     * returns the player's private goal
+     * returns the player's secret goal
      * @return Goal
      */
-    public Goal getPrivateGoal() {
-        return privateGoal;
+    public Goal getSecretGoal() {
+        return secretGoal;
     }
 
     /**

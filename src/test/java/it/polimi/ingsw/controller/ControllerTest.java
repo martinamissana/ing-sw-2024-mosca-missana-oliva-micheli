@@ -83,10 +83,10 @@ public class ControllerTest {
         c.chooseCardSide(1,eric1.getNickname(),CardSide.BACK);
         c.chooseCardSide(1,giorgio1.getNickname(),CardSide.FRONT);
 
-        assertEquals(gameHandler.getGame(1).getGamePhase(), GamePhase.CHOOSING_PRIVATE_GOAL);
-        c.choosePersonalGoal(1,anna1.getNickname(),anna1.getChoosableGoals().get(1).getGoalID());
-        c.choosePersonalGoal(1,eric1.getNickname(),eric1.getChoosableGoals().get(0).getGoalID());
-        c.choosePersonalGoal(1,giorgio1.getNickname(),giorgio1.getChoosableGoals().get(1).getGoalID());
+        assertEquals(gameHandler.getGame(1).getGamePhase(), GamePhase.CHOOSING_SECRET_GOAL);
+        c.chooseSecretGoal(1,anna1.getNickname(),anna1.getChoosableGoals().get(1).getGoalID());
+        c.chooseSecretGoal(1,eric1.getNickname(),eric1.getChoosableGoals().get(0).getGoalID());
+        c.chooseSecretGoal(1,giorgio1.getNickname(),giorgio1.getChoosableGoals().get(1).getGoalID());
 
         assertEquals(gameHandler.getGame(1).getGamePhase(), GamePhase.PLAYING_GAME);
 
@@ -155,7 +155,7 @@ public class ControllerTest {
         for(Player p : players) c.chooseCardSide(0,p.getNickname(), CardSide.FRONT);
 
         for (Player p : players) {
-            c.choosePersonalGoal(0,p.getNickname(), p.getChoosableGoals().getFirst().getGoalID());
+            c.chooseSecretGoal(0,p.getNickname(), p.getChoosableGoals().getFirst().getGoalID());
         }
 
         // Player + Pawn + Hand printing:
@@ -164,7 +164,7 @@ public class ControllerTest {
             for(int i = 0; i < 3; i++) {
                 System.out.print("[" + p.getHand().getCard(i).getCardID() + "]");
             }
-            System.out.println("   goal: (" + p.getPrivateGoal().getGoalID() + ")");
+            System.out.println("   goal: (" + p.getSecretGoal().getGoalID() + ")");
         }
 
         // Deck + Deck Buffers printing
@@ -218,8 +218,8 @@ public class ControllerTest {
         con.chooseCardSide(game.getGameID(),players.get(0).getNickname(),CardSide.FRONT);
         con.chooseCardSide(game.getGameID(),players.get(1).getNickname(),CardSide.FRONT);
 
-        con.choosePersonalGoal(0,players.get(0).getNickname(),players.get(0).getChoosableGoals().getFirst().getGoalID());
-        con.choosePersonalGoal(0,players.get(1).getNickname(),players.get(1).getChoosableGoals().getLast().getGoalID());
+        con.chooseSecretGoal(0,players.get(0).getNickname(),players.get(0).getChoosableGoals().getFirst().getGoalID());
+        con.chooseSecretGoal(0,players.get(1).getNickname(),players.get(1).getChoosableGoals().getLast().getGoalID());
 
         // card flipping
         con.flipCard(0, game.getPlayers().get(0).getNickname(), 0);
@@ -317,15 +317,15 @@ public class ControllerTest {
         Player player0 = gh.getGame(0).getPlayers().get(0);
         Player player1 = gh.getGame(0).getPlayers().get(1);
         Player player2 = gh.getGame(0).getPlayers().get(2);
-        player0.setPrivateGoal(goal0);
-        player1.setPrivateGoal(goal1);
-        player2.setPrivateGoal(goal2);
+        player0.setSecretGoal(goal0);
+        player1.setSecretGoal(goal1);
+        player2.setSecretGoal(goal2);
         //setting common goals
         gh.getGame(0).setCommonGoal1(goal2);
         gh.getGame(0).setCommonGoal2(goal2);
         // Starter card choosing:
         for (Player p : players) c.chooseCardSide(0,p.getNickname(), CardSide.FRONT);
-        // Adding cards to the field to satisfy the private goal
+        // Adding cards to the field to satisfy the secret goal
         ArrayList<ResourceCard> cards = CardsPreset.getResourceCards();
         player0.getField().addCard(cards.get(4), new Coords(1, 0));
         player0.getField().addCard(cards.get(14), new Coords(0, 1));
@@ -339,11 +339,11 @@ public class ControllerTest {
         c.winner(0);
         assertNotNull(gh.getGame(0).getWinners());
         assertSame(gh.getGame(0).getWinners().getFirst(), player2);
-        // player0's field contains their private goal so their score should be equal to the points of their private goal
+        // player0's field contains their secret goal so their score should be equal to the points of their secret goal
         assertEquals(goal0.getPoints(), gh.getGame(0).getPlayerScore(player0));
-        // player1's field contains their private goal so their score should be equal to the points of their private goal
+        // player1's field contains their secret goal so their score should be equal to the points of their secret goal
         assertEquals(goal1.getPoints(), gh.getGame(0).getPlayerScore(player1));
-        // since for the test the common goals are the same of player2 private goal (not possible in the real game), player2 score should be three times the points of his private goal (one time for the private one, two times for the common ones)
+        // since for the test the common goals are the same of player2 secret goal (not possible in the real game), player2 score should be three times the points of his secret goal (one time for the secret one, two times for the common ones)
         assertEquals(3 * goal2.getPoints(), gh.getGame(0).getPlayerScore(player2));
     }
 }

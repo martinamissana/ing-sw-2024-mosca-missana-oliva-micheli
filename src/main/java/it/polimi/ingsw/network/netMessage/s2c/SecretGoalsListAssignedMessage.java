@@ -11,7 +11,7 @@ public class SecretGoalsListAssignedMessage extends NetMessage {
     private final Player player;
 
     public SecretGoalsListAssignedMessage(ArrayList<Goal> list, Player player) {
-        this.list = list;
+        this.list = new ArrayList<>(list);
         this.player = player;
     }
 

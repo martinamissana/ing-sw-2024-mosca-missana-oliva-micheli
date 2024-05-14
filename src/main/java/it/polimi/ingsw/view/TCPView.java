@@ -41,7 +41,7 @@ public class TCPView extends View {
         this.out = new ObjectOutputStream(socket.getOutputStream());
     }
 
-    public void startClient() throws IOException, ClassNotFoundException {
+    public synchronized void startClient() throws IOException, ClassNotFoundException {
         try {
 
             NetMessage deserialized;
@@ -49,14 +49,14 @@ public class TCPView extends View {
                 deserialized = (NetMessage) in.readObject();
                 elaborate(deserialized);
             } while (!socket.isClosed() && deserialized.getClass() != LoginFail_NicknameAlreadyTaken.class && deserialized.getClass() != DisconnectMessage.class);
+            disconnect();
 
-            in.close();
-            out.close();
-            socket.close();
         } catch (IOException e) {
+            disconnect();
             System.err.println(e.getMessage());
         } catch (ClassNotFoundException | FullLobbyException | NicknameAlreadyTakenException | HandIsFullException |
                  IllegalMoveException e) {
+            disconnect();
             throw new RuntimeException(e);
         }
     }
@@ -66,6 +66,7 @@ public class TCPView extends View {
             case LoginMessage m -> {
             }
             case LoginFail_NicknameAlreadyTaken m -> {
+                //TODO: do we need this?
                 DisconnectMessage disconnectMessage = new DisconnectMessage();
                 out.writeObject(disconnectMessage);
             }
@@ -215,7 +216,7 @@ public class TCPView extends View {
     }
 
     @Override
-    public void login(String nickname) throws NicknameAlreadyTakenException, IOException {
+    public synchronized void login(String nickname) throws NicknameAlreadyTakenException, IOException {
         MyNickname m = new MyNickname(nickname);
         super.setPlayer(new Player(nickname));
         super.setNickname(nickname);
@@ -223,37 +224,37 @@ public class TCPView extends View {
     }
 
     @Override
-    public void createLobby(int numOfPlayers) throws IOException {
+    public synchronized void createLobby(int numOfPlayers) throws IOException {
         CreateLobbyMessage m = new CreateLobbyMessage(numOfPlayers, super.getPlayer());
         out.writeObject(m);
     }
 
     @Override
-    public void joinLobby(int lobbyID) throws IOException {
+    public synchronized void joinLobby(int lobbyID) throws IOException {
         JoinLobbyMessage m = new JoinLobbyMessage(super.getPlayer(), lobbyID);
         out.writeObject(m);
     }
 
     @Override
-    public void leaveLobby() throws IOException {
+    public synchronized void leaveLobby() throws IOException {
         LeaveLobbyMessage m = new LeaveLobbyMessage(super.getPlayer(), super.getID());
         out.writeObject(m);
     }
 
     @Override
-    public void choosePawn(Pawn color) throws IOException {
+    public synchronized void choosePawn(Pawn color) throws IOException {
         ChoosePawnMessage m = new ChoosePawnMessage(super.getID(), super.getPlayer(), color);
         out.writeObject(m);
     }
 
     @Override
-    public void chooseSecretGoal(int goalID) throws IOException {
+    public synchronized void chooseSecretGoal(int goalID) throws IOException {
         ChooseSecretGoalMessage m = new ChooseSecretGoalMessage(super.getID(), super.getNickname(), goalID);
         out.writeObject(m);
     }
 
     @Override
-    public void getCurrentStatus() throws IOException {
+    public synchronized void getCurrentStatus() throws IOException {
         GetCurrentStatusMessage m = new GetCurrentStatusMessage();
         out.writeObject(m);
     }
@@ -265,37 +266,43 @@ public class TCPView extends View {
     }
 
     @Override
-    public void chooseCardSide(CardSide side) throws IOException {
+    public synchronized void chooseCardSide(CardSide side) throws IOException {
         ChooseCardSideMessage m = new ChooseCardSideMessage(super.getID(), super.getNickname(), side);
         out.writeObject(m);
     }
 
     @Override
-    public void playCard(int handPos, Coords coords) throws IOException {
+    public synchronized void playCard(int handPos, Coords coords) throws IOException {
         PlayCardMessage m = new PlayCardMessage(super.getID(), super.getNickname(), handPos, coords);
         out.writeObject(m);
     }
 
     @Override
-    public void drawCard(DeckTypeBox deckTypeBox) throws IOException {
+    public synchronized void drawCard(DeckTypeBox deckTypeBox) throws IOException {
         DrawCardMessage m = new DrawCardMessage(super.getID(), super.getNickname(), deckTypeBox);
         out.writeObject(m);
     }
 
     @Override
-    public void flipCard(int handPos) throws IOException {
+    public synchronized void flipCard(int handPos) throws IOException {
         FlipCardMessage m = new FlipCardMessage(super.getID(), super.getNickname(), handPos);
         out.writeObject(m);
         super.getHand().getCard(handPos).flip();
     }
 
     @Override
-    public void heartbeat() throws IOException, ClassNotFoundException {
+    public synchronized void heartbeat() throws IOException, ClassNotFoundException {
         HeartBeatMessage m = new HeartBeatMessage();
         out.writeObject(m);
     }
 
-    public Socket getSocket() {
+    public synchronized void disconnect() throws IOException {
+        in.close();
+        out.close();
+        socket.close();
+    }
+
+    public synchronized Socket getSocket() {
         return socket;
     }
 }
