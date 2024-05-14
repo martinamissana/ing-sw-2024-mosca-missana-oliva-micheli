@@ -41,7 +41,7 @@ public class TCPView extends View {
         this.out = new ObjectOutputStream(socket.getOutputStream());
     }
 
-    public synchronized void startClient() throws IOException, ClassNotFoundException {
+    public void startClient() throws IOException, ClassNotFoundException {
         try {
 
             NetMessage deserialized;
@@ -291,12 +291,12 @@ public class TCPView extends View {
     }
 
     @Override
-    public synchronized void heartbeat() throws IOException, ClassNotFoundException {
+    public void heartbeat() throws IOException, ClassNotFoundException {
         HeartBeatMessage m = new HeartBeatMessage();
         out.writeObject(m);
     }
 
-    public synchronized void disconnect() throws IOException {
+    public void disconnect() throws IOException {
         in.close();
         out.close();
         socket.close();

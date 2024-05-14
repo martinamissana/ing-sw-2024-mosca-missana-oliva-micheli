@@ -201,7 +201,7 @@ public class TCPVirtualView implements Runnable, Observer {
                 try {
                     c.login(m.getNickname());
                     setNickname(m.getNickname());
-                    this.heartBeatDetector = new HeartBeatDetector(this, c, socket);
+                    //this.heartBeatDetector = new HeartBeatDetector(this, c, socket);
                 } catch (NicknameAlreadyTakenException e) {
                     LoginFail_NicknameAlreadyTaken errorMessage = new LoginFail_NicknameAlreadyTaken();
                     out.writeObject(m);

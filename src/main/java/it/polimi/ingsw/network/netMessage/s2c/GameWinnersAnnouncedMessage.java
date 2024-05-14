@@ -7,11 +7,11 @@ import java.util.ArrayList;
 
 public class GameWinnersAnnouncedMessage extends NetMessage {
     private Integer ID;
-    private ArrayList<Player> winners=new ArrayList<>();
+    private ArrayList<Player> winners;
 
     public GameWinnersAnnouncedMessage(Integer ID, ArrayList<Player> winners) {
         this.ID = ID;
-        this.winners.addAll(winners);
+        this.winners=new ArrayList<>(winners);
     }
 
     public Integer getID() {
