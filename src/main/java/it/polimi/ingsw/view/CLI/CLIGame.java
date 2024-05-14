@@ -1,9 +1,6 @@
 package it.polimi.ingsw.view.CLI;
 
-import it.polimi.ingsw.controller.exceptions.IllegalActionException;
-import it.polimi.ingsw.controller.exceptions.NotYourTurnException;
-import it.polimi.ingsw.controller.exceptions.UnexistentUserException;
-import it.polimi.ingsw.controller.exceptions.WrongGamePhaseException;
+import it.polimi.ingsw.controller.exceptions.*;
 import it.polimi.ingsw.model.card.Card;
 import it.polimi.ingsw.model.card.CardSide;
 import it.polimi.ingsw.model.card.CornerType;
@@ -21,14 +18,12 @@ import it.polimi.ingsw.model.deck.DeckType;
 import it.polimi.ingsw.model.deck.DeckTypeBox;
 import it.polimi.ingsw.model.exceptions.*;
 import it.polimi.ingsw.model.game.Action;
-import it.polimi.ingsw.model.game.GamePhase;
 import it.polimi.ingsw.model.goal.*;
 import it.polimi.ingsw.model.player.Coords;
 import it.polimi.ingsw.model.player.Hand;
 import it.polimi.ingsw.model.player.Player;
 import it.polimi.ingsw.view.View;
 
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
