@@ -20,5 +20,7 @@ module PSP001 {
     exports it.polimi.ingsw.model.player;
     exports it.polimi.ingsw.view;
     exports it.polimi.ingsw.network.netMessage;
-
+    exports it.polimi.ingsw.model.goal;
+    exports it.polimi.ingsw.model.game;
+    exports it.polimi.ingsw.model.observer.events;
 }

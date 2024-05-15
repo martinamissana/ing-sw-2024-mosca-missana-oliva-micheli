@@ -20,7 +20,7 @@ public class Server {
                 RMIServer server = new RMIServer(c);
                 Registry registry = LocateRegistry.createRegistry(1099);
                 registry.rebind("RMIServer", server);
-                System.out.println("Remote Object is ready:");
+                System.out.println("RMI Server is ready:");
             } catch (RemoteException e) {
                 throw new RuntimeException(e);
             }

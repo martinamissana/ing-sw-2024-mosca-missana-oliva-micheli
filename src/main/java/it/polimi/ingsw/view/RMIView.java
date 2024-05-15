@@ -23,7 +23,6 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.io.IOException;
-import java.rmi.server.UnicastRemoteObject;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -43,13 +42,14 @@ public class RMIView extends View implements ClientRemoteInterface {
         }
         String remoteObjectName = "RMIServer";
         RMIServer = (RemoteInterface) registry.lookup(remoteObjectName);
+        RMIServer.connect();
     }
 
+    @Override
     public void login(String nickname) throws NicknameAlreadyTakenException, IOException {
         RMIServer.login(nickname);
         super.setPlayer(new Player(nickname));
         super.setNickname(nickname);
-        System.out.println("you tried to login");
     }
 
     @Override
@@ -100,6 +100,7 @@ public class RMIView extends View implements ClientRemoteInterface {
     @Override
     public void flipCard(int handPos) throws UnexistentUserException, RemoteException, GameDoesNotExistException {
         RMIServer.flipCard(super.getID(),super.getPlayer().getNickname(), handPos);
+        super.getHand().getCard(handPos).flip();
     }
 
     @Override

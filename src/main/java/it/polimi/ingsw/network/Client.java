@@ -66,13 +66,9 @@ public class Client {
             } catch (NicknameAlreadyTakenException e) {
                 throw new RuntimeException(e);
             }
-            ClientRemoteInterface view = (ClientRemoteInterface) UnicastRemoteObject.exportObject(client, 0);
-            Registry registry = LocateRegistry.getRegistry();
-            try {
-                registry.bind("Client", client);
-            } catch (AlreadyBoundException e) {
-                throw new RuntimeException(e);
-            }
+            Registry registry = LocateRegistry.createRegistry(1099);
+            ClientRemoteInterface view = (ClientRemoteInterface) UnicastRemoteObject.exportObject(client,1099);
+            registry.rebind("Client", view);
             System.out.println("Remote Client is ready");
             new Thread(() -> {
                 CLI cli = new CLI(client);

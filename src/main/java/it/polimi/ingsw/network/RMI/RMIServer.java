@@ -28,8 +28,8 @@ public class RMIServer extends UnicastRemoteObject implements RemoteInterface,Ru
 
     @Override
     public void connect() throws RemoteException, NotBoundException {
-        Registry registry = LocateRegistry.getRegistry();
         System.out.println("RMI registry bindings: ");
+        Registry registry = LocateRegistry.getRegistry();
         String[] e = registry.list();
         for (String string : e) {
             System.out.println(string);

@@ -154,7 +154,7 @@ public abstract class View extends ViewObservable<NetMessage> {
         this.winners = winners;
     }
 
-    public abstract void login(String nickname) throws NicknameAlreadyTakenException, RemoteException, IOException, FullLobbyException, ClassNotFoundException;
+    public abstract void login(String nickname) throws NicknameAlreadyTakenException, IOException, FullLobbyException, ClassNotFoundException;
 
     public abstract void createLobby(int numOfPlayers) throws LobbyDoesNotExistsException, IOException, FullLobbyException, NicknameAlreadyTakenException, ClassNotFoundException, CannotJoinMultipleLobbiesException, UnexistentUserException;
 
