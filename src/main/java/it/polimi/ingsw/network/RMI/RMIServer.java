@@ -17,6 +17,7 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class RMIServer extends UnicastRemoteObject implements RemoteInterface,Runnable {
     private final Controller c;
@@ -24,21 +25,12 @@ public class RMIServer extends UnicastRemoteObject implements RemoteInterface,Ru
 
     public RMIServer(Controller c) throws RemoteException {
       this.c=c;
+        this.executor = Executors.newCachedThreadPool();
     }
 
     @Override
-    public void connect() throws RemoteException, NotBoundException {
-        System.out.println("RMI registry bindings: ");
-        Registry registry = LocateRegistry.getRegistry();
-        String[] e = registry.list();
-        for (String string : e) {
-            System.out.println(string);
-        }
-        String remoteObjectName = "Client";
-        ClientRemoteInterface client= (ClientRemoteInterface) registry.lookup(remoteObjectName);
+    public void connect(ClientRemoteInterface client) throws RemoteException, NotBoundException {
         executor.submit(new RMIVirtualView(c, client));
-
-
     }
     @Override
     public void login(String username) throws NicknameAlreadyTakenException, IOException {

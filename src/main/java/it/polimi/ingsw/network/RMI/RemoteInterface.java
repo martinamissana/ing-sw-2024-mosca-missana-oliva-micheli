@@ -16,7 +16,7 @@ import java.rmi.RemoteException;
 
 public interface RemoteInterface extends Remote {
 
-    void connect() throws RemoteException, NotBoundException; //send to the server a clientremoteinterface in order to send messages from server to client
+    void connect(ClientRemoteInterface client) throws RemoteException, NotBoundException; //send to the server a clientremoteinterface in order to send messages from server to client
 
     void login(String username) throws NicknameAlreadyTakenException, IOException;
 

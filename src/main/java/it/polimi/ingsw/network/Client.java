@@ -2,9 +2,11 @@ package it.polimi.ingsw.network;
 
 import it.polimi.ingsw.model.exceptions.NicknameAlreadyTakenException;
 import it.polimi.ingsw.network.RMI.ClientRemoteInterface;
+import it.polimi.ingsw.network.RMI.RemoteInterface;
 import it.polimi.ingsw.view.CLI.CLI;
 import it.polimi.ingsw.view.RMIView;
 import it.polimi.ingsw.view.TCPView;
+import it.polimi.ingsw.view.View;
 
 import java.io.IOException;
 import java.rmi.AlreadyBoundException;
@@ -59,19 +61,25 @@ public class Client {
                 throw new RuntimeException(e);
             }
         } else if (choice.equalsIgnoreCase("RMI")) {
-            RMIView client = new RMIView();
+            Registry registry = LocateRegistry.getRegistry();
+            System.out.println("RMI registry bindings: ");
+            String[] e = registry.list();
+            for (String string : e) {
+                System.out.println(string);
+            }
+            String remoteObjectName = "RMIServer";
+            RemoteInterface RMIServer = (RemoteInterface) registry.lookup(remoteObjectName);
+            ClientRemoteInterface client = new RMIView(RMIServer);
+            RMIServer.connect((ClientRemoteInterface) UnicastRemoteObject.exportObject(client,0));
             System.out.print("\u001B[38;2;255;165;0m" + "\n[+] " + "\u001B[0m" + "Insert username:" + "\u001B[38;2;255;165;0m" + "\n[-] " + "\u001B[0m");
             try {
-                client.login(input.nextLine());
-            } catch (NicknameAlreadyTakenException e) {
-                throw new RuntimeException(e);
+                ((RMIView) client).login(input.nextLine());
+            } catch (NicknameAlreadyTakenException ex) {
+                throw new RuntimeException(ex);
             }
-            Registry registry = LocateRegistry.createRegistry(1099);
-            ClientRemoteInterface view = (ClientRemoteInterface) UnicastRemoteObject.exportObject(client,1099);
-            registry.rebind("Client", view);
             System.out.println("Remote Client is ready");
             new Thread(() -> {
-                CLI cli = new CLI(client);
+                CLI cli = new CLI((View)client);
                 cli.run();
             }).start();
         } else exit(1);

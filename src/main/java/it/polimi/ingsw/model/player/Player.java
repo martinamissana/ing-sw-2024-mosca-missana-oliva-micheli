@@ -119,7 +119,10 @@ public class Player implements Serializable {
     }
 
     public boolean equals(Player p) {
-        if(this.nickname.equals(p.getNickname()))return true;
-        else return false;
+        if (this.nickname == null || p.getNickname() == null) {
+            return false;
+        }
+        return this.nickname.equals(p.getNickname());
     }
+
 }

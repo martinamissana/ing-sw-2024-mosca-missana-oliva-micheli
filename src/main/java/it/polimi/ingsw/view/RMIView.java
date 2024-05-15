@@ -18,31 +18,25 @@ import it.polimi.ingsw.network.netMessage.c2s.DisconnectMessage;
 import it.polimi.ingsw.network.netMessage.c2s.LobbyJoinedMessage;
 import it.polimi.ingsw.network.netMessage.s2c.*;
 
+import java.io.Serializable;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.io.IOException;
+import java.util.Objects;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 
-public class RMIView extends View implements ClientRemoteInterface {
+public class RMIView extends View implements ClientRemoteInterface , Serializable {
 
     private Registry registry;
     private final RemoteInterface RMIServer;
 
-    public RMIView() throws RemoteException, NotBoundException {
-        registry = LocateRegistry.getRegistry();
-        System.out.println("RMI registry bindings: ");
-        String[] e = registry.list();
-        for (String string : e) {
-            System.out.println(string);
-        }
-        String remoteObjectName = "RMIServer";
-        RMIServer = (RemoteInterface) registry.lookup(remoteObjectName);
-        RMIServer.connect();
+    public RMIView(RemoteInterface RMIServer) throws RemoteException, NotBoundException {
+        this.RMIServer=RMIServer;
     }
 
     @Override
@@ -117,7 +111,7 @@ public class RMIView extends View implements ClientRemoteInterface {
                     DisconnectMessage disconnectMessage = new DisconnectMessage();
                 }
                 case LobbyCreatedMessage m -> {
-                    if (m.getCreator().equals(super.getPlayer())) {
+                    if (super.getPlayer()!=null&&m.getCreator().equals(super.getPlayer())) {
                         super.setID(m.getID());
                     }
                     super.getLobbies().put(m.getID(), m.getLobby());
