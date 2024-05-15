@@ -42,5 +42,6 @@ public interface RemoteInterface extends Remote {
 
     void flipCard(Integer gameID,String nickname, int handPos) throws GameDoesNotExistException,RemoteException,UnexistentUserException;
 
+    void getCurrentStatus() throws IOException;
 
 }

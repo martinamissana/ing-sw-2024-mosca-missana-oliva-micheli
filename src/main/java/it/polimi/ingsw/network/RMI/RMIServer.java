@@ -29,8 +29,8 @@ public class RMIServer extends UnicastRemoteObject implements RemoteInterface {
     }
 
     @Override
-    public void connect(ClientRemoteInterface client) throws RemoteException, NotBoundException {
-        executor.submit((Runnable) new RMIVirtualView(c, client));
+    public void connect(ClientRemoteInterface client) throws RemoteException {
+        executor.submit(new RMIVirtualView(c, client));
     }
     @Override
     public void login(String username) throws NicknameAlreadyTakenException, IOException {
@@ -91,6 +91,11 @@ public class RMIServer extends UnicastRemoteObject implements RemoteInterface {
     @Override
     public void flipCard(Integer gameID,String nickname, int handPos) throws GameDoesNotExistException, RemoteException, UnexistentUserException {
         c.flipCard(gameID,nickname,handPos);
+    }
+
+    @Override
+    public void getCurrentStatus() throws IOException {
+        c.getCurrentStatus();
     }
 
 }

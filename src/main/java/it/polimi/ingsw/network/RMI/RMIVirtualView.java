@@ -33,7 +33,7 @@ public class RMIVirtualView implements Observer, Runnable {
         switch (event) {
             case LoginEvent e -> {
                 try {
-                    view.elaborate(new LoginMessage(((LoginEvent) event).getNickname()));
+                    view.elaborate(new LoginMessage(e.getNickname()));
                 } catch (FullLobbyException | NicknameAlreadyTakenException | HandIsFullException |
                          IllegalMoveException ex) {
                     throw new RuntimeException(ex);
@@ -218,6 +218,14 @@ public class RMIVirtualView implements Observer, Runnable {
                              IllegalMoveException ex) {
                         throw new RuntimeException(ex);
                     }
+                }
+            }
+            case CurrentStatusEvent e -> {
+                try {
+                    view.elaborate(new CurrentStatusMessage(e.getLobbies()));
+                } catch (FullLobbyException | NicknameAlreadyTakenException | HandIsFullException |
+                         IllegalMoveException ex) {
+                    throw new RuntimeException(ex);
                 }
             }
             default -> throw new IllegalStateException("Unexpected value: " + event);

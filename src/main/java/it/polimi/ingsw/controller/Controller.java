@@ -511,6 +511,7 @@ public class Controller implements Serializable {
 
         // remove card from player's hand
         player.getHand().removeCard(card);
+        gh.notify(new CardRemovedFromHandEvent(player, card));
 
         // add points to player's score
         game.addToScore(player, points);
@@ -849,4 +850,7 @@ public class Controller implements Serializable {
         }
     }
 
+    public void getCurrentStatus() throws IOException {
+        gh.notify(new CurrentStatusEvent(gh.getLobbies()));
+    }
 }
