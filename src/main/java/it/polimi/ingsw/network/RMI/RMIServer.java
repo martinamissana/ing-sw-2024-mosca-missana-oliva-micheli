@@ -19,7 +19,7 @@ import java.rmi.server.UnicastRemoteObject;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class RMIServer extends UnicastRemoteObject implements RemoteInterface,Runnable {
+public class RMIServer extends UnicastRemoteObject implements RemoteInterface {
     private final Controller c;
     ExecutorService executor;
 
@@ -30,7 +30,7 @@ public class RMIServer extends UnicastRemoteObject implements RemoteInterface,Ru
 
     @Override
     public void connect(ClientRemoteInterface client) throws RemoteException, NotBoundException {
-        executor.submit(new RMIVirtualView(c, client));
+        executor.submit((Runnable) new RMIVirtualView(c, client));
     }
     @Override
     public void login(String username) throws NicknameAlreadyTakenException, IOException {
@@ -93,8 +93,4 @@ public class RMIServer extends UnicastRemoteObject implements RemoteInterface,Ru
         c.flipCard(gameID,nickname,handPos);
     }
 
-    @Override
-    public void run() {
-
-    }
 }

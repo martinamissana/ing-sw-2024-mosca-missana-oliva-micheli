@@ -6,14 +6,14 @@ import it.polimi.ingsw.model.exceptions.FullLobbyException;
 import it.polimi.ingsw.model.exceptions.HandIsFullException;
 import it.polimi.ingsw.model.exceptions.IllegalMoveException;
 import it.polimi.ingsw.model.exceptions.NicknameAlreadyTakenException;
+import it.polimi.ingsw.model.observer.Observer;
 import it.polimi.ingsw.model.observer.events.*;
-import it.polimi.ingsw.network.VirtualView;
 import it.polimi.ingsw.network.netMessage.c2s.LobbyJoinedMessage;
 import it.polimi.ingsw.network.netMessage.s2c.*;
 import java.io.IOException;
 import java.rmi.RemoteException;
 
-public class RMIVirtualView implements VirtualView {
+public class RMIVirtualView implements Observer, Runnable {
     private final Controller c;
     private final Integer ID;
     private final String nickname;
