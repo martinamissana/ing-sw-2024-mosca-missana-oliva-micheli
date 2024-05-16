@@ -1,9 +1,6 @@
 package it.polimi.ingsw.view.CLI;
 
-import it.polimi.ingsw.controller.exceptions.CannotJoinMultipleLobbiesException;
-import it.polimi.ingsw.controller.exceptions.GameAlreadyStartedException;
-import it.polimi.ingsw.controller.exceptions.PlayerChatMismatchException;
-import it.polimi.ingsw.controller.exceptions.UnexistentUserException;
+import it.polimi.ingsw.controller.exceptions.*;
 import it.polimi.ingsw.model.chat.Chat;
 import it.polimi.ingsw.model.chat.Message;
 import it.polimi.ingsw.model.exceptions.*;
@@ -20,10 +17,9 @@ import it.polimi.ingsw.view.ViewController;
 import it.polimi.ingsw.view.ViewObserver;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.InputMismatchException;
-import java.util.Scanner;
+import java.util.*;
+
+import static java.lang.System.exit;
 
 public class CLI implements Runnable, ViewObserver {
     private final View view;
@@ -59,17 +55,19 @@ public class CLI implements Runnable, ViewObserver {
         }
 
         do {
-            if (view.getID() == null) {
+            if (!check.userConnectedToLobby()) {
                 lobbyAction = chooseAction();
                 switch (lobbyAction) {
                     case 1 -> createLobby();
                     case 2 -> chooseLobby();
-                    case 3 -> Thread.currentThread().interrupt();
+                    case 3 -> exit(0);
                 }
                 lobbyAction = -1;
 
             } else {
-                while (view.getPawn() == null) setPawnColor();
+                while (view.getPawn() == null) setPawnColor();  // TODO: fix "unexpected end of block data" (choosing second player's pawn then first player's)
+                                                                // TODO: fix "null" (choosing first player's pawn then second player's, both in lobby) (choosing second player's pawn then choosing same pawn for first player then another)
+                                                                // TODO: fix "unread block data" (choosing first player's pawn then choosing same pawn for second player then another)
 
                 while (lobbyAction != 2 && view.getLobbies().get(view.getID()).getPlayers().size() < view.getLobbies().get(view.getID()).getNumOfPlayers() && view.getLobbies().get(view.getID()).getPawnBuffer().getPawnList().size() > Pawn.values().length - view.getLobbies().get(view.getID()).getNumOfPlayers()) {
                     lobbyAction = waiting();
@@ -95,9 +93,11 @@ public class CLI implements Runnable, ViewObserver {
                                 case PLACING_STARTER_CARD -> game.placeStarterCard();
                                 case CHOOSING_SECRET_GOAL -> game.chooseSecretGoal();
                                 case PLAYING_GAME -> {
-                                    if (!view.isYourTurn()) System.out.print(cli + "Waiting for your turn");
-                                    else if (view.getAction().equals(Action.PLAY)) game.playCard();
-                                    else if (view.getAction().equals(Action.DRAW)) game.drawCard();
+
+                                    if (view.isYourTurn()) {
+                                        if (view.getAction().equals(Action.PLAY)) game.playCard();
+                                        else if (view.getAction().equals(Action.DRAW)) game.drawCard();
+                                    }
                                 }
                                 case GAME_FINISHED -> {
                                     // TODO: See if this is the only thing to do
@@ -110,6 +110,15 @@ public class CLI implements Runnable, ViewObserver {
                                             System.out.print(cli + GoldColor + winners.get(i).getNickname() + reset);
                                     }
                                 }
+                                case null -> {
+                                    quitLobby();
+                                }
+                            }
+
+                            try {
+                                Thread.sleep(500);
+                            } catch (InterruptedException e) {
+                                throw new RuntimeException(e);
                             }
 
                             phase = view.getGamePhase();
@@ -182,6 +191,7 @@ public class CLI implements Runnable, ViewObserver {
 
             if (ID == -1) return;
             try {
+                check.checkJoinLobby(ID);
                 view.joinLobby(ID);
                 chosen = true;
 
@@ -191,9 +201,14 @@ public class CLI implements Runnable, ViewObserver {
                     throw new RuntimeException(e);
                 }
 
-            } catch (LobbyDoesNotExistsException | NicknameAlreadyTakenException | IOException | FullLobbyException |
-                     CannotJoinMultipleLobbiesException ignored) {
-            } catch (ClassNotFoundException | UnexistentUserException e) {
+            } catch (NicknameAlreadyTakenException ignored) {}
+            catch (CannotJoinMultipleLobbiesException e) {
+                System.out.println(warningColor + "[ERROR]: Cannot join multiple lobbies!!" + reset);
+            } catch (FullLobbyException e) {
+                System.out.println(warningColor + "[ERROR]: Lobby #" + ID + " is full. Cannot join!!" + reset);
+            } catch (LobbyDoesNotExistsException e) {
+                System.out.println(warningColor + "[ERROR]: Lobby #" + ID + " does not exist!!" + reset);
+            } catch (IOException | ClassNotFoundException | UnexistentUserException e) {
                 throw new RuntimeException(e);
             }
         } while (!chosen);
@@ -211,8 +226,13 @@ public class CLI implements Runnable, ViewObserver {
                     return;
                 }
 
-                if (numOfPlayers < 2 || numOfPlayers > 4)
+                try {
+                    check.checkCreateLobby(numOfPlayers);
+                } catch (IllegalArgumentException e) {
                     System.out.println(warningColor + "\n[ERROR]: Invalid number of players inserted!!" + reset);
+                } catch (CannotJoinMultipleLobbiesException e) {
+                    System.out.println(warningColor + "\n[ERROR]: Cannot create a lobby while in another lobby!!" + reset);
+                }
             } while (numOfPlayers < 2 || numOfPlayers > 4);
 
             System.out.print(cli + "Trying to create lobby");
@@ -330,7 +350,7 @@ public class CLI implements Runnable, ViewObserver {
         }
     }
 
-    private void openChat() {
+    private void openChat() {       // TODO: fix private chats
         Chat chat = view.getChat();
         System.out.println(cli + "Which chat do you want to open?");
 
@@ -394,6 +414,12 @@ public class CLI implements Runnable, ViewObserver {
     }
 
     private void quitLobby() {
+        try {
+            check.checkLeaveLobby();
+        } catch (NotConnectedToLobbyException e) {
+            System.out.println(warningColor + "[ERROR]: Non connected to a lobby!!" + reset);
+        }
+
         System.out.print(cli + "Trying leaving lobby");
         printDots();
 
@@ -511,7 +537,6 @@ public class CLI implements Runnable, ViewObserver {
                 System.out.print(cli + "Game starting");
                 printDots();
                 game = new CLIGame(view);
-                input.close();
             }
 
             case CurrentStatusMessage m -> {
@@ -536,20 +561,16 @@ public class CLI implements Runnable, ViewObserver {
             }
 
             case CardAddedToHandMessage m -> {
-                if (m.getPlayer().equals(view.getPlayer())) {
-                    System.out.print(cli + "Card added to hand");
-                    if (view.getHand().getSize() == 3) {
-                        System.out.print(cli + "Your hand:");
-                        game.printHand();
-                    }
-                }
             }
 
             case CardRemovedFromHandMessage m -> {}
 
             case CardPlacedOnFieldMessage m -> {
                 if (m.getNickname().equals(view.getPlayer().getNickname())) {
-                    System.out.println(cli + "Card added to field in position: (" + m.getCoords().getX() + ", " + m.getCoords().getY() + ")");
+                    System.out.format(cli + "Card added to field in position: (%d, %d)", m.getCoords().getX(), m.getCoords().getY());
+                    System.out.println(cli + "Your score: " + view.getScoreboard().get(view.getPlayer()));      // TODO: fix score null
+                } else if (m.getID().equals(view.getID())) {
+                    System.out.print(cli + m.getNickname() + " played a card");
                 }
             }
 
@@ -567,15 +588,33 @@ public class CLI implements Runnable, ViewObserver {
             }
 
             case LastRoundStartedMessage m -> {
+                game.printScoreboard();
+                System.out.println(cli + "Last round is started");
             }
 
             case TurnChangedMessage m -> {
+                if (m.getNickname().equals(view.getNickname())) System.out.println(cli + "It's your turn");
+                else if (m.getNickname().toUpperCase().charAt(m.getNickname().length() - 1) == 'S') System.out.println(cli + "It's " + m.getNickname() + "' turn");
+                else System.out.println(cli + "It's " + m.getNickname() + "'s turn");
             }
 
             case GameWinnersAnnouncedMessage m -> {
+                game.printScoreboard();
+
+                ArrayList<Player> winners = view.getWinners();
+                if (winners.size() == 1)
+                    System.out.println(cli + "The winner is " + GoldColor + winners.getFirst().getNickname() + reset + "!!");
+                else {
+                    System.out.print(cli + "The winners are ");
+                    for (Player winner : winners) {
+                        System.out.print(cli + GoldColor + winner.getNickname() + reset);
+                    }
+                }
             }
 
             case GameTerminatedMessage m -> {
+                System.out.print(cli + "Game is closing");
+                printDots();
             }
 
             case CardDrawnFromSourceMessage m -> {

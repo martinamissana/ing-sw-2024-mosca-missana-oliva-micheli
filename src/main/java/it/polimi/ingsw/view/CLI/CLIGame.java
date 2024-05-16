@@ -1,13 +1,7 @@
 package it.polimi.ingsw.view.CLI;
 
 import it.polimi.ingsw.controller.exceptions.*;
-import it.polimi.ingsw.model.card.Card;
-import it.polimi.ingsw.model.card.CardSide;
-import it.polimi.ingsw.model.card.CornerType;
-import it.polimi.ingsw.model.card.GoldenCard;
-import it.polimi.ingsw.model.card.GoldenCardType;
-import it.polimi.ingsw.model.card.ResourceCard;
-import it.polimi.ingsw.model.card.StarterCard;
+import it.polimi.ingsw.model.card.*;
 import it.polimi.ingsw.model.commonItem.CornerStatus;
 import it.polimi.ingsw.model.commonItem.ItemBox;
 import it.polimi.ingsw.model.commonItem.Kingdom;
@@ -23,6 +17,7 @@ import it.polimi.ingsw.model.player.Coords;
 import it.polimi.ingsw.model.player.Hand;
 import it.polimi.ingsw.model.player.Player;
 import it.polimi.ingsw.view.View;
+import it.polimi.ingsw.view.ViewController;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -31,6 +26,7 @@ import java.util.Scanner;
 
 public class CLIGame {
     private final View view;
+    private final ViewController check;
     private final Scanner input = new Scanner(System.in);
     private static final String reset = "\u001B[0m";
     private static final String warningColor = "\u001B[31m";
@@ -48,6 +44,7 @@ public class CLIGame {
 
     public CLIGame(View view) {
         this.view = view;
+        this.check = new ViewController(view);
     }
 
     protected void placeStarterCard() {
@@ -58,6 +55,7 @@ public class CLIGame {
         card.flip();
         System.out.print(cli + "BACK SIDE:");
         printCard(card);
+        card.flip();
 
         CardSide side;
 
@@ -76,7 +74,7 @@ public class CLIGame {
                 printDots();
 
                 try {
-                    view.chooseCardSide(side);
+                    view.chooseCardSide(side);      // TODO: fix positioning starter card (wrong side)
                 }
                 catch (IOException | GameDoesNotExistException | EmptyDeckException | HandIsFullException |
                        UnexistentUserException | WrongGamePhaseException e) {
@@ -93,15 +91,22 @@ public class CLIGame {
     }
 
     protected void chooseSecretGoal () {
-        ArrayList<Goal> goals = view.getSecretGoalChoices();
+        if (view.getSecretGoal() != null) return;
 
+        System.out.print("\n" + cli + "Common goals:");
+        printGoal(view.getCommonGoal1());
+        printGoal(view.getCommonGoal2());
+        System.out.println("\n");
+
+        printHand();
+
+        ArrayList<Goal> goals = view.getSecretGoalChoices();
         try {
             Thread.sleep(500);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
 
-        goals.stream().mapToInt(Goal::getGoalID).forEach(System.out::println);
         System.out.print(cli + "You can choose between these two goals:");
         printGoal(goals.getFirst());
         printGoal(goals.getLast());
@@ -113,7 +118,8 @@ public class CLIGame {
 
             try {
                 view.chooseSecretGoal(ID);
-            } catch (IOException | UnexistentUserException e) {
+                Thread.sleep(500);
+            } catch (IOException | UnexistentUserException | InterruptedException e) {
                 throw new RuntimeException(e);
             } catch (WrongGamePhaseException | GameDoesNotExistException ignored) {
             } catch (IllegalGoalChosenException e) {
@@ -133,38 +139,77 @@ public class CLIGame {
             return;
         }
         int choice;
+        String in = "";
+        boolean flip;
         Coords coords = null;
 
         do {
+            printResources();
+            printField();
             printHand();
-            System.out.print(cli + "Which card do you want to play?" + user);
+
+            do {
+                System.out.print(cli + "Do you want to flip cards? (y / n)" + user);
+                while (in.isEmpty()) in = input.nextLine();
+                flip = switch (in.toUpperCase()) {
+                    case "Y", "YES" -> true;
+                    default -> false;
+                };
+                if (flip) {
+                    for (int i = 0; i < view.getHand().getSize(); i++) {
+                        view.getHand().getCard(i).flip();
+                    }
+                    printHand();
+                }
+            } while(flip);
+
+            System.out.print(cli + "Which card do you want to play?" + user);   // TODO: Choose if flip
             choice = input.nextInt();
 
             if (choice < 0 && choice >= view.getHand().getSize()) {
                 System.out.println(warningColor + "\n[ERROR]: Invalid choice!!\n" + reset);
                 choice = -1;
             } else {
-                // printField();
                 System.out.print(cli + "In which position you want to put this card? Select X:" + user);
                 int X = input.nextInt();
                 System.out.print(cli + "Now select Y:" + user);
                 int Y = input.nextInt();
                 coords = new Coords(X, Y);
 
+                try {
+                    check.checkPlayCard(choice, coords);
+                } catch (NotYourTurnException | IllegalActionException ignored) {
+                } catch (IllegalCoordsException e) {
+                    System.out.format(cli + "Coords (%d, %d) already occupied:\n", X, Y);
+                    printCard(view.getMyField().getMatrix().get(coords));
+
+                    coords = null;
+                } catch (RequirementsNotSatisfiedException e) {
+                    System.out.println(warningColor + "[ERROR]: You don't have enough resources to play this card!!");
+                    coords = null;
+                }
 
                 try {
-                    view.playCard(choice, coords);
+                    view.playCard(choice, coords);  // TODO: OccupiedCoordsException AAAAAAAAAAAAAAAAAAAAA
                     Thread.sleep(500);
+
+                    for (int i = 0; i < view.getHand().getSize(); i++) {
+                        if (view.getHand().getCard(i).getSide().equals(CardSide.BACK)) view.getHand().getCard(i).flip();
+                    }
+
                 } catch (IllegalActionException | NotYourTurnException | LobbyDoesNotExistsException |
                          GameDoesNotExistException ignored) {}
-                catch (IllegalMoveException e) {
+                catch(OccupiedCoordsException e) {
+                    System.out.println(warningColor + "[ERROR]: Spot already taken by:" + reset);
+                    printCard(view.getMyField().getMatrix().get(coords));
+                } catch (IllegalMoveException e) {
                     System.out.println(warningColor + "[ERROR]: Illegal placement. Cannot play card in this spot!!" + reset);
                     coords = null;
                 } catch (UnexistentUserException | IOException | InterruptedException e) {
                     throw new RuntimeException(e);
                 }
             }
-        } while (choice == -1 && coords == null);
+        } while (choice == -1 || coords == null);
     }
 
     protected void drawCard() {
@@ -176,9 +221,10 @@ public class CLIGame {
             System.out.println(warningColor + "[ERROR]: Cannot draw card because you have to play one first!!" + reset);
             return;
         }
+        // if (view.getHand().getSize() == 3) return;
 
         printGameArea();
-        String choice;
+        String choice = "";
         DeckTypeBox type;
         do {
             System.out.print(cli + "From where do you want to draw?" +
@@ -186,7 +232,7 @@ public class CLIGame {
                     cli + "Golden Deck -> GoldDeck" +
                     cli + "Resource card spaces -> RES1 - RES2" +
                     cli + "Golden card spaces -> GOLD1 - GOLD2" + user);
-            choice = input.nextLine();
+            while (choice.isEmpty()) choice = input.nextLine();
 
             type = switch (choice.toUpperCase()) {      // RD, GD help with testing
                 case "RD", "RESDECK", "RESOURCE DECK" -> DeckType.RESOURCE;
@@ -203,11 +249,12 @@ public class CLIGame {
 
         try {
             view.drawCard(type);
+            Thread.sleep(500);
         } catch (IllegalActionException | HandIsFullException | EmptyBufferException | NotYourTurnException |
                  LobbyDoesNotExistsException | GameDoesNotExistException ignored) {
         } catch (EmptyDeckException e) {
             System.out.println(warningColor + "[ERROR]: Cannot draw from this deck. Reason: empty!!" + reset);
-        } catch (IOException | UnexistentUserException e) {
+        } catch (IOException | UnexistentUserException | InterruptedException e) {
             throw new RuntimeException(e);
         }
     }
@@ -234,7 +281,7 @@ public class CLIGame {
         if (item.equals(Resource.QUILL)) return GoldColor + " Q " + reset;
         if (item.equals(CornerStatus.EMPTY)) return cornerColor + "   " + reset;
 
-        if (card.getClass().getName().equals("it.polimi.ingsw.model.card.StarterCard")) return switch (item) {
+        if (card.getClass().equals(StarterCard.class)) return switch (item) {
             case Kingdom.FUNGI -> ItemsToColor(item) + " F ";
             case Kingdom.PLANT -> ItemsToColor(item) + " P ";
             case Kingdom.ANIMAL -> ItemsToColor(item) + " A ";
@@ -243,10 +290,10 @@ public class CLIGame {
         } + reset;
 
         return switch (item) {
-            case Kingdom.FUNGI -> StarterColor + " F ";
-            case Kingdom.PLANT -> StarterColor + " P ";
-            case Kingdom.ANIMAL -> StarterColor + " A ";
-            case Kingdom.INSECT -> StarterColor + " I ";
+            case Kingdom.FUNGI -> cornerColor + " F ";
+            case Kingdom.PLANT -> cornerColor + " P ";
+            case Kingdom.ANIMAL -> cornerColor + " A ";
+            case Kingdom.INSECT -> cornerColor + " I ";
             default -> ItemsToColor(card.getKingdom()) + "   ";
         } + reset;
     }
@@ -265,7 +312,7 @@ public class CLIGame {
     }
 
     private String printUpper(Card card) {
-        if (card.getClass().getName().equals("it.polimi.ingsw.model.card.CardBlock"))
+        if (card.getClass().equals(CardBlock.class))
             return CardBlockColor + "             " + reset;
 
         String kingdom = ItemsToColor(card.getKingdom());
@@ -275,13 +322,13 @@ public class CLIGame {
 
         if (card.getSide().equals(CardSide.FRONT)) {
             int directPoints;
-            if (card.getClass().getName().equals("it.polimi.ingsw.model.card.StarterCard")) {
+            if (card.getClass().equals(StarterCard.class)) {
                 directPoints = 0;
             } else directPoints = ((ResourceCard) card).getPoints();
 
             // Setting string of points for cards:
             if (directPoints != 0) {
-                if (card.getClass().getName().equals("it.polimi.ingsw.model.card.GoldenCard")) {
+                if (card.getClass().equals(GoldenCard.class)) {
                     if (((GoldenCard) card).getType() == GoldenCardType.CORNER)
                         points = GoldColor + directPoints + "xC" + reset;
                     else if (((GoldenCard) card).getType() == GoldenCardType.RESOURCE) {
@@ -300,10 +347,10 @@ public class CLIGame {
     }
 
     private String printMiddle(Card card) {
-        if (card.getClass().getName().equals("it.polimi.ingsw.model.card.CardBlock"))
+        if (card.getClass().equals(CardBlock.class))
             return CardBlockColor + "             " + reset;
 
-        if (card.getClass().getName().equals("it.polimi.ingsw.model.card.StarterCard")) {
+        if (card.getClass().equals(StarterCard.class)) {
             if (card.getSide().equals(CardSide.FRONT)) return StarterColor + "             " + reset;
 
             // Setting string of permanent resources
@@ -335,7 +382,7 @@ public class CLIGame {
                 default -> throw new IllegalStateException("Unexpected value: " + ItemsToColor(card.getKingdom()));
             };
 
-            if (card.getClass().getName().equals("it.polimi.ingsw.model.card.GoldenCard"))
+            if (card.getClass().equals(GoldenCard.class))
                 return ItemsToColor(card.getKingdom()) + "     " + reset + GoldColor + kingdom + reset + ItemsToColor(card.getKingdom()) + "     " + reset;
         } else kingdom = "   ";
 
@@ -343,7 +390,7 @@ public class CLIGame {
     }
 
     private String printLower(Card card) {
-        if (card.getClass().getName().equals("it.polimi.ingsw.model.card.CardBlock"))
+        if (card.getClass().equals(CardBlock.class))
             return CardBlockColor + "             " + reset;
 
         String kingdom = ItemsToColor(card.getKingdom());
@@ -351,7 +398,7 @@ public class CLIGame {
         String south = ItemToString(card, CornerType.SOUTH);
         String west = ItemToString(card, CornerType.WEST);
 
-        if (card.getClass().getName().equals("it.polimi.ingsw.model.card.GoldenCard") && card.getSide().equals(CardSide.FRONT)) {
+        if (card.getClass().equals(GoldenCard.class) && card.getSide().equals(CardSide.FRONT)) {
             StringBuilder requirements = new StringBuilder();
             for (Kingdom k : ((GoldenCard) card).getRequirements().keySet()) {
                 switch(k) {
@@ -425,6 +472,8 @@ public class CLIGame {
         if (cardSpaces.get(DeckBufferType.RES2).getCard() != null) System.out.print(printLower(cardSpaces.get(DeckBufferType.RES2).getCard()) + cli);
         else System.out.print("\t\t\t\t");
 
+        if (next != null) next.flip();
+
         // Printing golden deck + spaces
         next = view.getTopGoldenCard();
         if (next != null) next.flip();
@@ -450,6 +499,27 @@ public class CLIGame {
         else System.out.print("\t\t\t\t");
         if (cardSpaces.get(DeckBufferType.GOLD2).getCard() != null) System.out.print(printLower(cardSpaces.get(DeckBufferType.GOLD2).getCard()) + cli);
         else System.out.print("\t\t\t\t");
+
+        if (next != null) next.flip();
+        System.out.print("\n" + cli + "Common goals:");
+        printGoal(view.getCommonGoal1());
+        printGoal(view.getCommonGoal2());
+        System.out.println("\n");
+    }
+
+    private void printField() {         // TODO: Do a better printField
+        System.out.print(cli + "Occupied spots:");
+        for (Coords coords : view.getMyField().getMatrix().keySet()) {
+            System.out.format(cli + "(%d, %d)\n", coords.getX(), coords.getY());
+            printCard(view.getMyField().getMatrix().get(coords));
+        } System.out.println();
+    }
+
+    private void printResources() {
+        System.out.print(cli + "Your total resources:");
+        for (ItemBox item : view.getMyField().getTotalResources().keySet()) {
+            System.out.print(cli + " - " + item + ": " + view.getMyField().getTotalResources().get(item));
+        } System.out.println();
     }
 
     protected void printScoreboard() {
