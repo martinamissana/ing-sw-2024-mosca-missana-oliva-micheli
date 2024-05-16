@@ -10,7 +10,6 @@ import it.polimi.ingsw.model.deck.DeckTypeBox;
 import it.polimi.ingsw.model.exceptions.FullLobbyException;
 import it.polimi.ingsw.model.exceptions.HandIsFullException;
 import it.polimi.ingsw.model.exceptions.IllegalMoveException;
-import it.polimi.ingsw.model.exceptions.NicknameAlreadyTakenException;
 import it.polimi.ingsw.model.player.Coords;
 import it.polimi.ingsw.model.player.Pawn;
 import it.polimi.ingsw.model.player.Player;
@@ -39,7 +38,13 @@ public class TCPView extends View {
         this.socket = new Socket(ip, port);
         this.in = new ObjectInputStream(socket.getInputStream());
         this.out = new ObjectOutputStream(socket.getOutputStream());
+        new Thread(() -> {
+            while (!socket.isClosed()) {
+                checkServerConnection();
+            }
+        }).start();
     }
+
 
     public void startClient() throws IOException, ClassNotFoundException {
         try {
@@ -48,27 +53,22 @@ public class TCPView extends View {
             do {
                 deserialized = (NetMessage) in.readObject();
                 elaborate(deserialized);
-            } while (!socket.isClosed() && deserialized.getClass() != LoginFail_NicknameAlreadyTaken.class && deserialized.getClass() != DisconnectMessage.class);
-            disconnect();
+            } while (!socket.isClosed());
 
-        } catch (IOException e) {
-            disconnect();
+        } catch (IOException | ClassNotFoundException e) {
             System.err.println(e.getMessage());
-        } catch (ClassNotFoundException | FullLobbyException | NicknameAlreadyTakenException | HandIsFullException |
-                 IllegalMoveException e) {
-            disconnect();
-            throw new RuntimeException(e);
+
         }
     }
 
-    private void elaborate(NetMessage message) throws IOException, FullLobbyException, NicknameAlreadyTakenException, HandIsFullException, IllegalMoveException {
+    private void elaborate(NetMessage message) throws IOException {
         switch (message) {
             case LoginMessage m -> {
             }
             case LoginFail_NicknameAlreadyTaken m -> {
-                //TODO: do we need this?
-                DisconnectMessage disconnectMessage = new DisconnectMessage();
-                out.writeObject(disconnectMessage);
+                disconnect();
+                Thread.currentThread().interrupt();
+                System.out.println("you were disconnected ");
             }
             case LobbyCreatedMessage m -> {
                 if (m.getCreator().equals(super.getPlayer())) {
@@ -79,7 +79,11 @@ public class TCPView extends View {
             case LobbyJoinedMessage m -> {
                 if (m.getPlayer().getNickname().equals(super.getPlayer().getNickname()))
                     super.setID(m.getID());
-                super.getLobbies().get(m.getID()).addPlayer(m.getPlayer());
+                try {
+                    getLobbies().get(m.getID()).addPlayer(m.getPlayer());
+                } catch (FullLobbyException e) {
+                    e.printStackTrace();
+                }
             }
             case LobbyLeftMessage m -> {
                 if (m.getPlayer().getNickname().equals(super.getNickname())) {
@@ -131,7 +135,11 @@ public class TCPView extends View {
             }
             case CardAddedToHandMessage m -> {
                 if (m.getPlayer().equals(super.getPlayer())) {
-                    super.getHand().addCard(m.getCard());
+                    try{
+                        super.getHand().addCard(m.getCard());
+                    } catch (HandIsFullException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
             case CardRemovedFromHandMessage m -> {
@@ -141,13 +149,23 @@ public class TCPView extends View {
             }
             case CardPlacedOnFieldMessage m -> {
                 if (m.getNickname().equals(super.getNickname())) {
-                    if (m.getCard().getClass().equals(StarterCard.class)) super.getMyField().addCard((StarterCard) m.getCard());
-                    else super.getMyField().addCard((ResourceCard) m.getCard(), m.getCoords());
+                    if (m.getCard().getClass().equals(StarterCard.class))
+                        super.getMyField().addCard((StarterCard) m.getCard());
+                    else try{
+                        super.getMyField().addCard((ResourceCard) m.getCard(), m.getCoords());
+                    } catch (IllegalMoveException e) {
+                        e.printStackTrace();
+                    }
                 } else {
                     for (Player p : super.getFields().keySet()) {
                         if (m.getNickname().equals(p.getNickname())) {
-                            if (m.getCard().getClass().equals(StarterCard.class)) p.getField().addCard((StarterCard) m.getCard());
-                            else p.getField().addCard((ResourceCard) m.getCard(), m.getCoords());
+                            if (m.getCard().getClass().equals(StarterCard.class))
+                                p.getField().addCard((StarterCard) m.getCard());
+                            else try{
+                                p.getField().addCard((ResourceCard) m.getCard(), m.getCoords());
+                            } catch (IllegalMoveException e) {
+                                e.printStackTrace();
+                            }
                         }
                     }
                 }
@@ -200,15 +218,22 @@ public class TCPView extends View {
             }
             case CardDrawnFromSourceMessage m -> {
                 if (m.getID().equals(super.getID())) {
-                    if (m.getType().equals(DeckType.RESOURCE))
-                        super.setTopResourceCard(m.getCard());
-                    if (m.getType().equals(DeckType.GOLDEN))
-                        super.setTopGoldenCard(m.getCard());
-                    else super.setCardInDeckBuffer((DeckBufferType) m.getType(), m.getCard());
+                    switch (m.getType()) {
+                        case DeckType.RESOURCE -> super.setTopResourceCard(m.getCard());
+                        case DeckType.GOLDEN -> super.setTopGoldenCard(m.getCard());
+                        case DeckBufferType.RES1 -> super.setCardInDeckBuffer(DeckBufferType.RES1, m.getCard());
+                        case DeckBufferType.RES2 -> super.setCardInDeckBuffer(DeckBufferType.RES2, m.getCard());
+                        case DeckBufferType.GOLD1 -> super.setCardInDeckBuffer(DeckBufferType.GOLD1, m.getCard());
+                        case DeckBufferType.GOLD2 -> super.setCardInDeckBuffer(DeckBufferType.GOLD2, m.getCard());
+                        default -> throw new IllegalStateException("Unexpected value: " + m.getType());
+                    }
                 }
             }
             case FailMessage m -> {
                 super.getErrorMessages().add(m.getMessage());
+            }
+            case HeartBeatMessage m -> {
+
             }
             default -> throw new IllegalStateException("Unexpected value: " + message);
         }
@@ -216,7 +241,7 @@ public class TCPView extends View {
     }
 
     @Override
-    public synchronized void login(String nickname) throws NicknameAlreadyTakenException, IOException {
+    public void login(String nickname) throws IOException {
         MyNickname m = new MyNickname(nickname);
         super.setPlayer(new Player(nickname));
         super.setNickname(nickname);
@@ -224,74 +249,74 @@ public class TCPView extends View {
     }
 
     @Override
-    public synchronized void createLobby(int numOfPlayers) throws IOException {
+    public void createLobby(int numOfPlayers) throws IOException {
         CreateLobbyMessage m = new CreateLobbyMessage(numOfPlayers, super.getPlayer());
         out.writeObject(m);
     }
 
     @Override
-    public synchronized void joinLobby(int lobbyID) throws IOException {
+    public void joinLobby(int lobbyID) throws IOException {
         JoinLobbyMessage m = new JoinLobbyMessage(super.getPlayer(), lobbyID);
         out.writeObject(m);
     }
 
     @Override
-    public synchronized void leaveLobby() throws IOException {
+    public void leaveLobby() throws IOException {
         LeaveLobbyMessage m = new LeaveLobbyMessage(super.getPlayer(), super.getID());
         out.writeObject(m);
     }
 
     @Override
-    public synchronized void choosePawn(Pawn color) throws IOException {
+    public void choosePawn(Pawn color) throws IOException {
         ChoosePawnMessage m = new ChoosePawnMessage(super.getID(), super.getPlayer(), color);
         out.writeObject(m);
     }
 
     @Override
-    public synchronized void chooseSecretGoal(int goalID) throws IOException {
+    public void chooseSecretGoal(int goalID) throws IOException {
         ChooseSecretGoalMessage m = new ChooseSecretGoalMessage(super.getID(), super.getNickname(), goalID);
         out.writeObject(m);
     }
 
     @Override
-    public synchronized void getCurrentStatus() throws IOException {
+    public void getCurrentStatus() throws IOException {
         GetCurrentStatusMessage m = new GetCurrentStatusMessage();
         out.writeObject(m);
     }
 
     @Override
-    public synchronized void sendMessage(Message message) throws IOException {
+    public void sendMessage(Message message) throws IOException {
         SendMessage m = new SendMessage(message, super.getID());
         out.writeObject(m);
     }
 
     @Override
-    public synchronized void chooseCardSide(CardSide side) throws IOException {
+    public void chooseCardSide(CardSide side) throws IOException {
         ChooseCardSideMessage m = new ChooseCardSideMessage(super.getID(), super.getNickname(), side);
         out.writeObject(m);
     }
 
     @Override
-    public synchronized void playCard(int handPos, Coords coords) throws IOException {
+    public void playCard(int handPos, Coords coords) throws IOException {
         PlayCardMessage m = new PlayCardMessage(super.getID(), super.getNickname(), handPos, coords);
         out.writeObject(m);
     }
 
     @Override
-    public synchronized void drawCard(DeckTypeBox deckTypeBox) throws IOException {
+    public void drawCard(DeckTypeBox deckTypeBox) throws IOException {
         DrawCardMessage m = new DrawCardMessage(super.getID(), super.getNickname(), deckTypeBox);
         out.writeObject(m);
     }
 
     @Override
-    public synchronized void flipCard(int handPos) throws IOException {
+    public void flipCard(int handPos) throws IOException {
         FlipCardMessage m = new FlipCardMessage(super.getID(), super.getNickname(), handPos);
         out.writeObject(m);
         super.getHand().getCard(handPos).flip();
     }
 
     @Override
-    public void heartbeat() throws IOException, ClassNotFoundException {
+    public void heartbeat() throws IOException {
         HeartBeatMessage m = new HeartBeatMessage();
         out.writeObject(m);
     }
@@ -300,9 +325,22 @@ public class TCPView extends View {
         in.close();
         out.close();
         socket.close();
+        Thread.currentThread().interrupt();
+        notify(new DisconnectMessage());
     }
 
-    public synchronized Socket getSocket() {
-        return socket;
+    public void checkServerConnection()   {
+        HeartBeatMessage m = new HeartBeatMessage();
+        try {
+            Thread.sleep(3000);
+            out.writeObject(m);
+        } catch (IOException e) {
+            System.out.println("the server crashed ");
+            try{
+                disconnect();
+            } catch (IOException ignored) {
+            }
+        } catch (InterruptedException ignored) {}
     }
+
 }
