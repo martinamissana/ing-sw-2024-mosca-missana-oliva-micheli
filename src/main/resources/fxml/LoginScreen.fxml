@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.geometry.Rectangle2D?>
+<?import javafx.scene.Cursor?>
+<?import javafx.scene.Group?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToggleButton?>
+<?import javafx.scene.effect.ColorAdjust?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.ArcTo?>
+<?import javafx.scene.shape.ClosePath?>
+<?import javafx.scene.shape.LineTo?>
+<?import javafx.scene.shape.MoveTo?>
+<?import javafx.scene.shape.Path?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane focusTraversable="true" maxHeight="600.0" maxWidth="800.0" minHeight="600.0" minWidth="800.0" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.ingsw.view.GUI.LoginScreenController">
+   <children>
+      <ImageView id="bgImage" fx:id="bgImage" fitHeight="600.0" nodeOrientation="INHERIT" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <image>
+            <Image url="@bg.png" />
+         </image>
+         <viewport>
+            <Rectangle2D height="600.0" width="800.0" />
+         </viewport>
+      </ImageView>
+      <BorderPane id="mainPane" fx:id="mainPane" maxHeight="600.0" maxWidth="800.0" minHeight="600.0" minWidth="800.0" prefHeight="600.0" prefWidth="800.0" style="-fx-padding: 5px;" AnchorPane.bottomAnchor="4.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <center>
+            <VBox id="textBox" alignment="CENTER" prefHeight="560.0" prefWidth="1061.0" style="-fx-spacing: 10;" BorderPane.alignment="CENTER">
+               <children>
+                  
+                  <TextField id="nickname" fx:id="nickname" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" onKeyTyped="#updateNicknameField" prefHeight="32.0" prefWidth="90.0" promptText="nickname" style="-fx-background-radius: 100px; -fx-background-color: #FFFFFF; -fx-min-width: 90px; -fx-min-height: 25px; -fx-max-height: 25px; -fx-display-caret: false;">
+                     <font>
+                        <Font name="Roboto Mono Regular" size="12.0" />
+                     </font>
+                     <cursor>
+                        <Cursor fx:constant="TEXT" />
+                     </cursor>
+                  </TextField>
+                  <TextField fx:id="nickError" alignment="CENTER" editable="false" focusTraversable="false" mouseTransparent="true" style="-fx-background-color: #00000000;">
+                     <font>
+                        <Font name="Roboto Mono Bold Italic" size="12.0" />
+                     </font>
+                     <effect>
+                        <ColorAdjust brightness="0.44" hue="-0.1" saturation="1.0" />
+                     </effect>
+                     <cursor>
+                        <Cursor fx:constant="DEFAULT" />
+                     </cursor>
+                  </TextField>
+                  <Button id="login" fx:id="login" contentDisplay="CENTER" defaultButton="true" mnemonicParsing="false" onAction="#goToMainMenu" style="-fx-background-color: #FFFFFF; -fx-background-radius: 100px; -fx-max-height: 25px; -fx-min-height: 25px; -fx-max-width: 90px; -fx-min-width: 90px;" text="login">
+                     <font>
+                        <Font name="Roboto Mono Regular" size="12.0" />
+                     </font>
+                     <cursor>
+                        <Cursor fx:constant="HAND" />
+                     </cursor>
+                  </Button>
+               </children>
+            </VBox>
+         </center>
+         <top>
+            <AnchorPane id="topBar" fx:id="topBar" BorderPane.alignment="CENTER">
+               <children>
+                  <TextField id="title" fx:id="title" accessibleRole="TEXT" alignment="CENTER" editable="false" focusTraversable="false" mouseTransparent="true" prefHeight="25.0" prefWidth="125.0" style="-fx-background-color: #FFFFFFBF; -fx-background-radius: 100px; -fx-min-height: 25px; -fx-max-height: 25px;" text="Codex Naturalis">
+                     <font>
+                        <Font name="Roboto Mono Regular" size="12.0" />
+                     </font>
+                  </TextField>
+                  <HBox id="buttonBar" fx:id="buttonBar" alignment="CENTER" layoutX="725.0" style="-fx-background-color: #FFFFFFBF; -fx-background-radius: 100px; -fx-padding: 5px; -fx-spacing: 5px; -fx-min-height: 25px; -fx-max-height: 25px;">
+                     <children>
+                        <Button id="minimize" fx:id="minimize" alignment="CENTER" contentDisplay="GRAPHIC_ONLY" focusTraversable="false" graphicTextGap="0.0" layoutX="35.0" layoutY="15.0" mnemonicParsing="false" onAction="#minimize" style="-fx-background-color: #72b043; -fx-background-radius: 5em; -fx-min-width: 15px; -fx-min-height: 15px; -fx-max-width: 15px; -fx-max-height: 15px; -fx-background-insets: 0px;">
+                           <cursor>
+                              <Cursor fx:constant="HAND" />
+                           </cursor>
+                           <opaqueInsets>
+                              <Insets />
+                           </opaqueInsets>
+                           <font>
+                              <Font size="6.0" />
+                           </font>
+                        </Button>
+                        <ToggleButton id="fullscreen" fx:id="fullscreen" contentDisplay="GRAPHIC_ONLY" focusTraversable="false" graphicTextGap="0.0" mnemonicParsing="false" onAction="#fullscreenToggle" style="-fx-background-color: #f8cc1b; -fx-background-radius: 5em; -fx-min-width: 15px; -fx-min-height: 15px; -fx-max-width: 15px; -fx-max-height: 15px; -fx-background-insets: 0px;">
+                           <font>
+                              <Font size="6.0" />
+                           </font>
+                           <cursor>
+                              <Cursor fx:constant="HAND" />
+                           </cursor>
+                        </ToggleButton>
+                        <Button id="quit" fx:id="quit" alignment="CENTER" cancelButton="true" contentDisplay="GRAPHIC_ONLY" focusTraversable="false" graphicTextGap="0.0" onAction="#closeWindow" style="-fx-background-color: #e12729; -fx-background-radius: 5em; -fx-min-width: 15px; -fx-min-height: 15px; -fx-max-width: 15px; -fx-max-height: 15px; -fx-background-insets: 0px;">
+                           <cursor>
+                              <Cursor fx:constant="HAND" />
+                           </cursor>
+                           <opaqueInsets>
+                              <Insets />
+                           </opaqueInsets>
+                           <font>
+                              <Font size="6.0" />
+                           </font>
+                        </Button>
+                     </children>
+                  </HBox>
+               </children>
+            </AnchorPane>
+         </top>
+         <bottom>
+            <AnchorPane BorderPane.alignment="CENTER">
+               <children>
+                  <HBox alignment="CENTER" layoutX="712.0" style="-fx-spacing: -8px;">
+                     <children>
+                        <Group>
+                           <children>
+                              <Path fill="WHITE" strokeType="INSIDE" strokeWidth="0.0">
+                                 <elements>
+                                    <MoveTo x="42.5" y="0.0" />
+                                    <LineTo x="12.5" y="0.0" />
+                                    <ArcTo radiusX="1.0" radiusY="1.0" x="12.5" y="25.0" />
+                                    <LineTo x="30.5" y="25.0" />
+                                    <ClosePath />
+                                 </elements>
+                                 <cursor>
+                                    <Cursor fx:constant="HAND" />
+                                 </cursor>
+                              </Path>
+                              <TextField accessibleRole="TEXT" editable="false" focusTraversable="false" mouseTransparent="true" prefHeight="25.0" prefWidth="38.0" style="-fx-background-color: #FFFFFF00; -fx-border-insets: 0px; -fx-background-radius: 100px; -fx-min-height: 25px; -fx-max-height: 25px;" text="TCP">
+                                 <font>
+                                    <Font name="Roboto Mono Regular" size="12.0" />
+                                 </font>
+                              </TextField>
+                           </children>
+                        </Group>
+                        <Group>
+                           <children>
+                              <Path fill="WHITE" strokeType="INSIDE" strokeWidth="0.0">
+                                 <elements>
+                                    <MoveTo x="0.0" y="25.0" />
+                                    <LineTo x="30.0" y="25.0" />
+                                    <ArcTo radiusX="1.0" radiusY="1.0" x="30.0" y="0.0" />
+                                    <LineTo x="12.0" y="0.0" />
+                                    <ClosePath />
+                                 </elements>
+                                 <cursor>
+                                    <Cursor fx:constant="HAND" />
+                                 </cursor>
+                              </Path>
+                              <TextField accessibleRole="TEXT" alignment="CENTER_RIGHT" editable="false" focusTraversable="false" mouseTransparent="true" prefHeight="25.0" prefWidth="42.0" style="-fx-background-color: #FFFFFF00; -fx-border-insets: 0px; -fx-background-radius: 100px; -fx-min-height: 25px; -fx-max-height: 25px;" text="RMI">
+                                 <font>
+                                    <Font name="Roboto Mono Regular" size="12.0" />
+                                 </font>
+                              </TextField>
+                           </children>
+                        </Group>
+                     </children>
+                  </HBox>
+               </children>
+            </AnchorPane>
+         </bottom>
+      </BorderPane>
+   </children>
+</AnchorPane>
