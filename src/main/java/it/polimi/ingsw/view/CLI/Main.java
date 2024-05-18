@@ -1,22 +1,10 @@
 package it.polimi.ingsw.view.CLI;
 
-import it.polimi.ingsw.controller.Controller;
 import it.polimi.ingsw.controller.exceptions.CannotJoinMultipleLobbiesException;
 import it.polimi.ingsw.controller.exceptions.GameAlreadyStartedException;
 import it.polimi.ingsw.controller.exceptions.IllegalActionException;
 import it.polimi.ingsw.controller.exceptions.NotYourTurnException;
-import it.polimi.ingsw.model.card.CardSide;
-import it.polimi.ingsw.model.deck.DeckBufferType;
-import it.polimi.ingsw.model.deck.DeckType;
 import it.polimi.ingsw.model.exceptions.*;
-import it.polimi.ingsw.model.game.GameHandler;
-import it.polimi.ingsw.model.game.Lobby;
-import it.polimi.ingsw.model.player.Coords;
-import it.polimi.ingsw.model.player.Pawn;
-import it.polimi.ingsw.model.player.Player;
-import it.polimi.ingsw.view.RMIView;
-import it.polimi.ingsw.view.TCPView;
-import it.polimi.ingsw.view.View;
 
 import java.io.IOException;
 

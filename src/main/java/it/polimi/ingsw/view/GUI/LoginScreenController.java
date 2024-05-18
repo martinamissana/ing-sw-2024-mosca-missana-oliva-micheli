@@ -2,8 +2,12 @@ package it.polimi.ingsw.view.GUI;
 
 import it.polimi.ingsw.model.exceptions.FullLobbyException;
 import it.polimi.ingsw.model.exceptions.NicknameAlreadyTakenException;
+import it.polimi.ingsw.network.RMI.RemoteInterface;
+import it.polimi.ingsw.network.netMessage.NetMessage;
+import it.polimi.ingsw.view.RMIView;
+import it.polimi.ingsw.view.TCPView;
 import it.polimi.ingsw.view.View;
-import it.polimi.ingsw.view.ViewController;
+import it.polimi.ingsw.view.ViewObserver;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -18,6 +22,10 @@ import javafx.scene.input.KeyCode;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.rmi.NotBoundException;
+import java.rmi.RemoteException;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
 
 public class LoginScreenController implements ViewObserver {
     private static final int WIDTH = 800;
@@ -38,7 +46,7 @@ public class LoginScreenController implements ViewObserver {
 
     private boolean isRMI;
 
-    //private View view = null;
+    private View view;
 
     public LoginScreenController() {}
 
@@ -95,13 +103,41 @@ public class LoginScreenController implements ViewObserver {
             nickError.setText("logging in...");
         }
 
-        /*
-        // i don't really understand what this does yet
+        // create view
         try {
-            view.getCurrentStatus();
-        } catch (IOException | FullLobbyException | NicknameAlreadyTakenException | ClassNotFoundException e) {
+            if (isRMI) {
+                Registry registry = null;
+                registry = LocateRegistry.getRegistry();
+                String remoteObjectName = "RMIServer";
+                RemoteInterface RMIServer = null;
+                try {
+                    RMIServer = (RemoteInterface) registry.lookup(remoteObjectName);
+                } catch (RemoteException | NotBoundException ex) {
+                    throw new RuntimeException(ex);
+                }
+                view = new RMIView(RMIServer);
+                } else {
+                    view = new TCPView("127.0.0.1", 4321);
+                    new Thread(() -> {
+                    try {
+                        ((TCPView) view).startClient();
+                    } catch (IOException | ClassNotFoundException e) {
+                        throw new RuntimeException(e);
+                    }
+                }).start();
+            }
+
+        } catch (IOException | NotBoundException e) {
             throw new RuntimeException(e);
         }
+
+        // login
+        try {
+            view.login(nick);
+        } catch (NicknameAlreadyTakenException | IOException | FullLobbyException | ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+        this.view.addObserver(this);
 
         // go to main menu
         Parent root = null;
@@ -115,7 +151,6 @@ public class LoginScreenController implements ViewObserver {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        */
     }
 
 
