@@ -185,6 +185,12 @@ public class TCPVirtualView implements Runnable, Observer {
                         out.writeObject(m);
                     }
                 }
+                case ScoreIncrementedEvent e -> {
+                    if (e.getID().equals(ID)) {
+                        ScoreIncrementedMessage m = new ScoreIncrementedMessage(e.getID(),e.getPlayer(),e.getPoints());
+                        out.writeObject(m);
+                    }
+                }
                 default -> throw new IllegalStateException("Unexpected value: " + event);
             }
         }

@@ -239,7 +239,7 @@ public class Controller implements Serializable {
                 receiver = p;
         }
 
-        if ( ( message.getReceiver() != null && !gh.getLobby(ID).getPlayers().contains(receiver) ) || ( message.getReceiver() != null && !gh.getLobby(ID).getPlayers().contains(sender)) )
+        if ((message.getReceiver() != null && !gh.getLobby(ID).getPlayers().contains(receiver)) || (message.getReceiver() != null && !gh.getLobby(ID).getPlayers().contains(sender)))
             throw new PlayerChatMismatchException();
         try {
             if (!message.isGlobal()) {
@@ -515,6 +515,7 @@ public class Controller implements Serializable {
 
         // add points to player's score
         game.addToScore(player, points);
+        gh.notify(new ScoreIncrementedEvent(gameID, player, points));
 
         // set the game's current action to DRAW after playing a card
         // only if it's not the last round (because if it is,
