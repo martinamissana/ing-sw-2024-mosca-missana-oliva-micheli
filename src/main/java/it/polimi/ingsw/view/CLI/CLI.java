@@ -109,10 +109,10 @@ public class CLI implements Runnable, ViewObserver {
 
 
         try {
-            view.getCurrentStatus();
-        } catch (IOException | FullLobbyException | NicknameAlreadyTakenException | ClassNotFoundException e) {
-            throw new RuntimeException(e);
-        }
+        view.getCurrentStatus();
+            } catch(IOException |FullLobbyException |NicknameAlreadyTakenException |ClassNotFoundException e){
+                 throw new RuntimeException(e);
+            }
 
         do {
             if (!check.userConnectedToLobby()) {
