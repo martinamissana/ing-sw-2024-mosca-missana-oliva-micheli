@@ -22,7 +22,7 @@ import java.io.IOException;
 
 public class Main {
     public static void main(String[] args) throws FullLobbyException, LobbyDoesNotExistsException, NicknameAlreadyTakenException, IOException, GameDoesNotExistException, EmptyDeckException, HandIsFullException, PawnAlreadyTakenException, IllegalActionException, NotYourTurnException, IllegalMoveException, EmptyBufferException, CannotJoinMultipleLobbiesException, GameAlreadyStartedException {
-        TCPView client1 = new TCPView("127.0.0.1", 4321);
+        /*TCPView client1 = new TCPView("127.0.0.1", 4321);
         TCPView client2 = new TCPView("127.0.0.1", 4321);
 
         CLI cli1 = new CLI(client1);

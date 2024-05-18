@@ -9,21 +9,29 @@ import it.polimi.ingsw.model.game.GamePhase;
 import it.polimi.ingsw.model.game.Lobby;
 import it.polimi.ingsw.model.player.Pawn;
 import it.polimi.ingsw.model.player.Player;
+import it.polimi.ingsw.network.RMI.ClientRemoteInterface;
+import it.polimi.ingsw.network.RMI.RemoteInterface;
 import it.polimi.ingsw.network.netMessage.NetMessage;
 import it.polimi.ingsw.network.netMessage.c2s.LobbyJoinedMessage;
 import it.polimi.ingsw.network.netMessage.s2c.*;
-import it.polimi.ingsw.view.View;
-import it.polimi.ingsw.view.ViewController;
-import it.polimi.ingsw.view.ViewObserver;
+import it.polimi.ingsw.view.*;
 
 import java.io.IOException;
-import java.util.*;
+import java.rmi.NotBoundException;
+import java.rmi.RemoteException;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
+import java.rmi.server.UnicastRemoteObject;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.InputMismatchException;
+import java.util.Scanner;
 
 import static java.lang.System.exit;
 
 public class CLI implements Runnable, ViewObserver {
-    private final View view;
-    private final ViewController check;
+    private View view;
+    private ViewController check;
     private CLIGame game;
     private final Scanner input = new Scanner(System.in);
     private static final String warningColor = "\u001B[31m";
@@ -36,17 +44,69 @@ public class CLI implements Runnable, ViewObserver {
     private static final String red = "\u001B[31m";
     private static final String GoldColor = "\u001B[30;43m"; // Gold
 
-    public CLI(View view) {
-        this.view = view;
-        this.game = new CLIGame(view);
-        this.check = new ViewController(view);
-        this.view.addObserver(this);
+    public CLI() {
     }
 
     @Override
     public void run() {
         int lobbyAction = 0;
         printHello();
+
+        System.out.println("Insert your connection type: [TCP|RMI]");
+        String choice = input.nextLine();
+
+        if (choice.equalsIgnoreCase("TCP")) {
+            try {
+                this.view = new TCPView("127.0.0.1", 4321);
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            }
+            new Thread(() -> {
+                try {
+                    ((TCPView)view).startClient();
+                } catch (IOException | ClassNotFoundException e) {
+                    throw new RuntimeException(e);
+                }
+            }).start();
+
+        } else if (choice.equalsIgnoreCase("RMI")) {
+            Registry registry = null;
+            try {
+                registry = LocateRegistry.getRegistry();
+            } catch (RemoteException ex) {
+                throw new RuntimeException(ex);
+            }
+            String remoteObjectName = "RMIServer";
+            RemoteInterface RMIServer = null;
+            try {
+                RMIServer = (RemoteInterface) registry.lookup(remoteObjectName);
+            } catch (RemoteException | NotBoundException ex) {
+                throw new RuntimeException(ex);
+            }
+            try {
+                this.view = new RMIView(RMIServer);
+            } catch (RemoteException | NotBoundException ex) {
+                throw new RuntimeException(ex);
+            }
+            try {
+                RMIServer.connect((ClientRemoteInterface) UnicastRemoteObject.exportObject((ClientRemoteInterface)this.view, 0));
+            } catch (NotBoundException | RemoteException ex) {
+                throw new RuntimeException(ex);
+            }
+
+        } else exit(1);
+
+        this.game = new CLIGame(view);
+        this.check = new ViewController(view);
+        this.view.addObserver(this);
+
+        System.out.print("\u001B[38;2;255;165;0m" + "\n[+] " + "\u001B[0m" + "Insert username:" + "\u001B[38;2;255;165;0m" + "\n[-] " + "\u001B[0m");
+        try {
+            view.login(input.nextLine());
+        } catch (NicknameAlreadyTakenException | FullLobbyException | IOException | ClassNotFoundException ex) {
+            throw new RuntimeException(ex);
+        }
+
 
         try {
             view.getCurrentStatus();

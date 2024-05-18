@@ -256,8 +256,10 @@ public class TCPView extends View {
                 }
             }
             case ScoreIncrementedMessage m -> {
-                if (super.getID() != null && super.getID().equals(m.getID()))
+                if (super.getID() != null && super.getID().equals(m.getID())) {
                     super.getScoreboard().put(m.getPlayer(), getScoreboard().get(m.getPlayer()) + m.getPoints());
+                    notify(m);
+                }
             }
             case FailMessage m -> {
                 super.getErrorMessages().add(m.getMessage());

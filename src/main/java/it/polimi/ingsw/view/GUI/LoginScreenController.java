@@ -19,7 +19,7 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 
-public class LoginScreenController {
+public class LoginScreenController implements ViewObserver {
     private static final int WIDTH = 800;
     private static final int HEIGHT = 600;
     private Stage stage;
@@ -116,5 +116,11 @@ public class LoginScreenController {
             throw new RuntimeException(e);
         }
         */
+    }
+
+
+    @Override
+    public void update(NetMessage m) throws IOException {
+
     }
 }

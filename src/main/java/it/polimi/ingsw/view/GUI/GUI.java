@@ -1,5 +1,6 @@
 package it.polimi.ingsw.view.GUI;
 
+import it.polimi.ingsw.view.View;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
@@ -10,10 +11,10 @@ import javafx.stage.StageStyle;
 
 public class GUI extends Application {
 
-    public static void main(String[] args) { launch(args); }
+    private View view;
 
     @Override
-    public void start(Stage stage){
+    public void start(Stage stage) {
 
         try {
             Parent root = FXMLLoader.load(getClass().getResource("/fxml/TitleScreen.fxml"));
