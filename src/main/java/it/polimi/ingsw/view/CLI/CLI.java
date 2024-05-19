@@ -11,7 +11,9 @@ import it.polimi.ingsw.model.player.Pawn;
 import it.polimi.ingsw.model.player.Player;
 import it.polimi.ingsw.network.RMI.ClientRemoteInterface;
 import it.polimi.ingsw.network.RMI.RemoteInterface;
+import it.polimi.ingsw.network.netMessage.HeartBeatMessage;
 import it.polimi.ingsw.network.netMessage.NetMessage;
+import it.polimi.ingsw.network.netMessage.c2s.DisconnectMessage;
 import it.polimi.ingsw.network.netMessage.c2s.LobbyJoinedMessage;
 import it.polimi.ingsw.network.netMessage.s2c.*;
 import it.polimi.ingsw.view.*;
@@ -109,10 +111,11 @@ public class CLI implements Runnable, ViewObserver {
 
 
         try {
-        view.getCurrentStatus();
-            } catch(IOException |FullLobbyException |NicknameAlreadyTakenException |ClassNotFoundException e){
-                 throw new RuntimeException(e);
-            }
+            view.getCurrentStatus();
+        } catch (IOException | FullLobbyException | NicknameAlreadyTakenException | ClassNotFoundException e) {
+            view.removeObserver(this);
+            Thread.currentThread().interrupt();
+        }
 
         do {
             if (!check.userConnectedToLobby()) {
@@ -120,9 +123,18 @@ public class CLI implements Runnable, ViewObserver {
                 switch (lobbyAction) {
                     case 1 -> createLobby();
                     case 2 -> chooseLobby();
-                    case 3 -> exit(0);
+                    case 3 -> {
+                        view.removeObserver(this);
+                        exit(0);
+                    }
                 }
                 lobbyAction = -1;
+
+                try {
+                    view.getCurrentStatus();
+                } catch (IOException | FullLobbyException | NicknameAlreadyTakenException | ClassNotFoundException e) {
+                    throw new RuntimeException(e);
+                }
 
             } else {
                 while (view.getPawn() == null) setPawnColor();  // TODO: fix "unexpected end of block data" (choosing second player's pawn then first player's)
@@ -139,9 +151,10 @@ public class CLI implements Runnable, ViewObserver {
 
                 try {
                     view.getCurrentStatus();
-                } catch (IOException | ClassNotFoundException e) {
-                    throw new RuntimeException(e);
-                } catch (FullLobbyException | NicknameAlreadyTakenException ignored) {}
+                } catch (IOException | ClassNotFoundException | NicknameAlreadyTakenException | FullLobbyException e) {
+                    view.removeObserver(this);
+                    Thread.currentThread().interrupt();
+                }
 
                 if (lobbyAction != 2) {
                     // Game CLI
@@ -201,6 +214,7 @@ public class CLI implements Runnable, ViewObserver {
             if (choice == 3) {
                 System.out.print(cli + "Exiting game");
                 printDots();
+                view.removeObserver(this);
                 Thread.currentThread().interrupt();
             }
             if (choice == 2) {
@@ -396,10 +410,9 @@ public class CLI implements Runnable, ViewObserver {
 
             try {
                 view.getCurrentStatus();
-                Thread.sleep(500);
-            } catch (IOException | NicknameAlreadyTakenException | FullLobbyException | ClassNotFoundException |
-                     InterruptedException e) {
-                throw new RuntimeException(e);
+            } catch (IOException | ClassNotFoundException | NicknameAlreadyTakenException | FullLobbyException e) {
+                view.removeObserver(this);
+                Thread.currentThread().interrupt();
             }
         } while (pawn == null);
 
@@ -509,9 +522,19 @@ public class CLI implements Runnable, ViewObserver {
 
                 try {
                     view.getCurrentStatus();
-                } catch (IOException | FullLobbyException | NicknameAlreadyTakenException | ClassNotFoundException e) {
-                    throw new RuntimeException(e);
+                } catch (IOException | ClassNotFoundException | NicknameAlreadyTakenException | FullLobbyException e) {
+                    view.removeObserver(this);
+                    Thread.currentThread().interrupt();
                 }
+            }
+
+            case HeartBeatMessage m -> {
+            }
+
+            case DisconnectMessage m -> {
+                System.out.println(cli + "Server crashed");
+                view.removeObserver(this);
+                exit(1);
             }
 
             case LobbyCreatedMessage m -> {
@@ -519,18 +542,12 @@ public class CLI implements Runnable, ViewObserver {
                     System.out.print(cli + "Successfully created lobby. ID: #" + m.getID());
                     printRemainingPlayers();
                 }
-
-                try {
-                    view.getCurrentStatus();
-                } catch (IOException | FullLobbyException | NicknameAlreadyTakenException | ClassNotFoundException e) {
-                    throw new RuntimeException(e);
-                }
             }
 
             case LoginFail_NicknameAlreadyTaken m -> {
                 System.out.print(cli + "Cannot login. Quitting");
-                printDots();
-                Thread.currentThread().interrupt();
+                view.removeObserver(this);
+                exit(1);
             }
 
             case LobbyJoinedMessage m -> {
@@ -541,12 +558,6 @@ public class CLI implements Runnable, ViewObserver {
                 } else if (m.getID().equals(view.getID())) {
                     System.out.print(cli + m.getPlayer().getNickname() + " joined the lobby!");
                     printRemainingPlayers();
-                }
-
-                try {
-                    view.getCurrentStatus();
-                } catch (IOException | FullLobbyException | NicknameAlreadyTakenException | ClassNotFoundException e) {
-                    throw new RuntimeException(e);
                 }
             }
 
@@ -565,31 +576,11 @@ public class CLI implements Runnable, ViewObserver {
                 } else if (m.getID().equals(view.getID())) {
                     System.out.print(cli + m.getPlayer().getNickname() + " left the lobby\n");
                 }
-
-                try {
-                    view.getCurrentStatus();
-                } catch (IOException | FullLobbyException | NicknameAlreadyTakenException | ClassNotFoundException e) {
-                    throw new RuntimeException(e);
-                }
-            }
-
-            case LobbyDeletedMessage m -> {
-                try {
-                    view.getCurrentStatus();
-                } catch (IOException | FullLobbyException | NicknameAlreadyTakenException | ClassNotFoundException e) {
-                    throw new RuntimeException(e);
-                }
             }
 
             case PawnAssignedMessage m -> {
                 if (m.getPlayer().equals(view.getPlayer())) {
                     System.out.print(cli + "Selected color " + m.getColor().name() + "\n");
-                }
-
-                try {
-                    view.getCurrentStatus();
-                } catch (IOException | FullLobbyException | NicknameAlreadyTakenException | ClassNotFoundException e) {
-                    throw new RuntimeException(e);
                 }
             }
 
@@ -597,9 +588,6 @@ public class CLI implements Runnable, ViewObserver {
                 System.out.print(cli + "Game starting");
                 printDots();
                 game = new CLIGame(view);
-            }
-
-            case CurrentStatusMessage m -> {
             }
 
             case ChatMessageAddedMessage m -> {
@@ -620,10 +608,14 @@ public class CLI implements Runnable, ViewObserver {
                 }
             }
 
-            case CardAddedToHandMessage m -> {
-            }
-
+            case LobbyDeletedMessage m -> {}
+            case CurrentStatusMessage m -> {}
+            case CardAddedToHandMessage m -> {}
             case CardRemovedFromHandMessage m -> {}
+            case SecretGoalsListAssignedMessage m -> {}
+            case SecretGoalAssignedMessage m -> {}
+            case GameActionSwitchedMessage m -> {}
+            case CardDrawnFromSourceMessage m -> {}
 
             case CardPlacedOnFieldMessage m -> {
                 if (m.getNickname().equals(view.getPlayer().getNickname())) {
@@ -635,49 +627,50 @@ public class CLI implements Runnable, ViewObserver {
             }
 
             case GamePhaseChangedMessage m -> {
-                System.out.println(cli + "New game phase: " + m.getGamePhase());
-            }
-
-            case SecretGoalsListAssignedMessage m -> {
-            }
-
-            case SecretGoalAssignedMessage m -> {
-            }
-
-            case GameActionSwitchedMessage m -> {
+                if (m.getID().equals(view.getID())) {
+                    System.out.println(cli + "New game phase: " + m.getGamePhase());
+                }
             }
 
             case LastRoundStartedMessage m -> {
-                game.printScoreboard();
-                System.out.println(cli + "Last round is started");
+                if (m.getID().equals(view.getID())) {
+                    game.printScoreboard();
+                    System.out.println(cli + "Last round is started");
+                }
             }
 
             case TurnChangedMessage m -> {
                 if (m.getNickname().equals(view.getNickname())) System.out.println(cli + "It's your turn");
-                else if (m.getNickname().toUpperCase().charAt(m.getNickname().length() - 1) == 'S') System.out.println(cli + "It's " + m.getNickname() + "' turn");
-                else System.out.println(cli + "It's " + m.getNickname() + "'s turn");
+                else if (m.getID().equals(view.getID())) {
+                    if (m.getNickname().toUpperCase().charAt(m.getNickname().length() - 1) == 'S')
+                        System.out.println(cli + "It's " + m.getNickname() + "' turn");
+                    else System.out.println(cli + "It's " + m.getNickname() + "'s turn");
+                }
             }
 
             case GameWinnersAnnouncedMessage m -> {
-                game.printScoreboard();
+                if (m.getID().equals(view.getID())) {
+                    game.printScoreboard();
 
-                ArrayList<Player> winners = view.getWinners();
-                if (winners.size() == 1)
-                    System.out.println(cli + "The winner is " + GoldColor + winners.getFirst().getNickname() + reset + "!!");
-                else {
-                    System.out.print(cli + "The winners are ");
-                    for (Player winner : winners) {
-                        System.out.print(cli + GoldColor + winner.getNickname() + reset);
+                    ArrayList<Player> winners = view.getWinners();
+                    if (winners.size() == 1) {
+                        if (m.getWinners().contains(view.getPlayer())) System.out.println(cli + "You win!!");
+                        else System.out.println(cli + "THE WINNER IS " + GoldColor + winners.getFirst().getNickname().toUpperCase() + reset + "!!");
+                    }
+                    else {
+                        System.out.print(cli + "The winners are ");
+                        for (Player winner : winners) {
+                            System.out.print(cli + GoldColor + winner.getNickname() + reset);
+                        }
                     }
                 }
             }
 
             case GameTerminatedMessage m -> {
-                System.out.print(cli + "Game is closing");
-                printDots();
-            }
-
-            case CardDrawnFromSourceMessage m -> {
+                if (m.getID().equals(view.getID())) {
+                    System.out.print(cli + "Game is closing");
+                    printDots();
+                }
             }
 
             default -> throw new IllegalStateException("Unexpected value: " + message);

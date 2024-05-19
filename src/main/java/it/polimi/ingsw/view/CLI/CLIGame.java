@@ -74,7 +74,7 @@ public class CLIGame {
                 printDots();
 
                 try {
-                    view.chooseCardSide(side);      // TODO: fix positioning starter card (wrong side)
+                    view.chooseCardSide(side);      // TODO: fix positioning starter card (it positions always FRONT)
                 }
                 catch (IOException | GameDoesNotExistException | EmptyDeckException | HandIsFullException |
                        UnexistentUserException | WrongGamePhaseException e) {
@@ -161,9 +161,10 @@ public class CLIGame {
                     }
                     printHand();
                 }
+                in = "";
             } while(flip);
 
-            System.out.print(cli + "Which card do you want to play?" + user);   // TODO: Choose if flip
+            System.out.print(cli + "Which card do you want to play?" + user);
             choice = input.nextInt();
 
             if (choice < 0 && choice >= view.getHand().getSize()) {
