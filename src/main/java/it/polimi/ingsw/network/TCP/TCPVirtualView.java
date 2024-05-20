@@ -35,7 +35,11 @@ public class TCPVirtualView implements Runnable, Observer {
         c.getGh().addObserver(this);
         new Thread(() -> {
             while (!socket.isClosed()) {
-                checkClientConnection();
+                try {
+                    checkClientConnection();
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
             }
         }).start();
     }
@@ -67,7 +71,11 @@ public class TCPVirtualView implements Runnable, Observer {
             Thread.currentThread().interrupt();
 
         } catch (IOException | ClassNotFoundException e) {
-            disconnect();
+            try {
+                disconnect();
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            }
         }
     }
 
@@ -356,7 +364,7 @@ public class TCPVirtualView implements Runnable, Observer {
         this.nickname = nickname;
     }
 
-    public void checkClientConnection()  {
+    public void checkClientConnection() throws IOException {
         HeartBeatMessage m = new HeartBeatMessage();
         try {
             Thread.sleep(3000);
@@ -366,19 +374,17 @@ public class TCPVirtualView implements Runnable, Observer {
         }
     }
 
-    private void disconnect() {
-        c.getGh().removeUser(nickname);
+    private void disconnect() throws IOException {
         c.getGh().removeObserver(this);
-        System.out.println("someone disconnected");
         try {
             if (ID != null && nickname != null) {
                 c.leaveLobby(nickname, ID);
             }
-            socket.close();
-            Thread.currentThread().interrupt();
-            System.out.println("closing a vv");
         } catch (LobbyDoesNotExistsException | GameDoesNotExistException | IOException |
                  UnexistentUserException ignored) {
         }
+        c.getGh().removeUser(nickname);
+        socket.close();
+        Thread.currentThread().interrupt();
     }
 }
