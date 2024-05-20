@@ -72,11 +72,11 @@ public class TCPView extends View {
                 notify(message);
             }
             case LobbyCreatedMessage m -> {
+                super.getLobbies().put(m.getID(), m.getLobby());
                 if (m.getCreator().equals(super.getPlayer())) {
                     super.setID(m.getID());
                     notify(message);
                 }
-                super.getLobbies().put(m.getID(), m.getLobby());
             }
             case LobbyJoinedMessage m -> {
                 if (m.getPlayer().getNickname().equals(super.getPlayer().getNickname()))
@@ -89,12 +89,12 @@ public class TCPView extends View {
                 if (m.getID() != null && m.getID().equals(super.getID())) notify(message);
             }
             case LobbyLeftMessage m -> {
-                if (m.getID() != null && m.getID().equals(super.getID())) notify(message);
                 if (m.getPlayer().getNickname().equals(super.getNickname())) {
                     super.setID(null);
                     super.setPawn(null);
                 }
                 super.getLobbies().get(m.getID()).removePlayer(m.getPlayer());
+                if (m.getID() != null && m.getID().equals(super.getID())) notify(message);
 
             }
             case LobbyDeletedMessage m -> {
