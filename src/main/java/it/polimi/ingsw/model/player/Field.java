@@ -245,9 +245,9 @@ public class Field implements Serializable {
      * @return HashMap<CornerType, Coords>
      */
     private HashMap<CornerType, Coords> getAdjacentCards(Coords coords) {
+        if (coords == null) throw new IllegalArgumentException();
+
         HashMap<CornerType, Coords> map = new HashMap<>();
-        if (coords == null) return map;
-        
         // create adjacent coordinates
         int Xin = coords.getX();
         int Yin = coords.getY();
@@ -277,10 +277,10 @@ public class Field implements Serializable {
      * @return HashMap<CornerType, Coords>
      */
     private HashMap<CornerType, Coords> getFreeAdjacentCoords(Coords coords) {
-        HashMap<CornerType, Coords> map = new HashMap<>();
-        if (coords == null) return map;
+        if (coords == null) throw new IllegalArgumentException();
 
-        // create neighboring coordinates
+        HashMap<CornerType, Coords> map = new HashMap<>();
+        // create adjacent coordinates
         int Xin = coords.getX();
         int Yin = coords.getY();
         Coords northCoords = new Coords(Xin,Yin+1);
