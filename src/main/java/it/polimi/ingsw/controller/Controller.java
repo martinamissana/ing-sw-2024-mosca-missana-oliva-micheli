@@ -507,15 +507,16 @@ public class Controller implements Serializable {
 
         // place card in the field and calculate points
         int points = player.getField().addCard(card, coords);
-        gh.notify(new CardPlacedOnFieldEvent(coords, gameID, card, nickname));
 
         // remove card from player's hand
         player.getHand().removeCard(card);
-        gh.notify(new CardRemovedFromHandEvent(player, card));
 
         // add points to player's score
         game.addToScore(player, points);
+
         gh.notify(new ScoreIncrementedEvent(gameID, player, points));
+        gh.notify(new CardRemovedFromHandEvent(player, card));
+        gh.notify(new CardPlacedOnFieldEvent(coords, gameID, card, nickname));
 
         // set the game's current action to DRAW after playing a card
         // only if it's not the last round (because if it is,

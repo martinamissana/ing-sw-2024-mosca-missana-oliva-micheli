@@ -5,6 +5,7 @@ import it.polimi.ingsw.model.goal.Goal;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class Player implements Serializable {
     private final String nickname;
@@ -118,11 +119,16 @@ public class Player implements Serializable {
         return choosableGoals;
     }
 
-    public boolean equals(Player p) {
-        if (this.nickname == null || p.getNickname() == null) {
-            return false;
-        }
-        return this.nickname.equals(p.getNickname());
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Player player = (Player) o;
+        return Objects.equals(nickname, player.nickname);
     }
 
+    @Override
+    public int hashCode() {
+        return Objects.hash(nickname);
+    }
 }
