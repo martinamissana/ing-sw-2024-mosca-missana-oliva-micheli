@@ -128,8 +128,10 @@ public class Controller implements Serializable {
             gh.getLobby(lobbyID).getPawnBuffer().getPawnList().add(player.getPawn());
             player.setPawn(null);
 
-            if (gh.getActiveGames().containsKey(lobbyID))
+            if (gh.getActiveGames().containsKey(lobbyID)){
                 leaveGame(lobbyID, player.getNickname());
+                winner(lobbyID);
+            }
             if (gh.getLobbies().get(lobbyID).getPlayers().isEmpty()) {
                 deleteLobby(lobbyID);
             }
