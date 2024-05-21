@@ -127,13 +127,14 @@ public class Controller implements Serializable {
             gh.getLobbies().get(lobbyID).getPlayers().remove(player);
             gh.getLobby(lobbyID).getPawnBuffer().getPawnList().add(player.getPawn());
             player.setPawn(null);
-            gh.notify(new LobbyLeftEvent(player, gh.getLobby(lobbyID), lobbyID));
-            if (gh.getActiveGames().containsKey(lobbyID) && gh.getGame(lobbyID).getPlayers().contains(player))
+
+            if (gh.getActiveGames().containsKey(lobbyID))
                 leaveGame(lobbyID, player.getNickname());
             if (gh.getLobbies().get(lobbyID).getPlayers().isEmpty()) {
                 deleteLobby(lobbyID);
             }
-
+            gh.notify(new LobbyLeftEvent(player, gh.getLobby(lobbyID), lobbyID));
+            gh.notify(new LobbyDeletedEvent(lobbyID));
         } else throw new LobbyDoesNotExistsException("Lobby with ID " + lobbyID + " does not exist");
     }
 
@@ -143,11 +144,11 @@ public class Controller implements Serializable {
      * @param lobbyID - the ID of the lobby that will be deleted
      * @throws LobbyDoesNotExistsException if the lobby does not exist
      */
-    public synchronized void deleteLobby(int lobbyID) throws LobbyDoesNotExistsException, IOException {
+    private synchronized void deleteLobby(int lobbyID) throws LobbyDoesNotExistsException, IOException {
         if (gh.getLobbies().containsKey(lobbyID)) {
             gh.getLobbies().remove(lobbyID);
             if (gh.getActiveGames().containsKey(lobbyID)) gh.getActiveGames().remove(lobbyID);
-            gh.notify(new LobbyDeletedEvent(lobbyID));
+
         } else throw new LobbyDoesNotExistsException("Lobby with ID " + lobbyID + " does not exist");
     }
 
@@ -191,7 +192,7 @@ public class Controller implements Serializable {
      * @throws GameDoesNotExistException   thrown if the specified ID doesn't correspond to any game
      * @throws LobbyDoesNotExistsException thrown if the specified ID doesn't correspond to any game, thus having no lobby
      */
-    public synchronized void leaveGame(Integer gameID, String nickname) throws GameDoesNotExistException, LobbyDoesNotExistsException, UnexistentUserException, IOException {
+    private synchronized void leaveGame(Integer gameID, String nickname) throws GameDoesNotExistException, LobbyDoesNotExistsException, UnexistentUserException, IOException {
         Player player = null;
         for (Player p : gh.getUsers()) {
             if (p.getNickname().equals(nickname)) player = p;
@@ -363,6 +364,7 @@ public class Controller implements Serializable {
         StarterCard card = (StarterCard) player.getHand().getCard(0);
         if (!card.getSide().equals(side)) card.flip();
         player.getField().addCard(card);
+        System.out.println(card.getCardID()+" "+card.getSide());
         gh.notify(new CardPlacedOnFieldEvent(new Coords(0, 0), ID, card, nickname));
         player.getHand().removeCard(card);
         gh.notify(new CardRemovedFromHandEvent(player, card));
@@ -507,15 +509,16 @@ public class Controller implements Serializable {
 
         // place card in the field and calculate points
         int points = player.getField().addCard(card, coords);
-        gh.notify(new CardPlacedOnFieldEvent(coords, gameID, card, nickname));
 
         // remove card from player's hand
         player.getHand().removeCard(card);
-        gh.notify(new CardRemovedFromHandEvent(player, card));
 
         // add points to player's score
         game.addToScore(player, points);
+
         gh.notify(new ScoreIncrementedEvent(gameID, player, points));
+        gh.notify(new CardRemovedFromHandEvent(player, card));
+        gh.notify(new CardPlacedOnFieldEvent(coords, gameID, card, nickname));
 
         // set the game's current action to DRAW after playing a card
         // only if it's not the last round (because if it is,

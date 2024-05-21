@@ -22,12 +22,11 @@ import it.polimi.ingsw.view.ViewController;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Scanner;
 
 public class CLIGame {
     private final View view;
     private final ViewController check;
-    private final Scanner input = new Scanner(System.in);
+    private final InputManager input;
     private static final String reset = "\u001B[0m";
     private static final String warningColor = "\u001B[31m";
     private static final String FungiColor = "\u001B[30;41m"; // Red
@@ -42,9 +41,10 @@ public class CLIGame {
     private static final String cli = "\u001B[38;2;255;165;0m" + "\n[+] " + "\u001B[0m";
     private static final String user = "\u001B[38;2;255;165;0m" + "\n[-] " + "\u001B[0m";
 
-    public CLIGame(View view) {
+    public CLIGame(View view, InputManager input) {
         this.view = view;
         this.check = new ViewController(view);
+        this.input = input;
     }
 
     protected void placeStarterCard() {
@@ -60,21 +60,22 @@ public class CLIGame {
         CardSide side;
 
         do {
-            System.out.print(cli + "Which side do you prefer?" + user);
-            String choice = input.nextLine();
+            String choice = input.askInput(cli + "Which side do you prefer?" + user);
 
             side = switch (choice.toUpperCase()) {
                 case "FRONT", "F" -> CardSide.FRONT;
                 case "BACK", "B" -> CardSide.BACK;
                 default -> null;
             };
+            if (side != null && side.equals(CardSide.BACK)) card.flip();
+
             if (side == null) System.out.println(warningColor + "\n[ERROR]: Invalid choice!!\n" + reset);
             else {
                 System.out.print(cli + "Positioning starter card");
                 printDots();
 
                 try {
-                    view.chooseCardSide(side);      // TODO: fix positioning starter card (wrong side)
+                    view.chooseCardSide(side);      // TODO: fix positioning starter card (it positions always FRONT)
                 }
                 catch (IOException | GameDoesNotExistException | EmptyDeckException | HandIsFullException |
                        UnexistentUserException | WrongGamePhaseException e) {
@@ -113,8 +114,7 @@ public class CLIGame {
 
         int ID;
         do {
-            System.out.print(cli + "Select ID of the goal you want:" + user);
-            ID = input.nextInt();
+            ID = Integer.parseInt(input.askInput(cli + "Select ID of the goal you want:" + user));
 
             try {
                 view.chooseSecretGoal(ID);
@@ -139,8 +139,6 @@ public class CLIGame {
             return;
         }
         int choice;
-        String in = "";
-        boolean flip;
         Coords coords = null;
 
         do {
@@ -148,9 +146,9 @@ public class CLIGame {
             printField();
             printHand();
 
+            boolean flip;
             do {
-                System.out.print(cli + "Do you want to flip cards? (y / n)" + user);
-                while (in.isEmpty()) in = input.nextLine();
+                String in = input.askInput(cli + "Do you want to flip cards? (y / n)" + user);
                 flip = switch (in.toUpperCase()) {
                     case "Y", "YES" -> true;
                     default -> false;
@@ -163,25 +161,27 @@ public class CLIGame {
                 }
             } while(flip);
 
-            System.out.print(cli + "Which card do you want to play?" + user);   // TODO: Choose if flip
-            choice = input.nextInt();
+            choice = Integer.parseInt(input.askInput(cli + "Which card do you want to play?" + user));
 
             if (choice < 0 && choice >= view.getHand().getSize()) {
                 System.out.println(warningColor + "\n[ERROR]: Invalid choice!!\n" + reset);
                 choice = -1;
             } else {
-                System.out.print(cli + "In which position you want to put this card? Select X:" + user);
-                int X = input.nextInt();
-                System.out.print(cli + "Now select Y:" + user);
-                int Y = input.nextInt();
+                int X = Integer.parseInt(input.askInput(cli + "Select X:" + user));
+                int Y = Integer.parseInt(input.askInput(cli + "Now select Y:" + user));
                 coords = new Coords(X, Y);
 
                 try {
-                    check.checkPlayCard(choice, coords);
-                } catch (NotYourTurnException | IllegalActionException ignored) {
-                } catch (IllegalCoordsException e) {
-                    System.out.format(cli + "Coords (%d, %d) already occupied:\n", X, Y);
-                    printCard(view.getMyField().getMatrix().get(coords));
+                    check.checkPlayCard(choice, coords);        // TODO: AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+                } catch (NotYourTurnException | IllegalActionException e) {
+                    System.out.println(e.getClass().getName());
+                }
+                catch (IllegalCoordsException e) {
+                    if (e.getClass().equals(OccupiedCoordsException.class)) {
+                        System.out.format(cli + "Coords (%d, %d) already occupied:\n", X, Y);
+                        printCard(view.getMyField().getMatrix().get(coords));
+                    } else if (e.getClass().equals(UnreachablePositionException.class)) System.out.println(warningColor + "[ERROR]: Invalid spot!!");
+                    else System.out.println(warningColor + "Don't know");
 
                     coords = null;
                 } catch (RequirementsNotSatisfiedException e) {
@@ -190,7 +190,7 @@ public class CLIGame {
                 }
 
                 try {
-                    view.playCard(choice, coords);  // TODO: OccupiedCoordsException AAAAAAAAAAAAAAAAAAAAA
+                    view.playCard(choice, coords);
                     Thread.sleep(500);
 
                     for (int i = 0; i < view.getHand().getSize(); i++) {
@@ -198,7 +198,9 @@ public class CLIGame {
                     }
 
                 } catch (IllegalActionException | NotYourTurnException | LobbyDoesNotExistsException |
-                         GameDoesNotExistException ignored) {}
+                         GameDoesNotExistException e) {
+                    System.out.println(e.getClass().getName());
+                }
                 catch(OccupiedCoordsException e) {
                     System.out.println(warningColor + "[ERROR]: Spot already taken by:" + reset);
                     printCard(view.getMyField().getMatrix().get(coords));
@@ -227,12 +229,12 @@ public class CLIGame {
         String choice = "";
         DeckTypeBox type;
         do {
-            System.out.print(cli + "From where do you want to draw?" +
+            while (choice.isEmpty()) choice = input.askInput(
+                    cli + "From where do you want to draw?" +
                     cli + "Resource Deck -> ResDeck" +
                     cli + "Golden Deck -> GoldDeck" +
                     cli + "Resource card spaces -> RES1 - RES2" +
                     cli + "Golden card spaces -> GOLD1 - GOLD2" + user);
-            while (choice.isEmpty()) choice = input.nextLine();
 
             type = switch (choice.toUpperCase()) {      // RD, GD help with testing
                 case "RD", "RESDECK", "RESOURCE DECK" -> DeckType.RESOURCE;
@@ -304,9 +306,9 @@ public class CLIGame {
         } else if (goal.getClass().equals(DiagonalGoal.class)) {
             System.out.print(cli + "Diagonal Goal " + goal.getGoalID() + ": " + ((DiagonalGoal) goal).getType() + " of " + ((DiagonalGoal) goal).getColor() + ". Points = " + goal.getPoints());
         } else {
-            System.out.print(cli + "Resource Goal " + goal.getGoalID() + ": " + goal.getPoints() + " points if you have: ");
+            System.out.print(cli + "Resource Goal " + goal.getGoalID() + ": " + goal.getPoints() + " points if you have:");
             for (ItemBox item : ((ResourceGoal) goal).getResourceList()) {
-                System.out.print(item);
+                System.out.print(" " + item);
             }
         }
     }
@@ -504,6 +506,9 @@ public class CLIGame {
         System.out.print("\n" + cli + "Common goals:");
         printGoal(view.getCommonGoal1());
         printGoal(view.getCommonGoal2());
+        System.out.println();
+        printGoal(view.getSecretGoal());
+
         System.out.println("\n");
     }
 

@@ -185,14 +185,12 @@ public class ViewController {
             throw new IllegalActionException();
 
         try {
-            view.getPlayer().getField().checkIfPlaceable(coords);
-            view.getPlayer().getField().checkRequirements((ResourceCard) view.getPlayer().getHand().getCard(handPos));
+            view.getMyField().checkIfPlaceable(coords);
+            view.getMyField().checkRequirements((ResourceCard) view.getHand().getCard(handPos));
         } catch (IllegalCoordsException | RequirementsNotSatisfiedException e) {
-            switch (e.getClass().getName()) {
-                case "OccupiedCoordsException": { throw new OccupiedCoordsException(); }
-                case "UnreachablePositionException": { throw new UnreachablePositionException(); }
-                case "RequirementsNotSatisfiedException": { throw new RequirementsNotSatisfiedException(); }
-            }
+            if(e.getClass().equals(OccupiedCoordsException.class)) { throw new OccupiedCoordsException(); }
+            if(e.getClass().equals(UnreachablePositionException.class)) { throw new UnreachablePositionException(); }
+            if(e.getClass().equals(RequirementsNotSatisfiedException.class)) { throw new RequirementsNotSatisfiedException(); }
         }
     }
 

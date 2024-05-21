@@ -14,6 +14,7 @@ public class CardPlacedOnFieldMessage extends NetMessage {
         this.coords = coords;
         this.ID = ID;
         this.card = card;
+        this.card.setSide(card.getSide());
         this.nickname = nickname;
     }
 
