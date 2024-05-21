@@ -30,18 +30,7 @@ public class ViewController {
      * @return boolean
      */
     public boolean userConnectedToLobby() {
-
-        boolean isInLobby = false;
-
-        // if the user is connected to any lobby
-        for (Lobby lobby : view.getLobbies().values())
-            for (Player player : lobby.getPlayers())
-                if (player.equals(view.getPlayer())) {
-                    isInLobby = true;
-                    break;
-                }
-
-        return isInLobby;
+        return view.getID() != null;
     }
 
     /**

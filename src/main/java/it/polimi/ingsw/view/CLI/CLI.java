@@ -27,7 +27,6 @@ import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.InputMismatchException;
-import java.util.Scanner;
 
 import static java.lang.System.exit;
 
@@ -49,9 +48,6 @@ public class CLI implements Runnable, ViewObserver {
     public CLI() {
     }
 
-    private boolean isNumeric(String s){
-        return s.matches("-?\\d+");
-    }
 
 
     @Override
@@ -76,7 +72,7 @@ public class CLI implements Runnable, ViewObserver {
             Thread.currentThread().interrupt();
         }
 
-        do {
+        while(true) {
             if (!check.userConnectedToLobby()) {
                 lobbyAction = chooseAction();
                 switch (lobbyAction) {
@@ -130,8 +126,7 @@ public class CLI implements Runnable, ViewObserver {
                                         else if (view.getAction().equals(Action.DRAW)) game.drawCard();
                                     }
                                 }
-                                case GAME_FINISHED -> {}
-                                case null -> {}
+                                default -> {}
                             }
                             try {
                                 Thread.sleep(500);
@@ -140,11 +135,11 @@ public class CLI implements Runnable, ViewObserver {
                             }
 
                             phase = view.getGamePhase();
-                        } while (phase != GamePhase.GAME_FINISHED);
+                        } while (phase != null);
                     }
                 }
             }
-        } while(true);
+        }
     }
 
     private void chooseConnectionType() {
@@ -648,10 +643,7 @@ public class CLI implements Runnable, ViewObserver {
             }
 
             case GameTerminatedMessage m -> {
-                if (m.getID().equals(view.getID())) {
-                    System.out.print(cli + "Game is closing");
-                    printDots();
-                }
+                System.out.print(cli + "Game is closing... Press Enter to return to menu");
             }
 
             default -> throw new IllegalStateException("Unexpected value: " + message);
