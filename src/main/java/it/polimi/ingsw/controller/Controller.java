@@ -127,13 +127,13 @@ public class Controller implements Serializable {
             gh.getLobbies().get(lobbyID).getPlayers().remove(player);
             gh.getLobby(lobbyID).getPawnBuffer().getPawnList().add(player.getPawn());
             player.setPawn(null);
-            gh.notify(new LobbyLeftEvent(player, gh.getLobby(lobbyID), lobbyID));
-            if (gh.getActiveGames().containsKey(lobbyID) && gh.getGame(lobbyID).getPlayers().contains(player))
+
+            if (gh.getActiveGames().containsKey(lobbyID))
                 leaveGame(lobbyID, player.getNickname());
             if (gh.getLobbies().get(lobbyID).getPlayers().isEmpty()) {
                 deleteLobby(lobbyID);
             }
-
+            gh.notify(new LobbyLeftEvent(player, gh.getLobby(lobbyID), lobbyID));
         } else throw new LobbyDoesNotExistsException("Lobby with ID " + lobbyID + " does not exist");
     }
 
@@ -143,7 +143,7 @@ public class Controller implements Serializable {
      * @param lobbyID - the ID of the lobby that will be deleted
      * @throws LobbyDoesNotExistsException if the lobby does not exist
      */
-    public synchronized void deleteLobby(int lobbyID) throws LobbyDoesNotExistsException, IOException {
+    private synchronized void deleteLobby(int lobbyID) throws LobbyDoesNotExistsException, IOException {
         if (gh.getLobbies().containsKey(lobbyID)) {
             gh.getLobbies().remove(lobbyID);
             if (gh.getActiveGames().containsKey(lobbyID)) gh.getActiveGames().remove(lobbyID);
@@ -191,7 +191,7 @@ public class Controller implements Serializable {
      * @throws GameDoesNotExistException   thrown if the specified ID doesn't correspond to any game
      * @throws LobbyDoesNotExistsException thrown if the specified ID doesn't correspond to any game, thus having no lobby
      */
-    public synchronized void leaveGame(Integer gameID, String nickname) throws GameDoesNotExistException, LobbyDoesNotExistsException, UnexistentUserException, IOException {
+    private synchronized void leaveGame(Integer gameID, String nickname) throws GameDoesNotExistException, LobbyDoesNotExistsException, UnexistentUserException, IOException {
         Player player = null;
         for (Player p : gh.getUsers()) {
             if (p.getNickname().equals(nickname)) player = p;
