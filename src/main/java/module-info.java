@@ -6,6 +6,7 @@ module PSP001 {
     requires com.google.gson;
     requires java.rmi;
     requires java.logging;
+    requires java.desktop;
 
     opens it.polimi.ingsw.model.card;
     opens it.polimi.ingsw.model.commonItem;
