@@ -41,9 +41,9 @@ public class RMIView extends View implements ClientRemoteInterface , Serializabl
 
     @Override
     public void login(String nickname) throws NicknameAlreadyTakenException, IOException {
-        RMIServer.login(nickname);
         super.setPlayer(new Player(nickname));
         super.setNickname(nickname);
+        RMIServer.login(nickname);
     }
 
     @Override
