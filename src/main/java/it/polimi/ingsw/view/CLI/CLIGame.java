@@ -60,12 +60,15 @@ public class CLIGame {
         CardSide side;
 
         do {
-            String choice = input.askInput(cli + "Which side do you prefer?" + user);
+            String choice = input.askInput(cli + "Which side do you prefer?" + user, "console");
 
-            side = switch (choice.toUpperCase()) {
-                case "FRONT", "F" -> CardSide.FRONT;
-                case "BACK", "B" -> CardSide.BACK;
-                default -> null;
+            switch (choice.toUpperCase()) {
+                case "FRONT", "F" -> side = CardSide.FRONT;
+                case "BACK", "B" -> side = CardSide.BACK;
+                case "CONSOLE" -> {
+                    return;
+                }
+                default -> side = null;
             };
             if (side != null && side.equals(CardSide.BACK)) card.flip();
 
@@ -114,7 +117,13 @@ public class CLIGame {
 
         int ID;
         do {
-            ID = Integer.parseInt(input.askInput(cli + "Select ID of the goal you want:" + user));
+            String s = input.askInput(cli + "Select ID of the goal you want:" + user, "console");
+            if (s.equals("console")) return;
+            if (input.isNumeric(s)) ID = Integer.parseInt(s);
+            else {
+                System.out.println(warningColor + "[ERROR]: Didn't inserted numeric value!!" + reset);
+                ID = -1;
+            }
 
             try {
                 view.chooseSecretGoal(ID);
@@ -161,15 +170,39 @@ public class CLIGame {
                 }
             } while(flip);
 
-            choice = Integer.parseInt(input.askInput(cli + "Which card do you want to play?" + user));
+            String s = input.askInput(cli + "Which card do you want to play?" + user, "console");
+            if (s.equals("console")) return;
+            if (input.isNumeric(s)) choice = Integer.parseInt(s);
+            else {
+                System.out.println(warningColor + "[ERROR]: Didn't inserted numeric value!!" + reset);
+                choice = -1;
+            }
 
-            if (choice < 0 && choice >= view.getHand().getSize()) {
+            if (choice < 0 || choice >= view.getHand().getSize()) {
                 System.out.println(warningColor + "\n[ERROR]: Invalid choice!!\n" + reset);
                 choice = -1;
             } else {
-                int X = Integer.parseInt(input.askInput(cli + "Select X:" + user));
-                int Y = Integer.parseInt(input.askInput(cli + "Now select Y:" + user));
-                coords = new Coords(X, Y);
+                int X, Y;
+
+                s = input.askInput(cli + "Select X:" + user, "console");
+                if (s.equals("console")) return;
+                if (input.isNumeric(s)) X = Integer.parseInt(s);
+                else {
+                    System.out.println(warningColor + "[ERROR]: Didn't inserted numeric value!!" + reset);
+                    choice = -1;
+                    X = -80;
+                }
+
+                s = input.askInput(cli + "Now select Y:" + user, "console");
+                if (s.equals("console")) return;
+                if (input.isNumeric(s)) Y = Integer.parseInt(s);
+                else {
+                    System.out.println(warningColor + "[ERROR]: Didn't inserted numeric value!!" + reset);
+                    choice = -1;
+                    Y = -80;
+                }
+
+                if (choice != -1) coords = new Coords(X, Y);
 
                 try {
                     check.checkPlayCard(choice, coords);        // TODO: AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA

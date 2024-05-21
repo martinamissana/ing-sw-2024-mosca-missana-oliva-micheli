@@ -63,4 +63,9 @@ public class InputManager {
             e.printStackTrace();
         }
     }
+
+    public boolean isNumeric(String s){
+        return s.matches("-?\\d+");
+    }
+
 }
