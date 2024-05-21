@@ -134,6 +134,7 @@ public class Controller implements Serializable {
                 deleteLobby(lobbyID);
             }
             gh.notify(new LobbyLeftEvent(player, gh.getLobby(lobbyID), lobbyID));
+            gh.notify(new LobbyDeletedEvent(lobbyID));
         } else throw new LobbyDoesNotExistsException("Lobby with ID " + lobbyID + " does not exist");
     }
 
@@ -147,7 +148,7 @@ public class Controller implements Serializable {
         if (gh.getLobbies().containsKey(lobbyID)) {
             gh.getLobbies().remove(lobbyID);
             if (gh.getActiveGames().containsKey(lobbyID)) gh.getActiveGames().remove(lobbyID);
-            gh.notify(new LobbyDeletedEvent(lobbyID));
+
         } else throw new LobbyDoesNotExistsException("Lobby with ID " + lobbyID + " does not exist");
     }
 
@@ -363,6 +364,7 @@ public class Controller implements Serializable {
         StarterCard card = (StarterCard) player.getHand().getCard(0);
         if (!card.getSide().equals(side)) card.flip();
         player.getField().addCard(card);
+        System.out.println(card.getCardID()+" "+card.getSide());
         gh.notify(new CardPlacedOnFieldEvent(new Coords(0, 0), ID, card, nickname));
         player.getHand().removeCard(card);
         gh.notify(new CardRemovedFromHandEvent(player, card));
