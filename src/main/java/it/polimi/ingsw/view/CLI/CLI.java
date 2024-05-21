@@ -68,14 +68,10 @@ public class CLI implements Runnable, ViewObserver {
         try {
             view.login(input.askInput(cli + "Insert username:" + user));
             Thread.sleep(500);
-        } catch (NicknameAlreadyTakenException | FullLobbyException | IOException | ClassNotFoundException | InterruptedException ex) {
-            view.removeObserver(this);
-            Thread.currentThread().interrupt();
-        }
 
-        try {
             view.getCurrentStatus();
-        } catch (IOException | FullLobbyException | NicknameAlreadyTakenException | ClassNotFoundException e) {
+
+        } catch (NicknameAlreadyTakenException | FullLobbyException | IOException | ClassNotFoundException | InterruptedException ex) {
             view.removeObserver(this);
             Thread.currentThread().interrupt();
         }
@@ -135,7 +131,7 @@ public class CLI implements Runnable, ViewObserver {
                                     }
                                 }
                                 case GAME_FINISHED -> {}
-                                case null -> quitLobby();
+                                case null -> {}
                             }
                             try {
                                 Thread.sleep(500);
@@ -152,7 +148,7 @@ public class CLI implements Runnable, ViewObserver {
     }
 
     private void chooseConnectionType() {
-        input.setPipedInput(true);              // TODO: Remove when TUI is functioning
+        // input.setPipedInput(true);              // TODO: Remove when TUI is functioning
         String choice = input.askInput(cli + "Insert your connection type: [TCP|RMI]" + user);
         if (choice.equals("console")) choice = "TCP";
 

@@ -67,6 +67,7 @@ public class CLIGame {
                 case "BACK", "B" -> CardSide.BACK;
                 default -> null;
             };
+            if (side != null && side.equals(CardSide.BACK)) card.flip();
 
             if (side == null) System.out.println(warningColor + "\n[ERROR]: Invalid choice!!\n" + reset);
             else {

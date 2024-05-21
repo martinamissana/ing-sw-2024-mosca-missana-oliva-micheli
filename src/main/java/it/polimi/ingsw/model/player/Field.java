@@ -122,7 +122,7 @@ public class Field implements Serializable {
     public boolean checkRequirements(ResourceCard card) throws RequirementsNotSatisfiedException {
 
         // if it's not a Golden card it doesn't have requirements, so they're automatically met
-        if (card.getClass() != GoldenCard.class)
+        if (card.getClass() != GoldenCard.class || card.getSide() == CardSide.BACK)
             return true;
 
         // if any resource required is insufficient, throw exception
