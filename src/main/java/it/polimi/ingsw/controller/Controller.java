@@ -127,16 +127,14 @@ public class Controller implements Serializable {
             gh.getLobbies().get(lobbyID).getPlayers().remove(player);
             gh.getLobby(lobbyID).getPawnBuffer().getPawnList().add(player.getPawn());
             player.setPawn(null);
-
-            if (gh.getActiveGames().containsKey(lobbyID)){
-                leaveGame(lobbyID, player.getNickname());
-                winner(lobbyID);
-            }
+            gh.notify(new LobbyLeftEvent(player, gh.getLobby(lobbyID), lobbyID));
             if (gh.getLobbies().get(lobbyID).getPlayers().isEmpty()) {
                 deleteLobby(lobbyID);
+                gh.notify(new LobbyDeletedEvent(lobbyID));
             }
-            gh.notify(new LobbyLeftEvent(player, gh.getLobby(lobbyID), lobbyID));
-            gh.notify(new LobbyDeletedEvent(lobbyID));
+            if (gh.getActiveGames().containsKey(lobbyID)){
+                leaveGame(lobbyID, player.getNickname());
+            }
         } else throw new LobbyDoesNotExistsException("Lobby with ID " + lobbyID + " does not exist");
     }
 
@@ -150,7 +148,6 @@ public class Controller implements Serializable {
         if (gh.getLobbies().containsKey(lobbyID)) {
             gh.getLobbies().remove(lobbyID);
             if (gh.getActiveGames().containsKey(lobbyID)) gh.getActiveGames().remove(lobbyID);
-
         } else throw new LobbyDoesNotExistsException("Lobby with ID " + lobbyID + " does not exist");
     }
 
@@ -202,6 +199,7 @@ public class Controller implements Serializable {
         if (player == null) throw new UnexistentUserException();
         if (gh.getActiveGames().containsKey(gameID)) {
             gh.getActiveGames().get(gameID).getPlayers().remove(player);
+            gh.getActiveGames().get(gameID).getScoreboard().remove(player);
             terminateGame(gameID);
         } else throw new GameDoesNotExistException("Lobby with ID " + gameID + " does not exist");
     }
@@ -212,11 +210,12 @@ public class Controller implements Serializable {
      * @param gameID the ID of the game that will be deleted
      * @throws GameDoesNotExistException - if the game does not exist
      */
-    public synchronized void terminateGame(Integer gameID) throws GameDoesNotExistException, LobbyDoesNotExistsException, IOException {
+    public synchronized void terminateGame(Integer gameID) throws GameDoesNotExistException, LobbyDoesNotExistsException, IOException, UnexistentUserException {
+        winner(gameID);
         if (gh.getActiveGames().containsKey(gameID)) {
             gh.getActiveGames().remove(gameID);
-            deleteLobby(gameID);
             gh.notify(new GameTerminatedEvent(gameID));
+            deleteLobby(gameID);
         } else throw new GameDoesNotExistException("Game with ID " + gameID + " does not exist");
     }
 
@@ -591,14 +590,13 @@ public class Controller implements Serializable {
      * @param gameID ID of the game to advance the turn of
      * @throws GameDoesNotExistException thrown if the given ID does not correspond to any Game
      */
-    public synchronized void nextTurn(Integer gameID) throws GameDoesNotExistException, LobbyDoesNotExistsException, IOException {
+    public synchronized void nextTurn(Integer gameID) throws GameDoesNotExistException, LobbyDoesNotExistsException, IOException, UnexistentUserException {
 
         // get game from ID
         Game game = gh.getGame(gameID);
 
         // if last round has finished, declare the winner and terminate the game
         if (game.isLastRound() && game.getWhoseTurn() == game.getNumOfPlayers() - 1) {
-            winner(gameID);
             terminateGame(gameID);
         }
 

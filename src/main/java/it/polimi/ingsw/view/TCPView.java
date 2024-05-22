@@ -94,6 +94,7 @@ public class TCPView extends View {
                     super.setPawn(null);
                 }
                 super.getLobbies().get(m.getID()).removePlayer(m.getPlayer());
+                super.getScoreboard().remove(m.getPlayer());
                 if (m.getID() != null && m.getID().equals(super.getID())) notify(message);
 
             }
@@ -158,9 +159,10 @@ public class TCPView extends View {
                 }
             }
             case CardPlacedOnFieldMessage m -> {
-                if (m.getNickname().equals(super.getNickname())) {
-                    if (m.getCard().getClass().equals(StarterCard.class))
+                if (m.getNickname().equals(super.getNickname())) { //TODO: card is not actually flipped
+                    if (m.getCard().getClass().equals(StarterCard.class)){
                         super.getMyField().addCard((StarterCard) m.getCard());
+                    }
                     else try {
                         super.getMyField().addCard((ResourceCard) m.getCard(), m.getCoords());
                     } catch (IllegalMoveException e) {

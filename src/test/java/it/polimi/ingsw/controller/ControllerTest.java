@@ -95,7 +95,7 @@ public class ControllerTest {
     }
 
     @Test
-    public void testCreateGameAndTerminateGame() throws GameDoesNotExistException, LobbyDoesNotExistsException, IOException {
+    public void testCreateGameAndTerminateGame() throws GameDoesNotExistException, LobbyDoesNotExistsException, IOException, UnexistentUserException {
         assertTrue(gameHandler.getGame(0).getPlayers().contains(anna));
         assertTrue(gameHandler.getGame(0).getPlayers().contains(eric));
         assertTrue(gameHandler.getGame(0).getPlayers().contains(giorgio));
