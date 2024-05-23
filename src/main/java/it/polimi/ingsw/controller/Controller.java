@@ -241,7 +241,7 @@ public class Controller implements Serializable {
                 receiver = p;
         }
 
-        if ((message.getReceiver() != null && !gh.getLobby(ID).getPlayers().contains(receiver)) || (message.getReceiver() != null && !gh.getLobby(ID).getPlayers().contains(sender)))
+        if (message.getReceiver() != null && (!gh.getLobby(ID).getPlayers().contains(receiver) || !gh.getLobby(ID).getPlayers().contains(sender)))
             throw new PlayerChatMismatchException();
         try {
             if (!message.isGlobal()) {
