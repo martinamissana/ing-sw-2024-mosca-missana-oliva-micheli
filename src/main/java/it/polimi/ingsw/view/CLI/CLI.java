@@ -26,15 +26,16 @@ import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.InputMismatchException;
 
 import static java.lang.System.exit;
 
 public class CLI implements Runnable, ViewObserver {
     private View view;
     private ViewController check;
+    private final Lock lock = new Lock();
     private CLIGame game;
     private final InputManager input = new InputManager();
+    private String in;
     private static final String warningColor = "\u001B[31m";
     private static final String reset = "\u001B[0m";
     private static final String cli = "\u001B[38;2;255;165;0m" + "\n[+] " + "\u001B[0m";
@@ -45,120 +46,93 @@ public class CLI implements Runnable, ViewObserver {
     private static final String red = "\u001B[31m";
     private static final String GoldColor = "\u001B[30;43m"; // Gold
 
-    public CLI() {
-    }
-
-
+    public CLI() {}
 
     @Override
-    public void run() {
-        int lobbyAction = 0;
-        printHello();
-
-        chooseConnectionType();
-
-        this.game = new CLIGame(view, input);
-        this.check = new ViewController(view);
-        this.view.addObserver(this);
-
+    public void run() {             // TODO: Modify adding states instead of ifs
         try {
-            view.login(input.askInput(cli + "Insert username:" + user));
-            Thread.sleep(500);
+            int lobbyAction = 0;
+            printHello();
 
-            view.getCurrentStatus();
+            chooseConnectionType();
 
-        } catch (NicknameAlreadyTakenException | FullLobbyException | IOException | ClassNotFoundException | InterruptedException ex) {
-            view.removeObserver(this);
-            Thread.currentThread().interrupt();
-        }
+            this.game = new CLIGame(view, input, lock);
+            this.check = new ViewController(view);
+            this.view.addObserver(this);
 
-        while(true) {
-            if (!check.userConnectedToLobby()) {
-                lobbyAction = chooseAction();
-                switch (lobbyAction) {
-                    case 1 -> createLobby();
-                    case 2 -> chooseLobby();
-                }
-                lobbyAction = -1;
+            try {
+                view.login(input.askInput(cli + "Insert username:" + user, "anto"));
+                lock.waitForUpdate();
 
-                try {
-                    view.getCurrentStatus();
-                } catch (IOException | FullLobbyException | NicknameAlreadyTakenException | ClassNotFoundException e) {
-                    throw new RuntimeException(e);
-                }
+                view.getCurrentStatus();
 
-            } else {
-                while (view.getPawn() == null) setPawnColor();
+            } catch (NicknameAlreadyTakenException | FullLobbyException | IOException | ClassNotFoundException ex) {
+                view.removeObserver(this);
+                Thread.currentThread().interrupt();
+            }
 
-                try {
-                    Thread.sleep(500);
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
-                }
-
-                while (lobbyAction != 2 && view.getLobbies().get(view.getID()).getPlayers().size() < view.getLobbies().get(view.getID()).getNumOfPlayers() && view.getLobbies().get(view.getID()).getPawnBuffer().getPawnList().size() > Pawn.values().length - view.getLobbies().get(view.getID()).getNumOfPlayers()) {
-                    lobbyAction = waiting();
-                    switch (lobbyAction) {
-                        case 1 -> openChat();
-                        case 2 -> quitLobby();
+            while(true) {
+                if (!check.userConnectedToLobby()) {
+                    chooseAction();
+                } else {
+                    while (view.getPawn() == null) setPawnColor();
+                    while (lobbyAction != 2 && view.getLobbies().get(view.getID()).getPlayers().size() < view.getLobbies().get(view.getID()).getNumOfPlayers() && view.getLobbies().get(view.getID()).getPawnBuffer().getPawnList().size() > Pawn.values().length - view.getLobbies().get(view.getID()).getNumOfPlayers()) {
+                        lobbyAction = waiting();
+                        switch (lobbyAction) {
+                            case 1 -> openChat();
+                            case 2 -> quitLobby();
+                        }
                     }
-                }
 
-                try {
-                    view.getCurrentStatus();
-                } catch (IOException | ClassNotFoundException | NicknameAlreadyTakenException | FullLobbyException e) {
-                    view.removeObserver(this);
-                    Thread.currentThread().interrupt();
-                }
+                    if (lobbyAction != 2) {
+                        // Game CLI
+                        GamePhase phase = view.getGamePhase();
+                        if (phase != null) {
 
-                if (lobbyAction != 2) {
-                    // Game CLI
-                    GamePhase phase = view.getGamePhase();
-                    if (phase != null) {
-
-                        do {
-                            switch (phase) {
-                                case PLACING_STARTER_CARD -> game.placeStarterCard();
-                                case CHOOSING_SECRET_GOAL -> game.chooseSecretGoal();
-                                case PLAYING_GAME -> {
-                                    if (view.isYourTurn()) {
-                                        if (view.getAction().equals(Action.PLAY)) game.playCard();
-                                        else if (view.getAction().equals(Action.DRAW)) game.drawCard();
+                            do {
+                                switch (phase) {
+                                    case PLACING_STARTER_CARD -> game.placeStarterCard();
+                                    case CHOOSING_SECRET_GOAL -> game.chooseSecretGoal();
+                                    case PLAYING_GAME -> {
+                                        if (view.isYourTurn()) {
+                                            if (view.getAction().equals(Action.PLAY)) game.playCard();
+                                            else if (view.getAction().equals(Action.DRAW)) game.drawCard();
+                                        }
                                     }
+                                    default -> {}
                                 }
-                                default -> {}
-                            }
-                            try {
-                                Thread.sleep(500);
-                            } catch (InterruptedException e) {
-                                throw new RuntimeException(e);
-                            }
+                                lock.waitForUpdate();
 
-                            phase = view.getGamePhase();
-                        } while (phase != null);
+                                phase = view.getGamePhase();
+                            } while (phase != null);
+                        }
                     }
                 }
             }
+        } catch (InterruptedException e) {
+            view.removeObserver(this);
+            Thread.currentThread().interrupt();
         }
     }
 
     private void chooseConnectionType() {
-        // input.setPipedInput(true);              // TODO: Remove when TUI is functioning
+        input.setPipedInput(true);              // TODO: Remove when TUI is functioning
         String choice = input.askInput(cli + "Insert your connection type: [TCP|RMI]" + user);
         if (choice.equals("console")) choice = "TCP";
 
         if (choice.equalsIgnoreCase("TCP")) {
-            System.out.println(cli + "TCP selected..");
             try {
                 this.view = new TCPView("127.0.0.1", 4321);
             } catch (IOException ex) {
-                throw new RuntimeException(ex);
+                view.removeObserver(this);
+                Thread.currentThread().interrupt();
             }
             new Thread(() -> {
                 try {
                     ((TCPView)view).startClient();
                 } catch (IOException | ClassNotFoundException e) {
-                    throw new RuntimeException(e);
+                    view.removeObserver(this);
+                    Thread.currentThread().interrupt();
                 }
             }).start();
 
@@ -166,57 +140,54 @@ public class CLI implements Runnable, ViewObserver {
             Registry registry;
             try {
                 registry = LocateRegistry.getRegistry();
-            } catch (RemoteException ex) {
-                throw new RuntimeException(ex);
-            }
-            String remoteObjectName = "RMIServer";
-            RemoteInterface RMIServer;
-            try {
-                RMIServer = (RemoteInterface) registry.lookup(remoteObjectName);
-            } catch (RemoteException | NotBoundException ex) {
-                throw new RuntimeException(ex);
-            }
-            try {
-                this.view = new RMIView(RMIServer);
-            } catch (RemoteException | NotBoundException ex) {
-                throw new RuntimeException(ex);
-            }
-            try {
-                RMIServer.connect((ClientRemoteInterface) UnicastRemoteObject.exportObject((ClientRemoteInterface)this.view, 0));
-            } catch (NotBoundException | RemoteException ex) {
-                throw new RuntimeException(ex);
-            }
 
+                String remoteObjectName = "RMIServer";
+                RemoteInterface RMIServer;
+
+                RMIServer = (RemoteInterface) registry.lookup(remoteObjectName);
+                this.view = new RMIView(RMIServer);
+
+                RMIServer.connect((ClientRemoteInterface) UnicastRemoteObject.exportObject((ClientRemoteInterface)this.view, 0));
+
+            } catch (RemoteException | NotBoundException ex) {
+                view.removeObserver(this);
+                exit(1);
+            }
         } else exit(1);
     }
 
-    private int chooseAction() {
+    private void chooseAction() throws InterruptedException {
         int choice;
         do {
-            String in = input.askInput(cli + "What would you like to do?" + cli +
+            in = input.askInput(cli + "What would you like to do?" + cli +
                     "1. Create a lobby and wait for other players to join" + cli +
                     "2. Join an already open lobby" + cli +
-                    "3. Quit" + user);
-            if ("123".contains(in)) choice = Integer.parseInt(in);
-            else choice = -1;
+                    "3. Quit" + user, "console");
 
-            if (choice == 3) {
-                System.out.print(cli + "Exiting game");
-                printDots();
-                view.removeObserver(this);
-                exit(0);
-            }
-            if (choice == 2) {
-                if (view.getLobbies().isEmpty()) {
-                    System.out.println(warningColor + "\n[ERROR]: There are no open lobbies!\n" + reset);
-                    choice = -1;
-                }
-            } else if (choice != 1) {
-                System.out.println(warningColor + "\n[ERROR]: Invalid choice!!\n" + reset);
+            if (in.equals("console")) return;
+            if (input.isNumeric(in)) choice = Integer.parseInt(in);
+            else {
+                System.out.println(warningColor + "[ERROR]: Didn't inserted numeric value!!" + reset);
                 choice = -1;
             }
+
+            switch (choice) {
+                case 1 -> createLobby();
+                case 2 -> {
+                    if (view.getLobbies().isEmpty()) {
+                        System.out.println(warningColor + "\n[ERROR]: There are no open lobbies!\n" + reset);
+                        choice = -1;
+                    } else chooseLobby();
+                }
+                case 3 -> {
+                    System.out.print(cli + "Exiting game");
+                    printDots();
+                    view.removeObserver(this);
+                    exit(0);
+                }
+                default -> System.out.println(warningColor + "\n[ERROR]: Invalid choice!!\n" + reset);
+            }
         } while (choice == -1);
-        return choice;
     }
 
     private void printOpenLobbies() {
@@ -239,7 +210,7 @@ public class CLI implements Runnable, ViewObserver {
         System.out.println();
     }
 
-    private void chooseLobby() {
+    private void chooseLobby() throws InterruptedException {
         if (view.getID() != null) {
             System.out.println(warningColor + "\n[ERROR]: Cannot create a lobby while in another lobby!!" + reset);
             return;
@@ -250,9 +221,11 @@ public class CLI implements Runnable, ViewObserver {
 
         printOpenLobbies();
         do {
-            try {
-                ID = Integer.parseInt(input.askInput(cli + "Which lobby do you want to join? (-1 to return to selection)" + user + "#"));
-            } catch (InputMismatchException e) {
+            in = input.askInput(cli + "Which lobby do you want to join? (-1 to return to selection)" + user + "#", "console");
+            if (in.equals("console")) return;
+            if (input.isNumeric(in)) ID = Integer.parseInt(in);
+            else {
+                System.out.println(warningColor + "[ERROR]: Didn't inserted numeric value!!" + reset);
                 ID = -1;
             }
 
@@ -262,12 +235,7 @@ public class CLI implements Runnable, ViewObserver {
                 view.joinLobby(ID);
                 chosen = true;
 
-                try {
-                    Thread.sleep(500);
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
-                }
-
+                lock.waitForUpdate();
             } catch (NicknameAlreadyTakenException ignored) {}
             catch (CannotJoinMultipleLobbiesException e) {
                 System.out.println(warningColor + "[ERROR]: Cannot join multiple lobbies!!" + reset);
@@ -276,13 +244,14 @@ public class CLI implements Runnable, ViewObserver {
             } catch (LobbyDoesNotExistsException e) {
                 System.out.println(warningColor + "[ERROR]: Lobby #" + ID + " does not exist!!" + reset);
             } catch (IOException | ClassNotFoundException | UnexistentUserException e) {
-                throw new RuntimeException(e);
+                view.removeObserver(this);
+                Thread.currentThread().interrupt();
             }
         } while (!chosen);
 
     }
 
-    private void createLobby() {
+    private void createLobby() throws InterruptedException {
         if (view.getID() != null) {
             System.out.println(warningColor + "\n[ERROR]: Cannot create a lobby while in another lobby!!" + reset);
             return;
@@ -291,7 +260,14 @@ public class CLI implements Runnable, ViewObserver {
         try {
             int numOfPlayers;
             do {
-                numOfPlayers = Integer.parseInt(input.askInput(cli + "Insert number of players: [2][3][4] (-1 to return to selection)" + user));
+                in = input.askInput(cli + "Insert number of players: [2][3][4] (-1 to return to selection)" + user, "console");
+                if (in.equals("console")) return;
+                if (input.isNumeric(in)) numOfPlayers = Integer.parseInt(in);
+                else {
+                    System.out.println(warningColor + "[ERROR]: Didn't inserted numeric value!!" + reset);
+                    numOfPlayers = -1;
+                }
+
                 if (numOfPlayers == -1) {
                     System.out.println(cli + "Lobby not created, returning to selection...");
                     return;
@@ -302,26 +278,32 @@ public class CLI implements Runnable, ViewObserver {
                 printDots();
 
                 view.createLobby(numOfPlayers);
-                Thread.sleep(500);
+                lock.waitForUpdate();
             } while (numOfPlayers < 2 || numOfPlayers > 4);
 
         } catch (LobbyDoesNotExistsException | IOException | NicknameAlreadyTakenException | FullLobbyException |
                  CannotJoinMultipleLobbiesException ignored) {}
-        catch (ClassNotFoundException | UnexistentUserException | InterruptedException e) {
-            throw new RuntimeException(e);
+        catch (ClassNotFoundException | UnexistentUserException e) {
+            view.removeObserver(this);
+            Thread.currentThread().interrupt();
         }
     }
 
     private int waiting() {
-        int choice;
+        int inLobbyAction;
         do {
-            choice = Integer.parseInt(input.askInput(cli + "Waiting for players..." + cli + "1. Open chat" + cli + "2. Quit lobby" + user, "3"));
+            in = input.askInput(cli + "Waiting for players..." + cli + "1. Open chat" + cli + "2. Quit lobby" + user, "console");
+            if (input.isNumeric(in)) inLobbyAction = Integer.parseInt(in);
+            else {
+                System.out.println(warningColor + "[ERROR]: Didn't inserted numeric value!!" + reset);
+                inLobbyAction = 3;
+            }
 
-            if (choice != 1 && choice != 2 && choice != 3)
+            if (inLobbyAction < 1 || inLobbyAction > 3)
                 System.out.println(warningColor + "\n[ERROR]: Invalid choice\n" + reset);
-        } while (choice != 1 && choice != 2 && choice != 3);
+        } while (inLobbyAction < 1 || inLobbyAction > 3);
 
-        return choice;
+        return inLobbyAction;
     }
 
     private void printAvailablePawns() {
@@ -343,24 +325,24 @@ public class CLI implements Runnable, ViewObserver {
         }
     }
 
-    private void printPlayers(Integer ID) {
+    private void printPlayers(Integer ID) {     // TODO: Resolve problem with prints
         Lobby lobby = view.getLobbies().get(ID);
 
         System.out.print(cli + "Players (lobby " + green + "#" + ID + reset + "): " + lobby.getPlayers().size() + "/" + lobby.getNumOfPlayers());
         for (Player p : lobby.getPlayers()) {
             switch (p.getPawn()) {
-                case Pawn.BLUE -> System.out.print(cli + blue + "● " + reset);
-                case Pawn.RED -> System.out.print(cli + red + "● " + reset);
-                case Pawn.GREEN -> System.out.print(cli + green + "● " + reset);
-                case Pawn.YELLOW -> System.out.print(cli + yellow + "● " + reset);
-                case null -> System.out.print(cli + "● " + reset);
+                case Pawn.BLUE -> System.out.print(cli + blue + "● ");
+                case Pawn.RED -> System.out.print(cli + red + "● ");
+                case Pawn.GREEN -> System.out.print(cli + green + "● ");
+                case Pawn.YELLOW -> System.out.print(cli + yellow + "● ");
+                case null -> System.out.print(cli + "● ");
             }
-            System.out.print(p.getNickname());
+            System.out.print(p.getNickname() + reset);
         }
         System.out.println();
     }
 
-    private void setPawnColor() {
+    private void setPawnColor() throws InterruptedException {
         if (view.getPawn() != null) {
             System.out.println(cli + "Pawn already chosen!!");
             return;
@@ -382,29 +364,25 @@ public class CLI implements Runnable, ViewObserver {
             if (pawn != null) {
                 try {
                     view.choosePawn(pawn);
+                    lock.waitForUpdate();
                 } catch (PawnAlreadyTakenException e) {
                     System.out.print(cli + "Pawn already taken!\n");
                     pawn = null;
-                } catch (Exception ignored) {}
-            } else System.out.print(cli + "Color chosen does not exist!\n");
 
-            try {
-                view.getCurrentStatus();
-            } catch (IOException | ClassNotFoundException | NicknameAlreadyTakenException | FullLobbyException e) {
-                view.removeObserver(this);
-                Thread.currentThread().interrupt();
-            }
+                } catch (GameAlreadyStartedException | LobbyDoesNotExistsException | GameDoesNotExistException ignored) {}
+                catch (IOException | UnexistentUserException e) {
+                    view.removeObserver(this);
+                    Thread.currentThread().interrupt();
+                }
+            } else System.out.println(warningColor + "[ERROR]: Color chosen does not exist!" + reset);
         } while (pawn == null);
-
-        try {
-            Thread.sleep(500);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
     }
 
-    private void openChat() {       // TODO: fix private chats
-        Chat chat = view.getChat();
+    private void openChat() throws InterruptedException {       // TODO: fix private chats
+        int desiredChat;
+        Chat chats = view.getChat();
+
+        // Taking all players currently in lobby (except the player itself)
         ArrayList<Player> players = new ArrayList<>();
         for (int i = 0; i < view.getLobbies().get(view.getID()).getPlayers().size(); i++) {
             if (!view.getLobbies().get(view.getID()).getPlayers().get(i).equals(view.getPlayer())) players.add(view.getLobbies().get(view.getID()).getPlayers().get(i));
@@ -414,54 +392,54 @@ public class CLI implements Runnable, ViewObserver {
         for (int i = 0; i < players.size(); i++) {
             System.out.print(cli + (i + 2) + ". Private chat with " + players.get(i).getNickname());
         }
-        int choice = Integer.parseInt(input.askInput(user));
+
+        // Selecting chat (if error return to waiting()):
+        in = input.askInput(user, "console");
+        if (in.equals("console")) return;
+        if (input.isNumeric(in)) desiredChat = Integer.parseInt(input.askInput(user));
+        else {
+            System.out.println(warningColor + "[ERROR]: Didn't inserted numeric value!!" + reset);
+            return;
+        }
 
         System.out.println(cli + "Opening chat (write \"quit chat\" to return to selection)");
-        if (choice == 1) {
-                for (Message m : chat.getGlobalChat()) {
-                    System.out.print("\u001B[38;2;255;165;0m\n[" + m.getSender().getNickname() + "]:\u001B[0m" + " \"" + m.getText() + "\"");
+        if (desiredChat == 1) {
+                for (Message m : chats.getGlobalChat()) {
+                    System.out.print("\u001B[38;2;255;165;0m\n[" + m.getSender().getNickname() + "]:" + reset + " \"" + m.getText() + "\"");
                 }
                 sendMessage(null);
         }
-        else if (choice > 1 && choice < view.getLobbies().get(view.getID()).getPlayers().size() + 2) {
-            for (Message m : chat.getPrivateChat(players.get(choice - 2))) {
-                System.out.print("\u001B[38;2;255;165;0m" + "\n[" + m.getSender().getNickname() + "] " + "\u001B[0m" + ": \"" + m.getText() + "\"");
+        else if (desiredChat > 1 && desiredChat < view.getLobbies().get(view.getID()).getPlayers().size() + 2) {
+            for (Message m : chats.getPrivateChat(players.get(desiredChat - 2))) {
+                System.out.print("\n\u001B[38;2;255;165;0m[" + m.getSender().getNickname() + "]:" + reset + " \"" + m.getText() + "\"");
             }
-            sendMessage(players.get(choice - 2));
+            sendMessage(players.get(desiredChat - 2));
         } else System.out.println(warningColor + "[ERROR]: Invalid choice!!" + reset);
     }
 
-    private void sendMessage(Player player) {
-        String text = input.askInput("\u001B[38;2;255;165;0m\n[" + view.getNickname() + "]: \u001B[0m ");
-
+    private void sendMessage(Player player) throws InterruptedException {
+        String text = input.askInput("\u001B[38;2;255;165;0m\n[" + view.getNickname() + "]: " + reset, "quit chat");
         if (text.equalsIgnoreCase("quit chat")) return;
         Message msg;
 
-        if (player == null) {
-            msg = new Message(text, view.getPlayer(), null, true);
-            try {
-                view.sendMessage(msg);
-            } catch (IOException | UnexistentUserException | PlayerChatMismatchException e) {
-                throw new RuntimeException(e);
-            } catch (LobbyDoesNotExistsException | GameDoesNotExistException ignored) {}
-        }
-        else {
-            msg = new Message(text, view.getPlayer(), player, false);
-            try {
-                view.sendMessage(msg);
-            } catch (IOException | UnexistentUserException | PlayerChatMismatchException e) {
-                throw new RuntimeException(e);
-            } catch (LobbyDoesNotExistsException | GameDoesNotExistException ignored) {}
-        }
-
         try {
-            Thread.sleep(500);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
+            if (player == null) {
+                msg = new Message(text, view.getPlayer(), null, true);
+                view.sendMessage(msg);
+            }
+            else {
+                msg = new Message(text, view.getPlayer(), player, false);
+                view.sendMessage(msg);
+                lock.waitForUpdate();
+            }
+        } catch (LobbyDoesNotExistsException | GameDoesNotExistException ignored) {}
+        catch (IOException | UnexistentUserException | PlayerChatMismatchException e) {
+            view.removeObserver(this);
+            Thread.currentThread().interrupt();
         }
     }
 
-    private void quitLobby() {
+    private void quitLobby() throws InterruptedException {
         try {
             check.checkLeaveLobby();
         } catch (NotConnectedToLobbyException e) {
@@ -473,17 +451,13 @@ public class CLI implements Runnable, ViewObserver {
 
         try {
             view.leaveLobby();
+            lock.waitForUpdate();
         } catch (GameAlreadyStartedException e) {
             System.out.print(cli + "The game is already started! Cannot leave the lobby!");
         } catch (LobbyDoesNotExistsException | NicknameAlreadyTakenException | GameDoesNotExistException ignored) {}
         catch (IOException | FullLobbyException | ClassNotFoundException | UnexistentUserException e) {
-            throw new RuntimeException(e);
-        }
-
-        try {
-            Thread.sleep(500);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
+            view.removeObserver(this);
+            Thread.currentThread().interrupt();
         }
     }
 
@@ -492,18 +466,9 @@ public class CLI implements Runnable, ViewObserver {
         switch (message) {
             case LoginMessage m -> {
                 if (m.getNickname().equals(view.getNickname())) {
-                    System.out.print(cli + "Successfully logged in.. Hello " + m.getNickname() + "!");
-                }
-
-                try {
-                    view.getCurrentStatus();
-                } catch (IOException | ClassNotFoundException | NicknameAlreadyTakenException | FullLobbyException e) {
-                    view.removeObserver(this);
-                    Thread.currentThread().interrupt();
+                        System.out.println(cli + "Successfully logged in.. Hello " + m.getNickname() + "!");
                 }
             }
-
-            case HeartBeatMessage m -> {}
 
             case DisconnectMessage m -> {
                 System.out.println(cli + "Server crashed");
@@ -514,7 +479,7 @@ public class CLI implements Runnable, ViewObserver {
             case LobbyCreatedMessage m -> {
                 if (m.getCreator().equals(view.getPlayer())) {
                     System.out.print(cli + "Successfully created lobby. ID: #" + m.getID());
-                    // printRemainingPlayers();
+                    printRemainingPlayers();
                 }
             }
 
@@ -581,14 +546,16 @@ public class CLI implements Runnable, ViewObserver {
                 }
             }
 
+            case HeartBeatMessage m -> {}
             case LobbyDeletedMessage m -> {}
-            case CurrentStatusMessage m -> {System.out.println("Updating...");}
+            case CurrentStatusMessage m -> {}
             case CardAddedToHandMessage m -> {}
             case CardRemovedFromHandMessage m -> {}
             case SecretGoalsListAssignedMessage m -> {}
             case SecretGoalAssignedMessage m -> {}
             case GameActionSwitchedMessage m -> {}
             case CardDrawnFromSourceMessage m -> {}
+            case ScoreIncrementedMessage m -> {}
 
             case CardPlacedOnFieldMessage m -> {
                 if (m.getNickname().equals(view.getPlayer().getNickname())) {
@@ -597,9 +564,6 @@ public class CLI implements Runnable, ViewObserver {
                 } else if (m.getID().equals(view.getID())) {
                     System.out.print(cli + m.getNickname() + " played a card");
                 }
-            }
-
-            case ScoreIncrementedMessage m -> {
             }
 
             case GamePhaseChangedMessage m -> {
@@ -641,13 +605,10 @@ public class CLI implements Runnable, ViewObserver {
                     }
                 }
             }
-
-            case GameTerminatedMessage m -> {
-                System.out.print(cli + "Game is closing... Press Enter to return to menu");
-            }
-
+            case GameTerminatedMessage m -> System.out.print(cli + "Game is closing... Press Enter to return to menu");
             default -> throw new IllegalStateException("Unexpected value: " + message);
         }
+        lock.notifyUpdateReceived();
     }
 
     private void printRemainingPlayers() {
@@ -704,7 +665,8 @@ public class CLI implements Runnable, ViewObserver {
         try {
             Thread.sleep(1500);
         } catch (InterruptedException e) {
-            throw new RuntimeException(e);
+            view.removeObserver(this);
+            Thread.currentThread().interrupt();
         }
         System.out.println("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
     }
@@ -713,14 +675,16 @@ public class CLI implements Runnable, ViewObserver {
         try {
             Thread.sleep(500);
         } catch (InterruptedException e) {
-            throw new RuntimeException(e);
+            view.removeObserver(this);
+            Thread.currentThread().interrupt();
         }
         for (int i = 0; i < 3; i++) {
             System.out.print(".");
             try {
                 Thread.sleep(500);
             } catch (InterruptedException e) {
-                throw new RuntimeException(e);
+                view.removeObserver(this);
+                Thread.currentThread().interrupt();
             }
         }
     }

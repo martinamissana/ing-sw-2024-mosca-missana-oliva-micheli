@@ -27,6 +27,8 @@ public class CLIGame {
     private final View view;
     private final ViewController check;
     private final InputManager input;
+    private String in;
+    private final Lock lock;
     private static final String reset = "\u001B[0m";
     private static final String warningColor = "\u001B[31m";
     private static final String FungiColor = "\u001B[30;41m"; // Red
@@ -35,19 +37,20 @@ public class CLIGame {
     private static final String AnimalColor = "\u001B[30;46m"; // Cyan
     private static final String StarterColor = "\u001B[30;48;2;245;200;157m"; // Skin
     private static final String cornerColor = "\u001B[30;48;2;200;150;100m"; // Darker skin
-
     private static final String GoldColor = "\u001B[30;43m"; // Gold
     private static final String CardBlockColor = "\u001B[40m";   // Black
     private static final String cli = "\u001B[38;2;255;165;0m" + "\n[+] " + "\u001B[0m";
     private static final String user = "\u001B[38;2;255;165;0m" + "\n[-] " + "\u001B[0m";
 
-    public CLIGame(View view, InputManager input) {
+    // TODO: Unify all try {} catch {}
+    public CLIGame(View view, InputManager input, Lock lock) {
         this.view = view;
         this.check = new ViewController(view);
         this.input = input;
+        this.lock = lock;           // TODO: Resolve problem: lock de-synchronize when changing class
     }
 
-    protected void placeStarterCard() {
+    protected void placeStarterCard() throws InterruptedException {
         if (view.getHand().getSize() == 0 || !view.getHand().getCard(0).getClass().equals(StarterCard.class)) return;
         StarterCard card = (StarterCard) view.getHand().getCard(0);
         System.out.print(cli + "FRONT SIDE:");
@@ -87,14 +90,10 @@ public class CLIGame {
             }
         } while (side == null);
 
-        try {
-            Thread.sleep(500);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
+        lock.waitForUpdate();
     }
 
-    protected void chooseSecretGoal () {
+    protected void chooseSecretGoal() throws InterruptedException {
         if (view.getSecretGoal() != null) return;
 
         System.out.print("\n" + cli + "Common goals:");
@@ -105,12 +104,6 @@ public class CLIGame {
         printHand();
 
         ArrayList<Goal> goals = view.getSecretGoalChoices();
-        try {
-            Thread.sleep(500);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
-
         System.out.print(cli + "You can choose between these two goals:");
         printGoal(goals.getFirst());
         printGoal(goals.getLast());
@@ -127,8 +120,8 @@ public class CLIGame {
 
             try {
                 view.chooseSecretGoal(ID);
-                Thread.sleep(500);
-            } catch (IOException | UnexistentUserException | InterruptedException e) {
+                lock.waitForUpdate();
+            } catch (IOException | UnexistentUserException e) {
                 throw new RuntimeException(e);
             } catch (WrongGamePhaseException | GameDoesNotExistException ignored) {
             } catch (IllegalGoalChosenException e) {
@@ -138,7 +131,7 @@ public class CLIGame {
         } while (ID == -1);
     }
 
-    protected void playCard() {
+    protected void playCard() throws InterruptedException {
         if (!view.isYourTurn()) {
             System.out.println(warningColor + "[ERROR]: Cannot play card because it's not your turn!!" + reset);
             return;
@@ -205,7 +198,7 @@ public class CLIGame {
                 if (choice != -1) coords = new Coords(X, Y);
 
                 try {
-                    check.checkPlayCard(choice, coords);        // TODO: AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+                    check.checkPlayCard(choice, coords);
                 } catch (NotYourTurnException | IllegalActionException e) {
                     System.out.println(e.getClass().getName());
                 }
@@ -224,7 +217,7 @@ public class CLIGame {
 
                 try {
                     view.playCard(choice, coords);
-                    Thread.sleep(500);
+                    lock.waitForUpdate();
 
                     for (int i = 0; i < view.getHand().getSize(); i++) {
                         if (view.getHand().getCard(i).getSide().equals(CardSide.BACK)) view.getHand().getCard(i).flip();
@@ -240,14 +233,14 @@ public class CLIGame {
                 } catch (IllegalMoveException e) {
                     System.out.println(warningColor + "[ERROR]: Illegal placement. Cannot play card in this spot!!" + reset);
                     coords = null;
-                } catch (UnexistentUserException | IOException | InterruptedException e) {
+                } catch (UnexistentUserException | IOException e) {
                     throw new RuntimeException(e);
                 }
             }
         } while (choice == -1 || coords == null);
     }
 
-    protected void drawCard() {
+    protected void drawCard() throws InterruptedException {
         if (!view.isYourTurn()) {
             System.out.println(warningColor + "[ERROR]: Cannot draw card because it's not your turn!!" + reset);
             return;
@@ -284,12 +277,12 @@ public class CLIGame {
 
         try {
             view.drawCard(type);
-            Thread.sleep(500);
+            lock.waitForUpdate();
         } catch (IllegalActionException | HandIsFullException | EmptyBufferException | NotYourTurnException |
                  LobbyDoesNotExistsException | GameDoesNotExistException ignored) {
         } catch (EmptyDeckException e) {
             System.out.println(warningColor + "[ERROR]: Cannot draw from this deck. Reason: empty!!" + reset);
-        } catch (IOException | UnexistentUserException | InterruptedException e) {
+        } catch (IOException | UnexistentUserException e) {
             throw new RuntimeException(e);
         }
     }
