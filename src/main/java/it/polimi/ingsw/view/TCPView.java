@@ -77,7 +77,7 @@ public class TCPView extends View {
                     super.setID(m.getID());
                     notify(message);
                 }
-                if(super.getID()==null)notify(m);
+                //if(super.getID()==null)notify(m);
             }
             case LobbyJoinedMessage m -> {
                 if (m.getPlayer().getNickname().equals(super.getPlayer().getNickname()))
@@ -87,7 +87,7 @@ public class TCPView extends View {
                 } catch (FullLobbyException e) {
                     e.printStackTrace();
                 }
-                if (m.getID() != null && m.getID().equals(super.getID()))
+                if ( m.getID() != null && m.getID().equals(super.getID()))
                     notify(message);
             }
             case LobbyLeftMessage m -> {
@@ -98,12 +98,13 @@ public class TCPView extends View {
                 }
                 super.getLobbies().get(m.getID()).removePlayer(m.getPlayer());
                 super.getScoreboard().remove(m.getPlayer());
-                if (m.getID() != null && m.getID().equals(super.getID())) notify(message);
+                if (super.getPawn() != null && m.getID() != null && m.getID().equals(super.getID()))
+                    notify(message);
 
             }
             case LobbyDeletedMessage m -> {
                 super.getLobbies().remove(m.getID());
-               // if(super.getID()==null)notify(m);
+                // if(super.getID()==null)notify(m);
             }
             case PawnAssignedMessage m -> {
                 if (m.getPlayer().getNickname().equals(super.getNickname())) {
@@ -165,11 +166,10 @@ public class TCPView extends View {
             }
             case CardPlacedOnFieldMessage m -> {
                 if (m.getNickname().equals(super.getNickname())) {
-                    if (m.getCard().getClass().equals(StarterCard.class)){
+                    if (m.getCard().getClass().equals(StarterCard.class)) {
                         super.getMyField().addCard((StarterCard) m.getCard());
                         return;
-                    }
-                    else try {
+                    } else try {
                         super.getMyField().addCard((ResourceCard) m.getCard(), m.getCoords());
                         notify(message);
                     } catch (IllegalMoveException e) {
@@ -268,7 +268,7 @@ public class TCPView extends View {
                 }
             }
             case FailMessage m -> {
-                if(m.getNickname().equals(super.getNickname())){
+                if (m.getNickname().equals(super.getNickname())) {
                     super.getErrorMessages().add(m.getMessage());
                     notify(m);
                 }
