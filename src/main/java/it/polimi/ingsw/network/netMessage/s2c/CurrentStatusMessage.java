@@ -9,7 +9,6 @@ public class CurrentStatusMessage extends NetMessage {
     private final HashMap<Integer, Lobby> lobbies;
 
     public CurrentStatusMessage(HashMap<Integer, Lobby> lobbies) {
-        
         this.lobbies= new HashMap<>(lobbies);
     }
 

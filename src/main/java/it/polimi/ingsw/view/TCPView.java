@@ -67,9 +67,9 @@ public class TCPView extends View {
                 notify(message);
             }
             case LoginFail_NicknameAlreadyTaken m -> {
-                disconnect();
                 Thread.currentThread().interrupt();
                 notify(message);
+                disconnect();
             }
             case LobbyCreatedMessage m -> {
                 super.getLobbies().put(m.getID(), m.getLobby());
@@ -77,6 +77,7 @@ public class TCPView extends View {
                     super.setID(m.getID());
                     notify(message);
                 }
+                if(super.getID()==null)notify(m);
             }
             case LobbyJoinedMessage m -> {
                 if (m.getPlayer().getNickname().equals(super.getPlayer().getNickname()))
@@ -86,12 +87,14 @@ public class TCPView extends View {
                 } catch (FullLobbyException e) {
                     e.printStackTrace();
                 }
-                if (m.getID() != null && m.getID().equals(super.getID())) notify(message);
+                if (m.getID() != null && m.getID().equals(super.getID()))
+                    notify(message);
             }
             case LobbyLeftMessage m -> {
                 if (m.getPlayer().getNickname().equals(super.getNickname())) {
                     super.setID(null);
                     super.setPawn(null);
+                    notify(m);
                 }
                 super.getLobbies().get(m.getID()).removePlayer(m.getPlayer());
                 super.getScoreboard().remove(m.getPlayer());
@@ -100,6 +103,7 @@ public class TCPView extends View {
             }
             case LobbyDeletedMessage m -> {
                 super.getLobbies().remove(m.getID());
+               // if(super.getID()==null)notify(m);
             }
             case PawnAssignedMessage m -> {
                 if (m.getPlayer().getNickname().equals(super.getNickname())) {
@@ -113,6 +117,7 @@ public class TCPView extends View {
             }
             case CurrentStatusMessage m -> {
                 super.getLobbies().putAll(m.getLobbies());
+                notify(m);
             }
             case ChatMessageAddedMessage m -> {
                 if (m.getM().getSender().equals(super.getPlayer())) {
@@ -146,7 +151,7 @@ public class TCPView extends View {
                 if (m.getPlayer().equals(super.getPlayer())) {
                     try {
                         super.getHand().addCard(m.getCard());
-                        notify(message);
+                        //notify(message);
                     } catch (HandIsFullException e) {
                         e.printStackTrace();
                     }
@@ -155,16 +160,18 @@ public class TCPView extends View {
             case CardRemovedFromHandMessage m -> {
                 if (m.getPlayer().equals(super.getPlayer())) {
                     super.getHand().removeCard(m.getCard());
-                    notify(message);
+                    //notify(message);
                 }
             }
             case CardPlacedOnFieldMessage m -> {
-                if (m.getNickname().equals(super.getNickname())) { //TODO: card is not actually flipped
+                if (m.getNickname().equals(super.getNickname())) {
                     if (m.getCard().getClass().equals(StarterCard.class)){
                         super.getMyField().addCard((StarterCard) m.getCard());
+                        return;
                     }
                     else try {
                         super.getMyField().addCard((ResourceCard) m.getCard(), m.getCoords());
+                        notify(message);
                     } catch (IllegalMoveException e) {
                         e.printStackTrace();
                     }
@@ -181,7 +188,7 @@ public class TCPView extends View {
                         }
                     }
                 }
-                if (m.getID() != null && m.getID().equals(super.getID())) notify(message);
+
             }
             case GamePhaseChangedMessage m -> {
                 if (m.getID().equals(super.getID())) {
@@ -192,25 +199,22 @@ public class TCPView extends View {
             case SecretGoalsListAssignedMessage m -> {
                 if (m.getPlayer().equals(super.getPlayer())) {
                     super.setSecretGoalChoices(m.getList());
-                    notify(m);
                 }
             }
             case SecretGoalAssignedMessage m -> {
                 if (m.getPlayer().equals(super.getPlayer())) {
                     super.setSecretGoal(m.getGoal());
-                    notify(m);
                 }
             }
             case GameActionSwitchedMessage m -> {
                 if (m.getID().equals(super.getID())) {
                     super.setAction(m.getAction());
-                    notify(m);
                 }
             }
             case LastRoundStartedMessage m -> {
                 if (m.getID().equals(super.getID())) {
                     super.setLastRound(true);
-                    notify(m);
+                    //notify(m);
                 }
             }
             case TurnChangedMessage m -> {
@@ -228,6 +232,7 @@ public class TCPView extends View {
             }
             case GameTerminatedMessage m -> {
                 if (m.getID().equals(super.getID())) {
+                    super.getLobbies().remove(super.getID());
                     super.setFirstPlayer(false);
                     super.setYourTurn(false);
                     super.setScoreboard(null);
@@ -254,7 +259,6 @@ public class TCPView extends View {
                         case DeckBufferType.GOLD2 -> super.setCardInDeckBuffer(DeckBufferType.GOLD2, m.getCard());
                         default -> throw new IllegalStateException("Unexpected value: " + m.getType());
                     }
-                    notify(m);
                 }
             }
             case ScoreIncrementedMessage m -> {
@@ -264,14 +268,15 @@ public class TCPView extends View {
                 }
             }
             case FailMessage m -> {
-                super.getErrorMessages().add(m.getMessage());
-                notify(m);
+                if(m.getNickname().equals(super.getNickname())){
+                    super.getErrorMessages().add(m.getMessage());
+                    notify(m);
+                }
             }
             case HeartBeatMessage m -> {
             }
             default -> throw new IllegalStateException("Unexpected value: " + message);
         }
-
     }
 
     @Override

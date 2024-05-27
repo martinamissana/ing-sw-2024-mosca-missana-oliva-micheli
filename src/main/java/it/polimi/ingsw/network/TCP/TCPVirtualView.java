@@ -26,7 +26,6 @@ public class TCPVirtualView implements Runnable, Observer {
     private String nickname;
 
 
-
     public TCPVirtualView(Socket socket, Controller c) throws IOException {
         this.socket = socket;
         this.out = new ObjectOutputStream(socket.getOutputStream());
@@ -85,8 +84,10 @@ public class TCPVirtualView implements Runnable, Observer {
         if (socket.isConnected()) {
             switch (event) {
                 case LoginEvent e -> {
-                    LoginMessage m = new LoginMessage(e.getNickname());
-                    out.writeObject(m);
+                    if (e.getNickname().equals(this.nickname)) {
+                        LoginMessage m = new LoginMessage(e.getNickname());
+                        out.writeObject(m);
+                    }
                 }
                 case LobbyCreatedEvent e -> {
                     LobbyCreatedMessage m = new LobbyCreatedMessage(e.getCreator(), e.getLobby(), e.getID());
@@ -97,10 +98,12 @@ public class TCPVirtualView implements Runnable, Observer {
                     out.writeObject(m);
                 }
                 case LobbyLeftEvent e -> {
+                    if (e.getPlayer().getNickname().equals(this.nickname)) this.ID = null;
                     LobbyLeftMessage m = new LobbyLeftMessage(e.getPlayer(), e.getLobby(), e.getID());
                     out.writeObject(m);
                 }
                 case LobbyDeletedEvent e -> {
+                    if (e.getID().equals(this.ID)) this.ID = null;
                     LobbyDeletedMessage m = new LobbyDeletedMessage(e.getID());
                     out.writeObject(m);
                 }
@@ -109,7 +112,7 @@ public class TCPVirtualView implements Runnable, Observer {
                     out.writeObject(m);
                 }
                 case ChatMessageAddedEvent e -> {
-                    if (e.getLobbyID().equals(ID)) {
+                    if (e.getLobbyID().equals(ID) && (e.getM().isGlobal() || (e.getM().getSender().getNickname().equals(nickname) || e.getM().getReceiver().getNickname().equals(nickname)))) {
                         ChatMessageAddedMessage m = new ChatMessageAddedMessage(e.getM(), e.getLobbyID());
                         out.writeObject(m);
                     }
@@ -195,7 +198,7 @@ public class TCPVirtualView implements Runnable, Observer {
                 }
                 case ScoreIncrementedEvent e -> {
                     if (e.getID().equals(ID)) {
-                        ScoreIncrementedMessage m = new ScoreIncrementedMessage(e.getID(),e.getPlayer(),e.getPoints());
+                        ScoreIncrementedMessage m = new ScoreIncrementedMessage(e.getID(), e.getPlayer(), e.getPoints());
                         out.writeObject(m);
                     }
                 }
@@ -209,11 +212,13 @@ public class TCPVirtualView implements Runnable, Observer {
         switch (message) {
             case MyNickname m -> {
                 try {
-                    c.login(m.getNickname());
                     setNickname(m.getNickname());
+                    c.login(m.getNickname());
                 } catch (NicknameAlreadyTakenException e) {
-                    LoginFail_NicknameAlreadyTaken errorMessage = new LoginFail_NicknameAlreadyTaken();
-                    out.writeObject(errorMessage);
+                    if (m.getNickname().equals(this.nickname)) {
+                        LoginFail_NicknameAlreadyTaken errorMessage = new LoginFail_NicknameAlreadyTaken();
+                        out.writeObject(errorMessage);
+                    }
                 }
             }
             case CreateLobbyMessage m -> {
