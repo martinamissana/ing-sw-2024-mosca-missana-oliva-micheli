@@ -13,18 +13,14 @@ import it.polimi.ingsw.network.netMessage.s2c.*;
 import java.io.IOException;
 import java.rmi.RemoteException;
 
-public class RMIVirtualView implements Observer, Runnable {
-    private final Controller c;
-    private final Integer ID;
-    private final String nickname;
+public class RMIVirtualView implements Observer {
+    private Integer ID;
+    private String nickname;
     private final ClientRemoteInterface view;
 
     public RMIVirtualView(Controller c, ClientRemoteInterface view) throws RemoteException {
-        this.c = c;
         c.getGh().addObserver(this);
         this.view=view;
-        this.ID=view.getID();
-        this.nickname=view.getNickname();
     }
 
 
@@ -32,6 +28,7 @@ public class RMIVirtualView implements Observer, Runnable {
     public void update(Event event) throws IOException {
         switch (event) {
             case LoginEvent e -> {
+                if(nickname==null) this.nickname=e.getNickname();
                 try {
                     view.elaborate(new LoginMessage(e.getNickname()));
                 } catch (FullLobbyException | NicknameAlreadyTakenException | HandIsFullException |
@@ -40,6 +37,7 @@ public class RMIVirtualView implements Observer, Runnable {
                 }
             }
             case LobbyCreatedEvent e -> {
+                if(e.getCreator().getNickname().equals(nickname)) this.ID=e.getID();
                 try {
                     view.elaborate(new LobbyCreatedMessage(e.getCreator(), e.getLobby(), e.getID()));
                 } catch (FullLobbyException | NicknameAlreadyTakenException | HandIsFullException |
@@ -48,6 +46,9 @@ public class RMIVirtualView implements Observer, Runnable {
                 }
             }
             case LobbyJoinedEvent e -> {
+                if(e.getPlayer().getNickname().equals(this.nickname)){
+                    this.ID=e.getID();
+                }
                 try {
                     view.elaborate(new LobbyJoinedMessage(e.getPlayer(), e.getID()));
                 } catch (FullLobbyException | NicknameAlreadyTakenException | HandIsFullException |
@@ -56,6 +57,10 @@ public class RMIVirtualView implements Observer, Runnable {
                 }
             }
             case LobbyLeftEvent e -> {
+                if (e.getPlayer().getNickname().equals(this.nickname)) {
+                    this.nickname=null;
+                    this.ID=null;
+                }
                 try {
                     view.elaborate(new LobbyLeftMessage(e.getPlayer(), e.getLobby(), e.getID()));
                 } catch (FullLobbyException | NicknameAlreadyTakenException | HandIsFullException |
@@ -228,12 +233,16 @@ public class RMIVirtualView implements Observer, Runnable {
                     throw new RuntimeException(ex);
                 }
             }
+            case ScoreIncrementedEvent e ->{
+                try {
+                    view.elaborate(new ScoreIncrementedMessage(e.getID(),e.getPlayer(),e.getPoints()));
+                } catch (FullLobbyException | IllegalMoveException | HandIsFullException |
+                         NicknameAlreadyTakenException ex) {
+                    throw new RuntimeException(ex);
+                }
+            }
             default -> throw new IllegalStateException("Unexpected value: " + event);
         }
     }
 
-    @Override
-    public void run() {
-
-    }
 }

@@ -21,16 +21,14 @@ import java.util.concurrent.Executors;
 
 public class RMIServer extends UnicastRemoteObject implements RemoteInterface {
     private final Controller c;
-    ExecutorService executor;
 
     public RMIServer(Controller c) throws RemoteException {
       this.c=c;
-        this.executor = Executors.newCachedThreadPool();
     }
 
     @Override
     public void connect(ClientRemoteInterface client) throws RemoteException {
-        executor.submit(new RMIVirtualView(c, client));
+        new RMIVirtualView(c, client);
     }
     @Override
     public void login(String username) throws NicknameAlreadyTakenException, IOException {

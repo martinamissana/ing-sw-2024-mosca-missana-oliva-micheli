@@ -4,10 +4,12 @@ import it.polimi.ingsw.controller.exceptions.*;
 import it.polimi.ingsw.model.card.Card;
 import it.polimi.ingsw.model.card.CardSide;
 import it.polimi.ingsw.model.card.ResourceCard;
+import it.polimi.ingsw.model.card.StarterCard;
 import it.polimi.ingsw.model.chat.Chat;
 import it.polimi.ingsw.model.chat.Message;
 import it.polimi.ingsw.model.deck.DeckBuffer;
 import it.polimi.ingsw.model.deck.DeckBufferType;
+import it.polimi.ingsw.model.deck.DeckType;
 import it.polimi.ingsw.model.deck.DeckTypeBox;
 import it.polimi.ingsw.model.exceptions.*;
 import it.polimi.ingsw.model.game.Action;
@@ -15,12 +17,16 @@ import it.polimi.ingsw.model.game.GamePhase;
 import it.polimi.ingsw.model.game.Lobby;
 import it.polimi.ingsw.model.goal.Goal;
 import it.polimi.ingsw.model.player.*;
+import it.polimi.ingsw.network.netMessage.HeartBeatMessage;
 import it.polimi.ingsw.network.netMessage.NetMessage;
+import it.polimi.ingsw.network.netMessage.c2s.LobbyJoinedMessage;
+import it.polimi.ingsw.network.netMessage.s2c.*;
 
 import java.io.IOException;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Objects;
 
 public abstract class View extends ViewObservable<NetMessage> {
     private String nickname;
@@ -179,4 +185,223 @@ public abstract class View extends ViewObservable<NetMessage> {
     public abstract void getCurrentStatus() throws IOException, FullLobbyException, NicknameAlreadyTakenException, ClassNotFoundException;
 
     public abstract void heartbeat() throws IOException, ClassNotFoundException;
+
+    public abstract void disconnect() throws IOException;
+
+    public void elaborate(NetMessage message) throws IOException, FullLobbyException, NicknameAlreadyTakenException, HandIsFullException, IllegalMoveException {
+        switch (message) {
+            case LoginMessage m -> {
+                if(Objects.equals(m.getNickname(), nickname)){
+                    notify(m);
+                }
+            }
+            case LoginFail_NicknameAlreadyTaken m -> {
+                Thread.currentThread().interrupt();
+                notify(message);
+                disconnect();
+            }
+            case LobbyCreatedMessage m -> {
+                lobbies.put(m.getID(), m.getLobby());
+                if (m.getCreator().equals(player)) {
+                    ID=m.getID();
+                    notify(m);
+                }
+            }
+            case LobbyJoinedMessage m -> {
+                if (m.getPlayer().getNickname().equals(player.getNickname()))
+                    ID=m.getID();
+                try {
+                    getLobbies().get(m.getID()).addPlayer(m.getPlayer());
+                } catch (FullLobbyException e) {
+                    e.printStackTrace();
+                }
+                if ( m.getID() != null && m.getID().equals(ID))
+                    notify(message);
+            }
+            case LobbyLeftMessage m -> {
+                if (m.getPlayer().getNickname().equals(nickname)) {
+                    ID=null;
+                    pawn=null;
+                    notify(m);
+                }
+                lobbies.get(m.getID()).removePlayer(m.getPlayer());
+                scoreboard.remove(m.getPlayer());
+                if (pawn != null && m.getID() != null && m.getID().equals(ID))
+                    notify(message);
+            }
+            case LobbyDeletedMessage m -> {
+               lobbies.remove(m.getID());
+            }
+            case PawnAssignedMessage m -> {
+                if (m.getPlayer().getNickname().equals(nickname)) {
+                    pawn=m.getColor();
+                    notify(message);
+                } else {
+                    for (Player p : lobbies.get(m.getLobbyID()).getPlayers()) {
+                        if (p.equals(m.getPlayer())) p.setPawn(m.getColor());
+                    }
+                }
+            }
+            case CurrentStatusMessage m -> {
+                lobbies.putAll(m.getLobbies());
+            }
+            case ChatMessageAddedMessage m -> {
+                if (m.getM().getSender().equals(player)) {
+                    chat.getSentMessages().add(m.getM());
+                } else if (m.getM().isGlobal() || m.getM().getReceiver().equals(player)) {
+                    chat.getReceivedMessages().add(m.getM());
+                }
+                if (m.getLobbyID() != null && m.getLobbyID().equals(ID)) notify(message);
+            }
+            case GameCreatedMessage m -> {
+                if (m.getID().equals(ID)) {
+                    if (m.getFirstPlayer().equals(player)) {
+                        firstPlayer=true;
+                        yourTurn=true;
+                    } else {
+                        firstPlayer=false;
+                        yourTurn=false;
+                    }
+                    scoreboard=m.getScoreboard();
+                    deckBuffers=m.getDeckBuffers();
+                    topResourceCard=m.getTopResourceCard();
+                    topGoldenCard=m.getTopGoldenCard();
+                    commonGoal1=m.getCommonGoal1();
+                    commonGoal2=m.getCommonGoal2();
+                    gamePhase=m.getGamePhase();
+                    action=m.getAction();
+                    notify(message);
+                }
+            }
+            case CardAddedToHandMessage m -> {
+                if (m.getPlayer().equals(player)) {
+                    try {
+                        hand.addCard(m.getCard());
+                    } catch (HandIsFullException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+            case CardRemovedFromHandMessage m -> {
+                if (m.getPlayer().equals(player)) {
+                    hand.removeCard(m.getCard());
+                }
+            }
+            case CardPlacedOnFieldMessage m -> {
+                if (m.getNickname().equals(nickname)) {
+                    if (m.getCard().getClass().equals(StarterCard.class)) {
+                        myField.addCard((StarterCard) m.getCard());
+                        return;
+                    } else try {
+                        myField.addCard((ResourceCard) m.getCard(), m.getCoords());
+                        notify(message);
+                    } catch (IllegalMoveException e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    for (Player p : fields.keySet()) {
+                        if (m.getNickname().equals(p.getNickname())) {
+                            if (m.getCard().getClass().equals(StarterCard.class))
+                                p.getField().addCard((StarterCard) m.getCard());
+                            else try {
+                                p.getField().addCard((ResourceCard) m.getCard(), m.getCoords());
+                            } catch (IllegalMoveException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+                }
+            }
+            case GamePhaseChangedMessage m -> {
+                if (m.getID().equals(ID)) {
+                    gamePhase=m.getGamePhase();
+                    notify(m);
+                }
+            }
+            case SecretGoalsListAssignedMessage m -> {
+                if (m.getPlayer().equals(player))
+                    secretGoalChoices=m.getList();
+            }
+            case SecretGoalAssignedMessage m -> {
+                if (m.getPlayer().equals(player))
+                    secretGoal=m.getGoal();
+            }
+            case GameActionSwitchedMessage m -> {
+                if (m.getID().equals(ID))
+                    action=m.getAction();
+            }
+            case LastRoundStartedMessage m -> {
+                if (m.getID().equals(ID))
+                    lastRound=true;
+            }
+            case TurnChangedMessage m -> {
+                if (m.getID().equals(ID) && m.getNickname().equals(nickname))
+                    yourTurn=true;
+                else if (m.getID().equals(ID) && !m.getNickname().equals(nickname))
+                    yourTurn=false;
+                if (m.getID().equals(ID)) notify(m);
+            }
+            case GameWinnersAnnouncedMessage m -> {
+                if (m.getID().equals(ID)) {
+                    winners=m.getWinners();
+                    notify(m);
+                }
+            }
+            case GameTerminatedMessage m -> {
+                if (m.getID().equals(ID)) {
+                    lobbies.remove(ID);
+                    firstPlayer=false;
+                    yourTurn=false;
+                    scoreboard=null;
+                    deckBuffers=null;
+                    topResourceCard=null;
+                    topGoldenCard=null;
+                    commonGoal1=null;
+                    commonGoal2=null;
+                    gamePhase=null;
+                    action=null;
+                    ID=null;
+                    pawn=null;
+                    notify(m);
+                }
+            }
+            case ScoreIncrementedMessage m -> {
+                if (ID != null && ID.equals(m.getID())) {
+                    scoreboard.put(m.getPlayer(), getScoreboard().get(m.getPlayer()) + m.getPoints());
+                }
+            }
+            case CardDrawnFromSourceMessage m -> {
+                if (m.getID().equals(ID)) {
+                    switch (m.getType()) {
+                        case DeckType.RESOURCE -> topResourceCard=m.getCard();
+                        case DeckType.GOLDEN -> topGoldenCard=m.getCard();
+                        case DeckBufferType.RES1 -> {
+                            DeckBuffer d = new DeckBuffer(null);
+                            d.setCard((ResourceCard) m.getCard());
+                            this.deckBuffers.put(DeckBufferType.RES1, d);
+                        }
+                        case DeckBufferType.RES2 -> {
+                            DeckBuffer d = new DeckBuffer(null);
+                            d.setCard((ResourceCard) m.getCard());
+                            this.deckBuffers.put(DeckBufferType.RES2, d);
+                        }
+                        case DeckBufferType.GOLD1 -> {
+                            DeckBuffer d = new DeckBuffer(null);
+                            d.setCard((ResourceCard) m.getCard());
+                            this.deckBuffers.put(DeckBufferType.GOLD1, d);
+                        }
+                        case DeckBufferType.GOLD2 -> {
+                            DeckBuffer d = new DeckBuffer(null);
+                            d.setCard((ResourceCard) m.getCard());
+                            this.deckBuffers.put(DeckBufferType.GOLD2, d);
+                        }
+                        default -> throw new IllegalStateException("Unexpected value: " + m.getType());
+                    }
+                }
+            }
+            case HeartBeatMessage m -> {
+            }
+            default -> throw new IllegalStateException("Unexpected value: " + message);
+        }
+    }
 }
