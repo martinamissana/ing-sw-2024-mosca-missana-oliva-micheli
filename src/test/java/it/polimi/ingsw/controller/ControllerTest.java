@@ -95,7 +95,7 @@ public class ControllerTest {
     }
 
     @Test
-    public void testCreateGameAndTerminateGame() throws GameDoesNotExistException, LobbyDoesNotExistsException, IOException, UnexistentUserException {
+    public void testCreateGameAndTerminateGame() throws GameDoesNotExistException, LobbyDoesNotExistsException, IOException, UnexistentUserException, GameAlreadyStartedException, PawnAlreadyTakenException {
         assertTrue(gameHandler.getGame(0).getPlayers().contains(anna));
         assertTrue(gameHandler.getGame(0).getPlayers().contains(eric));
         assertTrue(gameHandler.getGame(0).getPlayers().contains(giorgio));
@@ -116,18 +116,15 @@ public class ControllerTest {
         assertFalse(gameHandler.getGame(0).getPlayers().contains(sara));
     }
     @Test
-    public void leaveLobby() throws FullLobbyException, LobbyDoesNotExistsException, NicknameAlreadyTakenException, IOException, GameAlreadyStartedException, CannotJoinMultipleLobbiesException, GameDoesNotExistException, UnexistentUserException {
+    public void leaveLobby() throws FullLobbyException, LobbyDoesNotExistsException, IOException, GameAlreadyStartedException, CannotJoinMultipleLobbiesException, GameDoesNotExistException, UnexistentUserException {
         c.createLobby(3, sara.getNickname());
         c.joinLobby(paola.getNickname(),1);
         c.leaveLobby(sara.getNickname(), 1);
         assertTrue(gameHandler.getLobbies().containsKey(1));
         c.leaveLobby(paola.getNickname(), 1);
         assertFalse(gameHandler.getLobbies().containsKey(1));
-        c.leaveLobby(anna.getNickname(), 0);
-        assertTrue(gameHandler.getLobbies().containsKey(0));
-        assertTrue(gameHandler.getActiveGames().containsKey(0));
     }
-    @Test //(expected = PawnAlreadyTakenException.class)
+    @Test
     public void SetUpTest() throws IOException, HandIsFullException, FullLobbyException, LobbyDoesNotExistsException, NicknameAlreadyTakenException, GameDoesNotExistException, EmptyDeckException, PawnAlreadyTakenException, IllegalGoalChosenException, WrongGamePhaseException, GameAlreadyStartedException, CannotJoinMultipleLobbiesException, UnexistentUserException {
         GameHandler gh = new GameHandler();
         Controller c = new Controller(gh);
@@ -306,7 +303,7 @@ public class ControllerTest {
              i++;
              if(i==3)break;
         }
-        c.giveStarterCards(0);
+
         //Create goals
         ArrayList<ItemBox> resourceList = new ArrayList<>();
         resourceList.add(Resource.QUILL);

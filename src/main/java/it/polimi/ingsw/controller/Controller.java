@@ -211,7 +211,7 @@ public class Controller implements Serializable {
      * @throws GameDoesNotExistException - if the game does not exist
      */
     public synchronized void terminateGame(Integer gameID) throws GameDoesNotExistException, LobbyDoesNotExistsException, IOException, UnexistentUserException {
-        winner(gameID);
+        if(gh.getGame(gameID).getGamePhase().equals(GamePhase.PLAYING_GAME))winner(gameID);
         if (gh.getActiveGames().containsKey(gameID)) {
             gh.getActiveGames().remove(gameID);
             gh.notify(new GameTerminatedEvent(gameID));
@@ -277,7 +277,7 @@ public class Controller implements Serializable {
      * @param gameID ID of the game played
      * @throws GameDoesNotExistException if gameID does not correspond to a game in game handler
      */
-    public synchronized void setGameArea(Integer gameID) throws GameDoesNotExistException, IOException {
+    private synchronized void setGameArea(Integer gameID) throws GameDoesNotExistException, IOException {
         Game game = gh.getGame(gameID);
 
         // setting decks and deck buffers:
@@ -295,7 +295,7 @@ public class Controller implements Serializable {
      * @throws GameDoesNotExistException if gameID does not correspond to a game in game handler
      * @throws IOException               for building the starter deck
      */
-    public synchronized void giveStarterCards(Integer gameID) throws GameDoesNotExistException, IOException {
+    private synchronized void giveStarterCards(Integer gameID) throws GameDoesNotExistException, IOException {
         Game game = gh.getGame(gameID);
         ArrayList<Player> players = game.getPlayers();
 
@@ -365,7 +365,6 @@ public class Controller implements Serializable {
         StarterCard card = (StarterCard) player.getHand().getCard(0);
         if (!card.getSide().equals(side)) card.flip();
         player.getField().addCard(card);
-        System.out.println(card.getCardID()+" "+card.getSide());
         gh.notify(new CardPlacedOnFieldEvent(new Coords(0, 0), ID, card, nickname));
         player.getHand().removeCard(card);
         gh.notify(new CardRemovedFromHandEvent(player, card));
