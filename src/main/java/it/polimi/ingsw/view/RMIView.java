@@ -192,7 +192,7 @@ public class RMIView extends View implements ClientRemoteInterface , Serializabl
 
 
     /**
-     * used to uodate a new client on the current status of the lobbies, it calls the method of the server
+     * used to update a new client on the current status of the lobbies, it calls the method of the server
      * @throws IOException general class of exceptions produced by failed or interrupted I/O operations
      */
     @Override
@@ -203,7 +203,6 @@ public class RMIView extends View implements ClientRemoteInterface , Serializabl
 
     public void disconnect() throws IOException {
         Thread.currentThread().interrupt();
-        notify(new DisconnectMessage());
     }
 
 

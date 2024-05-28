@@ -11,10 +11,10 @@ public class DiagonalGoal extends Goal {
 
     /**
      * Class constructor
-     * @param goalID - specifies univocally the goal
-     * @param points - points of the goal
-     * @param color - color of the cards required
-     * @param type - it can be UPWARD or DOWNWARD (DiagonalGoalType)
+     * @param goalID specifies univocally the goal
+     * @param points points of the goal
+     * @param color color of the cards required
+     * @param type it can be UPWARD or DOWNWARD (DiagonalGoalType)
      */
     public DiagonalGoal(int goalID,int points, Kingdom color, DiagonalGoalType type) {
         super(goalID,points);

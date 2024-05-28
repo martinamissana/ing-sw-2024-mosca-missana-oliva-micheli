@@ -27,6 +27,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Objects;
 
+/**
+ * View class, it contains what the client can see and the methods the client can call to play
+ */
 public abstract class View extends ViewObservable<NetMessage> {
     private String nickname;
     private HashMap<Integer, Lobby> lobbies = new HashMap<>();
@@ -53,60 +56,154 @@ public abstract class View extends ViewObservable<NetMessage> {
     private ArrayList<Player> winners = new ArrayList<>();
     private final ArrayList<String> errorMessages = new ArrayList<>();
 
-    public View() {
-    }
 
+    /**
+     * gets the nickname
+     * @return String nickname
+     */
     public String getNickname() { return nickname; }
 
+    /**
+     * gets the deckBuffers
+     * @return HashMap <DeckBufferType, DeckBuffer>
+     */
     public HashMap<DeckBufferType, DeckBuffer> getDeckBuffers() { return deckBuffers; }
 
+    /**
+     * gets the top card of the resource deck
+     * @return Card
+     */
     public Card getTopResourceCard() { return topResourceCard; }
 
+    /**
+     * gets the lobbies
+     * @return HashMap <Integer, Lobby>
+     */
     public HashMap<Integer, Lobby> getLobbies(){ return lobbies; }
 
+    /**
+     * gets the player
+     * @return Player
+     */
     public Player getPlayer() { return player; }
 
+    /**
+     * gets the ID of the lobby/game
+     * @return Integer
+     */
     public Integer getID() { return ID; }
 
+    /**
+     * gets the hand of the player
+     * @return Hand
+     */
     public Hand getHand() { return hand; }
 
+    /**
+     * gets the player field
+     * @return Field
+     */
     public Field getMyField() { return myField; }
 
+    /**
+     * gets the other players' fields
+     * @return HashMap <Player, Field>
+     */
     public HashMap<Player, Field> getFields() { return fields; }
 
+    /**
+     * returns true if it's the player turn, false if it's the turn of another player
+     * @return boolean
+     */
     public boolean isYourTurn() { return yourTurn; }
 
+    /**
+     * gets the action [PLAY - DRAW]
+     * @return Action
+     */
     public Action getAction() { return action; }
 
+    /**
+     * gets the chat
+     * @return Chat
+     */
     public Chat getChat() { return chat; }
 
+    /**
+     * gets the player's secret goal
+     * @return Goal
+     */
     public Goal getSecretGoal() { return secretGoal; }
 
+    /**
+     * gets an ArrayList with the winners of the match
+     * @return ArrayList <Player>
+     */
     public ArrayList<Player> getWinners() { return winners; }
 
     public ArrayList<String> getErrorMessages() { return errorMessages; }
 
+    /**
+     * gets the player's pawn
+     * @return Pawn
+     */
     public Pawn getPawn() { return pawn; }
 
     public boolean isFirstPlayer() { return firstPlayer; }
 
+    /**
+     * returns true if it's the last round of the match
+     * @return boolean
+     */
     public boolean isLastRound() { return lastRound; }
 
+    /**
+     * gets an Arraylist with the two possible choices of the secret goal
+     * @return Arraylist <Goal>
+     */
     public ArrayList<Goal> getSecretGoalChoices() { return secretGoalChoices; }
 
+    /**
+     * gets the player's scoreboard
+     * @return Hashmap <Player, Integer>
+     *
+     */
     public HashMap<Player, Integer> getScoreboard() { return scoreboard; }
 
+    /**
+     * gets the game phase
+     * @return GamePhase
+     */
     public GamePhase getGamePhase() { return gamePhase; }
 
+    /**
+     * gets the top card of the golden deck
+     * @return Card
+     */
     public Card getTopGoldenCard() { return topGoldenCard; }
 
+    /**
+     * gets the first common goal of the game
+     * @return Goal
+     */
     public Goal getCommonGoal1() { return commonGoal1; }
 
+    /**
+     * gets the second common goal of the game
+     * @return Goal
+     */
     public Goal getCommonGoal2() { return commonGoal2; }
 
-
+    /**
+     * sets the player
+     * @param player user
+     */
     public void setPlayer(Player player) { this.player = player; }
 
+    /**
+     * sets the ID of the lobby/game
+     * @param ID lobby/game
+     */
     public void setID(Integer ID) { this.ID = ID; }
 
     public void setHand(Hand hand) { this.hand = hand; }
@@ -119,12 +216,24 @@ public abstract class View extends ViewObservable<NetMessage> {
 
     public void setYourTurn(boolean yourTurn) { this.yourTurn = yourTurn; }
 
+    /**
+     * sets the Action [PLAY - DRAW]
+     * @param action which action the player should perform
+     */
     public void setAction(Action action) { this.action = action; }
 
+    /**
+     * sets the chat
+     * @param chat chat
+     */
     public void setChat(Chat chat) { this.chat = chat; }
 
     public void setSecretGoal(Goal secretGoal) { this.secretGoal = secretGoal; }
 
+    /**
+     * sets the pawn color
+     * @param pawn color of the pawn
+     */
     public void setPawn(Pawn pawn) { this.pawn = pawn; }
 
     public void setFirstPlayer(boolean firstPlayer) { this.firstPlayer = firstPlayer; }
@@ -153,6 +262,10 @@ public abstract class View extends ViewObservable<NetMessage> {
 
     public void setCommonGoal2(Goal commonGoal2) { this.commonGoal2 = commonGoal2; }
 
+    /**
+     * sets the nickname
+     * @param nickname name of the player
+     */
     public void setNickname(String nickname) { this.nickname = nickname; }
 
     public void setWinners(ArrayList<Player> winners) {
@@ -185,6 +298,15 @@ public abstract class View extends ViewObservable<NetMessage> {
 
     public abstract void disconnect() throws IOException;
 
+    /**
+     * receives the messages from the server, notifies TUI and GUI and modifies the view
+     * @param message network message received from the server
+     * @throws IOException general class of exceptions produced by failed or interrupted I/O operations
+     * @throws FullLobbyException thrown if the lobby is full
+     * @throws NicknameAlreadyTakenException thrown if the nickname is already taken
+     * @throws HandIsFullException thrown if the hand is full
+     * @throws IllegalMoveException thrown when violating the game's rules when placing a card
+     */
     public void elaborate(NetMessage message) throws IOException, FullLobbyException, NicknameAlreadyTakenException, HandIsFullException, IllegalMoveException {
         switch (message) {
             case LoginMessage m -> {
@@ -288,7 +410,7 @@ public abstract class View extends ViewObservable<NetMessage> {
                 if (m.getNickname().equals(nickname)) {
                     if (m.getCard().getClass().equals(StarterCard.class)) {
                         myField.addCard((StarterCard) m.getCard());
-                        notify(m);
+                        return;
                     } else try {
                         myField.addCard((ResourceCard) m.getCard(), m.getCoords());
                         notify(message);
@@ -397,6 +519,10 @@ public abstract class View extends ViewObservable<NetMessage> {
                 }
             }
             case HeartBeatMessage m -> {
+            }
+            case FailMessage m -> {
+                if (m.getNickname().equals(nickname))
+                notify(m);
             }
             default -> throw new IllegalStateException("Unexpected value: " + message);
         }
