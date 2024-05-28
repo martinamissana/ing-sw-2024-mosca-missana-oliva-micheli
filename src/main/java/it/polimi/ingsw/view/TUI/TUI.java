@@ -27,6 +27,7 @@ import it.polimi.ingsw.model.player.Player;
 import it.polimi.ingsw.network.RMI.ClientRemoteInterface;
 import it.polimi.ingsw.network.RMI.RemoteInterface;
 import it.polimi.ingsw.network.netMessage.NetMessage;
+import it.polimi.ingsw.network.netMessage.c2s.DisconnectMessage;
 import it.polimi.ingsw.network.netMessage.c2s.LobbyJoinedMessage;
 import it.polimi.ingsw.network.netMessage.s2c.*;
 import it.polimi.ingsw.view.*;
@@ -236,7 +237,9 @@ public class TUI implements Runnable, ViewObserver {
 
             }
             case LoginFail_NicknameAlreadyTaken m -> {
-                System.out.println("nickname already take, quitting game");
+                System.out.print(cli + "Nickname already taken. Exiting game");
+                view.removeObserver(this);
+                exit(0);
             }
             case GameWinnersAnnouncedMessage m -> {
                 if (m.getID().equals(view.getID())) {
@@ -263,6 +266,11 @@ public class TUI implements Runnable, ViewObserver {
             case FailMessage m -> {
                 if (m.getNickname().equals(view.getNickname())) System.out.println(m.getMessage());
                 semaphore.release();
+            }
+            case DisconnectMessage m -> {
+                System.out.print(cli + "The server crashed. Exiting game");
+                view.removeObserver(this);
+                exit(0);
             }
             default -> throw new IllegalStateException("Unexpected value: " + message);
         }
@@ -800,8 +808,8 @@ public class TUI implements Runnable, ViewObserver {
             new Thread(() -> {
                 try {
                     ((TCPView) view).startClient();
-                } catch (IOException | ClassNotFoundException e) {
-                    view.removeObserver(this);
+                } catch (IOException | ClassNotFoundException |NullPointerException e) {
+                    if(view!=null)view.removeObserver(this);
                     Thread.currentThread().interrupt();
                 }
             }).start();

@@ -1,11 +1,7 @@
 package it.polimi.ingsw.view;
 
 import it.polimi.ingsw.model.card.CardSide;
-import it.polimi.ingsw.model.card.ResourceCard;
-import it.polimi.ingsw.model.card.StarterCard;
 import it.polimi.ingsw.model.chat.Message;
-import it.polimi.ingsw.model.deck.DeckBufferType;
-import it.polimi.ingsw.model.deck.DeckType;
 import it.polimi.ingsw.model.deck.DeckTypeBox;
 import it.polimi.ingsw.model.exceptions.FullLobbyException;
 import it.polimi.ingsw.model.exceptions.HandIsFullException;
@@ -17,7 +13,8 @@ import it.polimi.ingsw.model.player.Player;
 import it.polimi.ingsw.network.netMessage.HeartBeatMessage;
 import it.polimi.ingsw.network.netMessage.NetMessage;
 import it.polimi.ingsw.network.netMessage.c2s.*;
-import it.polimi.ingsw.network.netMessage.s2c.*;
+import it.polimi.ingsw.network.netMessage.s2c.JoinLobbyMessage;
+import it.polimi.ingsw.network.netMessage.s2c.LoginFail_NicknameAlreadyTaken;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -55,9 +52,9 @@ public class TCPView extends View {
                 deserialized = (NetMessage) in.readObject();
                 elaborate(deserialized);
             } while (!socket.isClosed());
-
+            disconnect();
         } catch (IOException | ClassNotFoundException e) {
-            System.err.println(e.getMessage());
+            disconnect();
 
         } catch (FullLobbyException | NicknameAlreadyTakenException | IllegalMoveException | HandIsFullException e) {
             throw new RuntimeException(e);
@@ -144,7 +141,8 @@ public class TCPView extends View {
         out.close();
         socket.close();
         Thread.currentThread().interrupt();
-        notify(new DisconnectMessage());
+        if(super.getNickname()!=null)notify(new DisconnectMessage());
+        else notify(new LoginFail_NicknameAlreadyTaken());
     }
 
     public void checkServerConnection() {

@@ -316,7 +316,7 @@ public abstract class View extends ViewObservable<NetMessage> {
             }
             case LoginFail_NicknameAlreadyTaken m -> {
                 Thread.currentThread().interrupt();
-                notify(message);
+                nickname=null;
                 disconnect();
             }
             case LobbyCreatedMessage m -> {
