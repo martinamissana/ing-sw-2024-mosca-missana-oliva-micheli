@@ -12,6 +12,7 @@ import java.util.ArrayList;
  */
 public class Lobby implements Serializable {
 
+    private final int ID;
     private final ArrayList<Player> players;
     private final int numOfPlayers;
     private final PawnBuffer pawnBuffer;
@@ -19,9 +20,12 @@ public class Lobby implements Serializable {
 
     /**
      * Constructor
+     *
+     * @param id
      * @param numOfPlayers - number of players required
      */
-    public Lobby(int numOfPlayers){
+    public Lobby(int id, int numOfPlayers){
+        ID = id;
         this.numOfPlayers = numOfPlayers;
         this.players = new ArrayList<>();
         this.pawnBuffer = new PawnBuffer();
