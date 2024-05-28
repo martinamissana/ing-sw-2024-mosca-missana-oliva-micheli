@@ -97,6 +97,8 @@ public class TCPVirtualView implements Runnable, Observer {
                     LobbyJoinedMessage m = new LobbyJoinedMessage(e.getPlayer(), e.getID());
                     out.writeObject(m);
                 }
+                case CurrentStatusEvent e -> {
+                }
                 case LobbyLeftEvent e -> {
                     if (e.getPlayer().getNickname().equals(this.nickname)) this.ID = null;
                     LobbyLeftMessage m = new LobbyLeftMessage(e.getPlayer(), e.getLobby(), e.getID());
