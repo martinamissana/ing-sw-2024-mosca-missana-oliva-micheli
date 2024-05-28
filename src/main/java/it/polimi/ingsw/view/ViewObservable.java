@@ -22,8 +22,9 @@ public class ViewObservable<T> {
     }
 
     public void notify(NetMessage m) throws IOException {
+        List<ViewObserver> l = new ArrayList<>(observers);
         synchronized (observers) {
-            for(ViewObserver observer : observers){
+            for(ViewObserver observer : l){
                 observer.update(m);
             }
         }
