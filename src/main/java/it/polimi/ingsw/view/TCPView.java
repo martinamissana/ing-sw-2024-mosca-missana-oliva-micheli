@@ -134,13 +134,6 @@ public class TCPView extends View {
     }
 
     @Override
-    public void flipCard(int handPos) throws IOException {
-        FlipCardMessage m = new FlipCardMessage(super.getID(), super.getNickname(), handPos);
-        out.writeObject(m);
-        super.getHand().getCard(handPos).flip();
-    }
-
-    @Override
     public void heartbeat() throws IOException {
         HeartBeatMessage m = new HeartBeatMessage();
         out.writeObject(m);

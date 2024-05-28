@@ -23,7 +23,6 @@ import it.polimi.ingsw.network.netMessage.c2s.LobbyJoinedMessage;
 import it.polimi.ingsw.network.netMessage.s2c.*;
 
 import java.io.IOException;
-import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Objects;
@@ -180,8 +179,6 @@ public abstract class View extends ViewObservable<NetMessage> {
 
     public abstract void drawCard(DeckTypeBox deckTypeBox) throws IllegalActionException, EmptyBufferException, NotYourTurnException, EmptyDeckException, GameDoesNotExistException, HandIsFullException, LobbyDoesNotExistsException, IOException, UnexistentUserException;
 
-    public abstract void flipCard(int handPos) throws GameDoesNotExistException, UnexistentUserException, IOException;
-
     public abstract void getCurrentStatus() throws IOException, FullLobbyException, NicknameAlreadyTakenException, ClassNotFoundException;
 
     public abstract void heartbeat() throws IOException, ClassNotFoundException;
@@ -291,7 +288,7 @@ public abstract class View extends ViewObservable<NetMessage> {
                 if (m.getNickname().equals(nickname)) {
                     if (m.getCard().getClass().equals(StarterCard.class)) {
                         myField.addCard((StarterCard) m.getCard());
-                        return;
+                        notify(m);
                     } else try {
                         myField.addCard((ResourceCard) m.getCard(), m.getCoords());
                         notify(message);
