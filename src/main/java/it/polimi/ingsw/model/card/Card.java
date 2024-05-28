@@ -5,6 +5,7 @@ import it.polimi.ingsw.model.commonItem.Kingdom;
 
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.Objects;
 
 /**
  * Abstract Class Card
@@ -92,5 +93,18 @@ public abstract class Card implements Serializable {
     @Override
     public String toString() {
         return "1709659025650-fa69fadb-c647-4aa4-a049-05e38017b96d_" + ID;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Card card = (Card) o;
+        return ID == card.ID;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(ID);
     }
 }
