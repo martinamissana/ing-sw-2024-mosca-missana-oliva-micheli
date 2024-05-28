@@ -24,8 +24,9 @@ public abstract class Observable<T> {
     }
 
     public void notify(Event event) throws IOException {
+        List<Observer> l = new ArrayList<>(observers);
         synchronized (observers) {
-            for(Observer observer : observers){
+            for (Observer observer : l) {
                 observer.update(event);
             }
         }
