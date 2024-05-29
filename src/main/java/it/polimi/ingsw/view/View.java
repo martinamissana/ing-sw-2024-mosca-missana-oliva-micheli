@@ -59,194 +59,302 @@ public abstract class View extends ViewObservable<NetMessage> {
 
     /**
      * gets the nickname
+     *
      * @return String nickname
      */
-    public String getNickname() { return nickname; }
+    public String getNickname() {
+        return nickname;
+    }
 
     /**
      * gets the deckBuffers
+     *
      * @return HashMap <DeckBufferType, DeckBuffer>
      */
-    public HashMap<DeckBufferType, DeckBuffer> getDeckBuffers() { return deckBuffers; }
+    public HashMap<DeckBufferType, DeckBuffer> getDeckBuffers() {
+        return deckBuffers;
+    }
 
     /**
      * gets the top card of the resource deck
+     *
      * @return Card
      */
-    public Card getTopResourceCard() { return topResourceCard; }
+    public Card getTopResourceCard() {
+        return topResourceCard;
+    }
 
     /**
      * gets the lobbies
+     *
      * @return HashMap <Integer, Lobby>
      */
-    public HashMap<Integer, Lobby> getLobbies(){ return lobbies; }
+    public HashMap<Integer, Lobby> getLobbies() {
+        return lobbies;
+    }
 
     /**
      * gets the player
+     *
      * @return Player
      */
-    public Player getPlayer() { return player; }
+    public Player getPlayer() {
+        return player;
+    }
 
     /**
      * gets the ID of the lobby/game
+     *
      * @return Integer
      */
-    public Integer getID() { return ID; }
+    public Integer getID() {
+        return ID;
+    }
 
     /**
      * gets the hand of the player
+     *
      * @return Hand
      */
-    public Hand getHand() { return hand; }
+    public Hand getHand() {
+        return hand;
+    }
 
     /**
      * gets the player field
+     *
      * @return Field
      */
-    public Field getMyField() { return myField; }
+    public Field getMyField() {
+        return myField;
+    }
 
     /**
      * gets the other players' fields
+     *
      * @return HashMap <Player, Field>
      */
-    public HashMap<Player, Field> getFields() { return fields; }
+    public HashMap<Player, Field> getFields() {
+        return fields;
+    }
 
     /**
      * returns true if it's the player turn, false if it's the turn of another player
+     *
      * @return boolean
      */
-    public boolean isYourTurn() { return yourTurn; }
+    public boolean isYourTurn() {
+        return yourTurn;
+    }
 
     /**
      * gets the action [PLAY - DRAW]
+     *
      * @return Action
      */
-    public Action getAction() { return action; }
+    public Action getAction() {
+        return action;
+    }
 
     /**
      * gets the chat
+     *
      * @return Chat
      */
-    public Chat getChat() { return chat; }
+    public Chat getChat() {
+        return chat;
+    }
 
     /**
      * gets the player's secret goal
+     *
      * @return Goal
      */
-    public Goal getSecretGoal() { return secretGoal; }
+    public Goal getSecretGoal() {
+        return secretGoal;
+    }
 
     /**
      * gets an ArrayList with the winners of the match
+     *
      * @return ArrayList <Player>
      */
-    public ArrayList<Player> getWinners() { return winners; }
+    public ArrayList<Player> getWinners() {
+        return winners;
+    }
 
-    public ArrayList<String> getErrorMessages() { return errorMessages; }
+    public ArrayList<String> getErrorMessages() {
+        return errorMessages;
+    }
 
     /**
      * gets the player's pawn
+     *
      * @return Pawn
      */
-    public Pawn getPawn() { return pawn; }
+    public Pawn getPawn() {
+        return pawn;
+    }
 
-    public boolean isFirstPlayer() { return firstPlayer; }
+    public boolean isFirstPlayer() {
+        return firstPlayer;
+    }
 
     /**
      * returns true if it's the last round of the match
+     *
      * @return boolean
      */
-    public boolean isLastRound() { return lastRound; }
+    public boolean isLastRound() {
+        return lastRound;
+    }
 
     /**
      * gets an Arraylist with the two possible choices of the secret goal
+     *
      * @return Arraylist <Goal>
      */
-    public ArrayList<Goal> getSecretGoalChoices() { return secretGoalChoices; }
+    public ArrayList<Goal> getSecretGoalChoices() {
+        return secretGoalChoices;
+    }
 
     /**
      * gets the player's scoreboard
-     * @return Hashmap <Player, Integer>
      *
+     * @return Hashmap <Player, Integer>
      */
-    public HashMap<Player, Integer> getScoreboard() { return scoreboard; }
+    public HashMap<Player, Integer> getScoreboard() {
+        return scoreboard;
+    }
 
     /**
      * gets the game phase
+     *
      * @return GamePhase
      */
-    public GamePhase getGamePhase() { return gamePhase; }
+    public GamePhase getGamePhase() {
+        return gamePhase;
+    }
 
     /**
      * gets the top card of the golden deck
+     *
      * @return Card
      */
-    public Card getTopGoldenCard() { return topGoldenCard; }
+    public Card getTopGoldenCard() {
+        return topGoldenCard;
+    }
 
     /**
      * gets the first common goal of the game
+     *
      * @return Goal
      */
-    public Goal getCommonGoal1() { return commonGoal1; }
+    public Goal getCommonGoal1() {
+        return commonGoal1;
+    }
 
     /**
      * gets the second common goal of the game
+     *
      * @return Goal
      */
-    public Goal getCommonGoal2() { return commonGoal2; }
+    public Goal getCommonGoal2() {
+        return commonGoal2;
+    }
 
     /**
      * sets the player
+     *
      * @param player user
      */
-    public void setPlayer(Player player) { this.player = player; }
+    public void setPlayer(Player player) {
+        this.player = player;
+    }
 
     /**
      * sets the ID of the lobby/game
+     *
      * @param ID lobby/game
      */
-    public void setID(Integer ID) { this.ID = ID; }
+    public void setID(Integer ID) {
+        this.ID = ID;
+    }
 
-    public void setHand(Hand hand) { this.hand = hand; }
+    public void setHand(Hand hand) {
+        this.hand = hand;
+    }
 
-    public void setMyField(Field myField) { this.myField = myField; }
+    public void setMyField(Field myField) {
+        this.myField = myField;
+    }
 
-    public void setFields(HashMap<Player, Field> fields) { this.fields = fields; }
+    public void setFields(HashMap<Player, Field> fields) {
+        this.fields = fields;
+    }
 
-    public void setLobbies(HashMap<Integer, Lobby> lobbies) { this.lobbies = lobbies; }
+    public void setLobbies(HashMap<Integer, Lobby> lobbies) {
+        this.lobbies = lobbies;
+    }
 
-    public void setYourTurn(boolean yourTurn) { this.yourTurn = yourTurn; }
+    public void setYourTurn(boolean yourTurn) {
+        this.yourTurn = yourTurn;
+    }
 
     /**
      * sets the Action [PLAY - DRAW]
+     *
      * @param action which action the player should perform
      */
-    public void setAction(Action action) { this.action = action; }
+    public void setAction(Action action) {
+        this.action = action;
+    }
 
     /**
      * sets the chat
+     *
      * @param chat chat
      */
-    public void setChat(Chat chat) { this.chat = chat; }
+    public void setChat(Chat chat) {
+        this.chat = chat;
+    }
 
-    public void setSecretGoal(Goal secretGoal) { this.secretGoal = secretGoal; }
+    public void setSecretGoal(Goal secretGoal) {
+        this.secretGoal = secretGoal;
+    }
 
     /**
      * sets the pawn color
+     *
      * @param pawn color of the pawn
      */
-    public void setPawn(Pawn pawn) { this.pawn = pawn; }
+    public void setPawn(Pawn pawn) {
+        this.pawn = pawn;
+    }
 
-    public void setFirstPlayer(boolean firstPlayer) { this.firstPlayer = firstPlayer; }
+    public void setFirstPlayer(boolean firstPlayer) {
+        this.firstPlayer = firstPlayer;
+    }
 
-    public void setLastRound(boolean lastRound) { this.lastRound = lastRound; }
+    public void setLastRound(boolean lastRound) {
+        this.lastRound = lastRound;
+    }
 
-    public void setSecretGoalChoices(ArrayList<Goal> secretGoalChoices) { this.secretGoalChoices = secretGoalChoices; }
+    public void setSecretGoalChoices(ArrayList<Goal> secretGoalChoices) {
+        this.secretGoalChoices = secretGoalChoices;
+    }
 
-    public void setScoreboard(HashMap<Player, Integer> scoreboard) { this.scoreboard = scoreboard; }
+    public void setScoreboard(HashMap<Player, Integer> scoreboard) {
+        this.scoreboard = scoreboard;
+    }
 
-    public void setGamePhase(GamePhase gamePhase) { this.gamePhase = gamePhase; }
+    public void setGamePhase(GamePhase gamePhase) {
+        this.gamePhase = gamePhase;
+    }
 
-    public void setDeckBuffers(HashMap<DeckBufferType, DeckBuffer> deckBuffers) { this.deckBuffers = deckBuffers; }
+    public void setDeckBuffers(HashMap<DeckBufferType, DeckBuffer> deckBuffers) {
+        this.deckBuffers = deckBuffers;
+    }
 
     public void setCardInDeckBuffer(DeckBufferType deckBufferType, Card card) {
         DeckBuffer d = new DeckBuffer(null);
@@ -254,19 +362,30 @@ public abstract class View extends ViewObservable<NetMessage> {
         this.deckBuffers.put(deckBufferType, d);
     }
 
-    public void setTopResourceCard(Card topResourceCard) { this.topResourceCard = topResourceCard; }
+    public void setTopResourceCard(Card topResourceCard) {
+        this.topResourceCard = topResourceCard;
+    }
 
-    public void setTopGoldenCard(Card topGoldenCard) { this.topGoldenCard = topGoldenCard; }
+    public void setTopGoldenCard(Card topGoldenCard) {
+        this.topGoldenCard = topGoldenCard;
+    }
 
-    public void setCommonGoal1(Goal commonGoal1) { this.commonGoal1 = commonGoal1; }
+    public void setCommonGoal1(Goal commonGoal1) {
+        this.commonGoal1 = commonGoal1;
+    }
 
-    public void setCommonGoal2(Goal commonGoal2) { this.commonGoal2 = commonGoal2; }
+    public void setCommonGoal2(Goal commonGoal2) {
+        this.commonGoal2 = commonGoal2;
+    }
 
     /**
      * sets the nickname
+     *
      * @param nickname name of the player
      */
-    public void setNickname(String nickname) { this.nickname = nickname; }
+    public void setNickname(String nickname) {
+        this.nickname = nickname;
+    }
 
     public void setWinners(ArrayList<Player> winners) {
         this.winners = winners;
@@ -300,60 +419,63 @@ public abstract class View extends ViewObservable<NetMessage> {
 
     /**
      * receives the messages from the server, notifies TUI and GUI and modifies the view
+     *
      * @param message network message received from the server
-     * @throws IOException general class of exceptions produced by failed or interrupted I/O operations
-     * @throws FullLobbyException thrown if the lobby is full
+     * @throws IOException                   general class of exceptions produced by failed or interrupted I/O operations
+     * @throws FullLobbyException            thrown if the lobby is full
      * @throws NicknameAlreadyTakenException thrown if the nickname is already taken
-     * @throws HandIsFullException thrown if the hand is full
-     * @throws IllegalMoveException thrown when violating the game's rules when placing a card
+     * @throws HandIsFullException           thrown if the hand is full
+     * @throws IllegalMoveException          thrown when violating the game's rules when placing a card
      */
     public void elaborate(NetMessage message) throws IOException, FullLobbyException, NicknameAlreadyTakenException, HandIsFullException, IllegalMoveException {
         switch (message) {
             case LoginMessage m -> {
-                if(Objects.equals(m.getNickname(), nickname)){
+                if (Objects.equals(m.getNickname(), nickname)) {
                     notify(m);
                 }
             }
             case LoginFail_NicknameAlreadyTaken m -> {
                 Thread.currentThread().interrupt();
-                nickname=null;
+                nickname = null;
                 disconnect();
             }
             case LobbyCreatedMessage m -> {
                 lobbies.put(m.getID(), m.getLobby());
-                if (m.getCreator().equals(player)) {
-                    ID=m.getID();
+                if (m.getCreator().equals(player)) ID = m.getID();
+                if (m.getCreator().equals(player) || ID == null) {
                     notify(m);
                 }
             }
             case LobbyJoinedMessage m -> {
                 if (m.getPlayer().getNickname().equals(player.getNickname()))
-                    ID=m.getID();
+                    ID = m.getID();
                 try {
                     getLobbies().get(m.getID()).addPlayer(m.getPlayer());
                 } catch (FullLobbyException e) {
                     e.printStackTrace();
                 }
-                if ( m.getID() != null && m.getID().equals(ID))
+                if (ID == null || m.getID().equals(ID))
                     notify(message);
             }
             case LobbyLeftMessage m -> {
-                if (m.getPlayer().getNickname().equals(nickname)) {
-                    ID=null;
-                    pawn=null;
-                    notify(m);
-                }
                 lobbies.get(m.getID()).removePlayer(m.getPlayer());
                 scoreboard.remove(m.getPlayer());
-                if (pawn != null && m.getID() != null && m.getID().equals(ID))
-                    notify(message);
+                if (m.getPlayer().getNickname().equals(nickname)) {
+                    ID = null;
+                    pawn = null;
+                }
+                if (ID == null || m.getID().equals(ID)) {
+                    notify(m);
+                }
             }
             case LobbyDeletedMessage m -> {
-               lobbies.remove(m.getID());
+                lobbies.remove(m.getID());
+                if (ID == null)
+                    notify(message);
             }
             case PawnAssignedMessage m -> {
-                if (m.getPlayer().getNickname().equals(nickname)) {
-                    pawn=m.getColor();
+                if (m.getPlayer().getNickname().equals(nickname) || ID == m.getLobbyID()) {
+                    pawn = m.getColor();
                     notify(message);
                 } else {
                     for (Player p : lobbies.get(m.getLobbyID()).getPlayers()) {
@@ -375,20 +497,20 @@ public abstract class View extends ViewObservable<NetMessage> {
             case GameCreatedMessage m -> {
                 if (m.getID().equals(ID)) {
                     if (m.getFirstPlayer().equals(player)) {
-                        firstPlayer=true;
-                        yourTurn=true;
+                        firstPlayer = true;
+                        yourTurn = true;
                     } else {
-                        firstPlayer=false;
-                        yourTurn=false;
+                        firstPlayer = false;
+                        yourTurn = false;
                     }
-                    scoreboard=m.getScoreboard();
-                    deckBuffers=m.getDeckBuffers();
-                    topResourceCard=m.getTopResourceCard();
-                    topGoldenCard=m.getTopGoldenCard();
-                    commonGoal1=m.getCommonGoal1();
-                    commonGoal2=m.getCommonGoal2();
-                    gamePhase=m.getGamePhase();
-                    action=m.getAction();
+                    scoreboard = m.getScoreboard();
+                    deckBuffers = m.getDeckBuffers();
+                    topResourceCard = m.getTopResourceCard();
+                    topGoldenCard = m.getTopGoldenCard();
+                    commonGoal1 = m.getCommonGoal1();
+                    commonGoal2 = m.getCommonGoal2();
+                    gamePhase = m.getGamePhase();
+                    action = m.getAction();
                     notify(message);
                 }
             }
@@ -433,54 +555,54 @@ public abstract class View extends ViewObservable<NetMessage> {
             }
             case GamePhaseChangedMessage m -> {
                 if (m.getID().equals(ID)) {
-                    gamePhase=m.getGamePhase();
+                    gamePhase = m.getGamePhase();
                     notify(m);
                 }
             }
             case SecretGoalsListAssignedMessage m -> {
                 if (m.getPlayer().equals(player))
-                    secretGoalChoices=m.getList();
+                    secretGoalChoices = m.getList();
             }
             case SecretGoalAssignedMessage m -> {
                 if (m.getPlayer().equals(player))
-                    secretGoal=m.getGoal();
+                    secretGoal = m.getGoal();
             }
             case GameActionSwitchedMessage m -> {
                 if (m.getID().equals(ID))
-                    action=m.getAction();
+                    action = m.getAction();
             }
             case LastRoundStartedMessage m -> {
                 if (m.getID().equals(ID))
-                    lastRound=true;
+                    lastRound = true;
             }
             case TurnChangedMessage m -> {
                 if (m.getID().equals(ID) && m.getNickname().equals(nickname))
-                    yourTurn=true;
+                    yourTurn = true;
                 else if (m.getID().equals(ID) && !m.getNickname().equals(nickname))
-                    yourTurn=false;
+                    yourTurn = false;
                 if (m.getID().equals(ID)) notify(m);
             }
             case GameWinnersAnnouncedMessage m -> {
                 if (m.getID().equals(ID)) {
-                    winners=m.getWinners();
+                    winners = m.getWinners();
                     notify(m);
                 }
             }
             case GameTerminatedMessage m -> {
                 if (m.getID().equals(ID)) {
                     lobbies.remove(ID);
-                    firstPlayer=false;
-                    yourTurn=false;
-                    scoreboard=null;
-                    deckBuffers=null;
-                    topResourceCard=null;
-                    topGoldenCard=null;
-                    commonGoal1=null;
-                    commonGoal2=null;
-                    gamePhase=null;
-                    action=null;
-                    ID=null;
-                    pawn=null;
+                    firstPlayer = false;
+                    yourTurn = false;
+                    scoreboard = null;
+                    deckBuffers = null;
+                    topResourceCard = null;
+                    topGoldenCard = null;
+                    commonGoal1 = null;
+                    commonGoal2 = null;
+                    gamePhase = null;
+                    action = null;
+                    ID = null;
+                    pawn = null;
                     notify(m);
                 }
             }
@@ -492,8 +614,8 @@ public abstract class View extends ViewObservable<NetMessage> {
             case CardDrawnFromSourceMessage m -> {
                 if (m.getID().equals(ID)) {
                     switch (m.getType()) {
-                        case DeckType.RESOURCE -> topResourceCard=m.getCard();
-                        case DeckType.GOLDEN -> topGoldenCard=m.getCard();
+                        case DeckType.RESOURCE -> topResourceCard = m.getCard();
+                        case DeckType.GOLDEN -> topGoldenCard = m.getCard();
                         case DeckBufferType.RES1 -> {
                             DeckBuffer d = new DeckBuffer(null);
                             d.setCard((ResourceCard) m.getCard());
@@ -522,9 +644,10 @@ public abstract class View extends ViewObservable<NetMessage> {
             }
             case FailMessage m -> {
                 if (m.getNickname().equals(nickname))
-                notify(m);
+                    notify(m);
             }
             default -> throw new IllegalStateException("Unexpected value: " + message);
         }
+        if (!message.getClass().equals(HeartBeatMessage.class)) System.out.println(message);
     }
 }
