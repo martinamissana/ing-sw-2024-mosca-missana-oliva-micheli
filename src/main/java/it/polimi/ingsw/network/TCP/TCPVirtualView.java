@@ -371,6 +371,10 @@ public class TCPVirtualView implements Runnable, Observer {
         this.nickname = nickname;
     }
 
+    /**
+     * called to send an HeartBeatMessage to check if the client is still alive.
+     * if an IOException is caught the client will assume tha the client has crashed and will disconnect
+     */
     public void checkClientConnection() throws IOException {
         HeartBeatMessage m = new HeartBeatMessage();
         try {

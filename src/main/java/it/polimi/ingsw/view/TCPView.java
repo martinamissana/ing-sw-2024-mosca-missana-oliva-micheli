@@ -47,7 +47,7 @@ public class TCPView extends View {
         this.out = new ObjectOutputStream(socket.getOutputStream());
         new Thread(() -> {
             while (!socket.isClosed()) {
-                checkServerConnection();
+                heartbeat();
             }
         }).start();
     }
@@ -197,13 +197,23 @@ public class TCPView extends View {
     }
 
     /**
-     * called to send an HeartBeatMessage, letting the server know that the client is still active
-     * @throws IOException general class of exceptions produced by failed or interrupted I/O operations
+     * called to send an HeartBeatMessage to check if the server is still alive.
+     * if an IOException is caught the client will assume tha the server has crashed and will disconnect
      */
     @Override
-    public void heartbeat() throws IOException {
+    public void heartbeat()  {
         HeartBeatMessage m = new HeartBeatMessage();
-        out.writeObject(m);
+        try {
+            Thread.sleep(3000);
+            out.writeObject(m);
+        } catch (IOException e) {
+            try {
+                disconnect();
+            } catch (IOException ignored) {
+            }
+        } catch (InterruptedException ignored) {
+        }
+
     }
 
     /**
@@ -219,21 +229,6 @@ public class TCPView extends View {
         else notify(new LoginFail_NicknameAlreadyTaken());
     }
 
-    /**
-     * called to send an HeartBeatMessage, letting the server know that the client is still active
-     */
-    public void checkServerConnection() {
-        HeartBeatMessage m = new HeartBeatMessage();
-        try {
-            Thread.sleep(3000);
-            out.writeObject(m);
-        } catch (IOException e) {
-            try {
-                disconnect();
-            } catch (IOException ignored) {
-            }
-        } catch (InterruptedException ignored) {
-        }
-    }
+
 
 }
