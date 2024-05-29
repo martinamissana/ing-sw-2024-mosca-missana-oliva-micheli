@@ -23,7 +23,7 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * RMIView class
- * the methods represent the action that the client can do, they
+ * the methods represent the action that the client can do
  */
 public class RMIView extends View implements ClientRemoteInterface , Serializable {
 
