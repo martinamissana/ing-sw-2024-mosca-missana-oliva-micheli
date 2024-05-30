@@ -625,14 +625,14 @@ public class Controller implements Serializable {
         // if both decks are empty
         if (game.getResourceDeck().getCards().isEmpty() && game.getGoldenDeck().getCards().isEmpty()) {
             game.setLastRound(true);
-            gh.notify(new LastRoundStartedEvent(gameID));
+            //gh.notify(new LastRoundStartedEvent(gameID)); //todo: togliere dalla logica
         }
 
         // if someone has reached 20 points
         for (Map.Entry<Player, Integer> entry : game.getScoreboard().entrySet())
             if (entry.getValue() >= 20) {
                 game.setLastRound(true);
-                gh.notify(new LastRoundStartedEvent(gameID));
+                //gh.notify(new LastRoundStartedEvent(gameID));
             }
     }
 
