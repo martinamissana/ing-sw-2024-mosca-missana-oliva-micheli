@@ -181,7 +181,7 @@ public class TCPView extends View {
      */
     @Override
     public void playCard(int handPos, Coords coords) throws IOException {
-        PlayCardMessage m = new PlayCardMessage(super.getID(), super.getNickname(), handPos, coords);
+        PlayCardMessage m = new PlayCardMessage(super.getID(), super.getNickname(), handPos, coords, super.getHand().getCard(handPos).getSide());
         out.writeObject(m);
     }
 

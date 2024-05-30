@@ -1,6 +1,7 @@
 package it.polimi.ingsw.network.netMessage.s2c;
 
 import it.polimi.ingsw.model.card.Card;
+import it.polimi.ingsw.model.card.CardSide;
 import it.polimi.ingsw.model.player.Coords;
 import it.polimi.ingsw.network.netMessage.NetMessage;
 
@@ -8,12 +9,14 @@ public class CardPlacedOnFieldMessage extends NetMessage {
     private final Coords coords;
     private final Integer ID;
     private final Card card;
+    private final CardSide side;
     private final String nickname;
 
-    public CardPlacedOnFieldMessage(Coords coords, Integer ID, Card card, String nickname) {
+    public CardPlacedOnFieldMessage(Coords coords, Integer ID, Card card, CardSide side, String nickname) {
         this.coords = coords;
         this.ID = ID;
         this.card = card;
+        this.side = side;
         this.card.setSide(card.getSide());
         this.nickname = nickname;
     }
@@ -31,5 +34,9 @@ public class CardPlacedOnFieldMessage extends NetMessage {
 
     public Card getCard() {
         return card;
+    }
+
+    public CardSide getSide() {
+        return side;
     }
 }

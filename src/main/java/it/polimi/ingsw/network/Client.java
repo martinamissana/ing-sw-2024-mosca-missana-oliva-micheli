@@ -4,14 +4,12 @@ import it.polimi.ingsw.view.GUI.GUI;
 import it.polimi.ingsw.view.TUI.TUI;
 import javafx.application.Application;
 
-import java.io.IOException;
-import java.rmi.NotBoundException;
 import java.util.Scanner;
 
 import static java.lang.System.exit;
 
 public class Client {
-    public static void main(String[] args) throws IOException, NotBoundException, NotBoundException {
+    public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
         System.out.println("Insert your interface type: [TUI|GUI]");
         String choice = scanner.nextLine();

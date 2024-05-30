@@ -97,10 +97,9 @@ public class TCPVirtualView implements Runnable, Observer {
                     LobbyJoinedMessage m = new LobbyJoinedMessage(e.getPlayer(), e.getID());
                     out.writeObject(m);
                 }
-                case CurrentStatusEvent e -> {
+                case CurrentStatusEvent ignored -> {
                 }
                 case LobbyLeftEvent e -> {
-                    if (e.getPlayer().getNickname().equals(this.nickname)) this.ID = null;
                     LobbyLeftMessage m = new LobbyLeftMessage(e.getPlayer(), e.getLobby(), e.getID());
                     out.writeObject(m);
                 }
@@ -140,7 +139,7 @@ public class TCPVirtualView implements Runnable, Observer {
                 }
                 case CardPlacedOnFieldEvent e -> {
                     if (e.getID().equals(ID)) {
-                        CardPlacedOnFieldMessage m = new CardPlacedOnFieldMessage(e.getCoords(), e.getID(), e.getCard(), e.getNickname());
+                        CardPlacedOnFieldMessage m = new CardPlacedOnFieldMessage(e.getCoords(), e.getID(), e.getCard(), e.getCard().getSide(), e.getNickname());
                         out.writeObject(m);
                     }
                 }
@@ -176,7 +175,7 @@ public class TCPVirtualView implements Runnable, Observer {
                 }
                 case TurnChangedEvent e -> {
                     if (e.getID().equals(ID)) {
-                        TurnChangedMessage m = new TurnChangedMessage(e.getID(), e.getNickname());
+                        TurnChangedMessage m = new TurnChangedMessage(e.getID(), e.getNickname(), e.isLastRound());
                         out.writeObject(m);
                     }
                 }
@@ -218,6 +217,7 @@ public class TCPVirtualView implements Runnable, Observer {
                     c.login(m.getNickname());
                 } catch (NicknameAlreadyTakenException e) {
                     if (m.getNickname().equals(this.nickname)) {
+                        setNickname(null);
                         LoginFail_NicknameAlreadyTaken errorMessage = new LoginFail_NicknameAlreadyTaken();
                         out.writeObject(errorMessage);
                     }
@@ -285,7 +285,7 @@ public class TCPVirtualView implements Runnable, Observer {
                     out.writeObject(failMessage);
                 }
             }
-            case GetCurrentStatusMessage m -> {
+            case GetCurrentStatusMessage ignored -> {
                 CurrentStatusMessage status = new CurrentStatusMessage(c.getGh().getLobbies());
                 out.writeObject(status);
             }
@@ -314,7 +314,7 @@ public class TCPVirtualView implements Runnable, Observer {
             }
             case PlayCardMessage m -> {
                 try {
-                    c.playCard(m.getGameID(), m.getNickname(), m.getHandPos(), m.getCoords());
+                    c.playCard(m.getGameID(), m.getNickname(), m.getHandPos(), m.getCoords(),m.getSide());
                 } catch (IllegalActionException e) {
                     FailMessage failMessage = new FailMessage("Not play action", m.getNickname());
                     out.writeObject(failMessage);
@@ -322,8 +322,13 @@ public class TCPVirtualView implements Runnable, Observer {
                     FailMessage failMessage = new FailMessage("Not your turn", m.getNickname());
                     out.writeObject(failMessage);
                 } catch (IllegalMoveException e) {
-                    FailMessage failMessage = new FailMessage("Illegal move", m.getNickname());
-                    out.writeObject(failMessage);
+                    if(e.getClass().equals(IllegalCoordsException.class)) {
+                        FailMessage failMessage = new FailMessage("Illegal coords", m.getNickname());
+                        out.writeObject(failMessage);
+                    } else if(e.getClass().equals(RequirementsNotSatisfiedException.class)) {
+                        FailMessage failMessage = new FailMessage("requirements not satisfied", m.getNickname());
+                        out.writeObject(failMessage);
+                    }
                 } catch (LobbyDoesNotExistsException | GameDoesNotExistException | UnexistentUserException e) {
                     e.printStackTrace();
                 }

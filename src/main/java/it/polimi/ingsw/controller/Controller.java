@@ -492,8 +492,7 @@ public class Controller implements Serializable {
      * @throws IllegalMoveException        thrown if the selected card cannot be played to the field as requested
      * @throws LobbyDoesNotExistsException thrown if the game's lobby does not exist
      */
-    public synchronized void playCard(Integer gameID, String nickname, int handPos, Coords coords) throws GameDoesNotExistException, NotYourTurnException, IllegalActionException, IllegalMoveException, LobbyDoesNotExistsException, UnexistentUserException, IOException {
-
+    public synchronized void playCard(Integer gameID, String nickname, int handPos, Coords coords, CardSide side) throws GameDoesNotExistException, NotYourTurnException, IllegalActionException, IllegalMoveException, LobbyDoesNotExistsException, UnexistentUserException, IOException {
         // get game from ID and player from nickname
         Game game = gh.getGame(gameID);
         Player player = game.getPlayers().stream().filter(p -> p.getNickname().equals(nickname)).findFirst().orElseThrow(UnexistentUserException::new);
@@ -506,6 +505,9 @@ public class Controller implements Serializable {
 
         // get card in player's specified hand position
         ResourceCard card = (ResourceCard) player.getHand().getCard(handPos);
+
+        //flip the card if it is required
+        if(side==CardSide.BACK)card.flip();
 
         // place card in the field and calculate points
         int points = player.getField().addCard(card, coords);
@@ -605,7 +607,7 @@ public class Controller implements Serializable {
 
         // update turn counter
         game.setWhoseTurn((game.getWhoseTurn() + 1) % game.getNumOfPlayers());
-        gh.notify(new TurnChangedEvent(gameID, game.getPlayers().get(game.getWhoseTurn()).getNickname()));
+        gh.notify(new TurnChangedEvent(gameID, game.getPlayers().get(game.getWhoseTurn()).getNickname(), game.isLastRound()));
     }
 
     /**

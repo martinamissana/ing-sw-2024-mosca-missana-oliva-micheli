@@ -44,7 +44,7 @@ public abstract class View extends ViewObservable<NetMessage> {
     private Goal secretGoal;
     private Pawn pawn;
     private boolean firstPlayer = false;
-    private boolean lastRound;
+    private boolean lastRound=false;
     private ArrayList<Goal> secretGoalChoices = new ArrayList<>();
     private HashMap<Player, Integer> scoreboard = new HashMap<>();
     private HashMap<DeckBufferType, DeckBuffer> deckBuffers = new HashMap<>();
@@ -332,7 +332,7 @@ public abstract class View extends ViewObservable<NetMessage> {
         this.pawn = pawn;
     }
 
-    public void setFirstPlayer(boolean firstPlayer) {
+    public void     setFirstPlayer(boolean firstPlayer) {
         this.firstPlayer = firstPlayer;
     }
 
@@ -455,7 +455,7 @@ public abstract class View extends ViewObservable<NetMessage> {
                     e.printStackTrace();
                 }
                 if (ID == null || m.getID().equals(ID))
-                    notify(message);
+                    notify(m);
             }
             case LobbyLeftMessage m -> {
                 lobbies.get(m.getID()).removePlayer(m.getPlayer());
@@ -485,6 +485,7 @@ public abstract class View extends ViewObservable<NetMessage> {
             }
             case CurrentStatusMessage m -> {
                 lobbies.putAll(m.getLobbies());
+                notify(m);
             }
             case ChatMessageAddedMessage m -> {
                 if (m.getM().getSender().equals(player)) {
@@ -517,6 +518,7 @@ public abstract class View extends ViewObservable<NetMessage> {
             case CardAddedToHandMessage m -> {
                 if (m.getPlayer().equals(player)) {
                     try {
+                        System.out.println("Carta aggiunta :" + m.getCard().getCardID());
                         hand.addCard(m.getCard());
                     } catch (HandIsFullException e) {
                         e.printStackTrace();
@@ -529,6 +531,7 @@ public abstract class View extends ViewObservable<NetMessage> {
                 }
             }
             case CardPlacedOnFieldMessage m -> {
+                if(!m.getSide().equals(m.getCard().getSide()))m.getCard().flip();
                 if (m.getNickname().equals(nickname)) {
                     if (m.getCard().getClass().equals(StarterCard.class)) {
                         myField.addCard((StarterCard) m.getCard());
@@ -580,7 +583,10 @@ public abstract class View extends ViewObservable<NetMessage> {
                     yourTurn = true;
                 else if (m.getID().equals(ID) && !m.getNickname().equals(nickname))
                     yourTurn = false;
-                if (m.getID().equals(ID)) notify(m);
+                if (m.getID().equals(ID)){
+                    lastRound=m.isLastRound();
+                    notify(m);
+                }
             }
             case GameWinnersAnnouncedMessage m -> {
                 if (m.getID().equals(ID)) {
@@ -593,6 +599,7 @@ public abstract class View extends ViewObservable<NetMessage> {
                     lobbies.remove(ID);
                     firstPlayer = false;
                     yourTurn = false;
+                    lastRound=false;
                     scoreboard = null;
                     deckBuffers = null;
                     topResourceCard = null;
@@ -648,6 +655,5 @@ public abstract class View extends ViewObservable<NetMessage> {
             }
             default -> throw new IllegalStateException("Unexpected value: " + message);
         }
-        if (!message.getClass().equals(HeartBeatMessage.class)) System.out.println(message);
     }
 }
