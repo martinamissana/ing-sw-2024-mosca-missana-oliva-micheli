@@ -371,9 +371,9 @@ public class Controller implements Serializable {
         for (Player p : gh.getGame(ID).getPlayers()) {
             if (p.getHand().getSize() != 0) return;
         }
+        fillHands(ID);
         gh.getGame(ID).setGamePhase(GamePhase.CHOOSING_SECRET_GOAL);
         gh.notify(new GamePhaseChangedEvent(ID, GamePhase.CHOOSING_SECRET_GOAL));
-        fillHands(ID);
     }
 
     /**

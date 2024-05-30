@@ -23,7 +23,7 @@ public class PawnAssignedMessage extends NetMessage {
         return color;
     }
 
-    public Integer getLobbyID() {
+    public Integer getID() {
         return lobbyID;
     }
 }

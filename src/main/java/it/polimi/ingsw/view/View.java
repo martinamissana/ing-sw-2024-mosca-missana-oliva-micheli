@@ -474,13 +474,14 @@ public abstract class View extends ViewObservable<NetMessage> {
                     notify(message);
             }
             case PawnAssignedMessage m -> {
-                if (m.getPlayer().getNickname().equals(nickname) || ID == m.getLobbyID()) {
+                if (m.getPlayer().getNickname().equals(nickname)) {
                     pawn = m.getColor();
                     notify(message);
-                } else {
-                    for (Player p : lobbies.get(m.getLobbyID()).getPlayers()) {
+                } else if (m.getID().equals(ID)) {
+                    for (Player p : lobbies.get(m.getID()).getPlayers()) {
                         if (p.equals(m.getPlayer())) p.setPawn(m.getColor());
                     }
+                    notify(message);
                 }
             }
             case CurrentStatusMessage m -> {
