@@ -92,8 +92,8 @@ public class RMIServer extends UnicastRemoteObject implements RemoteInterface {
     }
 
     @Override
-    public void getCurrentStatus() throws IOException {
-        c.getCurrentStatus();
+    public void getCurrentStatus(String nickname) throws IOException {
+        c.getCurrentStatus(nickname);
     }
 
 

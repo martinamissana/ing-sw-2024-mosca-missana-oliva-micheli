@@ -13,6 +13,7 @@ import it.polimi.ingsw.network.netMessage.c2s.LobbyJoinedMessage;
 import it.polimi.ingsw.network.netMessage.s2c.*;
 import java.io.IOException;
 import java.rmi.RemoteException;
+import java.util.Objects;
 
 /**
  * RMIVirtualView class
@@ -39,12 +40,14 @@ public class RMIVirtualView implements Observer {
     public void update(Event event) throws IOException {
         switch (event) {
             case LoginEvent e -> {
-                if(nickname==null) this.nickname=e.getNickname();
-                try {
-                    view.elaborate(new LoginMessage(e.getNickname()));
-                } catch (FullLobbyException | NicknameAlreadyTakenException | HandIsFullException |
-                         IllegalMoveException ex) {
-                    throw new RuntimeException(ex);
+                if (nickname == null) this.nickname = e.getNickname();
+                if (Objects.equals(nickname, e.getNickname())) {
+                    try {
+                        view.elaborate(new LoginMessage(e.getNickname()));
+                    } catch (FullLobbyException | NicknameAlreadyTakenException | HandIsFullException |
+                             IllegalMoveException ex) {
+                        throw new RuntimeException(ex);
+                    }
                 }
             }
             case LobbyCreatedEvent e -> {
@@ -237,11 +240,13 @@ public class RMIVirtualView implements Observer {
                 }
             }
             case CurrentStatusEvent e -> {
-                try {
-                    view.elaborate(new CurrentStatusMessage(e.getLobbies()));
-                } catch (FullLobbyException | NicknameAlreadyTakenException | HandIsFullException |
-                         IllegalMoveException ex) {
-                    throw new RuntimeException(ex);
+                if (Objects.equals(nickname, e.getNickname())) {
+                    try {
+                        view.elaborate(new CurrentStatusMessage(e.getLobbies(), e.getNickname()));
+                    } catch (FullLobbyException | NicknameAlreadyTakenException | HandIsFullException |
+                             IllegalMoveException ex) {
+                        throw new RuntimeException(ex);
+                    }
                 }
             }
             case ScoreIncrementedEvent e -> {

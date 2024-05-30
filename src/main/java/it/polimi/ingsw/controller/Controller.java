@@ -855,11 +855,11 @@ public class Controller implements Serializable {
         }
     }
 
-    public void getCurrentStatus() throws IOException {
-        gh.notify(new CurrentStatusEvent(gh.getLobbies()));
+    public void getCurrentStatus(String nickname) throws IOException {
+        gh.notify(new CurrentStatusEvent(gh.getLobbies(),nickname));
     }
 
     public void heartbeat() throws IOException {
-        gh.notify(new HeartBeatEvent());
+        //gh.notify(new HeartBeatEvent());
     }
 }

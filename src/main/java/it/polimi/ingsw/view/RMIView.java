@@ -11,6 +11,7 @@ import it.polimi.ingsw.model.player.Player;
 import it.polimi.ingsw.network.RMI.ClientRemoteInterface;
 import it.polimi.ingsw.network.RMI.RemoteInterface;
 import it.polimi.ingsw.network.netMessage.c2s.DisconnectMessage;
+import it.polimi.ingsw.network.netMessage.s2c.LoginFail_NicknameAlreadyTaken;
 
 import java.io.Serializable;
 import java.rmi.NotBoundException;
@@ -197,12 +198,14 @@ public class RMIView extends View implements ClientRemoteInterface , Serializabl
      */
     @Override
     public void getCurrentStatus() throws IOException {
-        RMIServer.getCurrentStatus();
+        RMIServer.getCurrentStatus(super.getNickname());
     }
 
 
     public void disconnect() throws IOException {
         Thread.currentThread().interrupt();
+        if (super.getNickname() != null) notify(new DisconnectMessage());
+        else notify(new LoginFail_NicknameAlreadyTaken());
     }
 
     @Override
@@ -212,7 +215,10 @@ public class RMIView extends View implements ClientRemoteInterface , Serializabl
             try {
                 RMIServer.heartbeat();
             } catch (IOException e) {
-                throw new RuntimeException(e);
+                try {
+                    disconnect();
+                } catch (IOException ignored) {
+                }
             }
         };
         executor.scheduleAtFixedRate(task, 0, 5, TimeUnit.SECONDS);
