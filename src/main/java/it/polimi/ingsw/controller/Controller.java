@@ -858,4 +858,8 @@ public class Controller implements Serializable {
     public void getCurrentStatus() throws IOException {
         gh.notify(new CurrentStatusEvent(gh.getLobbies()));
     }
+
+    public void heartbeat() throws IOException {
+        gh.notify(new HeartBeatEvent());
+    }
 }
