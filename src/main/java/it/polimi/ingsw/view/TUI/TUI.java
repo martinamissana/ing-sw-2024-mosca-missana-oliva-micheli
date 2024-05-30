@@ -72,7 +72,7 @@ public class TUI implements Runnable, ViewObserver {
     private int yChoice;
 
 
-    public boolean isNumeric(String s){
+    public boolean isNumeric(String s) {
         return s.matches("-?\\d+");
     }
 
@@ -87,7 +87,7 @@ public class TUI implements Runnable, ViewObserver {
         new Thread(() -> {
             try {
                 try {
-                    System.out.println("insert nickname");
+                    System.out.println(cli + "insert nickname" );
                     view.login(scanner.nextLine());
                     view.getCurrentStatus();
 
@@ -99,7 +99,7 @@ public class TUI implements Runnable, ViewObserver {
                 semaphore.acquire();
 
                 while (true) {
-                    //System.out.println(state);
+                    //System.out.println(cli +state);
                     String in = scanner.nextLine();
                     switch (state) {
                         case MENU -> {
@@ -129,7 +129,6 @@ public class TUI implements Runnable, ViewObserver {
                                 case PLAYING_GAME -> {
 
                                     if (view.isYourTurn()) {
-                                        //if (view.getAction().equals(Action.PLAY)) {
                                         switch (inputState) {
                                             case PLAY_SELECT_CARD -> {
                                                 playCard_selectCard(in);
@@ -172,6 +171,9 @@ public class TUI implements Runnable, ViewObserver {
         switch (message) {
 
             case LoginMessage m -> {
+                semaphore.release();
+            }
+            case CurrentStatusMessage m -> {
                 state = TUIState.MENU;
                 semaphore.release();
             }
@@ -179,41 +181,35 @@ public class TUI implements Runnable, ViewObserver {
             case LobbyCreatedMessage m -> {
                 if (state == TUIState.CREATE_LOBBY && m.getID().equals(view.getID())) {
                     state = TUIState.CHOOSE_PAWN;
-                    semaphore.release();
-                } else if (state == TUIState.MENU || state == TUIState.JOIN_LOBBY);
-
+                }
+                semaphore.release();
+            }
+            case LobbyDeletedMessage m -> {
+                return;
             }
             case PawnAssignedMessage m -> {
                 if (state == TUIState.CHOOSE_PAWN && m.getPlayer().equals(view.getPlayer())) {
                     state = TUIState.LOBBY;
                     semaphore.release();
-                }
+                } else if (!m.getPlayer().equals(view.getPlayer()))
+                    return;
             }
             case LobbyJoinedMessage m -> {
                 if (state == TUIState.CHOOSE_PAWN) return;
                 if (m.getPlayer().getNickname().equals(view.getPlayer().getNickname())) {
                     state = TUIState.CHOOSE_PAWN;
-                    semaphore.release();
                 }
-                if (state.equals(TUIState.LOBBY) && m.getID().equals(view.getID())) {
-
-                    semaphore.release();
-                }
+                semaphore.release();
             }
             case LobbyLeftMessage m -> {
+                if (state == TUIState.CHOOSE_PAWN) return;
                 if (m.getPlayer().getNickname().equals(view.getPlayer().getNickname())) {
                     state = TUIState.MENU;
-                    semaphore.release();
-                } else if (state.equals(TUIState.JOIN_LOBBY) || ((state.equals(TUIState.LOBBY) && m.getID().equals(view.getID())))) {
-
-                    semaphore.release();
-                } else if (!m.getPlayer().getNickname().equals(view.getPlayer().getNickname()) && view.getGamePhase().equals(GamePhase.PLACING_STARTER_CARD) || (view.getGamePhase().equals(GamePhase.CHOOSING_SECRET_GOAL))) {
-                    System.out.println("someone left the game");
-                    //if(!view.getGamePhase().equals(GamePhase.PLAYING_GAME)) state=TUIState.MENU;
-                    semaphore.release();
+                } else if (GamePhase.PLACING_STARTER_CARD.equals(view.getGamePhase()) || (GamePhase.CHOOSING_SECRET_GOAL.equals(view.getGamePhase()))) {
+                    System.out.println(cli + "someone left the game");
                 }
+                semaphore.release();
             }
-
             case GameCreatedMessage m -> {
                 state = TUIState.GAME;
                 semaphore.release();
@@ -224,15 +220,18 @@ public class TUI implements Runnable, ViewObserver {
                     semaphore.release();
             }
             case SecretGoalAssignedMessage m -> {
-                System.out.println("wait for the other players to continue");
+                System.out.println(cli + "wait for the other players to continue");
                 semaphore.release();
             }
             case CardPlacedOnFieldMessage m -> {
-                inputState = InputState.DRAW;
+                if (!view.isLastRound()) inputState = InputState.DRAW;
+                else return; //if(!view.isLastRound())inputState = InputState.DRAW;
                 semaphore.release();
             }
             case TurnChangedMessage m -> {
-                System.out.println("new turn");
+                if (view.isLastRound()) inputState = InputState.PLAY_SELECT_CARD;
+                System.out.println(cli + "new turn");
+                if(view.isLastRound())System.out.println(cli + "last round");
                 semaphore.release();
 
             }
@@ -259,13 +258,15 @@ public class TUI implements Runnable, ViewObserver {
                 }
             }
             case GameTerminatedMessage m -> {
-                System.out.println("game terminated, returning to menu");
+                System.out.print(cli + "game terminated, returning to menu");
                 state = TUIState.MENU;
                 semaphore.release();
             }
             case FailMessage m -> {
+                if(inputState==InputState.PLAY_SELECT_Y) inputState=InputState.PLAY_SELECT_CARD;
                 if (m.getNickname().equals(view.getNickname())) System.out.println(m.getMessage());
                 semaphore.release();
+                return;
             }
             case DisconnectMessage m -> {
                 System.out.print(cli + "The server crashed. Exiting game");
@@ -282,31 +283,34 @@ public class TUI implements Runnable, ViewObserver {
         switch (state) {
             // print status: prints what the player is supposed to see
             case LOGIN -> {
-                System.out.println("waiting for login and current status");
             }
             case MENU -> {
-                System.out.println("\n1.create lobby\n2.joinLobby\n3.exit game");
+                printOpenLobbies();
+                System.out.print(cli + "1.create lobby" + cli +
+                        "2.joinLobby" + cli +
+                        "3.exit game\n");
             }
             case CREATE_LOBBY -> {
-                System.out.println("insert how many players");
+                System.out.print(cli + "insert how many players\n");
             }
             case CHOOSE_PAWN -> {
                 printAvailablePawns();
-                System.out.println("\nwhich pawn?");
+                System.out.print(cli + "which pawn?\n");
             }
             case JOIN_LOBBY -> {
                 printOpenLobbies();
-                System.out.println("which lobby do you want to join?");
+                System.out.print(cli + "which lobby do you want to join?\n");
             }
             case LOBBY -> {
                 printPlayers(view.getID());
-                System.out.println("1.send message\n2.leave lobby");
+                System.out.print(cli + "1.send message" +cli +
+                        "2.leave lobby\n");
             }
-            //todo leave lobby
             case GAME -> {
                 switch (view.getGamePhase()) {
                     case PLACING_STARTER_CARD -> {
-                        System.out.println("the number of player needed has been reached and the game has started: now it's time to choose the strating card");
+                        System.out.print(cli + "the number of player needed has been reached and the game has started: " +
+                                cli + "now it's time to choose the strating card");
                         StarterCard card = (StarterCard) view.getHand().getCard(0);
                         System.out.print(cli + "FRONT SIDE:");
                         printCard(card);
@@ -316,11 +320,9 @@ public class TUI implements Runnable, ViewObserver {
                         card.flip();
                     }
                     case CHOOSING_SECRET_GOAL -> {
-                        System.out.println("time to choose a goal ");
                         System.out.print("\n" + cli + "Common goals:");
                         printGoal(view.getCommonGoal1());
                         printGoal(view.getCommonGoal2());
-                        System.out.println("\n");
 
                         printHand();
 
@@ -328,6 +330,7 @@ public class TUI implements Runnable, ViewObserver {
                         System.out.print(cli + "You can choose between these two goals:");
                         printGoal(goals.getFirst());
                         printGoal(goals.getLast());
+                        System.out.println();
                     }
                     case PLAYING_GAME -> {
                         if (view.isYourTurn()) {
@@ -336,10 +339,10 @@ public class TUI implements Runnable, ViewObserver {
                                     printResources();
                                     printField();
                                     printHand();
-                                    System.out.print(cli + "Which card do you want to play? (0, 1, 2)");
+                                    System.out.print(cli + "Which card do you want to play? (0, 1, 2)\n");
                                 }
                                 case PLAY_SELECT_SIDE -> {
-                                    System.out.print(cli + "Which side of card do you want to be visible? (front, back)");
+                                    System.out.print(cli + "Which side of card do you want to be visible? (front, back)\n");
                                 }
                                 case PLAY_SELECT_X -> {
                                     System.out.print(cli + "Select the X coordinate of the placement: ");
@@ -349,14 +352,15 @@ public class TUI implements Runnable, ViewObserver {
                                 }
                                 case DRAW -> {
                                     printGameArea();
-                                    System.out.println(cli + "From where do you want to draw?" + cli + "Resource Deck -> ResDeck" + cli + "Golden Deck -> GoldDeck" + cli + "Resource card spaces -> RES1 - RES2" + cli + "Golden card spaces -> GOLD1 - GOLD2" + user);
+                                    System.out.println(cli + "From where do you want to draw?" + cli + "Resource Deck -> ResDeck" + cli + "Golden Deck -> GoldDeck" + cli + "Resource card spaces -> RES1 - RES2" + cli + "Golden card spaces -> GOLD1 - GOLD2" );
                                 }
                             }
                         } else {
                             //not your turn
                             //print all the field and your hand and the decks
-                            System.out.println("wait for your turn");
-                            System.out.println("1.send message\n2.leave lobby");
+                            System.out.print(cli + "wait for your turn");
+                            System.out.print(cli + "1.send message" +cli+
+                                    "2.leave lobby");
                             printScoreboard();
                         }
                     }
@@ -369,9 +373,8 @@ public class TUI implements Runnable, ViewObserver {
 
     private void chooseMenuAction(String in) throws InterruptedException {
         if (state != TUIState.MENU) return;
-        if (in.equals("console")) return;
         if (!isNumeric(in)) {
-            System.out.println(warningColor + "[ERROR]: didn't insert numeric value!!" + reset);
+            System.out.println(warningColor + "didn't insert numeric value!!" + reset);
             return;
         }
 
@@ -381,7 +384,7 @@ public class TUI implements Runnable, ViewObserver {
             case 1 -> state = TUIState.CREATE_LOBBY;
             case 2 -> {
                 if (view.getLobbies().isEmpty()) {
-                    System.out.println(warningColor + "\n[ERROR]: There are no open lobbies!\n" + reset);
+                    System.out.println(warningColor + "\nThere are no open lobbies!\n" + reset);
                 } else {
                     state = TUIState.JOIN_LOBBY;
                 }
@@ -391,26 +394,25 @@ public class TUI implements Runnable, ViewObserver {
                 view.removeObserver(this);
                 exit(0);
             }
-            default -> System.out.println(warningColor + "\n[ERROR]: Invalid choice!!\n" + reset);
+            default -> System.out.println(warningColor + "Invalid choice!!\n" + reset);
         }
     }
 
     private void createLobby(String in) throws InterruptedException {
         if (view.getID() != null) {
-            System.out.println(warningColor + "\n[ERROR]: Cannot create a lobby while in another lobby!!" + reset);
+            System.out.println(warningColor + "\nCannot create a lobby while in another lobby!!" + reset);
             state = TUIState.MENU;
             return;
         }
-        if (in.equals("console")) return;
         if (!isNumeric(in)) {
-            System.out.println(warningColor + "[ERROR]: didn't insert numeric value!!" + reset);
+            System.out.println(warningColor + "didn't insert numeric value!!" + reset);
             return;
         }
 
         int numOfPlayers = Integer.parseInt(in);
 
         if (numOfPlayers < 2 || numOfPlayers > 4) {
-            System.out.println(warningColor + "[ERROR]: invalid number of player!" + reset);
+            System.out.println(warningColor + "invalid number of player!" + reset);
             return;
         }
 
@@ -454,32 +456,29 @@ public class TUI implements Runnable, ViewObserver {
                 view.removeObserver(this);
                 Thread.currentThread().interrupt();
             }
-        } else System.out.println(warningColor + "[ERROR]: Color chosen does not exist!" + reset);
+        } else System.out.println(warningColor + "Color chosen does not exist!" + reset);
 
     }
 
     private void chooseLobby(String in) throws InterruptedException {
 
         if (view.getID() != null) {
-            System.out.println(warningColor + "\n[ERROR]: Cannot create a lobby while in another lobby!!" + reset);
+            System.out.println(warningColor + "\nCannot create a lobby while in another lobby!!" + reset);
             return;
         }
 
         int id;
 
-        if (in.equals("console")) {
-            state = TUIState.MENU;
-            return;
-        }
 
         if (!isNumeric(in)) {
-            System.out.println(warningColor + "[ERROR]: didn't insert numeric value!!" + reset);
+            System.out.println(warningColor + "didn't insert numeric value!!" + reset);
             return;
         }
         id = Integer.parseInt(in);
 
         if (id == -1) {
             state = TUIState.MENU;
+            printStatus();
             return;
         }
 
@@ -489,11 +488,11 @@ public class TUI implements Runnable, ViewObserver {
             semaphore.acquire();
         } catch (NicknameAlreadyTakenException ignored) {
         } catch (CannotJoinMultipleLobbiesException e) {
-            System.out.println(warningColor + "[ERROR]: Cannot join multiple lobbies!!" + reset);
+            System.out.println(warningColor + "Cannot join multiple lobbies!!" + reset);
         } catch (FullLobbyException e) {
-            System.out.println(warningColor + "[ERROR]: Lobby #" + id + " is full. Cannot join!!" + reset);
+            System.out.println(warningColor + "Lobby #" + id + " is full. Cannot join!!" + reset);
         } catch (LobbyDoesNotExistsException e) {
-            System.out.println(warningColor + "[ERROR]: Lobby #" + id + " does not exist!!" + reset);
+            System.out.println(warningColor + "Lobby #" + id + " does not exist!!" + reset);
         } catch (IOException | ClassNotFoundException | UnexistentUserException e) {
             view.removeObserver(this);
             Thread.currentThread().interrupt();
@@ -503,9 +502,8 @@ public class TUI implements Runnable, ViewObserver {
 
     private void chooseLobbyAction(String in) throws InterruptedException {
 
-        if (in.equals("console")) return;
         if (!isNumeric(in)) {
-            System.out.println(warningColor + "[ERROR]: didn't insert numeric value!!" + reset);
+            System.out.println(warningColor + "didn't insert numeric value!!" + reset);
             return;
         }
         int choice = Integer.parseInt(in);
@@ -534,10 +532,10 @@ public class TUI implements Runnable, ViewObserver {
 
         // Selecting chat (if error return to waiting()):
         in = scanner.nextLine();
-        if (in.equals("console")) return;
+
         if (isNumeric(in)) desiredChat = Integer.parseInt(scanner.nextLine());
         else {
-            System.out.println(warningColor + "[ERROR]: didn't insert numeric value!!" + reset);
+            System.out.println(warningColor + "didn't insert numeric value!!" + reset);
             return;
         }
 
@@ -552,7 +550,7 @@ public class TUI implements Runnable, ViewObserver {
                 System.out.print("\n\u001B[38;2;255;165;0m[" + m.getSender().getNickname() + "]:" + reset + " \"" + m.getText() + "\"");
             }
             sendMessage(players.get(desiredChat - 2));
-        } else System.out.println(warningColor + "[ERROR]: Invalid choice!!" + reset);
+        } else System.out.println(warningColor + "Invalid choice!!\n" + reset);
     }
 
     private void sendMessage(Player player) throws InterruptedException {
@@ -580,14 +578,14 @@ public class TUI implements Runnable, ViewObserver {
         try {
             check.checkLeaveLobby();
         } catch (NotConnectedToLobbyException e) {
-            System.out.println(warningColor + "[ERROR]: Non connected to a lobby!!" + reset);
+            System.out.println(warningColor + "Non connected to a lobby!!" + reset);
         }
 
         try {
             view.leaveLobby();
             semaphore.acquire();
 
-        } catch (GameAlreadyStartedException e) {//todo:deprecated
+        } catch (GameAlreadyStartedException e) {
             System.out.print(cli + "The game is already started! Cannot leave the lobby!");
         } catch (LobbyDoesNotExistsException | NicknameAlreadyTakenException | GameDoesNotExistException ignored) {
         } catch (IOException | FullLobbyException | ClassNotFoundException | UnexistentUserException e) {
@@ -600,7 +598,6 @@ public class TUI implements Runnable, ViewObserver {
         if (view.getHand().getSize() == 0 || !view.getHand().getCard(0).getClass().equals(StarterCard.class)) return;
         StarterCard card = (StarterCard) view.getHand().getCard(0);
 
-        if (choice.equals("console")) return;
 
         CardSide side = switch (choice.toUpperCase()) {
             case "FRONT", "F" -> side = CardSide.FRONT;
@@ -608,7 +605,7 @@ public class TUI implements Runnable, ViewObserver {
             default -> side = null;
         };
         if (side == null) {
-            System.out.println(warningColor + "\n[ERROR]: Invalid choice!!\n" + reset);
+            System.out.println(warningColor + "Invalid choice!!\n" + reset);
             return;
         }
 
@@ -618,7 +615,7 @@ public class TUI implements Runnable, ViewObserver {
 
         try {
             view.chooseCardSide(side);
-            System.out.println("card placed, wait for the others");
+            System.out.print(cli + "card placed, wait for the others");
             semaphore.acquire();
         } catch (IOException | GameDoesNotExistException | EmptyDeckException | HandIsFullException |
                  UnexistentUserException | WrongGamePhaseException e) {
@@ -630,33 +627,31 @@ public class TUI implements Runnable, ViewObserver {
     protected void chooseSecretGoal(String choice) throws InterruptedException {
         if (view.getSecretGoal() != null) return;
 
-
-        if (choice.equals("console")) return;
         if (!isNumeric(choice)) {
-            System.out.println(warningColor + "[ERROR]: didn't insert numeric value!!" + reset);
+            System.out.println(warningColor + "didn't insert numeric value!!" + reset);
         }
         int id = Integer.parseInt(choice);
 
         try {
             view.chooseSecretGoal(id);
-            System.out.println("goal chosen");
+            System.out.print(cli + "goal chosen");
         } catch (IOException | UnexistentUserException e) {
             throw new RuntimeException(e);
         } catch (WrongGamePhaseException | GameDoesNotExistException ignored) {
         } catch (IllegalGoalChosenException e) {
-            System.out.print(warningColor + "[ERROR]: Invalid choice!!" + reset);
+            System.out.print(warningColor + "Invalid choice!!\n" + reset);
         }
     }
 
     private void playCard_selectCard(String in) {
         if (!isNumeric(in)) {
-            System.out.println(warningColor + "[ERROR]: didn't insert numeric value!!" + reset);
+            System.out.println(warningColor + "didn't insert numeric value!!" + reset);
             return;
         }
         cardChoice = Integer.parseInt(in);
 
         if (cardChoice < 0 || cardChoice >= view.getHand().getSize()) {
-            System.out.println(warningColor + "\n[ERROR]: Invalid choice!!\n" + reset);
+            System.out.println(warningColor + "Invalid choice!!\n" + reset);
         } else {
             inputState = InputState.PLAY_SELECT_SIDE;
             printStatus();
@@ -667,7 +662,7 @@ public class TUI implements Runnable, ViewObserver {
         String choice = in.toUpperCase();
 
         if (!List.of("B", "BACK", "F", "FRONT").contains(choice)) {
-            System.out.print(warningColor + "[ERROR]: Invalid choice!!" + reset);
+            System.out.print(warningColor + "Invalid choice!!\n" + reset);
             return;
         }
 
@@ -688,7 +683,7 @@ public class TUI implements Runnable, ViewObserver {
 
     private void playCard_selectX(String in) {
         if (!isNumeric(in)) {
-            System.out.println(warningColor + "[ERROR]: didn't insert numeric value!!" + reset);
+            System.out.println(warningColor + "didn't insert numeric value!!" + reset);
             return;
         }
         xChoice = Integer.parseInt(in);
@@ -698,7 +693,7 @@ public class TUI implements Runnable, ViewObserver {
 
     private void playCard_selectY(String in) {
         if (!isNumeric(in)) {
-            System.out.println(warningColor + "[ERROR]: didn't insert numeric value!!" + reset);
+            System.out.println(warningColor + "didn't insert numeric value!!" + reset);
             return;
         }
         yChoice = Integer.parseInt(in);
@@ -713,18 +708,16 @@ public class TUI implements Runnable, ViewObserver {
             return;
         } catch (IllegalCoordsException e) {
             if (e.getClass().equals(OccupiedCoordsException.class)) {
-                System.out.format(cli + "Coords (%d, %d) already occupied:\n", xChoice, yChoice);
-                printCard(view.getMyField().getMatrix().get(coords));
-
+                System.out.format(cli + "Coords (%d, %d) already occupied", xChoice, yChoice);
             } else if (e.getClass().equals(UnreachablePositionException.class))
-                System.out.println(warningColor + "[ERROR]: Invalid spot!!");
-            else System.out.println(warningColor + "Don't know");
-
+                System.out.println(warningColor + "Invalid spot!!");
             inputState = InputState.PLAY_SELECT_CARD;
+            printStatus();
             return;
         } catch (RequirementsNotSatisfiedException e) {
-            System.out.println(warningColor + "[ERROR]: You don't have enough resources to play this card!!");
+            System.out.println(warningColor + "You don't have enough resources to play this card!!");
             inputState = InputState.PLAY_SELECT_CARD;
+            printStatus();
             return;
         }
 
@@ -734,19 +727,16 @@ public class TUI implements Runnable, ViewObserver {
             for (int i = 0; i < view.getHand().getSize(); i++) {
                 if (view.getHand().getCard(i).getSide().equals(CardSide.BACK)) view.getHand().getCard(i).flip();
             }
-
-
         } catch (IllegalActionException | NotYourTurnException | LobbyDoesNotExistsException |
                  GameDoesNotExistException e) {
             System.out.println(e.getClass().getName());
         } catch (OccupiedCoordsException e) {
-            System.out.println(warningColor + "[ERROR]: Spot already taken by:" + reset);
-            printCard(view.getMyField().getMatrix().get(coords));
+            System.out.println(warningColor + "Spot already taken by:" + reset);
+            inputState = InputState.PLAY_SELECT_CARD;
         } catch (IllegalMoveException e) {
-            System.out.println(warningColor + "[ERROR]: Illegal placement. Cannot play card in this spot!!" + reset);
-        } catch (UnexistentUserException | IOException e) {
-            throw new RuntimeException(e);
-        } catch (InterruptedException e) {
+            System.out.println(warningColor + "Illegal placement. Cannot play card in this spot!!" + reset);
+            inputState = InputState.PLAY_SELECT_CARD;
+        } catch (UnexistentUserException | IOException | InterruptedException e) {
             throw new RuntimeException(e);
         }
 
@@ -755,14 +745,13 @@ public class TUI implements Runnable, ViewObserver {
 
     protected void drawCard(String choice) throws InterruptedException {
         if (!view.isYourTurn()) {
-            System.out.println(warningColor + "[ERROR]: Cannot draw card because it's not your turn!!" + reset);
+            System.out.println(warningColor + "Cannot draw card because it's not your turn!!" + reset);
             return;
         }
         if (!view.getAction().equals(Action.DRAW)) {
-            System.out.println(warningColor + "[ERROR]: Cannot draw card because you have to play one first!!" + reset);
+            System.out.println(warningColor + "Cannot draw card because you have to play one first!!" + reset);
             return;
         }
-        if (choice.equals("console")) return;
 
         DeckTypeBox type = switch (choice.toUpperCase()) {
             case "RD", "RESDECK", "RESOURCE DECK" -> DeckType.RESOURCE;
@@ -775,7 +764,7 @@ public class TUI implements Runnable, ViewObserver {
         };
 
         if (type == null) {
-            System.out.print(warningColor + "\n[ERROR]: Invalid choice!!\n" + reset);
+            System.out.print(warningColor + "Invalid choice!!\n" + reset);
             return;
         }
 
@@ -786,7 +775,7 @@ public class TUI implements Runnable, ViewObserver {
         } catch (IllegalActionException | HandIsFullException | EmptyBufferException | NotYourTurnException |
                  LobbyDoesNotExistsException | GameDoesNotExistException ignored) {
         } catch (EmptyDeckException e) {
-            System.out.println(warningColor + "[ERROR]: Cannot draw from this deck. Reason: empty!!" + reset);
+            System.out.println(warningColor + "Cannot draw from this deck. Reason: empty!!" + reset);
         } catch (IOException | UnexistentUserException e) {
             throw new RuntimeException(e);
         }
@@ -794,9 +783,8 @@ public class TUI implements Runnable, ViewObserver {
 
 
     private void chooseConnectionType() {
-        System.out.println(cli + "Insert your connection type: [TCP|RMI]" + user);
+        System.out.println(cli + "Insert your connection type: [TCP|RMI]" );
         String choice = scanner.nextLine();
-        //if (choice.equals("console")) choice = "RMI";
 
         if (choice.equalsIgnoreCase("TCP")) {
             try {
@@ -808,8 +796,8 @@ public class TUI implements Runnable, ViewObserver {
             new Thread(() -> {
                 try {
                     ((TCPView) view).startClient();
-                } catch (IOException | ClassNotFoundException |NullPointerException e) {
-                    if(view!=null)view.removeObserver(this);
+                } catch (IOException | ClassNotFoundException | NullPointerException e) {
+                    if (view != null) view.removeObserver(this);
                     Thread.currentThread().interrupt();
                 }
             }).start();
@@ -836,11 +824,11 @@ public class TUI implements Runnable, ViewObserver {
 
 
     private void printOpenLobbies() {
-        System.out.print(cli + "Open lobbies:");
         HashMap<Integer, Lobby> lobbies = view.getLobbies();
-
+        if (lobbies.isEmpty()) return;
+        System.out.print(cli + "Open lobbies:");
         for (Integer i : lobbies.keySet()) {
-            if (lobbies.get(i).getPlayers().size() != lobbies.get(i).getNumOfPlayers()) {
+            if (lobbies.get(i).getPlayers().size() != lobbies.get(i).getNumOfPlayers() && !lobbies.get(i).getPlayers().isEmpty()) {
                 System.out.print(cli + "-> Lobby " + green + "#" + i + reset + ": " + lobbies.get(i).getPlayers().size() + "/" + lobbies.get(i).getNumOfPlayers() + " - [");
 
                 for (Player p : lobbies.get(i).getPlayers()) {
@@ -850,9 +838,10 @@ public class TUI implements Runnable, ViewObserver {
                         System.out.print(p.getNickname() + " - ");
                     }
                 }
-            } else System.out.print(cli + "-> Lobby " + warningColor + "#" + i + reset + ": FULL");
+            } else if (!lobbies.get(i).getPlayers().isEmpty())
+                System.out.print(cli + "-> Lobby " + warningColor + "#" + i + reset + ": FULL");
         }
-        System.out.println();
+
     }
 
     private void printPlayers(Integer ID) {     // TODO: Resolve problem with prints
@@ -869,7 +858,7 @@ public class TUI implements Runnable, ViewObserver {
             }
             System.out.print(p.getNickname() + reset);
         }
-        System.out.println();
+
     }
 
     private void printAvailablePawns() {
@@ -1088,7 +1077,7 @@ public class TUI implements Runnable, ViewObserver {
         for (int i = 0; i < hand.getSize(); i++)
             System.out.print("\t" + i + ":\t" + printLower(hand.getCard(i)));
 
-        System.out.println();
+
     }
 
     private void printGameArea() {
@@ -1164,10 +1153,9 @@ public class TUI implements Runnable, ViewObserver {
         System.out.print("\n" + cli + "Common goals:");
         printGoal(view.getCommonGoal1());
         printGoal(view.getCommonGoal2());
-        System.out.println();
+
         printGoal(view.getSecretGoal());
 
-        System.out.println("\n");
     }
 
     private void printField() {         // TODO: Do a better printField
@@ -1176,7 +1164,7 @@ public class TUI implements Runnable, ViewObserver {
             System.out.format(cli + "(%d, %d)\n", coords.getX(), coords.getY());
             printCard(view.getMyField().getMatrix().get(coords));
         }
-        System.out.println();
+
     }
 
     private void printResources() {
@@ -1184,7 +1172,7 @@ public class TUI implements Runnable, ViewObserver {
         for (ItemBox item : view.getMyField().getTotalResources().keySet()) {
             System.out.print(cli + " - " + item + ": " + view.getMyField().getTotalResources().get(item));
         }
-        System.out.println();
+
     }
 
     protected void printScoreboard() {
