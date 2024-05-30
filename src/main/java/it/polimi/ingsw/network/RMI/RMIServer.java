@@ -36,13 +36,13 @@ public class RMIServer extends UnicastRemoteObject implements RemoteInterface {
     }
 
     @Override
-    public void heartbeat() throws RemoteException {
-
+    public void heartbeat() throws IOException {
+        c.heartbeat();
     }
 
     @Override
-    public void playCard(Integer GameID, String nickname, int handPos, Coords coords) throws IllegalActionException, NotYourTurnException, IllegalMoveException, GameDoesNotExistException, IOException, LobbyDoesNotExistsException, UnexistentUserException {
-        c.playCard(GameID,nickname,handPos,coords);
+    public void playCard(Integer GameID, String nickname, int handPos, Coords coords, CardSide side) throws IllegalActionException, NotYourTurnException, IllegalMoveException, GameDoesNotExistException, IOException, LobbyDoesNotExistsException, UnexistentUserException {
+        c.playCard(GameID,nickname,handPos,coords,side);
     }
 
     @Override
@@ -95,5 +95,6 @@ public class RMIServer extends UnicastRemoteObject implements RemoteInterface {
     public void getCurrentStatus() throws IOException {
         c.getCurrentStatus();
     }
+
 
 }

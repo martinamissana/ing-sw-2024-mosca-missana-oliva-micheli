@@ -169,7 +169,7 @@ public class RMIView extends View implements ClientRemoteInterface , Serializabl
      */
     @Override
     public void playCard(int handPos, Coords coords) throws IllegalActionException, NotYourTurnException, IllegalMoveException, GameDoesNotExistException, LobbyDoesNotExistsException, UnexistentUserException, IOException {
-        RMIServer.playCard(super.getID(), super.getPlayer().getNickname(), handPos, coords);
+        RMIServer.playCard(super.getID(), super.getPlayer().getNickname(), handPos, coords, super.getHand().getCard(handPos).getSide());
     }
 
     /**
@@ -205,13 +205,13 @@ public class RMIView extends View implements ClientRemoteInterface , Serializabl
         Thread.currentThread().interrupt();
     }
 
-
+    @Override
     public void heartbeat() throws RemoteException {
         ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
         Runnable task = () -> {
             try {
                 RMIServer.heartbeat();
-            } catch (RemoteException e) {
+            } catch (IOException e) {
                 throw new RuntimeException(e);
             }
         };

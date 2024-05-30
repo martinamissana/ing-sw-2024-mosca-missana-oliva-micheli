@@ -8,16 +8,27 @@ import it.polimi.ingsw.model.exceptions.IllegalMoveException;
 import it.polimi.ingsw.model.exceptions.NicknameAlreadyTakenException;
 import it.polimi.ingsw.model.observer.Observer;
 import it.polimi.ingsw.model.observer.events.*;
+import it.polimi.ingsw.network.netMessage.HeartBeatMessage;
 import it.polimi.ingsw.network.netMessage.c2s.LobbyJoinedMessage;
 import it.polimi.ingsw.network.netMessage.s2c.*;
 import java.io.IOException;
 import java.rmi.RemoteException;
 
+/**
+ * RMIVirtualView class
+ * receives the events from the controller and sends messages calling the remote method of the view elaborate
+ */
 public class RMIVirtualView implements Observer {
     private Integer ID;
     private String nickname;
     private final ClientRemoteInterface view;
 
+    /**
+     * Class constructor
+     * @param c controller
+     * @param view
+     * @throws RemoteException
+     */
     public RMIVirtualView(Controller c, ClientRemoteInterface view) throws RemoteException {
         c.getGh().addObserver(this);
         this.view=view;
@@ -128,7 +139,7 @@ public class RMIVirtualView implements Observer {
             case CardPlacedOnFieldEvent e -> {
                 if(e.getID().equals(ID)) {
                     try {
-                        view.elaborate(new CardPlacedOnFieldMessage(e.getCoords(), e.getID(), e.getCard(), e.getNickname()));
+                        view.elaborate(new CardPlacedOnFieldMessage(e.getCoords(), e.getID(), e.getCard(),e.getCard().getSide(), e.getNickname()));
                     } catch (FullLobbyException | NicknameAlreadyTakenException | HandIsFullException |
                              IllegalMoveException ex) {
                         throw new RuntimeException(ex);
@@ -188,7 +199,7 @@ public class RMIVirtualView implements Observer {
             case TurnChangedEvent e -> {
                 if(e.getID().equals(ID)) {
                     try {
-                        view.elaborate(new TurnChangedMessage(e.getID(), e.getNickname()));
+                        view.elaborate(new TurnChangedMessage(e.getID(), e.getNickname(),e.isLastRound()));
                     } catch (FullLobbyException | NicknameAlreadyTakenException | HandIsFullException |
                              IllegalMoveException ex) {
                         throw new RuntimeException(ex);
@@ -233,11 +244,19 @@ public class RMIVirtualView implements Observer {
                     throw new RuntimeException(ex);
                 }
             }
-            case ScoreIncrementedEvent e ->{
+            case ScoreIncrementedEvent e -> {
                 try {
                     view.elaborate(new ScoreIncrementedMessage(e.getID(),e.getPlayer(),e.getPoints()));
                 } catch (FullLobbyException | IllegalMoveException | HandIsFullException |
                          NicknameAlreadyTakenException ex) {
+                    throw new RuntimeException(ex);
+                }
+            }
+            case HeartBeatEvent e -> {
+                try {
+                    view.elaborate(new HeartBeatMessage());
+                } catch (FullLobbyException | NicknameAlreadyTakenException | IllegalMoveException |
+                         HandIsFullException ex) {
                     throw new RuntimeException(ex);
                 }
             }

@@ -20,9 +20,9 @@ public interface RemoteInterface extends Remote {
 
     void login(String username) throws NicknameAlreadyTakenException, IOException;
 
-    void heartbeat() throws RemoteException;
+    void heartbeat() throws IOException;
 
-    void playCard(Integer GameID, String nickname, int handPos, Coords coords) throws IllegalActionException, NotYourTurnException, IllegalMoveException, GameDoesNotExistException, IOException, LobbyDoesNotExistsException, UnexistentUserException;
+    void playCard(Integer GameID, String nickname, int handPos, Coords coords, CardSide side) throws IllegalActionException, NotYourTurnException, IllegalMoveException, GameDoesNotExistException, IOException, LobbyDoesNotExistsException, UnexistentUserException;
 
     void createLobby(int numOfPlayers,String nickname) throws LobbyDoesNotExistsException, RemoteException, CannotJoinMultipleLobbiesException, UnexistentUserException;
 
