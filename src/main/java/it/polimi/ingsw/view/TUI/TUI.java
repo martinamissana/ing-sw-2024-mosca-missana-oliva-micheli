@@ -14,7 +14,6 @@ import it.polimi.ingsw.model.goal.Goal;
 import it.polimi.ingsw.model.player.Coords;
 import it.polimi.ingsw.model.player.Pawn;
 import it.polimi.ingsw.model.player.Player;
-import it.polimi.ingsw.network.RMI.ClientRemoteInterface;
 import it.polimi.ingsw.network.RMI.RemoteInterface;
 import it.polimi.ingsw.network.netMessage.NetMessage;
 import it.polimi.ingsw.network.netMessage.c2s.DisconnectMessage;
@@ -27,7 +26,6 @@ import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
-import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -203,9 +201,11 @@ public class TUI implements Runnable, ViewObserver {
                 semaphore.release();
             }
 
-            case CardPlacedOnFieldMessage ignored -> {
+            case CardPlacedOnFieldMessage m -> {
+                System.out.println(cli + "Card placed successfully on coords (" + m.getCoords().getX() + ", " + m.getCoords().getX() + ")");
                 if (!view.isLastRound()) inputState = InputState.DRAW;
                 else return;
+                printStatus();
                 semaphore.release();
             }
 
@@ -280,7 +280,7 @@ public class TUI implements Runnable, ViewObserver {
             case GAME -> {
                 switch (view.getGamePhase()) {
                     case PLACING_STARTER_CARD -> {
-                        if (view.getHand().getSize() == 0) return;
+                        if (view.getHand().getSize() == 0 && !(view.getHand().getCard(0) instanceof StarterCard)) return;
                         System.out.print(cli + "Choose the starter card's side you prefer (front / back):");
                         StarterCard card = (StarterCard) view.getHand().getCard(0);
                         System.out.print(cli + "FRONT SIDE:");
@@ -317,10 +317,12 @@ public class TUI implements Runnable, ViewObserver {
 
                                 case PLAY_SELECT_CARD -> {
                                     printer.printResources();
-                                    printer.printField();
+                                    printer.printFieldTemp();
                                     printer.printHand();
                                     System.out.print(cli + "Which card do you want to play?" + user);
                                 }
+
+                                case PLAY_SELECT_COORDS -> System.out.println(cli +  "Now insert the position in format: X Y" + user);
 
                                 case DRAW -> {
                                     printer.printGameArea();
@@ -637,7 +639,7 @@ public class TUI implements Runnable, ViewObserver {
 
         try {
             view.chooseCardSide(side);
-            System.out.print(cli + "card placed, wait for the others");
+            System.out.print(cli + "Card placed in position (0, 0), wait for other players to continue...");
             semaphore.acquire();
         } catch (IOException | GameDoesNotExistException | EmptyDeckException | HandIsFullException |
                  UnexistentUserException | WrongGamePhaseException e) {
@@ -667,7 +669,7 @@ public class TUI implements Runnable, ViewObserver {
 
     private void chooseInGameAction(String in) {
         printer.printScoreboard();
-        printer.printField();
+        printer.printFieldTemp();
 
         if (!isNumeric(in)) {
             System.out.println(Color.warning + "Didn't insert numeric value!!" + Color.reset);
