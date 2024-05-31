@@ -7,6 +7,7 @@ import it.polimi.ingsw.model.deck.DeckTypeBox;
 import it.polimi.ingsw.model.exceptions.*;
 import it.polimi.ingsw.model.player.Coords;
 import it.polimi.ingsw.model.player.Pawn;
+import it.polimi.ingsw.network.Client;
 import it.polimi.ingsw.view.RMIView;
 
 import java.io.IOException;
@@ -16,9 +17,7 @@ import java.rmi.RemoteException;
 
 public interface RemoteInterface extends Remote {
 
-    void connect(ClientRemoteInterface client) throws RemoteException, NotBoundException; //send to the server a clientremoteinterface in order to send messages from server to client
-
-    void login(String username) throws NicknameAlreadyTakenException, IOException;
+    void login(String username, ClientRemoteInterface client) throws NicknameAlreadyTakenException, IOException;
 
     void heartbeat() throws IOException;
 

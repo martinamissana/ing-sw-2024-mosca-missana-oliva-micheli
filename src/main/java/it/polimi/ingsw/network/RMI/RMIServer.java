@@ -25,13 +25,9 @@ public class RMIServer extends UnicastRemoteObject implements RemoteInterface {
     public RMIServer(Controller c) throws RemoteException {
       this.c=c;
     }
-
     @Override
-    public void connect(ClientRemoteInterface client) throws RemoteException {
-        new RMIVirtualView(c, client);
-    }
-    @Override
-    public void login(String username) throws NicknameAlreadyTakenException, IOException {
+    public void login(String username,ClientRemoteInterface client) throws NicknameAlreadyTakenException, IOException {
+        new RMIVirtualView(c, client,username);
         c.login(username);
     }
 
@@ -94,6 +90,7 @@ public class RMIServer extends UnicastRemoteObject implements RemoteInterface {
     @Override
     public void getCurrentStatus(String nickname) throws IOException {
         c.getCurrentStatus(nickname);
+        System.out.println(nickname);
     }
 
 

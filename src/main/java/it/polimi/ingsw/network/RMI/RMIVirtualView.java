@@ -24,15 +24,17 @@ public class RMIVirtualView implements Observer {
     private String nickname;
     private final ClientRemoteInterface view;
 
+
     /**
-     * Class constructor
      * @param c controller
-     * @param view
+     * @param view client view
+     * @param nickname username
      * @throws RemoteException
      */
-    public RMIVirtualView(Controller c, ClientRemoteInterface view) throws RemoteException {
+    public RMIVirtualView(Controller c, ClientRemoteInterface view, String nickname) throws RemoteException {
         c.getGh().addObserver(this);
         this.view=view;
+        this.nickname=nickname;
     }
 
 
@@ -40,7 +42,6 @@ public class RMIVirtualView implements Observer {
     public void update(Event event) throws IOException {
         switch (event) {
             case LoginEvent e -> {
-                if (nickname == null) this.nickname = e.getNickname();
                 if (Objects.equals(nickname, e.getNickname())) {
                     try {
                         view.elaborate(new LoginMessage(e.getNickname()));
@@ -240,7 +241,7 @@ public class RMIVirtualView implements Observer {
                 }
             }
             case CurrentStatusEvent e -> {
-                if (Objects.equals(nickname, e.getNickname())) {
+                if (nickname != null && Objects.equals(nickname, e.getNickname())) {
                     try {
                         view.elaborate(new CurrentStatusMessage(e.getLobbies(), e.getNickname()));
                     } catch (FullLobbyException | NicknameAlreadyTakenException | HandIsFullException |
