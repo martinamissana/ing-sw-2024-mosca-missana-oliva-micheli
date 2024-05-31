@@ -163,13 +163,13 @@ public class TUI implements Runnable, ViewObserver {
                 if (m.getPlayer().equals(view.getPlayer())) {
                     System.out.println(cli + "Left lobby #" + m.getID());
                     state = TUIState.MENU;
-                    printStatus();
 
                 } else if (GamePhase.PLACING_STARTER_CARD.equals(view.getGamePhase()) ||
                         (GamePhase.CHOOSING_SECRET_GOAL.equals(view.getGamePhase()))) {
 
                     System.out.println(cli + m.getPlayer().getNickname() + " left the game");
                 }
+                printStatus();
                 semaphore.release();
             }
 
@@ -179,10 +179,8 @@ public class TUI implements Runnable, ViewObserver {
                 if (state == TUIState.CHOOSE_PAWN && m.getPlayer().equals(view.getPlayer())) {
                     state = TUIState.LOBBY;
                     semaphore.release();
-                    printStatus();
-                } else {
-                    printStatus();
                 }
+                printStatus();
             }
 
             // Game messages ·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·
@@ -214,7 +212,7 @@ public class TUI implements Runnable, ViewObserver {
             case TurnChangedMessage ignored -> {
                 if (view.isLastRound()) inputState = InputState.PLAY_SELECT_SIDE;
                 // System.out.println(cli + "new turn");
-                if (view.isLastRound()) System.out.println(cli + "last round");
+                if (view.isLastRound()) System.out.println(cli + "Last round started");
                 semaphore.release();
             }
 
@@ -245,7 +243,7 @@ public class TUI implements Runnable, ViewObserver {
 
             // Fail messages ·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·
             case FailMessage m -> {
-                if(inputState==InputState.PLAY_SELECT_COORDS) inputState=InputState.PLAY_SELECT_SIDE;
+                if (inputState==InputState.PLAY_SELECT_COORDS) inputState=InputState.PLAY_SELECT_SIDE;
                 if (m.getNickname().equals(view.getNickname())) System.out.println(m.getMessage());
                 semaphore.release();
             }
@@ -278,6 +276,7 @@ public class TUI implements Runnable, ViewObserver {
                 printer.printPlayers(view.getID());
                 System.out.print(cli + "1. Send message" + cli + "2. Leave lobby" + user);
             }
+
             case GAME -> {
                 switch (view.getGamePhase()) {
                     case PLACING_STARTER_CARD -> {
@@ -313,14 +312,14 @@ public class TUI implements Runnable, ViewObserver {
                             switch (inputState) {
                                 case PLAY_SELECT_SIDE -> {
                                     printer.printHand();
-                                    System.out.print(cli + "Do you want to flip your hand?" + user);
+                                    System.out.print(cli + "Do you want to flip your hand? (y / n)" + user);
                                 }
 
                                 case PLAY_SELECT_CARD -> {
                                     printer.printResources();
                                     printer.printField();
                                     printer.printHand();
-                                    System.out.print(cli + "Which card do you want to play? (0, 1, 2)" + user);
+                                    System.out.print(cli + "Which card do you want to play?" + user);
                                 }
 
                                 case DRAW -> {
@@ -331,9 +330,9 @@ public class TUI implements Runnable, ViewObserver {
                         } else {
                             //not your turn
                             //print all the field and your hand and the decks
-                            System.out.print(cli + "wait for your turn");
-                            System.out.print(cli + "1.send message" +cli+
-                                    "2.leave lobby");
+                            System.out.print(cli + "wait for your turn"
+                                            + cli + "1.send message"
+                                            + cli + "2.leave lobby");
                             printer.printScoreboard();
                         }
                     }
@@ -348,7 +347,7 @@ public class TUI implements Runnable, ViewObserver {
     // ~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~
 
     private void chooseConnectionType() {
-        System.out.println(cli + "Insert your connection type: [TCP|RMI]" );
+        System.out.print(cli + "Insert your connection type: [TCP|RMI]" + user);
         String choice = scanner.nextLine();
 
         if (choice.equalsIgnoreCase("TCP")) {
@@ -377,8 +376,6 @@ public class TUI implements Runnable, ViewObserver {
 
                 RMIServer = (RemoteInterface) registry.lookup(remoteObjectName);
                 this.view = new RMIView(RMIServer);
-
-                RMIServer.connect((ClientRemoteInterface) UnicastRemoteObject.exportObject((ClientRemoteInterface) this.view, 0));
 
             } catch (RemoteException | NotBoundException ex) {
                 view.removeObserver(this);
