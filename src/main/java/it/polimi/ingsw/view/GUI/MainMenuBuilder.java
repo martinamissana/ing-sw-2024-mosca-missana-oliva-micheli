@@ -2,23 +2,30 @@ package it.polimi.ingsw.view.GUI;
 
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.layout.Region;
 import javafx.util.Builder;
 
 import java.io.IOException;
 
-public class MainMenuBuilder implements Builder<Node> {
+public class MainMenuBuilder implements Builder<Region> {
+
+    private final Runnable goLobbyCreation;
+    private final Runnable goToExistingLobbies;
 
     @FXML
-    private Button hiButton;
+    private Button newLobbyButton;
+    @FXML
+    private Button joinLobbyButton;
 
-    public MainMenuBuilder() {}
+    public MainMenuBuilder(Runnable goToLobbyCreation, Runnable goToExistingLobbies) {
+        this.goLobbyCreation = goToLobbyCreation;
+        this.goToExistingLobbies = goToExistingLobbies;
+    }
 
     @Override
-    public Node build() {
-        Region mainMenu = new Region();
+    public Region build() {
+        Region mainMenu;
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/MainMenu.fxml"));
             loader.setController(this);
@@ -27,7 +34,8 @@ public class MainMenuBuilder implements Builder<Node> {
             throw new RuntimeException(e);
         }
 
-        hiButton.setOnAction(actionEvent -> System.out.println("hi button says hi"));
+        newLobbyButton.setOnAction(actionEvent -> goLobbyCreation.run());
+        joinLobbyButton.setOnAction(actionEvent -> goToExistingLobbies.run());
 
         return mainMenu;
     }

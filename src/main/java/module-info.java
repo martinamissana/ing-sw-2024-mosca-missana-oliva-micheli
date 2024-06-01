@@ -27,4 +27,6 @@ module PSP001 {
     exports it.polimi.ingsw.model.goal;
     exports it.polimi.ingsw.model.game;
     exports it.polimi.ingsw.model.observer.events;
+    exports it.polimi.ingsw.view.GUI.Lobby;
+    opens it.polimi.ingsw.view.GUI.Lobby;
 }

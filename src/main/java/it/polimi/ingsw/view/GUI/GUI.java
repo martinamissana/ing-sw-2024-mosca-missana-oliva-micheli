@@ -73,7 +73,7 @@ public class GUI extends Application {
                 ViewSingleton viewSing = ViewSingleton.getInstance();
                 if (viewSing.isInitialized()) {
                     try {
-                        ((TCPView)viewSing.getView()).disconnect();
+                        viewSing.getView().disconnect();
                     } catch (IOException e) {
                         throw new RuntimeException(e);
                     }

@@ -2,19 +2,13 @@ package it.polimi.ingsw.view.GUI;
 
 import it.polimi.ingsw.model.exceptions.FullLobbyException;
 import it.polimi.ingsw.model.exceptions.NicknameAlreadyTakenException;
-import it.polimi.ingsw.network.RMI.RemoteInterface;
 import it.polimi.ingsw.network.netMessage.NetMessage;
 import it.polimi.ingsw.network.netMessage.s2c.LoginFail_NicknameAlreadyTaken;
 import it.polimi.ingsw.network.netMessage.s2c.LoginMessage;
-import it.polimi.ingsw.view.RMIView;
-import it.polimi.ingsw.view.TCPView;
-import it.polimi.ingsw.view.View;
 import it.polimi.ingsw.view.ViewObserver;
-import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
-import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
@@ -25,14 +19,19 @@ import javafx.util.Builder;
 
 import java.io.IOException;
 import java.rmi.NotBoundException;
-import java.rmi.RemoteException;
-import java.rmi.registry.LocateRegistry;
-import java.rmi.registry.Registry;
 
-public class LoginScreenBuilder implements Builder<Node>, ViewObserver {
+public class LoginScreenBuilder implements Builder<Region>, ViewObserver {
+
+    private final ViewSingleton viewSing = ViewSingleton.getInstance();
 
     private final LoginInformation loginInformation = new LoginInformation();
-    private final Runnable screenSwapper;
+    private final Runnable addMainToViewObservers;
+    private final Runnable removeMainFromViewObservers;
+
+    public LoginScreenBuilder(Runnable add, Runnable remove) {
+        this.addMainToViewObservers = add;
+        this.removeMainFromViewObservers = remove;
+    }
 
     @FXML
     private TextField nicknameField;
@@ -47,16 +46,13 @@ public class LoginScreenBuilder implements Builder<Node>, ViewObserver {
     @FXML
     private Path rmiShape;
 
-    public LoginScreenBuilder(Runnable screenSwapper) {
-        this.screenSwapper = screenSwapper;
-    }
-
     @Override
     public Region build() {
         Region loginScreen;
+
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/LoginScreen.fxml"));
+        loader.setController(this);
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/LoginScreen.fxml"));
-            loader.setController(this);
             loginScreen = loader.load();
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -76,19 +72,17 @@ public class LoginScreenBuilder implements Builder<Node>, ViewObserver {
             } else
                 displayText.setText("");
 
-            // dynamic field size
+            // dynamic field size + text alignment
             nicknameField.setPrefWidth(nicknameField.getText().length() * 7.1 + 17);
-
-            // dynamic text alignment
             if (nicknameField.getText().length() * 7.1 + 20 >= nicknameField.getMinWidth())
                 nicknameField.setAlignment(Pos.CENTER_RIGHT);
             else
                 nicknameField.setAlignment(Pos.CENTER);
 
-            // if key pressed is 'enter', fire the login button
             if (keyEvent.getCode() == KeyCode.ENTER) loginButton.fire();
         });
 
+        // connection button functionality
         connectionButton.setOnKeyPressed(keyEvent -> {
 
             if (keyEvent.getCode() == KeyCode.SPACE) {
@@ -102,8 +96,19 @@ public class LoginScreenBuilder implements Builder<Node>, ViewObserver {
                 }
             }
         });
+        rmiShape.setOnMouseReleased(event -> {
+            loginInformation.isRMIProperty().set(true);
+            tcpShape.setFill(Paint.valueOf("#FFFFFF"));
+            rmiShape.setFill(Paint.valueOf("#72b043"));
+        });
+        tcpShape.setOnMouseReleased(event -> {
+            loginInformation.isRMIProperty().set(false);
+            tcpShape.setFill(Paint.valueOf("#72b043"));
+            rmiShape.setFill(Paint.valueOf("#FFFFFF"));
+        });
         tcpShape.setFill(Paint.valueOf("#72b043"));
 
+        // view initialization, connection and login
         loginButton.setOnAction(actionEvent -> {
             displayText.setText("");
 
@@ -117,20 +122,22 @@ public class LoginScreenBuilder implements Builder<Node>, ViewObserver {
                 displayText.setText("logging in...");
 
             // create view according to isRMI
-            ViewSingleton viewSing = ViewSingleton.getInstance();
             try {
                 viewSing.initialize(loginInformation.isRMIProperty().get());
             } catch (NotBoundException | IOException e) {
                 throw new RuntimeException(e);
             }
-
             viewSing.getView().addObserver(this);
+            addMainToViewObservers.run();
 
-            // login
+            // login + get current lobby status
             try {
                 viewSing.getView().login(nicknameField.getText());
+                viewSing.getView().getCurrentStatus();
             } catch (NicknameAlreadyTakenException | IOException | FullLobbyException | ClassNotFoundException e) {
-                throw new RuntimeException(e);
+                displayText.setText("nickname already taken");
+                viewSing.getView().removeObserver(this);
+                removeMainFromViewObservers.run();
             }
         });
 
@@ -143,13 +150,10 @@ public class LoginScreenBuilder implements Builder<Node>, ViewObserver {
             case LoginMessage m -> {
                 if (m.getNickname().equals(nicknameField.getText()))
                     displayText.setText("login successful");
-                Platform.runLater(screenSwapper);
             }
-            case LoginFail_NicknameAlreadyTaken ignored -> {
-                displayText.setText("nickname already taken");
-
-            }
-            default -> throw new IllegalStateException("Unexpected value: " + message);
+            case LoginFail_NicknameAlreadyTaken ignored ->
+                    displayText.setText("nickname already taken");
+            default -> {}
         }
     }
 }
