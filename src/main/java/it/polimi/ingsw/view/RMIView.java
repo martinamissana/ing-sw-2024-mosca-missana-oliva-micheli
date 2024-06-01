@@ -17,6 +17,7 @@ import java.io.Serializable;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.io.IOException;
+import java.rmi.server.UnicastRemoteObject;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -51,7 +52,7 @@ public class RMIView extends View implements ClientRemoteInterface , Serializabl
     public void login(String nickname) throws NicknameAlreadyTakenException, IOException {
         super.setPlayer(new Player(nickname));
         super.setNickname(nickname);
-        RMIServer.login(nickname);
+        RMIServer.login(nickname,(ClientRemoteInterface) UnicastRemoteObject.exportObject((ClientRemoteInterface) this, 0));
     }
 
     /**

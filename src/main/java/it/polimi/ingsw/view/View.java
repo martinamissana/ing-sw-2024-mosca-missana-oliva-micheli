@@ -513,6 +513,9 @@ public abstract class View extends ViewObservable<NetMessage> {
                     commonGoal2 = m.getCommonGoal2();
                     gamePhase = m.getGamePhase();
                     action = m.getAction();
+                    chat=new Chat();
+                    winners.clear();
+                    myField=new Field();
                     notify(message);
                 }
             }
@@ -611,6 +614,15 @@ public abstract class View extends ViewObservable<NetMessage> {
                     action = null;
                     ID = null;
                     pawn = null;
+                    hand.removeAllCards();
+                    secretGoalChoices.clear();
+                    secretGoal=null;
+                    fields.clear();
+                    chat=null;
+                    topResourceCard=null;
+                    topGoldenCard=null;
+                    commonGoal1=null;
+                    commonGoal2=null;
                     notify(m);
                 }
             }

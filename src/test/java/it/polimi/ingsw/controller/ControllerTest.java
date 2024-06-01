@@ -271,13 +271,13 @@ public class ControllerTest {
         players.get(1).getHand().addCard(goldenCards.get(1));
 
         // card placement, one resource and one golden for each player
-        con.playCard(0, game.getPlayers().get(0).getNickname(), 0, new Coords(1,0));
+        con.playCard(0, game.getPlayers().get(0).getNickname(), 0, new Coords(1,0),game.getPlayers().get(0).getHand().getCard(0).getSide());
         con.drawCard(0, game.getPlayers().get(0).getNickname(), DeckType.RESOURCE);
-        con.playCard(0, game.getPlayers().get(1).getNickname(), 0, new Coords(0,1));
+        con.playCard(0, game.getPlayers().get(1).getNickname(), 0, new Coords(0,1),game.getPlayers().get(1).getHand().getCard(0).getSide());
         con.drawCard(0, game.getPlayers().get(1).getNickname(), DeckType.RESOURCE);
-        con.playCard(0, game.getPlayers().get(0).getNickname(), 1, new Coords(-1,0));
+        con.playCard(0, game.getPlayers().get(0).getNickname(), 1, new Coords(-1,0),game.getPlayers().get(0).getHand().getCard(1).getSide());
         con.drawCard(0, game.getPlayers().get(0).getNickname(), DeckType.RESOURCE);
-        con.playCard(0, game.getPlayers().get(1).getNickname(), 1, new Coords(0,-1));
+        con.playCard(0, game.getPlayers().get(1).getNickname(), 1, new Coords(0,-1),game.getPlayers().get(1).getHand().getCard(0).getSide());
     }
 
     @Test

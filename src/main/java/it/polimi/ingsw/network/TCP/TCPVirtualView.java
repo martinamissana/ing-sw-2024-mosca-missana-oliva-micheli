@@ -286,7 +286,7 @@ public class TCPVirtualView implements Runnable, Observer {
                 }
             }
             case GetCurrentStatusMessage ignored -> {
-                CurrentStatusMessage status = new CurrentStatusMessage(c.getGh().getLobbies());
+                CurrentStatusMessage status = new CurrentStatusMessage(c.getGh().getLobbies(),"");
                 out.writeObject(status);
             }
             case ChooseCardSideMessage m -> {
