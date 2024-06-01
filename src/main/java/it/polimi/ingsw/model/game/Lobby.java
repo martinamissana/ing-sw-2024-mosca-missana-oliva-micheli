@@ -80,4 +80,12 @@ public class Lobby implements Serializable {
     private boolean lobbyFull(){
         return players.size() >= numOfPlayers;
     }
+
+    /**
+     * returns the lobby ID
+     * @return int
+     */
+    public int getID() {
+        return ID;
+    }
 }
