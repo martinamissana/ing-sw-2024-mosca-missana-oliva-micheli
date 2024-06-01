@@ -29,46 +29,43 @@ public class ViewSingleton {
     }
 
     public void initialize(Boolean isRMI) throws NotBoundException, IOException {
-        if (view == null) {
-            if (isRMI) {
-                try {
-                    Registry registry;
-                    registry = LocateRegistry.getRegistry();
-                    String remoteObjectName = "RMIServer";
-                    RemoteInterface RMIServer;
-                    RMIServer = (RemoteInterface) registry.lookup(remoteObjectName);
-                    view = new RMIView(RMIServer);
-                    RMIServer.connect((ClientRemoteInterface) UnicastRemoteObject.exportObject((ClientRemoteInterface)this.view,0));
-                } catch (RuntimeException | RemoteException | NotBoundException e) {
-                    throw new RuntimeException(e);
-                }
-            } else {
-                try {
-                    view = new TCPView("127.0.0.1", 4321);
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-                new Thread(() -> {
-                    try {
-                        ((TCPView) view).startClient();
-                    } catch (IOException | ClassNotFoundException e) {
-                        throw new RuntimeException(e);
-                    }
-                }).start();
+        if (isRMI) {
+            try {
+                Registry registry = LocateRegistry.getRegistry();
+                String remoteObjectName = "RMIServer";
+                RemoteInterface RMIServer;
+                RMIServer = (RemoteInterface) registry.lookup(remoteObjectName);
+                this.view = new RMIView(RMIServer);
+                RMIServer.connect((ClientRemoteInterface) UnicastRemoteObject.exportObject((ClientRemoteInterface) this.view, 0));
+            } catch (RemoteException | NotBoundException e) {
+                e.printStackTrace();
             }
-            viewController = new ViewController(view);
+        } else {
+            try {
+                view = new TCPView("127.0.0.1", 4321);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+            new Thread(() -> {
+                try {
+                    ((TCPView) view).startClient();
+                } catch (IOException | ClassNotFoundException e) {
+                    Thread.currentThread().interrupt();
+                }
+            }).start();
         }
+        viewController = new ViewController(view);
     }
 
     public Boolean isInitialized() { return (view != null) && (viewController != null); }
 
     public View getView() {
         if (view != null) return view;
-        else throw new NullPointerException();
+        else throw new NullPointerException("view is null");
     }
 
     public ViewController getViewController() {
         if (viewController != null) return viewController;
-        else throw new NullPointerException();
+        else throw new NullPointerException("view controller is null");
     }
 }
