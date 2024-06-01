@@ -15,6 +15,8 @@ import it.polimi.ingsw.model.player.Coords;
 import it.polimi.ingsw.model.player.Pawn;
 import it.polimi.ingsw.model.player.Player;
 
+import java.util.Objects;
+
 public class ViewController {
 
     View view;
@@ -125,6 +127,7 @@ public class ViewController {
         // if the selected pawn is already taken by another user
         if (view.getLobbies().get(view.getID()).getPlayers().stream()
                 .map(Player::getPawn)
+                .filter(Objects::nonNull)
                 .anyMatch(p -> p.equals(color)))
             throw new PawnAlreadyTakenException();
     }
