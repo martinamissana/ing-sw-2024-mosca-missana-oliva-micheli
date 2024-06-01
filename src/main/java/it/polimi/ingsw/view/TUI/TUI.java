@@ -56,7 +56,7 @@ public class TUI implements Runnable, ViewObserver {
 
     @Override
     public void run() {
-
+        // printer.printLogo();
         chooseConnectionType();
 
         this.check = new ViewController(view);
@@ -322,11 +322,11 @@ public class TUI implements Runnable, ViewObserver {
                                     System.out.print(cli + "Which card do you want to play?" + user);
                                 }
 
-                                case PLAY_SELECT_COORDS -> System.out.println(cli +  "Now insert the position in format: X Y" + user);
+                                case PLAY_SELECT_COORDS -> System.out.print(cli +  "Now insert the position in format: X Y" + user);
 
                                 case DRAW -> {
                                     printer.printGameArea();
-                                    System.out.println(cli + "From where do you want to draw?" + cli + "Resource Deck -> ResDeck" + cli + "Golden Deck -> GoldDeck" + cli + "Resource card spaces -> RES1 - RES2" + cli + "Golden card spaces -> GOLD1 - GOLD2" + user);
+                                    System.out.print(cli + "From where do you want to draw?" + cli + "Resource Deck -> ResDeck" + cli + "Golden Deck -> GoldDeck" + cli + "Resource card spaces -> RES1 - RES2" + cli + "Golden card spaces -> GOLD1 - GOLD2" + user);
                                 }
                             }
                         } else {
@@ -512,6 +512,7 @@ public class TUI implements Runnable, ViewObserver {
                 semaphore.acquire();
             } catch (PawnAlreadyTakenException e) {
                 System.out.print(cli + "Pawn already taken!\n");
+                printStatus();
             } catch (GameAlreadyStartedException | LobbyDoesNotExistsException |
                      GameDoesNotExistException ignored) {
             } catch (IOException | UnexistentUserException e) {
@@ -664,6 +665,7 @@ public class TUI implements Runnable, ViewObserver {
         } catch (WrongGamePhaseException | GameDoesNotExistException ignored) {
         } catch (IllegalGoalChosenException e) {
             System.out.print(Color.warning + "Invalid choice!!\n" + Color.reset);
+            printStatus();
         }
     }
 
@@ -692,7 +694,7 @@ public class TUI implements Runnable, ViewObserver {
                         for (int i = 0; i < view.getHand().getSize(); i++) {
                             view.getHand().getCard(i).flip();
                         }
-                        printer.printHand();
+                        printStatus();
                     }
 
                     case "N", "NO" -> {

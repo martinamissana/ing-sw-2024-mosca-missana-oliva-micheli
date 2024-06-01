@@ -12,10 +12,7 @@ import it.polimi.ingsw.model.goal.DiagonalGoal;
 import it.polimi.ingsw.model.goal.Goal;
 import it.polimi.ingsw.model.goal.L_ShapeGoal;
 import it.polimi.ingsw.model.goal.ResourceGoal;
-import it.polimi.ingsw.model.player.Coords;
-import it.polimi.ingsw.model.player.Hand;
-import it.polimi.ingsw.model.player.Pawn;
-import it.polimi.ingsw.model.player.Player;
+import it.polimi.ingsw.model.player.*;
 import it.polimi.ingsw.view.View;
 
 import java.util.ArrayList;
@@ -235,12 +232,24 @@ public class Printer {
         System.out.println("\n");
     }
 
-    public void printField() {         // TODO: Do a better printField (StringBuilder???)
+    public void printFieldTemp() {         // TODO: Do a better printField (StringBuilder???)
         System.out.print(cli + "Occupied spots:");
         for (Coords coords : view.getMyField().getMatrix().keySet()) {
             System.out.format(cli + "(%d, %d)\n", coords.getX(), coords.getY());
             printCard(view.getMyField().getMatrix().get(coords));
         } System.out.println();
+    }
+
+    public void printField(String nickname) {
+        Field field = null;
+        if (nickname.equals(view.getNickname())) field = view.getMyField();
+        else {
+            for (Player p : view.getLobbies().get(view.getID()).getPlayers()) {
+                if (p.getNickname().equals(nickname)) field = view.getFields().get(p);
+            }
+        }
+        if (field == null) return;
+
     }
 
     public void printResources() {
