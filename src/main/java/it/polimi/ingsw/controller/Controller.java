@@ -661,13 +661,15 @@ public class Controller implements Serializable {
         for (Player p : game.getPlayers()) {
             try {
                 if (p.getSecretGoal().getClass() == ResourceGoal.class) {
-                    resourceEvaluator(gameID, (ResourceGoal) p.getSecretGoal(), p.getNickname());
+                    resourceEvaluator(gameID, (ResourceGoal) p.getSecretGoal(), p);
                 } else if (p.getSecretGoal().getClass() == L_ShapeGoal.class) {
                     L_ShapeEvaluator(gameID, (L_ShapeGoal) p.getSecretGoal(), p.getNickname());
                 } else {
-                    diagonalEvaluator(gameID, (DiagonalGoal) p.getSecretGoal(), p.getNickname());
+                    diagonalEvaluator(gameID, (DiagonalGoal) p.getSecretGoal(), p);
                 }
             } catch (UnexistentUserException ignored) {
+            } catch (IOException e) {
+                throw new RuntimeException(e);
             }
         }
     }
@@ -684,20 +686,22 @@ public class Controller implements Serializable {
         for (Player p : game.getPlayers()) {
             try {
                 if (commonGoal1.getClass() == ResourceGoal.class) {
-                    resourceEvaluator(gameID, (ResourceGoal) commonGoal1, p.getNickname());
+                    resourceEvaluator(gameID, (ResourceGoal) commonGoal1, p);
                 } else if (commonGoal1.getClass() == L_ShapeGoal.class) {
                     L_ShapeEvaluator(gameID, (L_ShapeGoal) commonGoal1, p.getNickname());
                 } else {
-                    diagonalEvaluator(gameID, (DiagonalGoal) commonGoal1, p.getNickname());
+                    diagonalEvaluator(gameID, (DiagonalGoal) commonGoal1, p);
                 }
                 if (commonGoal2.getClass() == ResourceGoal.class) {
-                    resourceEvaluator(gameID, (ResourceGoal) commonGoal2, p.getNickname());
+                    resourceEvaluator(gameID, (ResourceGoal) commonGoal2, p);
                 } else if (commonGoal2.getClass() == L_ShapeGoal.class) {
                     L_ShapeEvaluator(gameID, (L_ShapeGoal) commonGoal2, p.getNickname());
                 } else {
-                    diagonalEvaluator(gameID, (DiagonalGoal) commonGoal2, p.getNickname());
+                    diagonalEvaluator(gameID, (DiagonalGoal) commonGoal2, p);
                 }
             } catch (UnexistentUserException ignored) {
+            } catch (IOException e) {
+                throw new RuntimeException(e);
             }
         }
     }
@@ -731,16 +735,12 @@ public class Controller implements Serializable {
      *
      * @param gameID   index of the game where the evaluation is done
      * @param goal     goal that needs to be found in the field
-     * @param nickname player who has to complete the goal
+     * @param p player who has to complete the goal
      */
-    private synchronized void diagonalEvaluator(Integer gameID, DiagonalGoal goal, String nickname) throws UnexistentUserException {
-        Player player = null;
-        for (Player p : gh.getUsers()) {
-            if (p.getNickname().equals(nickname)) player = p;
-        }
-        if (player == null) throw new UnexistentUserException();
+    private synchronized void diagonalEvaluator(Integer gameID, DiagonalGoal goal, Player p) throws UnexistentUserException, IOException {
+        if (p == null) throw new UnexistentUserException();
         Game game = gh.getActiveGames().get(gameID);
-        HashMap<Coords, Card> field = player.getField().getMatrix();
+        HashMap<Coords, Card> field = p.getField().getMatrix();
         HashSet<Coords> done = new HashSet<>(); // indicates the cards already used for the goal
         if (goal.getType() == DiagonalGoalType.UPWARD) {
             for (Coords coords : field.keySet()) {
@@ -750,7 +750,8 @@ public class Controller implements Serializable {
                     done.add(coords);
                     done.add(secondCard);
                     done.add(thirdCard);
-                    game.addToScore(player, goal.getPoints());
+                    game.addToScore(p, goal.getPoints());
+                    gh.notify(new ScoreIncrementedEvent(gameID,p,goal.getPoints()));
                 }
             }
         } else {
@@ -761,7 +762,8 @@ public class Controller implements Serializable {
                     done.add(coords);
                     done.add(secondCard);
                     done.add(thirdCard);
-                    game.addToScore(player, goal.getPoints());
+                    game.addToScore(p, goal.getPoints());
+                    gh.notify(new ScoreIncrementedEvent(gameID,p,goal.getPoints()));
                 }
             }
         }
@@ -772,13 +774,9 @@ public class Controller implements Serializable {
      *
      * @param gameID   index of the game where the evaluation is done
      * @param goal     goal that needs to be found in the field
-     * @param nickname player who has to complete the goal
+     * @param player player who has to complete the goal
      */
-    private synchronized void resourceEvaluator(Integer gameID, ResourceGoal goal, String nickname) throws UnexistentUserException {
-        Player player = null;
-        for (Player p : gh.getUsers()) {
-            if (p.getNickname().equals(nickname)) player = p;
-        }
+    private synchronized void resourceEvaluator(Integer gameID, ResourceGoal goal, Player player) throws UnexistentUserException, IOException {
         if (player == null) throw new UnexistentUserException();
         Game game = gh.getActiveGames().get(gameID);
         HashMap<ItemBox, Integer> totalResources = player.getField().getTotalResources();
@@ -788,6 +786,7 @@ public class Controller implements Serializable {
                 totalResources.replace(item, totalResources.get(item) - 1);
             }
             game.addToScore(player, goal.getPoints());
+            gh.notify(new ScoreIncrementedEvent(gameID,player, goal.getPoints()));
         }
 
     }
@@ -799,7 +798,7 @@ public class Controller implements Serializable {
      * @param goal     goal that needs to be found in the field
      * @param nickname player who has to complete the goal
      */
-    private synchronized void L_ShapeEvaluator(Integer gameID, L_ShapeGoal goal, String nickname) throws UnexistentUserException {
+    private synchronized void L_ShapeEvaluator(Integer gameID, L_ShapeGoal goal, String nickname) throws UnexistentUserException, IOException {
         Player player = null;
         for (Player p : gh.getUsers()) {
             if (p.getNickname().equals(nickname)) player = p;
@@ -814,28 +813,28 @@ public class Controller implements Serializable {
                 for (Coords coords : field.keySet()) {
                     Coords secondCard = new Coords(coords.getX() - 1, coords.getY());
                     Coords thirdCard = new Coords(coords.getX() - 2, coords.getY() - 1);
-                    genericL_ShapeEvaluator(gameID, goal, player.getNickname(), coords, secondCard, thirdCard, done);
+                    genericL_ShapeEvaluator(gameID, goal, player, coords, secondCard, thirdCard, done);
                 }
             }
             case UP_LEFT -> {
                 for (Coords coords : field.keySet()) {
                     Coords secondCard = new Coords(coords.getX(), coords.getY() - 1);
                     Coords thirdCard = new Coords(coords.getX() - 1, coords.getY() - 2);
-                    genericL_ShapeEvaluator(gameID, goal, player.getNickname(), coords, secondCard, thirdCard, done);
+                    genericL_ShapeEvaluator(gameID, goal, player, coords, secondCard, thirdCard, done);
                 }
             }
             case DOWN_LEFT -> {
                 for (Coords coords : field.keySet()) {
                     Coords secondCard = new Coords(coords.getX() + 1, coords.getY());
                     Coords thirdCard = new Coords(coords.getX() + 2, coords.getY() + 1);
-                    genericL_ShapeEvaluator(gameID, goal, player.getNickname(), coords, secondCard, thirdCard, done);
+                    genericL_ShapeEvaluator(gameID, goal, player, coords, secondCard, thirdCard, done);
                 }
             }
             case DOWN_RIGHT -> {
                 for (Coords coords : field.keySet()) {
                     Coords secondCard = new Coords(coords.getX(), coords.getY() + 1);
                     Coords thirdCard = new Coords(coords.getX() + 1, coords.getY() + 2);
-                    genericL_ShapeEvaluator(gameID, goal, player.getNickname(), coords, secondCard, thirdCard, done);
+                    genericL_ShapeEvaluator(gameID, goal, player, coords, secondCard, thirdCard, done);
                 }
             }
         }
@@ -846,17 +845,13 @@ public class Controller implements Serializable {
      *
      * @param gameID     index of the game where the evaluation is done
      * @param goal       goal that needs to be found in the field
-     * @param nickname   player who has to complete the goal
+     * @param player   player who has to complete the goal
      * @param firstCard  coordinates of the card with a different color from the other two in the L_Shape
      * @param secondCard coordinates of one of the cards with the main L_Shape color
      * @param thirdCard  coordinates of one of the cards with the main L_Shape color
      * @param done       HashMap that maps the cards already used to complete the goal
      */
-    private synchronized void genericL_ShapeEvaluator(Integer gameID, L_ShapeGoal goal, String nickname, Coords firstCard, Coords secondCard, Coords thirdCard, HashSet<Coords> done) throws UnexistentUserException {
-        Player player = null;
-        for (Player p : gh.getUsers()) {
-            if (p.getNickname().equals(nickname)) player = p;
-        }
+    private synchronized void genericL_ShapeEvaluator(Integer gameID, L_ShapeGoal goal, Player player, Coords firstCard, Coords secondCard, Coords thirdCard, HashSet<Coords> done) throws UnexistentUserException, IOException {
         if (player == null) throw new UnexistentUserException();
         Game game = gh.getActiveGames().get(gameID);
         HashMap<Coords, Card> field = player.getField().getMatrix();
@@ -865,8 +860,13 @@ public class Controller implements Serializable {
             done.add(secondCard);
             done.add(thirdCard);
             game.addToScore(player, goal.getPoints());
+            gh.notify(new ScoreIncrementedEvent(gameID,player, goal.getPoints()));
         }
     }
+
+    // ~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~
+    // RMI related methods
+    // ~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~
 
     public void getCurrentStatus(String nickname) throws IOException {
         gh.notify(new CurrentStatusEvent(gh.getLobbies(),nickname));
@@ -874,5 +874,9 @@ public class Controller implements Serializable {
 
     public void heartbeat() throws IOException {
         gh.notify(new HeartBeatEvent());
+    }
+
+    public void disconnect(String nickname, Integer ID) throws IOException {
+        gh.notify(new DisconnectEvent(this,nickname, ID));
     }
 }
