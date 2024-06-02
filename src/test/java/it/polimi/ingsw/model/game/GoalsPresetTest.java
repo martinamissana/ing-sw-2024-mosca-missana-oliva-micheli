@@ -1,10 +1,10 @@
 package it.polimi.ingsw.model.game;
 
-import junit.framework.TestCase;
-
 import java.io.IOException;
 
-public class GoalsPresetTest extends TestCase {
+import static org.junit.jupiter.api.Assertions.assertFalse;
+
+public class GoalsPresetTest{
 
     public void testGetDiagonalGoals() throws IOException {
         assertFalse(GoalsPreset.getDiagonalGoals().isEmpty());

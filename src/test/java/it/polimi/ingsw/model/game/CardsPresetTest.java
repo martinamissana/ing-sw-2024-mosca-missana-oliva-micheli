@@ -1,10 +1,10 @@
 package it.polimi.ingsw.model.game;
 
-import junit.framework.TestCase;
-
 import java.io.IOException;
 
-public class CardsPresetTest extends TestCase {
+import static org.junit.jupiter.api.Assertions.assertFalse;
+
+public class CardsPresetTest {
 
     public void testGetResourceCards() throws IOException {
         assertFalse(CardsPreset.getResourceCards().isEmpty());

@@ -5,12 +5,13 @@ import it.polimi.ingsw.model.card.ResourceCard;
 import it.polimi.ingsw.model.card.StarterCard;
 import it.polimi.ingsw.model.exceptions.IllegalMoveException;
 import it.polimi.ingsw.model.game.CardsPreset;
-import junit.framework.TestCase;
 
 import java.io.IOException;
 import java.util.ArrayList;
 
-public class TestField extends TestCase {
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+public class TestField {
 
     public void testAddCard() throws IOException, IllegalMoveException {
         ArrayList<StarterCard> starterCards = CardsPreset.getStarterCards();

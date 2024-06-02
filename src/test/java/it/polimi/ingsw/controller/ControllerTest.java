@@ -17,14 +17,15 @@ import it.polimi.ingsw.model.goal.*;
 import it.polimi.ingsw.model.player.Coords;
 import it.polimi.ingsw.model.player.Pawn;
 import it.polimi.ingsw.model.player.Player;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
+
 
 public class ControllerTest {
     GameHandler gameHandler=new GameHandler();
@@ -36,7 +37,7 @@ public class ControllerTest {
     Player anna, eric, giorgio,sara,paola ,anna1,eric1,giorgio1;
     Controller c=new Controller(gameHandler);
 
-    @Before
+    @BeforeEach
     public void setUp() throws IOException, FullLobbyException, NicknameAlreadyTakenException, LobbyDoesNotExistsException, HandIsFullException, CannotJoinMultipleLobbiesException, GameAlreadyStartedException, PawnAlreadyTakenException, GameDoesNotExistException, UnexistentUserException {
         anna=new Player("anna");
         eric=new Player("eric");
@@ -57,7 +58,7 @@ public class ControllerTest {
         anna.getHand().addCard(card);
     }
 
-    @Test (expected = PawnAlreadyTakenException.class)
+    @Test
     public void testGamePhase() throws LobbyDoesNotExistsException, GameDoesNotExistException, FullLobbyException, NicknameAlreadyTakenException, IOException, EmptyDeckException, HandIsFullException, IllegalGoalChosenException, WrongGamePhaseException, GameAlreadyStartedException, PawnAlreadyTakenException, CannotJoinMultipleLobbiesException, UnexistentUserException {
         anna1=new Player("anna1");
         eric1=new Player("eric1");
@@ -72,7 +73,10 @@ public class ControllerTest {
 
         assertFalse(c.getGh().getActiveGames().containsKey(1));
         c.choosePawn(1,anna1.getNickname(),Pawn.BLUE);
-        c.choosePawn(1,eric1.getNickname(),Pawn.BLUE);
+        assertThrows(PawnAlreadyTakenException.class, () -> {
+            c.choosePawn(1,eric1.getNickname(),Pawn.BLUE);
+        });
+
         c.choosePawn(1,eric1.getNickname(),Pawn.RED);
         c.joinLobby(giorgio1.getNickname(),1);
         c.choosePawn( 1,giorgio1.getNickname(),Pawn.YELLOW);
@@ -90,8 +94,6 @@ public class ControllerTest {
 
         assertEquals(gameHandler.getGame(1).getGamePhase(), GamePhase.PLAYING_GAME);
 
-
-
     }
 
     @Test
@@ -103,15 +105,19 @@ public class ControllerTest {
         assertTrue(gameHandler.getActiveGames().isEmpty());
         assertTrue(gameHandler.getLobbies().isEmpty());
     }
-    @Test (expected = FullLobbyException.class)
+    @Test
     public void testJoinLobbyButLobbyIsFull() throws FullLobbyException, NicknameAlreadyTakenException, LobbyDoesNotExistsException, IOException, GameDoesNotExistException, CannotJoinMultipleLobbiesException, UnexistentUserException {
-        c.joinLobby(sara.getNickname(),0);
+        assertThrows(FullLobbyException.class, () -> {
+            c.joinLobby(sara.getNickname(), 0);
+        });
         assertFalse(gameHandler.getLobby(0).getPlayers().contains(sara));
         assertFalse(gameHandler.getGame(0).getPlayers().contains(sara));
     }
-    @Test (expected = LobbyDoesNotExistsException.class)
+    @Test
     public void testJoinLobbyButLobbyDoesNotExist() throws FullLobbyException, NicknameAlreadyTakenException, LobbyDoesNotExistsException, IOException, GameDoesNotExistException, CannotJoinMultipleLobbiesException, UnexistentUserException {
-        c.joinLobby(sara.getNickname(),1);
+        assertThrows(LobbyDoesNotExistsException.class, () -> {
+            c.joinLobby(sara.getNickname(), 1);
+        });
         assertFalse(gameHandler.getLobby(0).getPlayers().contains(sara));
         assertFalse(gameHandler.getGame(0).getPlayers().contains(sara));
     }

@@ -1,9 +1,10 @@
 package it.polimi.ingsw.model.goal;
 
 import it.polimi.ingsw.model.commonItem.Kingdom;
-import junit.framework.TestCase;
 
-public class DiagonalGoalTest extends TestCase {
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+public class DiagonalGoalTest {
 
     public void testGetColor() {
         Kingdom Expectedcolor=Kingdom.ANIMAL;

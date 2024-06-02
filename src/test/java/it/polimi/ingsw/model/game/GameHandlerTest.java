@@ -14,12 +14,13 @@ import it.polimi.ingsw.model.commonItem.Resource;
 import it.polimi.ingsw.model.exceptions.*;
 import it.polimi.ingsw.model.player.Pawn;
 import it.polimi.ingsw.model.player.Player;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.util.HashMap;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class GameHandlerTest {
     GameHandler gameHandler=new GameHandler();
@@ -31,7 +32,7 @@ public class GameHandlerTest {
     Controller c=new Controller(gameHandler);
     ResourceCard card;
 
-    @Before
+  @BeforeEach
     public void setUp() {
         frontCorners.put(CornerType.NORTH,corner1);
         backCorners.put(CornerType.NORTH,corner2);
@@ -42,16 +43,17 @@ public class GameHandlerTest {
         anna1=new Player("anna");
 
     }
-    @Test (expected = NicknameAlreadyTakenException.class)
+    @Test
     public void testAddUser() throws NicknameAlreadyTakenException, IOException {
         gameHandler.addUser(anna);
         gameHandler.addUser(giorgio);
         gameHandler.addUser(eric);
-        gameHandler.addUser(anna1);
-        Assert.assertTrue(gameHandler.getUsers().contains(anna));
-        Assert.assertTrue(gameHandler.getUsers().contains(eric));
-        Assert.assertTrue(gameHandler.getUsers().contains(giorgio));
-        Assert.assertFalse(gameHandler.getUsers().contains(anna1));
+        assertThrows(NicknameAlreadyTakenException.class, () -> {
+            gameHandler.addUser(anna1);
+        });
+        assertTrue(gameHandler.getUsers().contains(anna));
+        assertTrue(gameHandler.getUsers().contains(eric));
+        assertTrue(gameHandler.getUsers().contains(giorgio));
     }
     @Test
     public void testSaveAndLoad() throws IOException, ClassNotFoundException, GameDoesNotExistException, FullLobbyException, NicknameAlreadyTakenException, LobbyDoesNotExistsException, HandIsFullException, CannotJoinMultipleLobbiesException, GameAlreadyStartedException, PawnAlreadyTakenException, UnexistentUserException {
@@ -70,7 +72,7 @@ public class GameHandlerTest {
         gameHandler.save();
         GameHandler gameHandler1=new GameHandler();
         gameHandler1.load();
-        Assert.assertEquals(gameHandler.getGame(0).getPlayers().get(0).getNickname(), gameHandler1.getActiveGames().get(0).getPlayers().get(0).getNickname());
-        Assert.assertEquals(gameHandler.getGame(0).getPlayers().get(0).getHand().getCard(0).getCardID(), gameHandler1.getActiveGames().get(0).getPlayers().get(0).getHand().getCard(0).getCardID());
+        assertEquals(gameHandler.getGame(0).getPlayers().get(0).getNickname(), gameHandler1.getActiveGames().get(0).getPlayers().get(0).getNickname());
+        assertEquals(gameHandler.getGame(0).getPlayers().get(0).getHand().getCard(0).getCardID(), gameHandler1.getActiveGames().get(0).getPlayers().get(0).getHand().getCard(0).getCardID());
     }
 }

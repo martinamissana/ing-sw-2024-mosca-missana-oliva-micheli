@@ -1,12 +1,16 @@
 package it.polimi.ingsw.model.deck;
 
-import it.polimi.ingsw.model.card.*;
+import it.polimi.ingsw.model.card.Card;
 import it.polimi.ingsw.model.exceptions.EmptyDeckException;
-import org.junit.Test;
-import static org.junit.Assert.*;
+import org.junit.jupiter.api.Test;
+
 import java.io.IOException;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 public class DeckTest {
+
     @Test
     public void ShuffleAndDrawTest() throws IOException, EmptyDeckException {
         Deck ResourceDeck = new Deck(DeckType.RESOURCE);

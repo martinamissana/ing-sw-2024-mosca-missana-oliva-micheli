@@ -2,11 +2,12 @@ package it.polimi.ingsw.model.goal;
 
 import it.polimi.ingsw.model.commonItem.ItemBox;
 import it.polimi.ingsw.model.commonItem.Kingdom;
-import junit.framework.TestCase;
 
 import java.util.ArrayList;
 
-public class ResourceGoalTest extends TestCase {
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+public class ResourceGoalTest {
 
     public void testGetResourceList() {
         ArrayList<ItemBox> resourceList =new ArrayList<>();

@@ -8,11 +8,13 @@ import it.polimi.ingsw.controller.exceptions.UnexistentUserException;
 import it.polimi.ingsw.model.exceptions.*;
 import it.polimi.ingsw.model.game.GameHandler;
 import it.polimi.ingsw.model.player.Player;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 public class ChatTest {
     GameHandler gameHandler=new GameHandler();
@@ -20,7 +22,7 @@ public class ChatTest {
     Message m1,m2,m3,m4,m5,m6,m7,m8,m9,m10,m11,m12;
     Controller c;
 
-    @Before
+    @BeforeEach
     public void setUp() throws GameDoesNotExistException, IOException, FullLobbyException, LobbyDoesNotExistsException, NicknameAlreadyTakenException, CannotJoinMultipleLobbiesException, PlayerChatMismatchException, GameAlreadyStartedException, PawnAlreadyTakenException, UnexistentUserException {
 
         gameHandler= new GameHandler();
@@ -65,14 +67,14 @@ public class ChatTest {
 
     @Test
     public void testSend(){
-        Assert.assertEquals(anna.getChat().getSentMessages().get(0), m1);
-        Assert.assertEquals(anna.getChat().getReceivedMessages().get(0), m2);
-        Assert.assertEquals(anna.getChat().getReceivedMessages().get(1), m3);
-        Assert.assertEquals(eric.getChat().getSentMessages().get(0), m2);
-        Assert.assertEquals(eric.getChat().getReceivedMessages().get(0), m1);
-        Assert.assertEquals(eric.getChat().getReceivedMessages().get(1), m3);
-        Assert.assertFalse(giorgio.getChat().getReceivedMessages().isEmpty());
-        Assert.assertEquals(giorgio.getChat().getSentMessages().get(0), m3);
+        assertEquals(anna.getChat().getSentMessages().get(0), m1);
+        assertEquals(anna.getChat().getReceivedMessages().get(0), m2);
+        assertEquals(anna.getChat().getReceivedMessages().get(1), m3);
+        assertEquals(eric.getChat().getSentMessages().get(0), m2);
+        assertEquals(eric.getChat().getReceivedMessages().get(0), m1);
+        assertEquals(eric.getChat().getReceivedMessages().get(1), m3);
+        assertFalse(giorgio.getChat().getReceivedMessages().isEmpty());
+        assertEquals(giorgio.getChat().getSentMessages().get(0), m3);
     }
 
     @Test

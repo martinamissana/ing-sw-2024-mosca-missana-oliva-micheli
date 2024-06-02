@@ -1,9 +1,11 @@
 package it.polimi.ingsw.model.goal;
 
 import it.polimi.ingsw.model.commonItem.Kingdom;
-import junit.framework.TestCase;
 
-public class L_ShapeGoalTest extends TestCase {
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+
+public class L_ShapeGoalTest{
 
     public void testGetType() {
         L_ShapeGoalType Expectedtype= L_ShapeGoalType.UP_RIGHT;
