@@ -44,7 +44,7 @@ public class Controller implements Serializable {
         return gh;
     }
 
-    // TODO: add a method to terminate the game if a player disconnects, it will be activated by a message from the vie
+    // TODO: add a method to terminate the game if a player disconnects, it will be activated by a message from the view
 
     /**
      * adds users to user list in game handler
@@ -55,7 +55,9 @@ public class Controller implements Serializable {
     public synchronized void login(String username) throws NicknameAlreadyTakenException, IOException {
         gh.addUser(new Player(username));
     }
-    //methods related to lobby
+    // ~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~
+    // Lobby related methods:
+    // ~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~
 
     /**
      * creates a new lobby adding it to the list of lobbies in GameHandler,
@@ -144,14 +146,16 @@ public class Controller implements Serializable {
      * @param lobbyID - the ID of the lobby that will be deleted
      * @throws LobbyDoesNotExistsException if the lobby does not exist
      */
-    private synchronized void deleteLobby(int lobbyID) throws LobbyDoesNotExistsException, IOException {
+    private synchronized void deleteLobby(int lobbyID) throws LobbyDoesNotExistsException {
         if (gh.getLobbies().containsKey(lobbyID)) {
             gh.getLobbies().remove(lobbyID);
-            if (gh.getActiveGames().containsKey(lobbyID)) gh.getActiveGames().remove(lobbyID);
+            gh.getActiveGames().remove(lobbyID);
         } else throw new LobbyDoesNotExistsException("Lobby with ID " + lobbyID + " does not exist");
     }
 
-    //methods related to game
+    // ~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~
+    // Game related methods:
+    // ~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~
 
     /**
      * creates a new game adding it to the list of active games in GameHandler,
@@ -210,7 +214,7 @@ public class Controller implements Serializable {
      * @param gameID the ID of the game that will be deleted
      * @throws GameDoesNotExistException - if the game does not exist
      */
-    public synchronized void terminateGame(Integer gameID) throws GameDoesNotExistException, LobbyDoesNotExistsException, IOException, UnexistentUserException {
+    public synchronized void terminateGame(Integer gameID) throws GameDoesNotExistException, LobbyDoesNotExistsException, IOException {
         if(gh.getGame(gameID).getGamePhase().equals(GamePhase.PLAYING_GAME))winner(gameID);
         if (gh.getActiveGames().containsKey(gameID)) {
             gh.getActiveGames().remove(gameID);
@@ -219,7 +223,9 @@ public class Controller implements Serializable {
         } else throw new GameDoesNotExistException("Game with ID " + gameID + " does not exist");
     }
 
-    //chat related methods
+    /// ~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~
+    // Chat related methods:
+    // ~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~
 
     /**
      * sends the message either to the specified receiver, or to every player in the global chat,
@@ -245,9 +251,12 @@ public class Controller implements Serializable {
             throw new PlayerChatMismatchException();
         try {
             if (!message.isGlobal()) {
+                assert sender != null;
                 sender.getChat().getSentMessages().add(message);
+                assert receiver != null;
                 receiver.getChat().getReceivedMessages().add(message);
             } else {
+                assert sender != null;
                 sender.getChat().getSentMessages().add(message);
                 ArrayList<Player> list;
                 if (gh.getActiveGames().containsKey(ID)) {
@@ -269,7 +278,9 @@ public class Controller implements Serializable {
         }
     }
 
+    // ~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~
     // SET UP
+    // ~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~
 
     /**
      * Set decks and deck buffers
@@ -442,8 +453,8 @@ public class Controller implements Serializable {
 
         if (gh.getGame(ID).getGamePhase() != GamePhase.CHOOSING_SECRET_GOAL) throw new WrongGamePhaseException();
         if (player.getChoosableGoals().get(0).getGoalID() == goalID) {
-            player.setSecretGoal(player.getChoosableGoals().get(0));
-            gh.notify(new SecretGoalAssignedEvent(player, player.getChoosableGoals().get(0)));
+            player.setSecretGoal(player.getChoosableGoals().getFirst());
+            gh.notify(new SecretGoalAssignedEvent(player, player.getChoosableGoals().getFirst()));
         } else if (player.getChoosableGoals().get(1).getGoalID() == goalID) {
             player.setSecretGoal(player.getChoosableGoals().get(1));
             gh.notify(new SecretGoalAssignedEvent(player, player.getChoosableGoals().get(1)));
@@ -457,7 +468,9 @@ public class Controller implements Serializable {
 
     }
 
+    // ~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~
     // GAME
+    // ~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~
 
     /**
      * flips a card in a player's hand
@@ -589,7 +602,7 @@ public class Controller implements Serializable {
      * @param gameID ID of the game to advance the turn of
      * @throws GameDoesNotExistException thrown if the given ID does not correspond to any Game
      */
-    public synchronized void nextTurn(Integer gameID) throws GameDoesNotExistException, LobbyDoesNotExistsException, IOException, UnexistentUserException {
+    public synchronized void nextTurn(Integer gameID) throws GameDoesNotExistException, LobbyDoesNotExistsException, IOException {
 
         // get game from ID
         Game game = gh.getGame(gameID);
@@ -614,7 +627,7 @@ public class Controller implements Serializable {
      *
      * @param gameID - the ID of the game where the status is checked
      */
-    public synchronized void updateLastRound(Integer gameID) throws IOException {
+    public synchronized void updateLastRound(Integer gameID) {
         Game game = gh.getActiveGames().get(gameID);
 
         // if it's already last round there's no need to update
@@ -623,7 +636,7 @@ public class Controller implements Serializable {
         // if both decks are empty
         if (game.getResourceDeck().getCards().isEmpty() && game.getGoldenDeck().getCards().isEmpty()) {
             game.setLastRound(true);
-            //gh.notify(new LastRoundStartedEvent(gameID)); //todo: togliere dalla logica
+            //gh.notify(new LastRoundStartedEvent(gameID)); //todo: remove from game logic
         }
 
         // if someone has reached 20 points
@@ -634,7 +647,9 @@ public class Controller implements Serializable {
             }
     }
 
+    // ~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~
     // FINAL PHASE
+    // ~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~
 
     /**
      * checks in the field the secret goal of the players and adds the points to the scoreboard
@@ -858,6 +873,6 @@ public class Controller implements Serializable {
     }
 
     public void heartbeat() throws IOException {
-        //gh.notify(new HeartBeatEvent());
+        gh.notify(new HeartBeatEvent());
     }
 }
