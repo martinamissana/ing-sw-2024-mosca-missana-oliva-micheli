@@ -1,5 +1,6 @@
 package it.polimi.ingsw.model.deck;
 
+import it.polimi.ingsw.model.card.CardSide;
 import it.polimi.ingsw.model.card.ResourceCard;
 import it.polimi.ingsw.model.exceptions.EmptyBufferException;
 import it.polimi.ingsw.model.exceptions.EmptyDeckException;
@@ -39,6 +40,7 @@ public class DeckBuffer implements Drawable, Serializable {
         if(!deck.getCards().isEmpty() && card == null)
             try {
                 this.card = this.deck.draw();
+                if (this.card.getSide().equals(CardSide.BACK)) card.flip();
             }
             catch (EmptyDeckException ignored) {}
     }

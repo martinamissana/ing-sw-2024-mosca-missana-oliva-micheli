@@ -202,7 +202,7 @@ public class TUI implements Runnable, ViewObserver {
             }
 
             case CardPlacedOnFieldMessage m -> {
-                System.out.println(cli + "Card placed successfully on coords (" + m.getCoords().getX() + ", " + m.getCoords().getX() + ")");
+                System.out.println(cli + "Card placed successfully on coords (" + m.getCoords().getX() + ", " + m.getCoords().getY() + ")");
                 if (!view.isLastRound()) inputState = InputState.DRAW;
                 else return;
                 printStatus();
@@ -214,6 +214,7 @@ public class TUI implements Runnable, ViewObserver {
                 // System.out.println(cli + "new turn");
                 if (view.isLastRound()) System.out.println(cli + "Last round started");
                 semaphore.release();
+                printStatus();
             }
 
             case GameWinnersAnnouncedMessage m -> {

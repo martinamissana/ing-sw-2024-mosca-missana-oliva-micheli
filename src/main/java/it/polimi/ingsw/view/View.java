@@ -1,10 +1,7 @@
 package it.polimi.ingsw.view;
 
 import it.polimi.ingsw.controller.exceptions.*;
-import it.polimi.ingsw.model.card.Card;
-import it.polimi.ingsw.model.card.CardSide;
-import it.polimi.ingsw.model.card.ResourceCard;
-import it.polimi.ingsw.model.card.StarterCard;
+import it.polimi.ingsw.model.card.*;
 import it.polimi.ingsw.model.chat.Chat;
 import it.polimi.ingsw.model.chat.Message;
 import it.polimi.ingsw.model.deck.DeckBuffer;
@@ -513,9 +510,9 @@ public abstract class View extends ViewObservable<NetMessage> {
                     commonGoal2 = m.getCommonGoal2();
                     gamePhase = m.getGamePhase();
                     action = m.getAction();
-                    chat=new Chat();
+                    chat = new Chat();
                     winners.clear();
-                    myField=new Field();
+                    myField = new Field();
                     notify(message);
                 }
             }
@@ -634,28 +631,32 @@ public abstract class View extends ViewObservable<NetMessage> {
             case CardDrawnFromSourceMessage m -> {
                 if (m.getID().equals(ID)) {
                     switch (m.getType()) {
-                        case DeckType.RESOURCE -> topResourceCard = m.getCard();
-                        case DeckType.GOLDEN -> topGoldenCard = m.getCard();
-                        case DeckBufferType.RES1 -> {
-                            DeckBuffer d = new DeckBuffer(null);
-                            d.setCard((ResourceCard) m.getCard());
-                            this.deckBuffers.put(DeckBufferType.RES1, d);
+                        case DeckType.RESOURCE -> {
+                            topResourceCard = m.getCard();
+                            if (topResourceCard.getSide().equals(CardSide.FRONT)) topResourceCard.flip();
                         }
-                        case DeckBufferType.RES2 -> {
-                            DeckBuffer d = new DeckBuffer(null);
-                            d.setCard((ResourceCard) m.getCard());
-                            this.deckBuffers.put(DeckBufferType.RES2, d);
+
+                        case DeckType.GOLDEN -> {
+                            topGoldenCard = m.getCard();
+                            if (topGoldenCard.getSide().equals(CardSide.FRONT)) topGoldenCard.flip();
                         }
-                        case DeckBufferType.GOLD1 -> {
-                            DeckBuffer d = new DeckBuffer(null);
-                            d.setCard((ResourceCard) m.getCard());
-                            this.deckBuffers.put(DeckBufferType.GOLD1, d);
+
+                        case DeckBufferType.RES1, DeckBufferType.RES2 -> {
+                            if (topResourceCard.getSide().equals(CardSide.BACK)) topResourceCard.flip();
+                            deckBuffers.get((DeckBufferType) m.getType()).setCard((ResourceCard) topResourceCard);
+
+                            topResourceCard = m.getCard();
+                            if (topResourceCard.getSide().equals(CardSide.FRONT)) topResourceCard.flip();
                         }
-                        case DeckBufferType.GOLD2 -> {
-                            DeckBuffer d = new DeckBuffer(null);
-                            d.setCard((ResourceCard) m.getCard());
-                            this.deckBuffers.put(DeckBufferType.GOLD2, d);
+
+                        case DeckBufferType.GOLD1, DeckBufferType.GOLD2 -> {
+                            if (topGoldenCard.getSide().equals(CardSide.BACK)) topGoldenCard.flip();
+                            deckBuffers.get((DeckBufferType) m.getType()).setCard((GoldenCard) topGoldenCard);
+
+                            topGoldenCard = m.getCard();
+                            if (topGoldenCard.getSide().equals(CardSide.FRONT)) topGoldenCard.flip();
                         }
+
                         default -> throw new IllegalStateException("Unexpected value: " + m.getType());
                     }
                 }

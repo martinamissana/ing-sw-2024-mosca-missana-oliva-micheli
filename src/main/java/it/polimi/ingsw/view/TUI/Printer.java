@@ -166,11 +166,19 @@ public class Printer {
     // ~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~
 
     public void printGameArea() {
+        System.out.print("\n" + cli + "Common goals:");
+        printGoal(view.getCommonGoal1());
+        printGoal(view.getCommonGoal2());
+        System.out.println();
+        printGoal(view.getSecretGoal());
+
+        System.out.println("\n");
+
         Card next = view.getTopResourceCard();
         HashMap<DeckBufferType, DeckBuffer> cardSpaces = view.getDeckBuffers();
 
         // Printing resource deck + spaces
-        if (next != null) next.flip();
+        if (next != null && next.getSide().equals(CardSide.FRONT)) next.flip();
 
         System.out.print(cli + "Resource Deck + card spaces:" + cli);
         if (next != null) System.out.print(printUpper(next) + "\t\t");
@@ -198,7 +206,7 @@ public class Printer {
 
         // Printing golden deck + spaces
         next = view.getTopGoldenCard();
-        if (next != null) next.flip();
+        if (next != null && next.getSide().equals(CardSide.FRONT)) next.flip();
 
         System.out.print(cli + "Golden Deck + card spaces:" + cli);
         if (next != null) System.out.print(printUpper(next) + "\t\t");
@@ -223,13 +231,6 @@ public class Printer {
         else System.out.print("\t\t\t\t");
 
         if (next != null) next.flip();
-        System.out.print("\n" + cli + "Common goals:");
-        printGoal(view.getCommonGoal1());
-        printGoal(view.getCommonGoal2());
-        System.out.println();
-        printGoal(view.getSecretGoal());
-
-        System.out.println("\n");
     }
 
     public void printFieldTemp() {         // TODO: Do a better printField (StringBuilder???)

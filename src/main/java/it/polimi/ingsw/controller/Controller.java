@@ -565,12 +565,10 @@ public class Controller implements Serializable {
         player.getHand().addCard(newCard);
         gh.notify(new CardAddedToHandEvent(player, newCard));
 
-        if (deckTypeBox.equals(DeckType.RESOURCE) || deckTypeBox.equals(DeckType.GOLDEN)) {
-            DeckType d = (DeckType) deckTypeBox;
-            gh.notify(new CardDrawnFromSourceEvent(gameID, deckTypeBox, game.getDeck(d).getCards().getLast()));
-        } else if (deckTypeBox.equals(DeckBufferType.RES1) || deckTypeBox.equals(DeckBufferType.RES2) || deckTypeBox.equals(DeckBufferType.GOLD1) || deckTypeBox.equals(DeckBufferType.GOLD2)) {
-            DeckBufferType d = (DeckBufferType) deckTypeBox;
-            gh.notify(new CardDrawnFromSourceEvent(gameID, deckTypeBox, game.getDeckBuffer(d).getCard()));
+        if (deckTypeBox.equals(DeckType.RESOURCE) || deckTypeBox.equals(DeckBufferType.RES1) || deckTypeBox.equals(DeckBufferType.RES2)) {
+            gh.notify(new CardDrawnFromSourceEvent(gameID, deckTypeBox, game.getDeck(DeckType.RESOURCE).getCards().getLast()));
+        } else if (deckTypeBox.equals(DeckType.GOLDEN) || deckTypeBox.equals(DeckBufferType.GOLD1) || deckTypeBox.equals(DeckBufferType.GOLD2)) {
+            gh.notify(new CardDrawnFromSourceEvent(gameID, deckTypeBox, game.getDeck(DeckType.GOLDEN).getCards().getLast()));
         }
 
         // set the game's current action to PLAY after drawing a card
