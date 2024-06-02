@@ -4,6 +4,9 @@ import it.polimi.ingsw.controller.Controller;
 import it.polimi.ingsw.model.game.GameHandler;
 import it.polimi.ingsw.network.RMI.RMIServer;
 import it.polimi.ingsw.network.TCP.TCPServer;
+
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
@@ -13,7 +16,16 @@ public class Server {
 
         Controller c=new Controller(new GameHandler());
         new Thread(() -> {
+
+            try {
+                InetAddress IP = InetAddress. getLocalHost();
+                System. out. println("IP of the server is := "+IP. getHostAddress());
+            } catch (UnknownHostException e) {
+                throw new RuntimeException(e);
+            }
+
             TCPServer server = new TCPServer(4321,c);
+
         }).start();
         new Thread(() -> {
             try {

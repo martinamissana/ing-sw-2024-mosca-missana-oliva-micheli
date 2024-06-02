@@ -354,8 +354,13 @@ public class TUI implements Runnable, ViewObserver {
         String choice = scanner.nextLine();
 
         if (choice.equalsIgnoreCase("TCP")) {
+
+            System.out.print(cli + "Insert the server IP" + user);
+            String IP = scanner.nextLine();
+            //IP="127.0.0.1";
+
             try {
-                this.view = new TCPView("127.0.0.1", 4321);
+                this.view = new TCPView(IP, 4321);
             } catch (IOException ex) {
                 if (view != null) view.removeObserver(this);
                 Thread.currentThread().interrupt();
