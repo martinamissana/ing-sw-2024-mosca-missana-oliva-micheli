@@ -427,7 +427,7 @@ public abstract class View extends ViewObservable<NetMessage> {
     public void elaborate(NetMessage message) throws IOException, FullLobbyException, NicknameAlreadyTakenException, HandIsFullException, IllegalMoveException {
         switch (message) {
             case LoginMessage m -> {
-                if (Objects.equals(m.getNickname(), nickname)) {
+                if (nickname.equals(m.getNickname())) {
                     notify(m);
                 }
             }
@@ -438,8 +438,8 @@ public abstract class View extends ViewObservable<NetMessage> {
             }
             case LobbyCreatedMessage m -> {
                 lobbies.put(m.getID(), m.getLobby());
-                if (m.getCreator().equals(player)) ID = m.getID();
-                if (m.getCreator().equals(player) || ID == null) {
+                if (m.getCreator().equals(player)) {
+                    ID = m.getID();
                     notify(m);
                 }
             }
@@ -451,17 +451,19 @@ public abstract class View extends ViewObservable<NetMessage> {
                 } catch (FullLobbyException e) {
                     e.printStackTrace();
                 }
-                if (ID == null || m.getID().equals(ID))
-                    notify(m);
+                if (m.getID().equals(ID)) notify(m);
             }
             case LobbyLeftMessage m -> {
+                for (Player p : lobbies.get(m.getID()).getPlayers())
+                    if (p.equals(m.getPlayer()) && p.getPawn() != null) p.setPawn(null);
+
                 lobbies.get(m.getID()).removePlayer(m.getPlayer());
                 scoreboard.remove(m.getPlayer());
                 if (m.getPlayer().getNickname().equals(nickname)) {
                     ID = null;
                     pawn = null;
-                }
-                if (ID == null || m.getID().equals(ID)) {
+                    notify(m);
+                } else if (m.getID().equals(ID)) {
                     notify(m);
                 }
             }

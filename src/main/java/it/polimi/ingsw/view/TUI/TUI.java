@@ -110,6 +110,7 @@ public class TUI implements Runnable, ViewObserver {
 
     @Override
     public synchronized void update(NetMessage message) throws IOException {
+        System.out.println(message.getClass().getName());
         switch (message) {
 
             // Login messages ·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~
@@ -147,25 +148,24 @@ public class TUI implements Runnable, ViewObserver {
             }
 
             case LobbyJoinedMessage m -> {
-                if (state == TUIState.CHOOSE_PAWN) return;
                 if (m.getPlayer().equals(view.getPlayer())) {
                     System.out.println(cli + "Joined lobby #" + m.getID());
                     state = TUIState.CHOOSE_PAWN;
-                    printStatus();
                 }
+                printStatus();
                 semaphore.release();
             }
 
             case LobbyLeftMessage m -> {
-                if (state == TUIState.CHOOSE_PAWN) return;
                 if (m.getPlayer().equals(view.getPlayer())) {
                     System.out.println(cli + "Left lobby #" + m.getID());
                     state = TUIState.MENU;
 
                 } else if (GamePhase.PLACING_STARTER_CARD.equals(view.getGamePhase()) ||
-                        (GamePhase.CHOOSING_SECRET_GOAL.equals(view.getGamePhase()))) {
+                        (GamePhase.CHOOSING_SECRET_GOAL.equals(view.getGamePhase())) ||
+                        (m.getID().equals(view.getID()))) {
 
-                    System.out.println(cli + m.getPlayer().getNickname() + " left the game");
+                    System.out.println(cli + m.getPlayer().getNickname() + " left the lobby");
                 }
                 printStatus();
                 semaphore.release();
@@ -356,8 +356,8 @@ public class TUI implements Runnable, ViewObserver {
         if (choice.equalsIgnoreCase("TCP")) {
 
             System.out.print(cli + "Insert the server IP" + user);
-            String IP = scanner.nextLine();
-            //IP="127.0.0.1";
+            String IP; // = scanner.nextLine();
+            IP="127.0.0.1";
 
             try {
                 this.view = new TCPView(IP, 4321);
@@ -417,6 +417,11 @@ public class TUI implements Runnable, ViewObserver {
             case 3 -> {
                 System.out.print(cli + "Exiting game");
                 view.removeObserver(this);
+                try {
+                    view.disconnect();
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
                 exit(0);
             }
             default -> System.out.println(Color.warning + "Invalid choice!!\n" + Color.reset);
@@ -683,13 +688,19 @@ public class TUI implements Runnable, ViewObserver {
             System.out.println(Color.warning + "Didn't insert numeric value!!" + Color.reset);
 //            return;
         }
-//        int action = Integer.parseInt(in);
+        int action = Integer.parseInt(in);
 
-//        switch (action) {
+        switch (action) {
 //            case 1 -> print field of another player;
 //            case 2 -> send message;
-//            case 3 -> leave game;
-//        }
+              case 3 -> {
+                  try {
+                      quitLobby();
+                  } catch (InterruptedException e) {
+                      throw new RuntimeException(e);
+                  }
+              }
+        }
     }
 
     private void playCard(String in) {
