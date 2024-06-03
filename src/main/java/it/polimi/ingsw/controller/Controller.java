@@ -129,6 +129,9 @@ public class Controller implements Serializable {
             gh.getLobbies().get(lobbyID).getPlayers().remove(player);
             gh.getLobby(lobbyID).getPawnBuffer().getPawnList().add(player.getPawn());
             player.setPawn(null);
+            player.getHand().removeAllCards();
+            player.getChoosableGoals().clear();
+            player.setSecretGoal(null);
             gh.notify(new LobbyLeftEvent(player, gh.getLobby(lobbyID), lobbyID));
             if (gh.getLobbies().get(lobbyID).getPlayers().isEmpty()) {
                 deleteLobby(lobbyID);

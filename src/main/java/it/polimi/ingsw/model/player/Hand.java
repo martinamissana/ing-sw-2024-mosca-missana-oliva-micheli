@@ -55,7 +55,7 @@ public class Hand implements Serializable {
      * remove all the cards from the hand, used for the testing of this class
      */
     public void removeAllCards(){
-        handList = new ArrayList<>();
+        handList.clear();
 
     }
 }

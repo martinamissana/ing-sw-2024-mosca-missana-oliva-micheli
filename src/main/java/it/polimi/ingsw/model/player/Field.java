@@ -1,13 +1,13 @@
 package it.polimi.ingsw.model.player;
 
-import java.io.Serializable;
 import it.polimi.ingsw.model.card.*;
-import it.polimi.ingsw.model.commonItem.*;
-import it.polimi.ingsw.model.exceptions.IllegalMoveException;
-import it.polimi.ingsw.model.exceptions.IllegalCoordsException;
-import it.polimi.ingsw.model.exceptions.OccupiedCoordsException;
-import it.polimi.ingsw.model.exceptions.UnreachablePositionException;
-import it.polimi.ingsw.model.exceptions.RequirementsNotSatisfiedException;
+import it.polimi.ingsw.model.commonItem.CornerStatus;
+import it.polimi.ingsw.model.commonItem.ItemBox;
+import it.polimi.ingsw.model.commonItem.Kingdom;
+import it.polimi.ingsw.model.commonItem.Resource;
+import it.polimi.ingsw.model.exceptions.*;
+
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -217,6 +217,9 @@ public class Field implements Serializable {
      */
     private int evaluatePoints(ResourceCard card, Coords coords) {
 
+        if(card.getSide().equals(CardSide.BACK)) {
+            return 0;
+        }
         // read direct points from ResourceCard
         if (card.getClass() == ResourceCard.class)
             return card.getPoints();
