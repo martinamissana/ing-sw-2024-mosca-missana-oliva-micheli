@@ -441,7 +441,7 @@ public abstract class View extends ViewObservable<NetMessage> {
                 if (m.getCreator().equals(player)) {
                     ID = m.getID();
                     notify(m);
-                }
+                } if (ID == null) notify(m);
             }
             case LobbyJoinedMessage m -> {
                 if (m.getPlayer().getNickname().equals(player.getNickname()))
@@ -451,7 +451,7 @@ public abstract class View extends ViewObservable<NetMessage> {
                 } catch (FullLobbyException e) {
                     e.printStackTrace();
                 }
-                if (m.getID().equals(ID)) notify(m);
+                if (m.getID().equals(ID) || ID == null) notify(m);
             }
             case LobbyLeftMessage m -> {
                 for (Player p : lobbies.get(m.getID()).getPlayers())
@@ -463,7 +463,7 @@ public abstract class View extends ViewObservable<NetMessage> {
                     ID = null;
                     pawn = null;
                     notify(m);
-                } else if (m.getID().equals(ID)) {
+                } else if (m.getID().equals(ID) || ID == null) {
                     notify(m);
                 }
             }
@@ -521,7 +521,7 @@ public abstract class View extends ViewObservable<NetMessage> {
             case CardAddedToHandMessage m -> {
                 if (m.getPlayer().equals(player)) {
                     try {
-                        System.out.println("Carta aggiunta :" + m.getCard().getCardID());
+                        System.out.println("Card #" + m.getCard().getCardID() + " added to hand");
                         hand.addCard(m.getCard());
                     } catch (HandIsFullException e) {
                         e.printStackTrace();
@@ -538,10 +538,10 @@ public abstract class View extends ViewObservable<NetMessage> {
                 if (m.getNickname().equals(nickname)) {
                     if (m.getCard().getClass().equals(StarterCard.class)) {
                         myField.addCard((StarterCard) m.getCard());
-                        return;
+                        notify(m);
                     } else try {
                         myField.addCard((ResourceCard) m.getCard(), m.getCoords());
-                        notify(message);
+                        notify(m);
                     } catch (IllegalMoveException e) {
                         e.printStackTrace();
                     }
@@ -570,8 +570,10 @@ public abstract class View extends ViewObservable<NetMessage> {
                     secretGoalChoices = m.getList();
             }
             case SecretGoalAssignedMessage m -> {
-                if (m.getPlayer().equals(player))
+                if (m.getPlayer().equals(player)) {
                     secretGoal = m.getGoal();
+                    notify(m);
+                }
             }
             case GameActionSwitchedMessage m -> {
                 if (m.getID().equals(ID))
