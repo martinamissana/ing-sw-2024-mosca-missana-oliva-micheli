@@ -613,6 +613,7 @@ public class Controller implements Serializable {
         // if last round has finished, declare the winner and terminate the game
         if (game.isLastRound() && game.getWhoseTurn() == game.getNumOfPlayers() - 1) {
             terminateGame(gameID);
+            return;
         }
 
         // if the current player is the last in the round,
@@ -644,7 +645,7 @@ public class Controller implements Serializable {
 
         // if someone has reached 20 points
         for (Map.Entry<Player, Integer> entry : game.getScoreboard().entrySet())
-            if (entry.getValue() >= 20) {
+            if (entry.getValue() >= 3) {
                 game.setLastRound(true);
                 //gh.notify(new LastRoundStartedEvent(gameID));
             }
