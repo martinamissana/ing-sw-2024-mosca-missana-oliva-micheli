@@ -65,9 +65,9 @@ public class TCPView extends View {
                 deserialized = (NetMessage) in.readObject();
                 elaborate(deserialized);
             } while (!socket.isClosed());
-            disconnect();
+            disconnect(super.getNickname());
         } catch (IOException | ClassNotFoundException e) {
-            disconnect();
+            disconnect(super.getNickname());
 
         } catch (FullLobbyException | NicknameAlreadyTakenException | IllegalMoveException | HandIsFullException e) {
             throw new RuntimeException(e);
@@ -208,7 +208,7 @@ public class TCPView extends View {
             out.writeObject(m);
         } catch (IOException e) {
             try {
-                disconnect();
+                disconnect(super.getNickname());
             } catch (IOException ignored) {
             }
         } catch (InterruptedException ignored) {
@@ -220,12 +220,13 @@ public class TCPView extends View {
      * called to disconnect the client, it closes the socket and interrupts the current thread notifying the client
      * @throws IOException general class of exceptions produced by failed or interrupted I/O operations
      */
-    public void disconnect() throws IOException {
+    @Override
+    public void disconnect(String nickname) throws IOException {
         in.close();
         out.close();
         socket.close();
         Thread.currentThread().interrupt();
-        if(super.getNickname()!=null)notify(new DisconnectMessage());
+        if (super.getNickname() != null) notify(new DisconnectMessage());
         else notify(new LoginFail_NicknameAlreadyTaken());
     }
 

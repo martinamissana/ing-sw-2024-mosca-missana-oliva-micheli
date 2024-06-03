@@ -426,7 +426,7 @@ public class TUI implements Runnable, ViewObserver {
                 System.out.print(cli + "Exiting game");
                 view.removeObserver(this);
                 try {
-                    view.disconnect();
+                    view.disconnect(view.getNickname());
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }

@@ -6,18 +6,17 @@ import it.polimi.ingsw.model.card.CardSide;
 import it.polimi.ingsw.model.chat.Message;
 import it.polimi.ingsw.model.deck.DeckTypeBox;
 import it.polimi.ingsw.model.exceptions.*;
+import it.polimi.ingsw.model.game.Lobby;
 import it.polimi.ingsw.model.player.Coords;
 import it.polimi.ingsw.model.player.Pawn;
-import it.polimi.ingsw.view.RMIView;
+import it.polimi.ingsw.model.player.Player;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import java.io.IOException;
-import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
-import java.rmi.registry.LocateRegistry;
-import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 public class RMIServer extends UnicastRemoteObject implements RemoteInterface {
     private final Controller c;
@@ -25,15 +24,32 @@ public class RMIServer extends UnicastRemoteObject implements RemoteInterface {
     public RMIServer(Controller c) throws RemoteException {
       this.c=c;
     }
-    @Override
-    public void login(String username,ClientRemoteInterface client) throws NicknameAlreadyTakenException, IOException {
-        new RMIVirtualView(c, client,username);
-        c.login(username);
-    }
 
     @Override
-    public void heartbeat() throws IOException {
-        c.heartbeat();
+    public void login(String username, ClientRemoteInterface client) throws NicknameAlreadyTakenException, IOException {
+        new RMIVirtualView(c, client, username);
+        c.login(username);
+        new Thread(() -> {
+            try {
+                ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
+                String nickname = client.getNickname();
+                Runnable task = new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            client.heartbeat();
+                        } catch (RemoteException e) {
+                            disconnect(nickname);
+                        }
+                    }
+                };
+                executor.scheduleAtFixedRate(task, 0, 3, TimeUnit.SECONDS);
+            } catch (RemoteException e) {
+                throw new RuntimeException(e);
+            }
+
+        }).start();
+
     }
 
     @Override
@@ -90,8 +106,31 @@ public class RMIServer extends UnicastRemoteObject implements RemoteInterface {
     @Override
     public void getCurrentStatus(String nickname) throws IOException {
         c.getCurrentStatus(nickname);
-        System.out.println(nickname);
     }
 
+    @Override
+    public void disconnect(String nickname) {
+        Integer ID=null;
+        for(Lobby l: c.getGh().getLobbies().values()){
+            for(Player p: l.getPlayers()){
+                if(p.getNickname().equals(nickname)){
+                    ID=l.getID();
+                }
+            }
+        }
+        try {
+                if (ID != null && nickname != null) {
+                    c.leaveLobby(nickname, ID);
+                }
+            } catch (LobbyDoesNotExistsException | GameDoesNotExistException | IOException |
+                     UnexistentUserException ignored) {
+            }
+            c.getGh().removeUser(nickname);
+        try {
+            c.disconnect(nickname,ID);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
 }

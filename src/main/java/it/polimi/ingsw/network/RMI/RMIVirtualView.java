@@ -1,14 +1,13 @@
 package it.polimi.ingsw.network.RMI;
 
 import it.polimi.ingsw.controller.Controller;
+import it.polimi.ingsw.controller.exceptions.UnexistentUserException;
 import it.polimi.ingsw.model.deck.DeckBufferType;
-import it.polimi.ingsw.model.exceptions.FullLobbyException;
-import it.polimi.ingsw.model.exceptions.HandIsFullException;
-import it.polimi.ingsw.model.exceptions.IllegalMoveException;
-import it.polimi.ingsw.model.exceptions.NicknameAlreadyTakenException;
+import it.polimi.ingsw.model.exceptions.*;
 import it.polimi.ingsw.model.observer.Observer;
 import it.polimi.ingsw.model.observer.events.*;
 import it.polimi.ingsw.network.netMessage.HeartBeatMessage;
+import it.polimi.ingsw.network.netMessage.c2s.DisconnectMessage;
 import it.polimi.ingsw.network.netMessage.c2s.LobbyJoinedMessage;
 import it.polimi.ingsw.network.netMessage.s2c.*;
 import java.io.IOException;
@@ -20,6 +19,7 @@ import java.util.Objects;
  * receives the events from the controller and sends messages calling the remote method of the view elaborate
  */
 public class RMIVirtualView implements Observer {
+    private Controller c;
     private Integer ID;
     private String nickname;
     private final ClientRemoteInterface view;
@@ -32,6 +32,7 @@ public class RMIVirtualView implements Observer {
      * @throws RemoteException
      */
     public RMIVirtualView(Controller c, ClientRemoteInterface view, String nickname) throws RemoteException {
+        this.c=c;
         c.getGh().addObserver(this);
         this.view=view;
         this.nickname=nickname;
@@ -48,6 +49,8 @@ public class RMIVirtualView implements Observer {
                     } catch (FullLobbyException | NicknameAlreadyTakenException | HandIsFullException |
                              IllegalMoveException ex) {
                         throw new RuntimeException(ex);
+                    } catch (RemoteException exc){
+                        c.getGh().removeObserver(this);
                     }
                 }
             }
@@ -58,6 +61,8 @@ public class RMIVirtualView implements Observer {
                 } catch (FullLobbyException | NicknameAlreadyTakenException | HandIsFullException |
                          IllegalMoveException ex) {
                     throw new RuntimeException(ex);
+                }catch (RemoteException exc){
+                    c.getGh().removeObserver(this);
                 }
             }
             case LobbyJoinedEvent e -> {
@@ -69,6 +74,8 @@ public class RMIVirtualView implements Observer {
                 } catch (FullLobbyException | NicknameAlreadyTakenException | HandIsFullException |
                          IllegalMoveException ex) {
                     throw new RuntimeException(ex);
+                }catch (RemoteException exc){
+                    c.getGh().removeObserver(this);
                 }
             }
             case LobbyLeftEvent e -> {
@@ -81,6 +88,8 @@ public class RMIVirtualView implements Observer {
                 } catch (FullLobbyException | NicknameAlreadyTakenException | HandIsFullException |
                          IllegalMoveException ex) {
                     throw new RuntimeException(ex);
+                }catch (RemoteException exc){
+                    c.getGh().removeObserver(this);
                 }
             }
             case LobbyDeletedEvent e -> {
@@ -89,6 +98,8 @@ public class RMIVirtualView implements Observer {
                 } catch (FullLobbyException | NicknameAlreadyTakenException | HandIsFullException |
                          IllegalMoveException ex) {
                     throw new RuntimeException(ex);
+                }catch (RemoteException exc){
+                    c.getGh().removeObserver(this);
                 }
             }
             case PawnAssignedEvent e -> {
@@ -97,6 +108,8 @@ public class RMIVirtualView implements Observer {
                 } catch (FullLobbyException | NicknameAlreadyTakenException | HandIsFullException |
                          IllegalMoveException ex) {
                     throw new RuntimeException(ex);
+                }catch (RemoteException exc){
+                    c.getGh().removeObserver(this);
                 }
             }
             case ChatMessageAddedEvent e -> {
@@ -106,6 +119,8 @@ public class RMIVirtualView implements Observer {
                     } catch (FullLobbyException | NicknameAlreadyTakenException | HandIsFullException |
                              IllegalMoveException ex) {
                         throw new RuntimeException(ex);
+                    }catch (RemoteException exc){
+                        c.getGh().removeObserver(this);
                     }
                 }
             }
@@ -116,6 +131,8 @@ public class RMIVirtualView implements Observer {
                     } catch (FullLobbyException | NicknameAlreadyTakenException | HandIsFullException |
                              IllegalMoveException ex) {
                         throw new RuntimeException(ex);
+                    }catch (RemoteException exc){
+                        c.getGh().removeObserver(this);
                     }
                 }
 
@@ -127,6 +144,8 @@ public class RMIVirtualView implements Observer {
                     } catch (FullLobbyException | NicknameAlreadyTakenException | HandIsFullException |
                              IllegalMoveException ex) {
                         throw new RuntimeException(ex);
+                    }catch (RemoteException exc){
+                        c.getGh().removeObserver(this);
                     }
                 }
             }
@@ -137,6 +156,8 @@ public class RMIVirtualView implements Observer {
                     } catch (FullLobbyException | NicknameAlreadyTakenException | HandIsFullException |
                              IllegalMoveException ex) {
                         throw new RuntimeException(ex);
+                    }catch (RemoteException exc){
+                        c.getGh().removeObserver(this);
                     }
                 }
             }
@@ -147,6 +168,8 @@ public class RMIVirtualView implements Observer {
                     } catch (FullLobbyException | NicknameAlreadyTakenException | HandIsFullException |
                              IllegalMoveException ex) {
                         throw new RuntimeException(ex);
+                    }catch (RemoteException exc){
+                        c.getGh().removeObserver(this);
                     }
                 }
             }
@@ -157,6 +180,8 @@ public class RMIVirtualView implements Observer {
                     } catch (FullLobbyException | NicknameAlreadyTakenException | HandIsFullException |
                              IllegalMoveException ex) {
                         throw new RuntimeException(ex);
+                    }catch (RemoteException exc){
+                        c.getGh().removeObserver(this);
                     }
                 }
             }
@@ -167,6 +192,8 @@ public class RMIVirtualView implements Observer {
                     } catch (FullLobbyException | NicknameAlreadyTakenException | HandIsFullException |
                              IllegalMoveException ex) {
                         throw new RuntimeException(ex);
+                    }catch (RemoteException exc){
+                        c.getGh().removeObserver(this);
                     }
                 }
             }
@@ -177,6 +204,8 @@ public class RMIVirtualView implements Observer {
                     } catch (FullLobbyException | NicknameAlreadyTakenException | HandIsFullException |
                              IllegalMoveException ex) {
                         throw new RuntimeException(ex);
+                    }catch (RemoteException exc){
+                        c.getGh().removeObserver(this);
                     }
                 }
             }
@@ -187,6 +216,8 @@ public class RMIVirtualView implements Observer {
                     } catch (FullLobbyException | NicknameAlreadyTakenException | HandIsFullException |
                              IllegalMoveException ex) {
                         throw new RuntimeException(ex);
+                    }catch (RemoteException exc){
+                        c.getGh().removeObserver(this);
                     }
                 }
             }
@@ -197,6 +228,8 @@ public class RMIVirtualView implements Observer {
                     } catch (FullLobbyException | NicknameAlreadyTakenException | HandIsFullException |
                              IllegalMoveException ex) {
                         throw new RuntimeException(ex);
+                    }catch (RemoteException exc){
+                        c.getGh().removeObserver(this);
                     }
                 }
             }
@@ -207,6 +240,8 @@ public class RMIVirtualView implements Observer {
                     } catch (FullLobbyException | NicknameAlreadyTakenException | HandIsFullException |
                              IllegalMoveException ex) {
                         throw new RuntimeException(ex);
+                    }catch (RemoteException exc){
+                        c.getGh().removeObserver(this);
                     }
                 }
             }
@@ -217,6 +252,8 @@ public class RMIVirtualView implements Observer {
                     } catch (FullLobbyException | NicknameAlreadyTakenException | HandIsFullException |
                              IllegalMoveException ex) {
                         throw new RuntimeException(ex);
+                    }catch (RemoteException exc){
+                        c.getGh().removeObserver(this);
                     }
                 }
             }
@@ -227,6 +264,8 @@ public class RMIVirtualView implements Observer {
                     } catch (FullLobbyException | NicknameAlreadyTakenException | HandIsFullException |
                              IllegalMoveException ex) {
                         throw new RuntimeException(ex);
+                    }catch (RemoteException exc){
+                        c.getGh().removeObserver(this);
                     }
                 }
             }
@@ -237,6 +276,8 @@ public class RMIVirtualView implements Observer {
                     } catch (FullLobbyException | NicknameAlreadyTakenException | HandIsFullException |
                              IllegalMoveException ex) {
                         throw new RuntimeException(ex);
+                    }catch (RemoteException exc){
+                        c.getGh().removeObserver(this);
                     }
                 }
             }
@@ -247,6 +288,8 @@ public class RMIVirtualView implements Observer {
                     } catch (FullLobbyException | NicknameAlreadyTakenException | HandIsFullException |
                              IllegalMoveException ex) {
                         throw new RuntimeException(ex);
+                    }catch (RemoteException exc){
+                        c.getGh().removeObserver(this);
                     }
                 }
             }
@@ -256,18 +299,18 @@ public class RMIVirtualView implements Observer {
                 } catch (FullLobbyException | IllegalMoveException | HandIsFullException |
                          NicknameAlreadyTakenException ex) {
                     throw new RuntimeException(ex);
+                }catch (RemoteException exc){
+                    c.getGh().removeObserver(this);
                 }
             }
-            case HeartBeatEvent e -> {
-                try {
-                    view.elaborate(new HeartBeatMessage());
-                } catch (FullLobbyException | NicknameAlreadyTakenException | IllegalMoveException |
-                         HandIsFullException ex) {
-                    throw new RuntimeException(ex);
+            case DisconnectEvent e -> {
+                if(Objects.equals(e.getNickname(),nickname) && Objects.equals(e.getID(),ID)) {
+                    e.getC().getGh().removeObserver(this);
                 }
             }
             default -> throw new IllegalStateException("Unexpected value: " + event);
         }
     }
+
 
 }

@@ -18,9 +18,7 @@ import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.io.IOException;
 import java.rmi.server.UnicastRemoteObject;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
+import java.util.Objects;
 
 
 /**
@@ -40,24 +38,38 @@ public class RMIView extends View implements ClientRemoteInterface , Serializabl
     public RMIView(RemoteInterface RMIServer) throws RemoteException, NotBoundException {
         super();
         this.RMIServer=RMIServer;
+        new Thread(() -> {
+            while (true) {
+                try {
+                    heartbeat();
+                } catch (RemoteException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }).start();
     }
 
     /**
      * Sets nickname in the view and calls the method login of the server
      * @param nickname name of the player
-     * @throws NicknameAlreadyTakenException thrown if another client has the same nickname
      * @throws IOException general class of exceptions produced by failed or interrupted I/O operations
      */
     @Override
-    public void login(String nickname) throws NicknameAlreadyTakenException, IOException {
+    public void login(String nickname) throws IOException {
         super.setPlayer(new Player(nickname));
         super.setNickname(nickname);
-        RMIServer.login(nickname,(ClientRemoteInterface) UnicastRemoteObject.exportObject((ClientRemoteInterface) this, 0));
+        try {
+            RMIServer.login(nickname,(ClientRemoteInterface) UnicastRemoteObject.exportObject(this, 0));
+        } catch (NicknameAlreadyTakenException e) {
+            notify(new LoginFail_NicknameAlreadyTaken());
+        } catch (RemoteException e){
+            disconnect(super.getNickname());
+        }
     }
 
     /**
      * calls the method createLobby of the server
-     * @param numOfPlayers players of the lobby
+     * @param  numOfPlayers players of the lobby
      * @throws LobbyDoesNotExistsException thrown if the lobby doesn't exist
      * @throws IOException general class of exceptions produced by failed or interrupted I/O operations
      * @throws CannotJoinMultipleLobbiesException thrown if the player tries to join multiple lobbies
@@ -68,7 +80,11 @@ public class RMIView extends View implements ClientRemoteInterface , Serializabl
      */
     @Override
     public void createLobby(int numOfPlayers) throws LobbyDoesNotExistsException, IOException, CannotJoinMultipleLobbiesException, UnexistentUserException, FullLobbyException, NicknameAlreadyTakenException, ClassNotFoundException {
-        RMIServer.createLobby(numOfPlayers, super.getPlayer().getNickname());
+        try {
+            RMIServer.createLobby(numOfPlayers, super.getPlayer().getNickname());
+        } catch (RemoteException e) {
+            disconnect(super.getNickname());
+        }
     }
 
     /**
@@ -83,7 +99,11 @@ public class RMIView extends View implements ClientRemoteInterface , Serializabl
      */
     @Override
     public void joinLobby(int lobbyID) throws FullLobbyException, NicknameAlreadyTakenException, LobbyDoesNotExistsException, IOException, CannotJoinMultipleLobbiesException, UnexistentUserException {
-        RMIServer.joinLobby(lobbyID, super.getPlayer().getNickname());
+        try {
+            RMIServer.joinLobby(lobbyID, super.getPlayer().getNickname());
+        } catch (RemoteException e) {
+            disconnect(super.getNickname());
+        }
     }
 
     /**
@@ -96,7 +116,11 @@ public class RMIView extends View implements ClientRemoteInterface , Serializabl
      */
     @Override
     public void leaveLobby() throws GameAlreadyStartedException, LobbyDoesNotExistsException, IOException, GameDoesNotExistException, UnexistentUserException {
-        RMIServer.leaveLobby(super.getID(), super.getPlayer().getNickname());
+        try {
+            RMIServer.leaveLobby(super.getID(), super.getPlayer().getNickname());
+        } catch (RemoteException e) {
+            disconnect(super.getNickname());
+        }
     }
 
     /**
@@ -109,8 +133,13 @@ public class RMIView extends View implements ClientRemoteInterface , Serializabl
      * @throws PlayerChatMismatchException thrown if sender or receiver
      */
     @Override
-    public void sendMessage(Message message) throws LobbyDoesNotExistsException, GameDoesNotExistException, UnexistentUserException, RemoteException, PlayerChatMismatchException {
-        RMIServer.sendMessage(message,super.getID());
+    public void sendMessage(Message message) throws LobbyDoesNotExistsException, GameDoesNotExistException, UnexistentUserException, IOException, PlayerChatMismatchException {
+        try{
+            RMIServer.sendMessage(message,super.getID());
+        }
+        catch (RemoteException e){
+            disconnect(super.getNickname());
+        }
     }
 
     /**
@@ -125,7 +154,12 @@ public class RMIView extends View implements ClientRemoteInterface , Serializabl
      */
     @Override
     public void choosePawn(Pawn color) throws LobbyDoesNotExistsException, PawnAlreadyTakenException, IOException, GameAlreadyStartedException, GameDoesNotExistException, UnexistentUserException {
-        RMIServer.choosePawn(super.getID(), super.getPlayer().getNickname(), color);
+        try{
+            RMIServer.choosePawn(super.getID(), super.getPlayer().getNickname(), color);
+        }
+        catch (RemoteException e){
+            disconnect(super.getNickname());
+        }
     }
 
     /**
@@ -139,7 +173,12 @@ public class RMIView extends View implements ClientRemoteInterface , Serializabl
      */
     @Override
     public void chooseSecretGoal(int goalID) throws IOException, IllegalGoalChosenException, WrongGamePhaseException, GameDoesNotExistException, UnexistentUserException {
-        RMIServer.chooseSecretGoal(super.getID(), super.getPlayer().getNickname(), goalID);
+        try{
+            RMIServer.chooseSecretGoal(super.getID(), super.getPlayer().getNickname(), goalID);
+        }
+        catch (RemoteException e){
+            disconnect(super.getNickname());
+        }
     }
 
     /**
@@ -154,7 +193,12 @@ public class RMIView extends View implements ClientRemoteInterface , Serializabl
      */
     @Override
     public void chooseCardSide(CardSide side) throws EmptyDeckException, GameDoesNotExistException, HandIsFullException, UnexistentUserException, IOException, WrongGamePhaseException {
-        RMIServer.chooseCardSide(super.getID(), super.getPlayer().getNickname(), side);
+        try{
+            RMIServer.chooseCardSide(super.getID(), super.getPlayer().getNickname(), side);
+        }
+        catch (RemoteException e){
+            disconnect(super.getNickname());
+        }
     }
 
     /**
@@ -199,30 +243,25 @@ public class RMIView extends View implements ClientRemoteInterface , Serializabl
      */
     @Override
     public void getCurrentStatus() throws IOException {
-        RMIServer.getCurrentStatus(super.getNickname());
+        try{
+            RMIServer.getCurrentStatus(super.getNickname());
+        }
+        catch (RemoteException e){
+            disconnect(super.getNickname());
+        }
     }
 
-
-    public void disconnect() throws IOException {
-        Thread.currentThread().interrupt();
-        if (super.getNickname() != null) notify(new DisconnectMessage());
-        else notify(new LoginFail_NicknameAlreadyTaken());
+    @Override
+    public void disconnect(String nickname) throws IOException {
+        try {
+            RMIServer.disconnect(nickname);
+        } catch (RemoteException e){
+            if (Objects.equals(super.getNickname(), nickname)) notify(new DisconnectMessage());
+        }
     }
 
     @Override
     public void heartbeat() throws RemoteException {
-        ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
-        Runnable task = () -> {
-            try {
-                RMIServer.heartbeat();
-            } catch (IOException e) {
-                try {
-                    disconnect();
-                } catch (IOException ignored) {
-                }
-            }
-        };
-        executor.scheduleAtFixedRate(task, 0, 5, TimeUnit.SECONDS);
     }
 
 }

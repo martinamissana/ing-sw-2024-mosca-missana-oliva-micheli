@@ -412,7 +412,7 @@ public abstract class View extends ViewObservable<NetMessage> {
 
     public abstract void heartbeat() throws IOException, ClassNotFoundException;
 
-    public abstract void disconnect() throws IOException;
+    public abstract void disconnect(String nickname) throws IOException;
 
     /**
      * receives the messages from the server, notifies TUI and GUI and modifies the view
@@ -434,7 +434,7 @@ public abstract class View extends ViewObservable<NetMessage> {
             case LoginFail_NicknameAlreadyTaken m -> {
                 Thread.currentThread().interrupt();
                 nickname = null;
-                disconnect();
+                disconnect(null);
             }
             case LobbyCreatedMessage m -> {
                 lobbies.put(m.getID(), m.getLobby());

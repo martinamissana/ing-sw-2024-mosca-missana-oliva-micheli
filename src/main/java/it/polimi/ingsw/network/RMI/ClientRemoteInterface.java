@@ -12,6 +12,6 @@ import java.rmi.RemoteException;
 
 public interface ClientRemoteInterface extends Remote {
     void elaborate(NetMessage message) throws IOException, FullLobbyException, NicknameAlreadyTakenException, HandIsFullException, IllegalMoveException;
-    Integer getID() throws RemoteException;
+    void heartbeat() throws RemoteException;
     String getNickname() throws RemoteException;
     }
