@@ -1,13 +1,10 @@
 package it.polimi.ingsw.network.RMI;
 
 import it.polimi.ingsw.controller.Controller;
-import it.polimi.ingsw.controller.exceptions.UnexistentUserException;
 import it.polimi.ingsw.model.deck.DeckBufferType;
 import it.polimi.ingsw.model.exceptions.*;
 import it.polimi.ingsw.model.observer.Observer;
 import it.polimi.ingsw.model.observer.events.*;
-import it.polimi.ingsw.network.netMessage.HeartBeatMessage;
-import it.polimi.ingsw.network.netMessage.c2s.DisconnectMessage;
 import it.polimi.ingsw.network.netMessage.c2s.LobbyJoinedMessage;
 import it.polimi.ingsw.network.netMessage.s2c.*;
 import java.io.IOException;
@@ -19,7 +16,7 @@ import java.util.Objects;
  * receives the events from the controller and sends messages calling the remote method of the view elaborate
  */
 public class RMIVirtualView implements Observer {
-    private Controller c;
+    private final Controller c;
     private Integer ID;
     private String nickname;
     private final ClientRemoteInterface view;
@@ -29,9 +26,8 @@ public class RMIVirtualView implements Observer {
      * @param c controller
      * @param view client view
      * @param nickname username
-     * @throws RemoteException
      */
-    public RMIVirtualView(Controller c, ClientRemoteInterface view, String nickname) throws RemoteException {
+    public RMIVirtualView(Controller c, ClientRemoteInterface view, String nickname){
         this.c=c;
         c.getGh().addObserver(this);
         this.view=view;

@@ -33,14 +33,14 @@ public class RMIServer extends UnicastRemoteObject implements RemoteInterface {
             try {
                 ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
                 String nickname = client.getNickname();
-                Runnable task = new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            client.heartbeat();
-                        } catch (RemoteException e) {
-                            disconnect(nickname);
-                        }
+                Runnable task = () -> {
+                    try {
+                        System.out.println("heartbeat");
+                        client.heartbeat();
+                    } catch (RemoteException e) {
+                        Thread.currentThread().interrupt();
+                        disconnect(nickname);
+                        executor.shutdown();
                     }
                 };
                 executor.scheduleAtFixedRate(task, 0, 3, TimeUnit.SECONDS);
@@ -110,24 +110,25 @@ public class RMIServer extends UnicastRemoteObject implements RemoteInterface {
 
     @Override
     public void disconnect(String nickname) {
-        Integer ID=null;
-        for(Lobby l: c.getGh().getLobbies().values()){
-            for(Player p: l.getPlayers()){
-                if(p.getNickname().equals(nickname)){
-                    ID=l.getID();
+        Integer ID = null;
+        for (Lobby l : c.getGh().getLobbies().values()) {
+            for (Player p : l.getPlayers()) {
+                if (p.getNickname().equals(nickname)) {
+                    ID = l.getID();
+                    break;
                 }
             }
         }
         try {
-                if (ID != null && nickname != null) {
-                    c.leaveLobby(nickname, ID);
-                }
-            } catch (LobbyDoesNotExistsException | GameDoesNotExistException | IOException |
-                     UnexistentUserException ignored) {
+            if (ID != null) {
+                c.leaveLobby(nickname, ID);
             }
-            c.getGh().removeUser(nickname);
+        } catch (LobbyDoesNotExistsException | GameDoesNotExistException | IOException |
+                 UnexistentUserException ignored) {
+        }
+        c.getGh().removeUser(nickname);
         try {
-            c.disconnect(nickname,ID);
+            c.disconnect(nickname, ID);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
