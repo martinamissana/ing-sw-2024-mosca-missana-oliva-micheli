@@ -135,7 +135,6 @@ public class Controller implements Serializable {
             gh.notify(new LobbyLeftEvent(player, gh.getLobby(lobbyID), lobbyID));
             if (gh.getLobbies().get(lobbyID).getPlayers().isEmpty()) {
                 deleteLobby(lobbyID);
-                gh.notify(new LobbyDeletedEvent(lobbyID));
             }
             if (gh.getActiveGames().containsKey(lobbyID)){
                 leaveGame(lobbyID, player.getNickname());
@@ -149,10 +148,11 @@ public class Controller implements Serializable {
      * @param lobbyID - the ID of the lobby that will be deleted
      * @throws LobbyDoesNotExistsException if the lobby does not exist
      */
-    private synchronized void deleteLobby(int lobbyID) throws LobbyDoesNotExistsException {
+    private synchronized void deleteLobby(int lobbyID) throws LobbyDoesNotExistsException, IOException {
         if (gh.getLobbies().containsKey(lobbyID)) {
             gh.getLobbies().remove(lobbyID);
             gh.getActiveGames().remove(lobbyID);
+            gh.notify(new LobbyDeletedEvent(lobbyID));
         } else throw new LobbyDoesNotExistsException("Lobby with ID " + lobbyID + " does not exist");
     }
 
@@ -874,10 +874,6 @@ public class Controller implements Serializable {
 
     public void getCurrentStatus(String nickname) throws IOException {
         gh.notify(new CurrentStatusEvent(gh.getLobbies(),nickname));
-    }
-
-    public void heartbeat() throws IOException {
-        gh.notify(new HeartBeatEvent());
     }
 
     public void disconnect(String nickname, Integer ID) throws IOException {
