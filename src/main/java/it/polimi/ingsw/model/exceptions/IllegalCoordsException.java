@@ -7,4 +7,6 @@ import java.io.Serializable;
  */
 public class IllegalCoordsException extends IllegalMoveException implements Serializable {
     public IllegalCoordsException() { super(); }
+
+    public IllegalCoordsException(String string) { super(string); }
 }

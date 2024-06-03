@@ -7,4 +7,6 @@ import java.io.Serializable;
  */
 public class IllegalMoveException extends Exception implements Serializable {
     public IllegalMoveException() { super(); }
+
+    public IllegalMoveException(String string) { super(string); }
 }

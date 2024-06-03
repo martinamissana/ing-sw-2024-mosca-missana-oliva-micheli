@@ -60,6 +60,9 @@ public class Field implements Serializable {
         StringBuilder out = new StringBuilder("Total Res:\n");
         for (HashMap.Entry<ItemBox, Integer> entry : totalResources.entrySet())
             out.append("\t").append(entry.getKey()).append(": ").append(entry.getValue()).append("\n");
+        out.append("\nMatrix:\n");
+        for (HashMap.Entry<Coords, Card> entry : matrix.entrySet())
+            out.append("\t").append(entry.getKey().toString()).append(": ").append(entry.getValue().toStringReadable()).append("\n");
         return out.toString();
     }
 
@@ -101,11 +104,15 @@ public class Field implements Serializable {
 
         // if there's already a card at that position (including a CardBlock,
         // meaning the position would be blocked by a corner), throw an exception
-        if (this.matrix.get(coords) != null) throw new OccupiedCoordsException();
+        if (this.matrix.get(coords) != null) {
+            String cardInfo = matrix.get(coords).getClass().equals(CardBlock.class) ? "CardBlock already present at " + coords.toString() :
+                    (matrix.get(coords).getClass().getSimpleName() + " already present at " + coords.toString() + ", ID: " + matrix.get(coords).getCardID());
+            throw new OccupiedCoordsException(cardInfo);
+        }
 
         // if any of the adjacent positions has a card with a non-blocking corner
         // pointed towards the specified position, return true
-        for (Map.Entry<CornerType, Coords> entry : getAdjacentCards(coords).entrySet())            // iterate through neighboring cards
+        for (Map.Entry<CornerType, Coords> entry : getAdjacentCards(coords).entrySet())         // iterate through neighboring cards
             if (this.matrix.get(entry.getValue()).getCorner(opposite(entry.getKey())) != null)  // if any such card... (as before)
                 return true;                                                                    // a card can be placed at 'coords'
 
@@ -121,14 +128,17 @@ public class Field implements Serializable {
      */
     public boolean checkRequirements(ResourceCard card) throws RequirementsNotSatisfiedException {
 
-        // if it's not a Golden card it doesn't have requirements, so they're automatically met
+        // if it's not a Golden card or if it's flipped, it doesn't have requirements, so they're automatically met
         if (card.getClass() != GoldenCard.class || card.getSide() == CardSide.BACK)
             return true;
 
         // if any resource required is insufficient, throw exception
         for (Map.Entry<Kingdom, Integer> entry : ((GoldenCard) card).getRequirements().entrySet())  // for each required resource's quantity
-            if (entry.getValue() > this.totalResources.get(entry.getKey()))                         // if it's greater than the corresponding total
-                throw new RequirementsNotSatisfiedException();                                      // the card's requirements are not met
+            if (entry.getValue() > this.totalResources.get(entry.getKey())) {                       // if it's greater than the corresponding total
+                String resInfo = "Insufficient " + entry.getKey().toString().toLowerCase() +        // the card's requirements are not met
+                        "s: needed " + entry.getValue() + ", have " + totalResources.get(entry.getKey());
+                throw new RequirementsNotSatisfiedException(resInfo);
+            }
 
         // else, requirements are met. return true
         return true;
@@ -248,7 +258,7 @@ public class Field implements Serializable {
      * @return HashMap<CornerType, Coords>
      */
     private HashMap<CornerType, Coords> getAdjacentCards(Coords coords) {
-        if (coords == null) throw new IllegalArgumentException();
+        if (coords == null) throw new NullPointerException();
 
         HashMap<CornerType, Coords> map = new HashMap<>();
         // create adjacent coordinates
@@ -280,7 +290,7 @@ public class Field implements Serializable {
      * @return HashMap<CornerType, Coords>
      */
     private HashMap<CornerType, Coords> getFreeAdjacentCoords(Coords coords) {
-        if (coords == null) throw new IllegalArgumentException();
+        if (coords == null) throw new NullPointerException();
 
         HashMap<CornerType, Coords> map = new HashMap<>();
         // create adjacent coordinates
@@ -309,16 +319,13 @@ public class Field implements Serializable {
      * @return CornerType
      */
     private CornerType opposite(CornerType corner) {
-        if (corner != null) {
-            if (corner == CornerType.NORTH)
-                return CornerType.SOUTH;
-            if (corner == CornerType.EAST)
-                return CornerType.WEST;
-            if (corner == CornerType.SOUTH)
-                return CornerType.NORTH;
-            if (corner == CornerType.WEST)
-                return CornerType.EAST;
+        switch (corner) {
+            case NORTH: return CornerType.SOUTH;
+            case EAST: return CornerType.WEST;
+            case SOUTH: return CornerType.NORTH;
+            case WEST: return CornerType.EAST;
+            case null: throw new NullPointerException();
+            default: throw new IllegalArgumentException();
         }
-        return null;
     }
 }

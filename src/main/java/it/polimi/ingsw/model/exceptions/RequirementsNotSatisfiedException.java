@@ -5,4 +5,6 @@ package it.polimi.ingsw.model.exceptions;
  */
 public class RequirementsNotSatisfiedException extends IllegalMoveException {
     public RequirementsNotSatisfiedException() { super(); }
+
+    public RequirementsNotSatisfiedException(String string) { super(string); }
 }

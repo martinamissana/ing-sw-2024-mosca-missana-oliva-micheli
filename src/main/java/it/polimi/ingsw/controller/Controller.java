@@ -368,26 +368,26 @@ public class Controller implements Serializable {
      * @param nickname who is playing the card
      * @param side     side chosen by the player
      */
-    public synchronized void chooseCardSide(Integer ID, String nickname, CardSide side) throws GameDoesNotExistException, EmptyDeckException, HandIsFullException, UnexistentUserException, IOException, WrongGamePhaseException {
+    public synchronized void chooseCardSide(Integer gameID, String nickname, CardSide side) throws GameDoesNotExistException, EmptyDeckException, HandIsFullException, UnexistentUserException, IOException, WrongGamePhaseException {
 
-        Player player = null;
-        for (Player p : gh.getUsers()) {
-            if (p.getNickname().equals(nickname)) player = p;
-        }
-        if (player == null) throw new UnexistentUserException();
-        if (gh.getGame(ID).getGamePhase() != GamePhase.PLACING_STARTER_CARD) throw new WrongGamePhaseException();
+        Game game = gh.getGame(gameID);
+
+        if (game == null) throw new GameDoesNotExistException("Game with ID " + gameID + " does not exist");
+        if (game.getGamePhase() != GamePhase.PLACING_STARTER_CARD) throw new WrongGamePhaseException();
+        Player player = game.getPlayers().stream().filter(p -> p.getNickname().equals(nickname)).findFirst().orElse(null);
+        if (player == null) throw new UnexistentUserException("User is not in the specified game");
+
         StarterCard card = (StarterCard) player.getHand().getCard(0);
         if (!card.getSide().equals(side)) card.flip();
         player.getField().addCard(card);
-        gh.notify(new CardPlacedOnFieldEvent(new Coords(0, 0), ID, card, nickname));
+        gh.notify(new CardPlacedOnFieldEvent(new Coords(0, 0), gameID, card, nickname));
         player.getHand().removeCard(card);
         gh.notify(new CardRemovedFromHandEvent(player, card));
-        for (Player p : gh.getGame(ID).getPlayers()) {
-            if (p.getHand().getSize() != 0) return;
-        }
-        fillHands(ID);
-        gh.getGame(ID).setGamePhase(GamePhase.CHOOSING_SECRET_GOAL);
-        gh.notify(new GamePhaseChangedEvent(ID, GamePhase.CHOOSING_SECRET_GOAL));
+
+        for (Player p : game.getPlayers()) if (p.getHand().getSize() != 0) return;
+        fillHands(gameID);
+        game.setGamePhase(GamePhase.CHOOSING_SECRET_GOAL);
+        gh.notify(new GamePhaseChangedEvent(gameID, GamePhase.CHOOSING_SECRET_GOAL));
     }
 
     /**
@@ -522,8 +522,8 @@ public class Controller implements Serializable {
         // get card in player's specified hand position
         ResourceCard card = (ResourceCard) player.getHand().getCard(handPos);
 
-        //flip the card if it is required
-        if(side==CardSide.BACK)card.flip();
+        // flip the card if it is required
+        if (side != card.getSide()) card.flip();
 
         // place card in the field and calculate points
         int points = player.getField().addCard(card, coords);

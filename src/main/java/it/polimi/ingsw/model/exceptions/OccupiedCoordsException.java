@@ -6,4 +6,5 @@ package it.polimi.ingsw.model.exceptions;
  */
 public class OccupiedCoordsException extends IllegalCoordsException {
     public OccupiedCoordsException() { super(); }
+    public OccupiedCoordsException(String string) { super(string);}
 }
