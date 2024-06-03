@@ -94,6 +94,7 @@ public abstract class Card implements Serializable {
     public String toString() {
         return "1709659025650-fa69fadb-c647-4aa4-a049-05e38017b96d_" + ID;
     }
+    public String toStringReadable() { return getClass().getSimpleName() + "(" + getCardID() + ")"; }
 
     @Override
     public boolean equals(Object o) {
