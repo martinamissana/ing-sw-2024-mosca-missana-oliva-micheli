@@ -22,7 +22,6 @@ import it.polimi.ingsw.network.netMessage.s2c.*;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Objects;
 
 /**
  * View class, it contains what the client can see and the methods the client can call to play
@@ -462,6 +461,8 @@ public abstract class View extends ViewObservable<NetMessage> {
                 if (m.getPlayer().getNickname().equals(nickname)) {
                     ID = null;
                     pawn = null;
+                    hand.removeAllCards();
+                    secretGoalChoices.clear();
                     notify(m);
                 } else if (m.getID().equals(ID) || ID == null) {
                     notify(m);

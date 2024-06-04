@@ -221,8 +221,8 @@ public class Controller implements Serializable {
         if(gh.getGame(gameID).getGamePhase().equals(GamePhase.PLAYING_GAME))winner(gameID);
         if (gh.getActiveGames().containsKey(gameID)) {
             gh.getActiveGames().remove(gameID);
-            gh.notify(new GameTerminatedEvent(gameID));
             deleteLobby(gameID);
+            gh.notify(new GameTerminatedEvent(gameID));
         } else throw new GameDoesNotExistException("Game with ID " + gameID + " does not exist");
     }
 
