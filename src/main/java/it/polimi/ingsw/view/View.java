@@ -461,8 +461,10 @@ public abstract class View extends ViewObservable<NetMessage> {
                 if (m.getPlayer().getNickname().equals(nickname)) {
                     ID = null;
                     pawn = null;
+                    player.initialize();
                     hand.removeAllCards();
                     secretGoalChoices.clear();
+                    secretGoal=null;
                     notify(m);
                 } else if (m.getID().equals(ID) || ID == null) {
                     notify(m);
@@ -603,6 +605,7 @@ public abstract class View extends ViewObservable<NetMessage> {
             case GameTerminatedMessage m -> {
                 if (m.getID().equals(ID)) {
                     lobbies.remove(ID);
+                    player.initialize();
                     firstPlayer = false;
                     yourTurn = false;
                     lastRound=false;

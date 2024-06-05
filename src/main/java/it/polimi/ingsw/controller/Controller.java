@@ -5,6 +5,7 @@ import it.polimi.ingsw.model.card.Card;
 import it.polimi.ingsw.model.card.CardSide;
 import it.polimi.ingsw.model.card.ResourceCard;
 import it.polimi.ingsw.model.card.StarterCard;
+import it.polimi.ingsw.model.chat.Chat;
 import it.polimi.ingsw.model.chat.Message;
 import it.polimi.ingsw.model.commonItem.ItemBox;
 import it.polimi.ingsw.model.deck.DeckBufferType;
@@ -82,7 +83,8 @@ public class Controller implements Serializable {
             gh.getLobby(gh.getNumOfLobbies()).addPlayer(lobbyCreator);
             gh.notify(new LobbyCreatedEvent(lobbyCreator, gh.getLobby(getGh().getNumOfLobbies()), gh.getNumOfLobbies()));
             gh.setNumOfLobbies(gh.getNumOfLobbies() + 1);
-        } catch (FullLobbyException | IOException ignored) {
+        } catch (FullLobbyException | IOException e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -128,10 +130,7 @@ public class Controller implements Serializable {
         if (gh.getLobbies().containsKey(lobbyID)) {
             gh.getLobbies().get(lobbyID).getPlayers().remove(player);
             gh.getLobby(lobbyID).getPawnBuffer().getPawnList().add(player.getPawn());
-            player.setPawn(null);
-            player.getHand().removeAllCards();
-            player.getChoosableGoals().clear();
-            player.setSecretGoal(null);
+            player.initialize();
             gh.notify(new LobbyLeftEvent(player, gh.getLobby(lobbyID), lobbyID));
             if (gh.getLobbies().get(lobbyID).getPlayers().isEmpty()) {
                 deleteLobby(lobbyID);
@@ -205,6 +204,7 @@ public class Controller implements Serializable {
         }
         if (player == null) throw new UnexistentUserException();
         if (gh.getActiveGames().containsKey(gameID)) {
+            player.initialize();
             gh.getActiveGames().get(gameID).getPlayers().remove(player);
             gh.getActiveGames().get(gameID).getScoreboard().remove(player);
             terminateGame(gameID);
@@ -220,6 +220,9 @@ public class Controller implements Serializable {
     public synchronized void terminateGame(Integer gameID) throws GameDoesNotExistException, LobbyDoesNotExistsException, IOException {
         if(gh.getGame(gameID).getGamePhase().equals(GamePhase.PLAYING_GAME))winner(gameID);
         if (gh.getActiveGames().containsKey(gameID)) {
+            for (Player p : gh.getGame(gameID).getPlayers()) {
+                p.initialize();
+            }
             gh.getActiveGames().remove(gameID);
             deleteLobby(gameID);
             gh.notify(new GameTerminatedEvent(gameID));
@@ -321,8 +324,9 @@ public class Controller implements Serializable {
             try {
                 p.getHand().addCard(starter.removeLast());
                 gh.notify(new CardAddedToHandEvent(p, p.getHand().getCard(0)));
-            } catch (HandIsFullException ignored) {
-            }   // isn't supposed to happen
+            } catch (HandIsFullException e) {
+                throw new RuntimeException(e);
+            }
         }
     }
 

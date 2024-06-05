@@ -10,8 +10,8 @@ import java.util.Objects;
 public class Player implements Serializable {
     private final String nickname;
     private final Hand hand;
-    private final Field field;
-    private final Chat chat;
+    private Field field;
+    private Chat chat;
     private boolean goesFirst;
     private Goal secretGoal;
     private Pawn pawn;
@@ -110,6 +110,19 @@ public class Player implements Serializable {
      * @return Pawn
      */
     public Pawn getPawn() { return pawn; }
+
+    /**
+     * initializes all the attributes related to a game, used when a players is no longer in a lobby or in a game
+     */
+    public void initialize(){
+        this.hand.removeAllCards();
+        this.field = new Field();
+        this.chat = new Chat();
+        this.goesFirst = false;
+        this.secretGoal = null;
+        this.pawn = null;
+        this.choosableGoals.clear();
+    }
 
     /**
      * getter

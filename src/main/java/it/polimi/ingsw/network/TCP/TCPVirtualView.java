@@ -100,11 +100,11 @@ public class TCPVirtualView implements Runnable, Observer {
                 case CurrentStatusEvent ignored -> {
                 }
                 case LobbyLeftEvent e -> {
+                    if (e.getPlayer().getNickname().equals(this.nickname)) this.ID = null;
                     LobbyLeftMessage m = new LobbyLeftMessage(e.getPlayer(), e.getLobby(), e.getID());
                     out.writeObject(m);
                 }
                 case LobbyDeletedEvent e -> {
-                    if (e.getID().equals(this.ID)) this.ID = null;
                     LobbyDeletedMessage m = new LobbyDeletedMessage(e.getID());
                     out.writeObject(m);
                 }
@@ -187,6 +187,7 @@ public class TCPVirtualView implements Runnable, Observer {
                 }
                 case GameTerminatedEvent e -> {
                     if (e.getID().equals(ID)) {
+                        this.ID = null;
                         GameTerminatedMessage m = new GameTerminatedMessage(e.getID());
                         out.writeObject(m);
                     }
