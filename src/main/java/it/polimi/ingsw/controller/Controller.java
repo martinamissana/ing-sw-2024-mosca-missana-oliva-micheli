@@ -649,7 +649,7 @@ public class Controller implements Serializable {
 
         // if someone has reached 20 points
         for (Map.Entry<Player, Integer> entry : game.getScoreboard().entrySet())
-            if (entry.getValue() >= 5) {        // TODO: 20 points
+            if (entry.getValue() >= 20) {        // TODO: 20 points
                 game.setLastRound(true);
                 //gh.notify(new LastRoundStartedEvent(gameID));
             }

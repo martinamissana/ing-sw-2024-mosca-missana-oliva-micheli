@@ -462,7 +462,7 @@ public abstract class View extends ViewObservable<NetMessage> {
                     if (p.equals(m.getPlayer()) && p.getPawn() != null) p.setPawn(null);
 
                 lobbies.get(m.getID()).removePlayer(m.getPlayer());
-                scoreboard.remove(m.getPlayer());
+                if (scoreboard != null) scoreboard.remove(m.getPlayer());
                 if (m.getPlayer().getNickname().equals(nickname)) {
                     ID = null;
                     pawn = null;

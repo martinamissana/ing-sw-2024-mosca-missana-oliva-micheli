@@ -172,11 +172,13 @@ public class TUI implements Runnable, ViewObserver {
 
                     System.out.println(cli + m.getPlayer().getNickname() + " left the lobby");
                     state = TUIState.MENU;
+                } else if (m.getID().equals(view.getID())) {
+                    chatState = null;
                 } else printStatus();
 
             }
 
-            case LobbyDeletedMessage ignored -> printStatus();
+            case LobbyDeletedMessage ignored -> {}
 
             case PawnAssignedMessage m -> {
                 if (state == TUIState.CHOOSE_PAWN && m.getPlayer().equals(view.getPlayer())) {
@@ -257,6 +259,7 @@ public class TUI implements Runnable, ViewObserver {
             case GameTerminatedMessage ignored -> {
                 System.out.print(cli + "Game terminated, returning to menu...");
                 state = TUIState.MENU;
+                chatState = null;
                 semaphore.release();
                 printStatus();
             }
@@ -264,7 +267,10 @@ public class TUI implements Runnable, ViewObserver {
             // Fail messages ·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·
             case FailMessage m -> {
                 if (actionState == ActionState.PLAY_SELECT_COORDS) actionState = ActionState.PLAY_SELECT_CARD;
-                if (m.getNickname().equals(view.getNickname())) System.out.println(m.getMessage());
+                if (m.getNickname().equals(view.getNickname())) {
+                    System.out.println(m.getMessage());
+                    printStatus();
+                }
                 semaphore.release();
             }
 
