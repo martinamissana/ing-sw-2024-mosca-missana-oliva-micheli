@@ -16,6 +16,7 @@ public class Player implements Serializable {
     private Goal secretGoal;
     private Pawn pawn;
     private ArrayList<Goal> choosableGoals;
+    private int goalsDone;
 
     /**
      * Class constructor
@@ -30,6 +31,7 @@ public class Player implements Serializable {
         this.secretGoal = null;
         this.pawn = null;
         this.choosableGoals = new ArrayList<>();
+        this.goalsDone = 0;
     }
 
     /**
@@ -47,6 +49,7 @@ public class Player implements Serializable {
         this.goesFirst = goesFirst;
         this.secretGoal = null;
         this.pawn = pawn;
+        this.goalsDone = 0;
     }
 
     /**
@@ -105,6 +108,14 @@ public class Player implements Serializable {
         return secretGoal;
     }
 
+    public int getGoalsDone(){
+        return goalsDone;
+    }
+
+    public void addGoalDone() {
+        this.goalsDone ++;
+    }
+
     /**
      * returns the player's pawn
      * @return Pawn
@@ -122,6 +133,7 @@ public class Player implements Serializable {
         this.secretGoal = null;
         this.pawn = null;
         this.choosableGoals.clear();
+        this.goalsDone = 0;
     }
 
     /**

@@ -244,7 +244,7 @@ public class RMIVirtualView implements Observer {
             case GameWinnersAnnouncedEvent e -> {
                 if(e.getID().equals(ID)) {
                     try {
-                        view.elaborate(new GameWinnersAnnouncedMessage(e.getID(), e.getWinners()));
+                        view.elaborate(new GameWinnersAnnouncedMessage(e.getID(), e.getWinners(),e.getGoalsDone()));
                     } catch (FullLobbyException | NicknameAlreadyTakenException | HandIsFullException |
                              IllegalMoveException ex) {
                         throw new RuntimeException(ex);

@@ -91,17 +91,16 @@ public class RMIView extends View implements ClientRemoteInterface , Serializabl
      * calls the method joinLobby of the server
      * @param lobbyID ID of the lobby to join
      * @throws FullLobbyException thrown if the lobby is full
-     * @throws NicknameAlreadyTakenException thrown if the nickname is already taken
      * @throws LobbyDoesNotExistsException thrown if the lobby does not exist
      * @throws IOException general class of exceptions produced by failed or interrupted I/O operations
      * @throws CannotJoinMultipleLobbiesException thrown if the player tries to join multiple lobbies
      * @throws UnexistentUserException thrown if the player doesn't exist
      */
     @Override
-    public void joinLobby(int lobbyID) throws FullLobbyException, NicknameAlreadyTakenException, LobbyDoesNotExistsException, IOException, CannotJoinMultipleLobbiesException, UnexistentUserException {
+    public void joinLobby(int lobbyID) throws FullLobbyException, LobbyDoesNotExistsException, IOException, CannotJoinMultipleLobbiesException, UnexistentUserException {
         try {
             RMIServer.joinLobby(lobbyID, super.getPlayer().getNickname());
-        } catch (RemoteException e) {
+        } catch (RemoteException | NicknameAlreadyTakenException e) {
             disconnect(super.getNickname());
         }
     }

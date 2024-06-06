@@ -718,21 +718,29 @@ public class Controller implements Serializable {
      */
     public synchronized void winner(Integer gameID) throws IOException {
         Game game = gh.getActiveGames().get(gameID);
+        HashMap <Player,Integer> goalsDone= new HashMap<>();
         evaluateSecretGoal(gameID);
         evaluateCommonGoal(gameID);
         HashMap<Player, Integer> scoreboard = game.getScoreboard();
         ArrayList<Player> winners = new ArrayList<>();
         int maxValue = 0;
+        int maxGoalsDone = 0;
         for (Map.Entry<Player, Integer> entry : scoreboard.entrySet()) {
             if (entry.getValue() > maxValue) {
                 maxValue = entry.getValue();
             }
         }
+        for(Player p: game.getPlayers()){
+            if(scoreboard.get(p) == maxValue && p.getGoalsDone() > maxGoalsDone) {
+                maxGoalsDone = p.getGoalsDone();
+            }
+        }
         for (Player p : scoreboard.keySet()) {
-            if (scoreboard.get(p) == maxValue) winners.add(p);
+            if (scoreboard.get(p) == maxValue && p.getGoalsDone() == maxGoalsDone) winners.add(p);
+            goalsDone.put(p,p.getGoalsDone());
         }
         game.setWinners(winners);
-        gh.notify(new GameWinnersAnnouncedEvent(gameID, game.getWinners()));
+        gh.notify(new GameWinnersAnnouncedEvent(gameID, game.getWinners(),goalsDone));
     }
 
     /**
@@ -756,6 +764,7 @@ public class Controller implements Serializable {
                     done.add(secondCard);
                     done.add(thirdCard);
                     game.addToScore(p, goal.getPoints());
+                    p.addGoalDone();
                     gh.notify(new ScoreIncrementedEvent(gameID,p,goal.getPoints()));
                 }
             }
@@ -768,6 +777,7 @@ public class Controller implements Serializable {
                     done.add(secondCard);
                     done.add(thirdCard);
                     game.addToScore(p, goal.getPoints());
+                    p.addGoalDone();
                     gh.notify(new ScoreIncrementedEvent(gameID,p,goal.getPoints()));
                 }
             }
@@ -791,6 +801,7 @@ public class Controller implements Serializable {
                 totalResources.replace(item, totalResources.get(item) - 1);
             }
             game.addToScore(player, goal.getPoints());
+            player.addGoalDone();
             gh.notify(new ScoreIncrementedEvent(gameID,player, goal.getPoints()));
         }
 
@@ -865,6 +876,7 @@ public class Controller implements Serializable {
             done.add(secondCard);
             done.add(thirdCard);
             game.addToScore(player, goal.getPoints());
+            player.addGoalDone();
             gh.notify(new ScoreIncrementedEvent(gameID,player, goal.getPoints()));
         }
     }

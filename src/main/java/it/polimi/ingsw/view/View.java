@@ -51,6 +51,7 @@ public abstract class View extends ViewObservable<NetMessage> {
     private GamePhase gamePhase;
     private ArrayList<Player> winners = new ArrayList<>();
     private final ArrayList<String> errorMessages = new ArrayList<>();
+    private HashMap <Player, Integer> goalsDone = new HashMap<>();
 
 
     /**
@@ -257,6 +258,10 @@ public abstract class View extends ViewObservable<NetMessage> {
      */
     public Goal getCommonGoal2() {
         return commonGoal2;
+    }
+
+    public HashMap<Player, Integer> getGoalsDone() {
+        return goalsDone;
     }
 
     /**
@@ -604,6 +609,7 @@ public abstract class View extends ViewObservable<NetMessage> {
             case GameWinnersAnnouncedMessage m -> {
                 if (m.getID().equals(ID)) {
                     winners = m.getWinners();
+                    goalsDone=m.getGoalsDone();
                     notify(m);
                 }
             }
