@@ -644,12 +644,12 @@ public class Controller implements Serializable {
         // if both decks are empty
         if (game.getResourceDeck().getCards().isEmpty() && game.getGoldenDeck().getCards().isEmpty()) {
             game.setLastRound(true);
-            //gh.notify(new LastRoundStartedEvent(gameID)); //todo: remove from game logic
+            //gh.notify(new LastRoundStartedEvent(gameID)); // TODO: remove from game logic
         }
 
         // if someone has reached 20 points
         for (Map.Entry<Player, Integer> entry : game.getScoreboard().entrySet())
-            if (entry.getValue() >= 3) {
+            if (entry.getValue() >= 5) {        // TODO: 20 points
                 game.setLastRound(true);
                 //gh.notify(new LastRoundStartedEvent(gameID));
             }

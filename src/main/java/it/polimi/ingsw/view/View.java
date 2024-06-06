@@ -437,19 +437,24 @@ public abstract class View extends ViewObservable<NetMessage> {
             }
             case LobbyCreatedMessage m -> {
                 lobbies.put(m.getID(), m.getLobby());
+
                 if (m.getCreator().equals(player)) {
                     ID = m.getID();
+                    this.chat = new Chat();
                     notify(m);
                 } if (ID == null) notify(m);
             }
             case LobbyJoinedMessage m -> {
-                if (m.getPlayer().getNickname().equals(player.getNickname()))
+                if (m.getPlayer().getNickname().equals(player.getNickname())) {
                     ID = m.getID();
+                    this.chat = new Chat();
+                }
                 try {
                     getLobbies().get(m.getID()).addPlayer(m.getPlayer());
                 } catch (FullLobbyException e) {
                     e.printStackTrace();
                 }
+
                 if (m.getID().equals(ID) || ID == null) notify(m);
             }
             case LobbyLeftMessage m -> {
@@ -461,6 +466,7 @@ public abstract class View extends ViewObservable<NetMessage> {
                 if (m.getPlayer().getNickname().equals(nickname)) {
                     ID = null;
                     pawn = null;
+                    chat = null;
                     player.initialize();
                     hand.removeAllCards();
                     secretGoalChoices.clear();

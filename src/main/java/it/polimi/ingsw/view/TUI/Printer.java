@@ -1,12 +1,17 @@
 package it.polimi.ingsw.view.TUI;
 
 import it.polimi.ingsw.model.card.*;
+import it.polimi.ingsw.model.chat.Message;
 import it.polimi.ingsw.model.commonItem.CornerStatus;
 import it.polimi.ingsw.model.commonItem.ItemBox;
 import it.polimi.ingsw.model.commonItem.Kingdom;
 import it.polimi.ingsw.model.commonItem.Resource;
+import it.polimi.ingsw.model.deck.Deck;
 import it.polimi.ingsw.model.deck.DeckBuffer;
 import it.polimi.ingsw.model.deck.DeckBufferType;
+import it.polimi.ingsw.model.deck.DeckType;
+import it.polimi.ingsw.model.exceptions.IllegalMoveException;
+import it.polimi.ingsw.model.game.CardsPreset;
 import it.polimi.ingsw.model.game.Lobby;
 import it.polimi.ingsw.model.goal.DiagonalGoal;
 import it.polimi.ingsw.model.goal.Goal;
@@ -15,6 +20,7 @@ import it.polimi.ingsw.model.goal.ResourceGoal;
 import it.polimi.ingsw.model.player.*;
 import it.polimi.ingsw.view.View;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -85,17 +91,20 @@ public class Printer {
         HashMap<Integer, Lobby> lobbies = view.getLobbies();
 
         for (Integer i : lobbies.keySet()) {
-            if (lobbies.get(i).getPlayers().size() != lobbies.get(i).getNumOfPlayers()) {
-                System.out.print(cli + "-> Lobby " + Color.green + "#" + i + Color.reset + ": " + lobbies.get(i).getPlayers().size() + "/" + lobbies.get(i).getNumOfPlayers() + " - [");
+            if (!lobbies.get(i).getPlayers().isEmpty()) {
+                if (lobbies.get(i).getPlayers().size() != lobbies.get(i).getNumOfPlayers()) {
+                    System.out.print(cli + "-> Lobby " + Color.green + "#" + i + Color.reset + ": " + lobbies.get(i).getPlayers().size() + "/" + lobbies.get(i).getNumOfPlayers() + " - [");
 
-                for (Player p : lobbies.get(i).getPlayers()) {
-                    if (p.equals(lobbies.get(i).getPlayers().getLast())) {
-                        System.out.print(p.getNickname() + "]");
-                    } else {
-                        System.out.print(p.getNickname() + " - ");
+                    for (Player p : lobbies.get(i).getPlayers()) {
+                        if (p.equals(lobbies.get(i).getPlayers().getLast())) {
+                            System.out.print(p.getNickname() + "]");
+                        } else {
+                            System.out.print(p.getNickname() + " - ");
+                        }
                     }
-                }
-            } else System.out.print(cli + "-> Lobby " + Color.warning + "#" + i + Color.reset + ": FULL");
+                } else if (!lobbies.get(i).getPlayers().isEmpty())
+                    System.out.print(cli + "-> Lobby " + Color.warning + "#" + i + Color.reset + ": FULL");
+            }
         }
         System.out.println();
     }
@@ -233,14 +242,6 @@ public class Printer {
         if (next != null) next.flip();
     }
 
-    public void printFieldTemp() {         // TODO: Do a better printField (StringBuilder???)
-        System.out.print(cli + "Occupied spots:");
-        for (Coords coords : view.getMyField().getMatrix().keySet()) {
-            System.out.format(cli + "(%d, %d)\n", coords.getX(), coords.getY());
-            printCard(view.getMyField().getMatrix().get(coords));
-        } System.out.println();
-    }
-
     public void printField(String nickname) {
         Field field = null;
         if (nickname.equals(view.getNickname())) field = view.getMyField();
@@ -251,6 +252,184 @@ public class Printer {
         }
         if (field == null) return;
 
+        // TODO: Remove when functioning:
+//        Field field = new Field();
+//        try {
+//            Deck deck = new Deck(DeckType.RESOURCE);
+//            field.addCard(CardsPreset.getStarterCards().getFirst());
+//            field.addCard(deck.getCards().get(23), new Coords(0, 1));
+//            field.addCard(deck.getCards().get(10), new Coords(0, 2));
+//            field.addCard(deck.getCards().get(11), new Coords(1, 0));
+//            field.addCard(deck.getCards().get(3), new Coords(2, 0));
+//            field.addCard(deck.getCards().get(31), new Coords(0, -1));
+//            field.addCard(deck.getCards().get(34), new Coords(1, -1));
+//            field.addCard(deck.getCards().get(35), new Coords(2, -1));
+//            field.addCard(deck.getCards().get(2), new Coords(-1, -1));
+//            field.addCard(deck.getCards().get(6), new Coords(-2, -1));
+//            field.addCard(deck.getCards().get(25), new Coords(3, -1));
+//
+//        } catch (IOException | IllegalMoveException e) {
+//            throw new RuntimeException(e);
+//        }
+
+        int firstDiagonal = field.getMatrix().keySet().stream().mapToInt(c -> c.getX() + c.getY()).distinct().max().orElse(-80);
+        int lastDiagonal = field.getMatrix().keySet().stream().mapToInt(c -> c.getX() + c.getY()).distinct().min().orElse(-80);
+        int firstColumn = field.getMatrix().keySet().stream().mapToInt(c -> c.getX() - c.getY()).distinct().min().orElse(-80);
+        int lastColumn = field.getMatrix().keySet().stream().mapToInt(c -> c.getX() - c.getY()).distinct().max().orElse(-80);
+
+        if (firstDiagonal == -80 || firstColumn == -80 || lastDiagonal == -80 || lastColumn == -80) return;
+
+        Coords firstCoordinate;
+        if ((firstDiagonal + firstColumn) % 2 == 0) firstCoordinate = new Coords((int) Math.floor((firstDiagonal + firstColumn) / 2.0), (int) Math.floor((firstDiagonal - firstColumn) / 2.0));
+        else firstCoordinate = new Coords((int) Math.floor((firstDiagonal + firstColumn) / 2.0), (int) Math.floor((firstDiagonal - firstColumn) / 2.0) + 1);
+        firstColumn = firstCoordinate.getX() - firstCoordinate.getY();
+
+        Coords lastCoordinate;
+        if ((firstDiagonal + lastColumn) % 2 == 0) lastCoordinate = new Coords((int) Math.floor((firstDiagonal + lastColumn) / 2.0), (int) Math.floor((firstDiagonal - lastColumn) / 2.0));
+        else lastCoordinate = new Coords((int) Math.floor((firstDiagonal + lastColumn) / 2.0) + 1, (int) Math.floor((firstDiagonal - lastColumn) / 2.0));
+        lastColumn = lastCoordinate.getX() - lastCoordinate.getY();
+
+        System.out.println(" Diagonal: " + firstDiagonal + " to " + lastDiagonal + "\n Column: " + firstColumn + " to " + lastColumn);
+
+        String cardColor;
+        StringBuilder fieldBuilder = new StringBuilder();
+
+        for (int diagonal = firstDiagonal; diagonal > lastDiagonal - 2; diagonal--) {
+            for (Coords c = firstCoordinate; c.getX() != lastCoordinate.getX() + 1 && c.getY() != lastCoordinate.getY() - 1; c = new Coords(c.getX() + 1, c.getY() - 1)) {
+                Card up_left = field.getMatrix().get(new Coords(c.getX(), c.getY() + 1));
+                Card card = field.getMatrix().get(c);
+
+                if (c.getX() == firstCoordinate.getX() && firstCoordinate.getX() - firstCoordinate.getY() != firstColumn) {
+                    if (up_left == null) fieldBuilder.append("       ");
+                    else {
+                        cardColor = ItemsToColor(up_left.getKingdom());
+                        if (!(up_left instanceof CardBlock) && up_left.getCorner(CornerType.WEST) != null) fieldBuilder.append(Color.corner).append("  ").append(Color.reset);
+                        else fieldBuilder.append(cardColor).append("  ").append(Color.reset);
+                        fieldBuilder.append(cardColor).append("     ").append(Color.reset);
+                    }
+                }
+
+                // North corner printed:
+                // IF card exists in coordinates, is not block card and has corner NORTH (UP-LEFT corner) != null
+                if ((card != null && !(card instanceof CardBlock) && card.getCorner(CornerType.NORTH) != null) ||
+                        // Card to the up-left of current card exists, is not block card and has corner SOUTH (DOWN-RIGHT corner) != null
+                        (up_left != null && !(up_left instanceof CardBlock) && up_left.getCorner(CornerType.SOUTH) != null)) {
+
+                    // Print a corner
+                    fieldBuilder.append(Color.corner).append("  ").append(Color.reset);
+                }
+                // ELSE IF card is not a block card and its corner NORTH is null
+                else if (card != null && !(card instanceof CardBlock) && card.getCorner(CornerType.NORTH) == null) {
+                    cardColor = ItemsToColor(card.getKingdom());
+                    fieldBuilder.append(cardColor).append("  ").append(Color.reset);
+                } else if (up_left != null && !(up_left instanceof CardBlock) && up_left.getCorner(CornerType.SOUTH) == null) {
+                    cardColor = ItemsToColor(up_left.getKingdom());
+                    fieldBuilder.append(cardColor).append("  ").append(Color.reset);
+                }
+                // ELSE IF card exists and is a block card
+                else if (card instanceof CardBlock || up_left instanceof CardBlock) {
+
+                    // print black corner
+                    fieldBuilder.append(Color.black).append("  ").append(Color.reset);
+
+                } else fieldBuilder.append("  ");
+
+                // Upper middle part printed:
+                if (card != null && !(card instanceof CardBlock || card instanceof StarterCard))
+                    cardColor = ItemsToColor(card.getKingdom());
+                else if (card instanceof CardBlock) cardColor = Color.black.label;
+                else if (card != null) cardColor = Color.starter.label;
+                else cardColor = "";
+
+                fieldBuilder.append(cardColor).append("     ").append(Color.reset);
+
+                Card up_right = field.getMatrix().get(new Coords(c.getX() + 1, c.getY()));
+                // East corner printed:
+                if ((card != null && !(card instanceof CardBlock) && card.getCorner(CornerType.EAST) != null) ||
+                        // Card to the up-left of current card exists, is not block card and has corner SOUTH (DOWN-RIGHT corner) != null
+                        (up_right != null && !(up_right instanceof CardBlock) && up_right.getCorner(CornerType.WEST) != null)) {
+
+                    // Print a corner
+                    fieldBuilder.append(Color.corner).append("  ").append(Color.reset);
+                }
+                // ELSE IF card is not a block card and its corner NORTH is null
+                else if (card != null && !(card instanceof CardBlock) && card.getCorner(CornerType.EAST) == null) {
+                    cardColor = ItemsToColor(card.getKingdom());
+                    fieldBuilder.append(cardColor).append("  ").append(Color.reset);
+                } else if (up_right != null && !(up_right instanceof CardBlock) && up_right.getCorner(CornerType.WEST) == null) {
+                    cardColor = ItemsToColor(up_right.getKingdom());
+                    fieldBuilder.append(cardColor).append("  ").append(Color.reset);
+                }
+                // ELSE IF card exists and is a block card
+                else if (card instanceof CardBlock || up_right instanceof CardBlock) {
+
+                    // print black corner
+                    fieldBuilder.append(Color.black).append("  ").append(Color.reset);
+
+                } else fieldBuilder.append("  ");
+
+                // Lower part of up-right card printed:
+                if (up_right != null && !(up_right instanceof CardBlock || up_right instanceof StarterCard))
+                    cardColor = ItemsToColor(up_right.getKingdom());
+                else if (up_right instanceof CardBlock) cardColor = Color.black.label;
+                else if (up_right != null) cardColor = Color.starter.label;
+                else cardColor = "";
+
+                fieldBuilder.append(cardColor).append("     ").append(Color.reset);
+
+                if ((c.getX() + 1) + c.getY() <= firstDiagonal && (c.getX() + 1) - c.getY() == lastColumn && (c.getX() + 1) - (c.getY() - 1) != lastColumn) {
+                    if (up_right instanceof CardBlock) fieldBuilder.append(Color.black).append("  ").append(Color.reset);
+                    else if (up_right != null && up_right.getCorner(CornerType.SOUTH) == null) fieldBuilder.append(cardColor).append("  ").append(Color.reset);
+                    else if (up_right != null && up_right.getCorner(CornerType.SOUTH) != null) fieldBuilder.append(Color.corner).append("  ").append(Color.reset);
+                    else fieldBuilder.append("  ");
+                }
+            }
+            fieldBuilder.append("\n");
+
+            // Middle part:
+            for (Coords c = firstCoordinate; c.getX() != lastCoordinate.getX() + 1 && c.getY() != lastCoordinate.getY() - 1; c = new Coords(c.getX() + 1, c.getY() - 1)) {
+                Card card = field.getMatrix().get(c);
+
+                if (c.getX() == firstCoordinate.getX() && firstCoordinate.getX() - firstCoordinate.getY() != firstColumn) fieldBuilder.append("       ");
+
+                if (card != null && !(card instanceof CardBlock || card instanceof StarterCard))
+                    cardColor = ItemsToColor(card.getKingdom());
+                else if (card instanceof CardBlock) cardColor = Color.black.label;
+                else if (card != null) cardColor = Color.starter.label;
+                else cardColor = "";
+
+                if (!(card instanceof CardBlock)) {
+                    fieldBuilder.append(cardColor).append(" ");
+                    if (c.getX() >= 0 && c.getX() < 10) fieldBuilder.append("  ").append(c.getX());
+                    else if (c.getX() > -10) fieldBuilder.append(" ").append(c.getX());
+                    else fieldBuilder.append(c.getX());
+
+                    fieldBuilder.append(" ");
+
+                    if (c.getY() >= 0 && c.getY() < 10) fieldBuilder.append(c.getY()).append("  ");
+                    else if (c.getY() > -10) fieldBuilder.append(c.getY()).append(" ");
+                    else fieldBuilder.append(c.getY());
+
+                    fieldBuilder.append(" ");
+                } else fieldBuilder.append(cardColor).append("         ");
+                fieldBuilder.append(Color.reset).append("     ");
+            }
+            fieldBuilder.append("\n");
+
+            System.out.println(firstCoordinate);
+
+            if (firstCoordinate.getX() - firstCoordinate.getY() == firstColumn) {
+                firstCoordinate = new Coords(firstCoordinate.getX(), firstCoordinate.getY() - 1);
+                lastCoordinate = new Coords(lastCoordinate.getX(), lastCoordinate.getY() - 1);
+            } else {
+                firstCoordinate = new Coords(firstCoordinate.getX() - 1, firstCoordinate.getY());
+                lastCoordinate = new Coords(lastCoordinate.getX() - 1, lastCoordinate.getY());
+            }
+        }
+        // Print last lower string:
+
+
+        System.out.println(cli + "Your field:\n\n" + fieldBuilder);
     }
 
     public void printResources() {
