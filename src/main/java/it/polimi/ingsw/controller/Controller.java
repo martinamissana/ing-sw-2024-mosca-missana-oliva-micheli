@@ -45,7 +45,6 @@ public class Controller implements Serializable {
         return gh;
     }
 
-    // TODO: add a method to terminate the game if a player disconnects, it will be activated by a message from the view
 
     /**
      * adds users to user list in game handler
@@ -644,14 +643,12 @@ public class Controller implements Serializable {
         // if both decks are empty
         if (game.getResourceDeck().getCards().isEmpty() && game.getGoldenDeck().getCards().isEmpty()) {
             game.setLastRound(true);
-            //gh.notify(new LastRoundStartedEvent(gameID)); // TODO: remove from game logic
         }
 
         // if someone has reached 20 points
         for (Map.Entry<Player, Integer> entry : game.getScoreboard().entrySet())
             if (entry.getValue() >= 20) {        // TODO: 20 points
                 game.setLastRound(true);
-                //gh.notify(new LastRoundStartedEvent(gameID));
             }
     }
 

@@ -530,7 +530,6 @@ public abstract class View extends ViewObservable<NetMessage> {
             case CardAddedToHandMessage m -> {
                 if (m.getPlayer().equals(player)) {
                     try {
-                        System.out.println("Card #" + m.getCard().getCardID() + " added to hand");
                         hand.addCard(m.getCard());
                     } catch (HandIsFullException e) {
                         e.printStackTrace();

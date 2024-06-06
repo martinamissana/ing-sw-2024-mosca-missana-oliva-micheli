@@ -289,8 +289,6 @@ public class Printer {
         else lastCoordinate = new Coords((int) Math.floor((firstDiagonal + lastColumn) / 2.0) + 1, (int) Math.floor((firstDiagonal - lastColumn) / 2.0));
         lastColumn = lastCoordinate.getX() - lastCoordinate.getY();
 
-        System.out.println(" Diagonal: " + firstDiagonal + " to " + lastDiagonal + "\n Column: " + firstColumn + " to " + lastColumn);
-
         String cardColor;
         StringBuilder fieldBuilder = new StringBuilder();
 
@@ -416,7 +414,6 @@ public class Printer {
             }
             fieldBuilder.append("\n");
 
-            System.out.println(firstCoordinate);
 
             if (firstCoordinate.getX() - firstCoordinate.getY() == firstColumn) {
                 firstCoordinate = new Coords(firstCoordinate.getX(), firstCoordinate.getY() - 1);

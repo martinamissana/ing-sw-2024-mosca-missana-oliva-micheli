@@ -93,6 +93,7 @@ public class TUI implements Runnable, ViewObserver {
 
                                 case PLAYING_GAME -> {
                                     if (view.isYourTurn()) {
+                                        chatState = null;
                                         if (actionState.equals(ActionState.DRAW)) drawCard(in);
                                         else playCard(in);
                                     } else {
@@ -444,8 +445,8 @@ public class TUI implements Runnable, ViewObserver {
         if (choice.equalsIgnoreCase("TCP")) {
 
             System.out.print(cli + "Insert the server IP" + user);
-            String IP; // = scanner.nextLine();
-            IP = "127.0.0.1";
+            String IP= scanner.nextLine();
+            //IP = "127.0.0.1";
 
             try {
                 this.view = new TCPView(IP, 4321);
