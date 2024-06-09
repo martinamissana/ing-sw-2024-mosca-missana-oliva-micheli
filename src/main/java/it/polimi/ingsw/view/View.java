@@ -453,6 +453,7 @@ public abstract class View extends ViewObservable<NetMessage> {
                 if (m.getPlayer().getNickname().equals(player.getNickname())) {
                     ID = m.getID();
                     this.chat = new Chat();
+
                 }
                 try {
                     getLobbies().get(m.getID()).addPlayer(m.getPlayer());
@@ -464,7 +465,10 @@ public abstract class View extends ViewObservable<NetMessage> {
             }
             case LobbyLeftMessage m -> {
                 for (Player p : lobbies.get(m.getID()).getPlayers())
-                    if (p.equals(m.getPlayer()) && p.getPawn() != null) p.setPawn(null);
+                    if (p.equals(m.getPlayer()) && p.getPawn() != null) {
+                        p.setPawn(null);
+                        p.initialize();
+                    }
 
                 lobbies.get(m.getID()).removePlayer(m.getPlayer());
                 if (scoreboard != null) scoreboard.remove(m.getPlayer());
