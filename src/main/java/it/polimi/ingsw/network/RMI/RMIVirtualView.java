@@ -109,7 +109,7 @@ public class RMIVirtualView implements Observer {
                 }
             }
             case ChatMessageAddedEvent e -> {
-                if(e.getLobbyID().equals(ID)) {
+                if(e.getLobbyID().equals(ID)&& (e.getM().isGlobal() || (e.getM().getSender().getNickname().equals(nickname) || e.getM().getReceiver().getNickname().equals(nickname)))) {
                     try {
                         view.elaborate(new ChatMessageAddedMessage(e.getM(), e.getLobbyID()));
                     } catch (FullLobbyException | NicknameAlreadyTakenException | HandIsFullException |
