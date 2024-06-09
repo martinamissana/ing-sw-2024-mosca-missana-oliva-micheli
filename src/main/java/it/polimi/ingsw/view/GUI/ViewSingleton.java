@@ -36,7 +36,6 @@ public class ViewSingleton {
                 RemoteInterface RMIServer;
                 RMIServer = (RemoteInterface) registry.lookup(remoteObjectName);
                 this.view = new RMIView(RMIServer);
-                RMIServer.connect((ClientRemoteInterface) UnicastRemoteObject.exportObject((ClientRemoteInterface) this.view, 0));
             } catch (RemoteException | NotBoundException e) {
                 e.printStackTrace();
             }
