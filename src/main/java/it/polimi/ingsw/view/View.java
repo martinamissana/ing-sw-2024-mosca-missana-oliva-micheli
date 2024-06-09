@@ -51,6 +51,7 @@ public abstract class View extends ViewObservable<NetMessage> {
     private GamePhase gamePhase;
     private ArrayList<Player> winners = new ArrayList<>();
     private final ArrayList<String> errorMessages = new ArrayList<>();
+    private HashMap <Player, Integer> goalsDone = new HashMap<>();
 
 
     /**
@@ -259,6 +260,10 @@ public abstract class View extends ViewObservable<NetMessage> {
         return commonGoal2;
     }
 
+    public HashMap<Player, Integer> getGoalsDone() {
+        return goalsDone;
+    }
+
     /**
      * sets the player
      *
@@ -437,30 +442,40 @@ public abstract class View extends ViewObservable<NetMessage> {
             }
             case LobbyCreatedMessage m -> {
                 lobbies.put(m.getID(), m.getLobby());
+
                 if (m.getCreator().equals(player)) {
                     ID = m.getID();
+                    this.chat = new Chat();
                     notify(m);
                 } if (ID == null) notify(m);
             }
             case LobbyJoinedMessage m -> {
-                if (m.getPlayer().getNickname().equals(player.getNickname()))
+                if (m.getPlayer().getNickname().equals(player.getNickname())) {
                     ID = m.getID();
+                    this.chat = new Chat();
+
+                }
                 try {
                     getLobbies().get(m.getID()).addPlayer(m.getPlayer());
                 } catch (FullLobbyException e) {
                     e.printStackTrace();
                 }
+
                 if (m.getID().equals(ID) || ID == null) notify(m);
             }
             case LobbyLeftMessage m -> {
                 for (Player p : lobbies.get(m.getID()).getPlayers())
-                    if (p.equals(m.getPlayer()) && p.getPawn() != null) p.setPawn(null);
+                    if (p.equals(m.getPlayer()) && p.getPawn() != null) {
+                        p.setPawn(null);
+                        p.initialize();
+                    }
 
                 lobbies.get(m.getID()).removePlayer(m.getPlayer());
-                scoreboard.remove(m.getPlayer());
+                if (scoreboard != null) scoreboard.remove(m.getPlayer());
                 if (m.getPlayer().getNickname().equals(nickname)) {
                     ID = null;
                     pawn = null;
+                    chat = null;
                     player.initialize();
                     hand.removeAllCards();
                     secretGoalChoices.clear();
@@ -524,7 +539,6 @@ public abstract class View extends ViewObservable<NetMessage> {
             case CardAddedToHandMessage m -> {
                 if (m.getPlayer().equals(player)) {
                     try {
-                        System.out.println("Card #" + m.getCard().getCardID() + " added to hand");
                         hand.addCard(m.getCard());
                     } catch (HandIsFullException e) {
                         e.printStackTrace();
@@ -599,6 +613,7 @@ public abstract class View extends ViewObservable<NetMessage> {
             case GameWinnersAnnouncedMessage m -> {
                 if (m.getID().equals(ID)) {
                     winners = m.getWinners();
+                    goalsDone=m.getGoalsDone();
                     notify(m);
                 }
             }

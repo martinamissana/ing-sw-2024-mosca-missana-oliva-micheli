@@ -246,6 +246,7 @@ public class ControllerTest {
         con.choosePawn(0,players.get(1).getNickname(),Pawn.RED);
 
         Game game = con.getGh().getGame(0);
+        players = con.getGh().getGame(0).getPlayers();
 
         // starter cards (switching randomly drawn ones with specific ones)
         for (Player p : players) p.getHand().removeAllCards();
@@ -285,7 +286,7 @@ public class ControllerTest {
                 assertEquals(p.getHand().getCard(i).getSide(), CardSide.FRONT);
 
         // card placement, one resource and one golden for each player
-        con.playCard(0, game.getPlayers().get(0).getNickname(), 0, new Coords(1,0), CardSide.FRONT);
+        con.playCard(0, players.get(0).getNickname(), 0, new Coords(1,0), CardSide.FRONT);
         assertEquals(players.get(0).getField().getMatrix().get(new Coords(0,0)), CardsPreset.getStarterCards().get(0));
         assertEquals(players.get(0).getField().getMatrix().get(new Coords(1,0)), resourceCards.get(0));
         assertEquals(players.get(0).getField().getMatrix().get(new Coords(1,-1)), players.get(0).getField().getCardBlock());

@@ -44,7 +44,7 @@ public class Chat implements Serializable {
         int i;
         ArrayList<Message> list= new ArrayList<>();
         for(i=0;i<receivedMessages.size();i++){
-            if(receivedMessages.get(i).getSender()==sender && !receivedMessages.get(i).isGlobal()){
+            if(receivedMessages.get(i).getSender().equals(sender) && !receivedMessages.get(i).isGlobal()){
                 list.add(receivedMessages.get(i));
             }
         }
@@ -60,7 +60,7 @@ public class Chat implements Serializable {
         int i;
         ArrayList<Message> list= new ArrayList<>();
         for(i=0;i<sentMessages.size();i++){
-            if(sentMessages.get(i).getReceiver()==receiver&& !sentMessages.get(i).isGlobal()){
+            if(sentMessages.get(i).getReceiver().equals(receiver)&& !sentMessages.get(i).isGlobal()){
                 list.add(sentMessages.get(i));
             }
         }
@@ -135,7 +135,7 @@ public class Chat implements Serializable {
 
     /**
      * getter
-     * @param player - the player from which you want to get the private chat
+     * @param nickname - the player from which you want to get the private chat
      * @return list of the sent and received messages in a private chat in the order they have been sent
      */
     public ArrayList<Message> getPrivateChat(Player player){

@@ -45,7 +45,6 @@ public class Controller implements Serializable {
         return gh;
     }
 
-    // TODO: add a method to terminate the game if a player disconnects, it will be activated by a message from the view
 
     /**
      * adds users to user list in game handler
@@ -644,14 +643,12 @@ public class Controller implements Serializable {
         // if both decks are empty
         if (game.getResourceDeck().getCards().isEmpty() && game.getGoldenDeck().getCards().isEmpty()) {
             game.setLastRound(true);
-            //gh.notify(new LastRoundStartedEvent(gameID)); //todo: remove from game logic
         }
 
         // if someone has reached 20 points
         for (Map.Entry<Player, Integer> entry : game.getScoreboard().entrySet())
-            if (entry.getValue() >= 3) {
+            if (entry.getValue() >= 20) {        // TODO: 20 points
                 game.setLastRound(true);
-                //gh.notify(new LastRoundStartedEvent(gameID));
             }
     }
 
@@ -721,21 +718,29 @@ public class Controller implements Serializable {
      */
     public synchronized void winner(Integer gameID) throws IOException {
         Game game = gh.getActiveGames().get(gameID);
+        HashMap <Player,Integer> goalsDone= new HashMap<>();
         evaluateSecretGoal(gameID);
         evaluateCommonGoal(gameID);
         HashMap<Player, Integer> scoreboard = game.getScoreboard();
         ArrayList<Player> winners = new ArrayList<>();
         int maxValue = 0;
+        int maxGoalsDone = 0;
         for (Map.Entry<Player, Integer> entry : scoreboard.entrySet()) {
             if (entry.getValue() > maxValue) {
                 maxValue = entry.getValue();
             }
         }
+        for(Player p: game.getPlayers()){
+            if(scoreboard.get(p) == maxValue && p.getGoalsDone() > maxGoalsDone) {
+                maxGoalsDone = p.getGoalsDone();
+            }
+        }
         for (Player p : scoreboard.keySet()) {
-            if (scoreboard.get(p) == maxValue) winners.add(p);
+            if (scoreboard.get(p) == maxValue && p.getGoalsDone() == maxGoalsDone) winners.add(p);
+            goalsDone.put(p,p.getGoalsDone());
         }
         game.setWinners(winners);
-        gh.notify(new GameWinnersAnnouncedEvent(gameID, game.getWinners()));
+        gh.notify(new GameWinnersAnnouncedEvent(gameID, game.getWinners(),goalsDone));
     }
 
     /**
@@ -759,6 +764,7 @@ public class Controller implements Serializable {
                     done.add(secondCard);
                     done.add(thirdCard);
                     game.addToScore(p, goal.getPoints());
+                    p.addGoalDone();
                     gh.notify(new ScoreIncrementedEvent(gameID,p,goal.getPoints()));
                 }
             }
@@ -771,6 +777,7 @@ public class Controller implements Serializable {
                     done.add(secondCard);
                     done.add(thirdCard);
                     game.addToScore(p, goal.getPoints());
+                    p.addGoalDone();
                     gh.notify(new ScoreIncrementedEvent(gameID,p,goal.getPoints()));
                 }
             }
@@ -794,6 +801,7 @@ public class Controller implements Serializable {
                 totalResources.replace(item, totalResources.get(item) - 1);
             }
             game.addToScore(player, goal.getPoints());
+            player.addGoalDone();
             gh.notify(new ScoreIncrementedEvent(gameID,player, goal.getPoints()));
         }
 
@@ -868,6 +876,7 @@ public class Controller implements Serializable {
             done.add(secondCard);
             done.add(thirdCard);
             game.addToScore(player, goal.getPoints());
+            player.addGoalDone();
             gh.notify(new ScoreIncrementedEvent(gameID,player, goal.getPoints()));
         }
     }
