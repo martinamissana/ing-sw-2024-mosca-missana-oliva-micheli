@@ -37,6 +37,7 @@ public class RMIVirtualView implements Observer {
 
     @Override
     public void update(Event event) throws IOException {
+        // System.out.println(event.getClass());
         switch (event) {
             case LoginEvent e -> {
                 if (Objects.equals(nickname, e.getNickname())) {
@@ -76,7 +77,6 @@ public class RMIVirtualView implements Observer {
             }
             case LobbyLeftEvent e -> {
                 if (e.getPlayer().getNickname().equals(this.nickname)) {
-                    this.nickname=null;
                     this.ID=null;
                 }
                 try {
@@ -121,6 +121,7 @@ public class RMIVirtualView implements Observer {
                 }
             }
             case GameCreatedEvent e -> {
+                System.out.println("l'evento arriva a " + nickname);
                 if(e.getID().equals(ID)){
                     try {
                         view.elaborate(new GameCreatedMessage(e.getID(), e.getFirstPlayer(), e.getScoreboard(), e.getTopResourceCard(), e.getTopGoldenCard(), e.getCommonGoal1(), e.getCommonGoal2(), e.getGamePhase(), e.getDeckBuffers().get(DeckBufferType.RES1), e.getDeckBuffers().get(DeckBufferType.RES2), e.getDeckBuffers().get(DeckBufferType.GOLD1), e.getDeckBuffers().get(DeckBufferType.GOLD2)));
