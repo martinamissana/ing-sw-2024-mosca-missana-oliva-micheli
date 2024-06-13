@@ -2,7 +2,6 @@ package it.polimi.ingsw.view.TUI;
 
 import it.polimi.ingsw.controller.exceptions.*;
 import it.polimi.ingsw.model.card.*;
-import it.polimi.ingsw.model.chat.Chat;
 import it.polimi.ingsw.model.chat.Message;
 import it.polimi.ingsw.model.deck.DeckBufferType;
 import it.polimi.ingsw.model.deck.DeckType;
@@ -26,10 +25,7 @@ import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 import java.util.concurrent.Semaphore;
 
 import static java.lang.System.exit;
@@ -155,8 +151,12 @@ public class TUI implements Runnable, ViewObserver {
             case LobbyJoinedMessage m -> {
                 if (m.getPlayer().equals(view.getPlayer())) {
                     System.out.println(cli + "Joined lobby #" + m.getID());
+                    printer.printRemainingPlayers();
                     state = TUIState.CHOOSE_PAWN;
-                } else System.out.println(cli + m.getPlayer().getNickname() + " joined the lobby!");
+                } else {
+                    System.out.println(cli + m.getPlayer().getNickname() + " joined the lobby!");
+                    printer.printRemainingPlayers();
+                }
                 printStatus();
                 semaphore.release();
             }
@@ -241,7 +241,7 @@ public class TUI implements Runnable, ViewObserver {
 
             case GameWinnersAnnouncedMessage m -> {
                 if (m.getID().equals(view.getID())) {
-                    printer.printScoreboard();
+                    printer.printFinalScoreboard();
 
                     ArrayList<Player> winners = view.getWinners();
                     if (winners.size() == 1) {
@@ -287,7 +287,8 @@ public class TUI implements Runnable, ViewObserver {
             case MENU -> System.out.print(cli + "What would you like to do?"
                     + cli + "1. Create a new lobby"
                     + cli + "2. Join an open lobby"
-                    + cli + "3. Exit game" + user);
+                    + cli + "3. Show game rules"
+                    + cli + "4. Exit game" + user);
 
             case CREATE_LOBBY -> System.out.print(cli + "How many players? (-1 to return to selection)" + user);
             case JOIN_LOBBY -> {
@@ -369,7 +370,6 @@ public class TUI implements Runnable, ViewObserver {
                             switch (actionState) {
                                 case PLAY_SELECT_CARD -> {
                                     printer.printField(view.getNickname());
-                                    printer.printResources();
                                     printer.printHand();
                                     System.out.print(cli + "Which card do you want to play? (press f to flip all cards)" + user);
                                 }
@@ -445,8 +445,8 @@ public class TUI implements Runnable, ViewObserver {
         if (choice.equalsIgnoreCase("TCP")) {
 
             System.out.print(cli + "Insert the server IP" + user);
-            String IP= scanner.nextLine();
-            //IP = "127.0.0.1";
+            String IP = scanner.nextLine();
+            // IP = "127.0.0.1";
 
             try {
                 this.view = new TCPView(IP, 4321);
@@ -502,7 +502,8 @@ public class TUI implements Runnable, ViewObserver {
                     state = TUIState.JOIN_LOBBY;
                 }
             }
-            case 3 -> {
+            case 3 -> printer.printRules();
+            case 4 -> {
                 System.out.print(cli + "Exiting game");
                 view.removeObserver(this);
                 try {
@@ -700,49 +701,6 @@ public class TUI implements Runnable, ViewObserver {
         }
     }
 
-    private void openChat() {       // TODO: fix chats
-        int desiredChat;
-        Chat chats = view.getChat();
-
-        // Selecting chat (if error return to waiting()):
-        in = scanner.nextLine();
-
-        if (isNumeric(in)) desiredChat = Integer.parseInt(scanner.nextLine());
-        else {
-            System.out.println(Color.warning + "didn't insert numeric value!!" + Color.reset);
-            return;
-        }
-
-        System.out.println(cli + "Opening chat (write \"quit chat\" to return to selection)");
-        if (desiredChat == 1) {
-            for (Message m : chats.getGlobalChat()) {
-                System.out.print(Color.console + "\n[" + m.getSender().getNickname() + "]:" + Color.reset + " \"" + m.getText() + "\"");
-            }
-        } else if (desiredChat > 1 && desiredChat < view.getLobbies().get(view.getID()).getPlayers().size() + 2) {
-
-        } else System.out.println(Color.warning + "Invalid choice!!\n" + Color.reset);
-    }
-
-    private void sendMessage(Player player) {
-        String text = scanner.nextLine();
-        if (text.equalsIgnoreCase("quit chat")) return;
-        Message msg;
-
-        try {
-            if (player == null) {
-                msg = new Message(text, view.getPlayer(), null, true);
-                view.sendMessage(msg);
-            } else {
-                msg = new Message(text, view.getPlayer(), player, false);
-                view.sendMessage(msg);
-            }
-        } catch (LobbyDoesNotExistsException | GameDoesNotExistException ignored) {
-        } catch (IOException | UnexistentUserException | PlayerChatMismatchException e) {
-            view.removeObserver(this);
-            Thread.currentThread().interrupt();
-        }
-    }
-
     private void quitLobby() throws InterruptedException {
         try {
             check.checkLeaveLobby();
@@ -821,6 +779,9 @@ public class TUI implements Runnable, ViewObserver {
 
         switch (action) {
             case 1 -> {
+                printer.printGoal(view.getCommonGoal1());
+                printer.printGoal(view.getCommonGoal2());
+                printer.printGoal(view.getSecretGoal());
                 printer.printField(view.getNickname());
                 printStatus();
             }

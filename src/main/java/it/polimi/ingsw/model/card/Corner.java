@@ -10,6 +10,7 @@ import java.io.Serializable;
  */
 public class Corner implements Serializable {
     private final ItemBox item;
+    private boolean covered = false;
 
     /**
      * Class constructor
@@ -27,4 +28,18 @@ public class Corner implements Serializable {
         return this.item;
     }
 
+    /**
+     * It sees if corner is covered by another card
+     * @return covered - if the corner is covered or not
+     */
+    public boolean isCovered() {
+        return covered;
+    }
+
+    /**
+     * Set corner covered
+     */
+    public void cover() {
+        this.covered = true;
+    }
 }

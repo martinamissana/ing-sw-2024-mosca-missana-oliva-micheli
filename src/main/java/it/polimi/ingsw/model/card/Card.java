@@ -59,7 +59,7 @@ public abstract class Card implements Serializable {
      * @param cornerType - the corner you want to get from the side the card is on
      * @return ItemBox associated with the given corner
      */
-    public ItemBox getCorner(CornerType cornerType) {
+    public ItemBox getItemFromCorner(CornerType cornerType) {
         if(side==CardSide.FRONT){
             if(frontCorner.containsKey(cornerType)) {
                 return frontCorner.get(cornerType).getItem();
@@ -73,6 +73,11 @@ public abstract class Card implements Serializable {
                 return null;
             }
         }
+    }
+
+    public Corner getCorner(CornerType type) {
+        if (this.side == CardSide.FRONT) return this.frontCorner.get(type);
+        else return this.backCorner.get(type);
     }
 
     /**

@@ -33,10 +33,10 @@ public class ResourceCardTest {
         frontCorners.put(CornerType.NORTH, corner1);
         backCorners.put(CornerType.NORTH, corner2);
         ResourceCard card = new ResourceCard(1, CardSide.FRONT, frontCorners, backCorners, 0, Kingdom.ANIMAL);
-        assertEquals(card.getCorner(CornerType.NORTH), CornerStatus.EMPTY);
+        assertEquals(card.getItemFromCorner(CornerType.NORTH), CornerStatus.EMPTY);
         card.flip();
-        assertEquals(card.getCorner(CornerType.NORTH), Resource.INKWELL);
-        assertEquals(card.getCorner(CornerType.SOUTH), null);
+        assertEquals(card.getItemFromCorner(CornerType.NORTH), Resource.INKWELL);
+        assertEquals(card.getItemFromCorner(CornerType.SOUTH), null);
     }
 
 }

@@ -89,6 +89,7 @@ public class Field implements Serializable {
         if (!checkIfPlaceable(coords)) throw new IllegalCoordsException();
         if (!checkRequirements(card)) throw new RequirementsNotSatisfiedException();
         this.matrix.put(coords, card);
+        updateCoverage(coords);
         blockCardSpaces(card, coords);
         updateTotalRes(card, coords);
         return evaluatePoints(card, coords);
@@ -113,7 +114,7 @@ public class Field implements Serializable {
         // if any of the adjacent positions has a card with a non-blocking corner
         // pointed towards the specified position, return true
         for (Map.Entry<CornerType, Coords> entry : getAdjacentCards(coords).entrySet())         // iterate through neighboring cards
-            if (this.matrix.get(entry.getValue()).getCorner(opposite(entry.getKey())) != null)  // if any such card... (as before)
+            if (this.matrix.get(entry.getValue()).getItemFromCorner(opposite(entry.getKey())) != null)  // if any such card... (as before)
                 return true;                                                                    // a card can be placed at 'coords'
 
         // unreachable position, throw exception
@@ -154,8 +155,19 @@ public class Field implements Serializable {
         // if a free adjacent position is covered by a blocking corner of
         // the specified card, set a CardBlock at that position
         for (Map.Entry<CornerType, Coords> entry : getFreeAdjacentCoords(coords).entrySet())  // iterate through free neighboring positions.
-            if (card.getCorner(entry.getKey()) == null)                                         // if no corner is instantiated for that direction,
+            if (card.getItemFromCorner(entry.getKey()) == null)                                         // if no corner is instantiated for that direction,
                 this.matrix.put(entry.getValue(), this.cardBlock);                              // then set a CardBlock
+    }
+
+    /**
+     * covers each corner on adjacent cards
+     */
+    private void updateCoverage(Coords coords) {
+        HashMap<CornerType, Coords> adjacentCards = getAdjacentCards(coords);
+
+        for (CornerType corner : adjacentCards.keySet())
+            this.matrix.get(adjacentCards.get(corner)).getCorner(opposite(corner)).cover();
+
     }
 
     /**
@@ -175,7 +187,7 @@ public class Field implements Serializable {
             // this is for the two Starter cards
             // that have resources on their back corners
             for (CornerType corner : CornerType.values()) {                 // then check all corners
-                ItemBox resource = card.getCorner(corner);
+                ItemBox resource = card.getItemFromCorner(corner);
                 if (resource != null && resource != CornerStatus.EMPTY) {   // if there's a resource,
                     Integer oldQty = this.totalResources.get(resource);
                     this.totalResources.replace(resource, oldQty+1);        // increment its count by 1
@@ -196,7 +208,7 @@ public class Field implements Serializable {
             // card is face up
         if (card.getSide() == CardSide.FRONT) {
             for (CornerType corner : CornerType.values()) {         // check each corners'
-                item = card.getCorner(corner);                      // resources.
+                item = card.getItemFromCorner(corner);                      // resources.
                 if (item != null && item != CornerStatus.EMPTY) {   // if there's any,
                     oldQty = this.totalResources.get(item);         // increment the corresponding
                     this.totalResources.replace(item, oldQty+1);    // total count
@@ -211,7 +223,7 @@ public class Field implements Serializable {
 
         // subtract 1 to a resource's count every time an adjacent card's corner that contains it gets covered
         for (Map.Entry<CornerType, Coords> entry : getAdjacentCards(coords).entrySet()) {   // iterate through neighboring cards
-            item = this.matrix.get(entry.getValue()).getCorner(opposite(entry.getKey()));   // get covered corner's resource
+            item = this.matrix.get(entry.getValue()).getItemFromCorner(opposite(entry.getKey()));   // get covered corner's resource
             if (item != null && item != CornerStatus.EMPTY) {                               // if there is
                 oldQty = this.totalResources.get(item);
                 this.totalResources.replace(item, oldQty-1);                                // decrement its total count
