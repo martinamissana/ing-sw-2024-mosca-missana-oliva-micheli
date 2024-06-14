@@ -569,10 +569,13 @@ public abstract class View extends ViewObservable<NetMessage> {
                 } else {
                     for (Player p : fields.keySet()) {
                         if (m.getNickname().equals(p.getNickname())) {
-                            if (m.getCard().getClass().equals(StarterCard.class))
+                            if (m.getCard().getClass().equals(StarterCard.class)){
                                 fields.get(p).addCard((StarterCard) m.getCard());
+                                notify(m);
+                            }
                             else try {
                                 fields.get(p).addCard((ResourceCard) m.getCard(), m.getCoords());
+                                notify(m);
                             } catch (IllegalMoveException e) {
                                 e.printStackTrace();
                             }

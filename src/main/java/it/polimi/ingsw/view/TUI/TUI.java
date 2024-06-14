@@ -220,6 +220,7 @@ public class TUI implements Runnable, ViewObserver {
             }
 
             case CardPlacedOnFieldMessage m -> {
+                if(!m.getNickname().equals(view.getPlayer().getNickname())) return;
                 if (m.getCard() instanceof StarterCard)
                     System.out.print(cli + "Card placed in position (0, 0), wait for other players to continue...");
                 else if (m.getCard() instanceof ResourceCard) {
