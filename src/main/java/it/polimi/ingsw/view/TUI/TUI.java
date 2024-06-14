@@ -372,6 +372,7 @@ public class TUI implements Runnable, ViewObserver {
                                     printer.printGoal(view.getCommonGoal1());
                                     printer.printGoal(view.getCommonGoal2());
                                     printer.printGoal(view.getSecretGoal());
+
                                     printer.printField(view.getNickname());
                                     printer.printHand();
                                     System.out.print(cli + "Which card do you want to play? (press f to flip all cards)" + user);
@@ -792,7 +793,6 @@ public class TUI implements Runnable, ViewObserver {
             case 2 -> {
                 for (Player p : view.getFields().keySet()){
                     if (!p.getNickname().equals(view.getNickname())) {
-                        System.out.println(cli + p.getNickname() + " :");
                         printer.printField(p.getNickname());
                     }
                  }

@@ -256,7 +256,7 @@ public class Printer {
         System.out.println();
         printGoal(view.getSecretGoal());
 
-        printResources();
+        //printResources();
 
         Card next = view.getTopResourceCard();
         HashMap<DeckBufferType, DeckBuffer> cardSpaces = view.getDeckBuffers();
@@ -530,8 +530,9 @@ public class Printer {
         // Print last lower string:
 
 
-        System.out.println(cli + "Your field:\n" + fieldBuilder);
-        printResources();
+        if(view.getNickname().equals(nickname))System.out.println(cli + "Your field:\n" + fieldBuilder);
+        else  System.out.println(cli + nickname +"'s field:\n" + fieldBuilder);
+        //printResources();
     }
 
     public void printResources() {
