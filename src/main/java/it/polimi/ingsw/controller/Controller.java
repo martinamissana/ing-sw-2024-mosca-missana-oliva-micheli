@@ -322,7 +322,7 @@ public class Controller implements Serializable {
         for (Player p : players) {
             try {
                 p.getHand().addCard(starter.removeLast());
-                gh.notify(new CardAddedToHandEvent(p, p.getHand().getCard(0)));
+                gh.notify(new CardAddedToHandEvent(p, p.getHand().getCard(0),gameID));
             } catch (HandIsFullException e) {
                 throw new RuntimeException(e);
             }
@@ -406,11 +406,11 @@ public class Controller implements Serializable {
 
         for (Player p : game.getPlayers()) {
             p.getHand().addCard(game.getResourceDeck().draw());
-            gh.notify(new CardAddedToHandEvent(p, p.getHand().getCard(0)));
+            gh.notify(new CardAddedToHandEvent(p, p.getHand().getCard(0), gameID));
             p.getHand().addCard(game.getResourceDeck().draw());
-            gh.notify(new CardAddedToHandEvent(p, p.getHand().getCard(1)));
+            gh.notify(new CardAddedToHandEvent(p, p.getHand().getCard(1), gameID));
             p.getHand().addCard(game.getGoldenDeck().draw());
-            gh.notify(new CardAddedToHandEvent(p, p.getHand().getCard(2)));
+            gh.notify(new CardAddedToHandEvent(p, p.getHand().getCard(2), gameID));
         }
     }
 
@@ -582,7 +582,7 @@ public class Controller implements Serializable {
         // draw a card and add it to the current player's hand
         ResourceCard newCard = game.drawFromSource(deckTypeBox);
         player.getHand().addCard(newCard);
-        gh.notify(new CardAddedToHandEvent(player, newCard));
+        gh.notify(new CardAddedToHandEvent(player, newCard,gameID));
 
         if (deckTypeBox.equals(DeckType.RESOURCE) || deckTypeBox.equals(DeckBufferType.RES1) || deckTypeBox.equals(DeckBufferType.RES2)) {
             gh.notify(new CardDrawnFromSourceEvent(gameID, deckTypeBox, game.getDeck(DeckType.RESOURCE).getCards().getLast()));

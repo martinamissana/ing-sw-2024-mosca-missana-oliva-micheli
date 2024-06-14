@@ -522,6 +522,8 @@ public abstract class View extends ViewObservable<NetMessage> {
                         firstPlayer = false;
                         yourTurn = false;
                     }
+                    for(Player p: lobbies.get(ID).getPlayers())
+                        fields.put(p,new Field());
                     scoreboard = m.getScoreboard();
                     deckBuffers = m.getDeckBuffers();
                     topResourceCard = m.getTopResourceCard();
@@ -552,6 +554,7 @@ public abstract class View extends ViewObservable<NetMessage> {
             }
             case CardPlacedOnFieldMessage m -> {
                 if(!m.getSide().equals(m.getCard().getSide()))m.getCard().flip();
+
                 if (m.getNickname().equals(nickname)) {
                     if (m.getCard().getClass().equals(StarterCard.class)) {
                         myField.addCard((StarterCard) m.getCard());
@@ -562,13 +565,14 @@ public abstract class View extends ViewObservable<NetMessage> {
                     } catch (IllegalMoveException e) {
                         e.printStackTrace();
                     }
+
                 } else {
                     for (Player p : fields.keySet()) {
                         if (m.getNickname().equals(p.getNickname())) {
                             if (m.getCard().getClass().equals(StarterCard.class))
-                                p.getField().addCard((StarterCard) m.getCard());
+                                fields.get(p).addCard((StarterCard) m.getCard());
                             else try {
-                                p.getField().addCard((ResourceCard) m.getCard(), m.getCoords());
+                                fields.get(p).addCard((ResourceCard) m.getCard(), m.getCoords());
                             } catch (IllegalMoveException e) {
                                 e.printStackTrace();
                             }

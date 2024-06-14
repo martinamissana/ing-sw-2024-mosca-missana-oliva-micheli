@@ -135,7 +135,7 @@ public class RMIVirtualView implements Observer {
 
             }
             case CardAddedToHandEvent e -> {
-                if(e.getPlayer().getNickname().equals(nickname)) {
+                if(e.getID().equals(ID)) {
                     try {
                         view.elaborate(new CardAddedToHandMessage(e.getPlayer(), e.getCard()));
                     } catch (FullLobbyException | NicknameAlreadyTakenException | HandIsFullException |

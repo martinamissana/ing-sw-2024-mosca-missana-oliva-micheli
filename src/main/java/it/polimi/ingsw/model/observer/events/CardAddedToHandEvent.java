@@ -11,15 +11,17 @@ import it.polimi.ingsw.model.player.Player;
 public class CardAddedToHandEvent extends Event {
     private final Player player;
     private final Card card;
+    private final Integer ID;
 
     /**
      * Class constructor
      * @param player who's hand the card is added to
      * @param card card added to the hand
      */
-    public CardAddedToHandEvent(Player player, Card card) {
+    public CardAddedToHandEvent(Player player, Card card, Integer id) {
         this.player = player;
         this.card = card;
+        ID = id;
     }
 
     /**
@@ -37,4 +39,10 @@ public class CardAddedToHandEvent extends Event {
     public Card getCard() {
         return card;
     }
+
+    /**
+     * getter
+     * @return game ID
+     */
+    public Integer getID() { return ID; }
 }

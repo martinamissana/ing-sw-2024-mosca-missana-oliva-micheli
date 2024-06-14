@@ -369,6 +369,9 @@ public class TUI implements Runnable, ViewObserver {
                         if (view.isYourTurn()) {
                             switch (actionState) {
                                 case PLAY_SELECT_CARD -> {
+                                    printer.printGoal(view.getCommonGoal1());
+                                    printer.printGoal(view.getCommonGoal2());
+                                    printer.printGoal(view.getSecretGoal());
                                     printer.printField(view.getNickname());
                                     printer.printHand();
                                     System.out.print(cli + "Which card do you want to play? (press f to flip all cards)" + user);
@@ -388,9 +391,10 @@ public class TUI implements Runnable, ViewObserver {
                                 case null -> {
                                     printer.printScoreboard();
                                     System.out.print(cli + "Waiting for your turn..."
-                                            + cli + "1. View your field"
-                                            + cli + "2. Open chats"
-                                            + cli + "3. Leave game" + user);
+                                            + cli + "1. View your field and goals"
+                                            + cli + "2. View opponents' field"
+                                            + cli + "3. Open chats"
+                                            + cli + "4. Leave game" + user);
                                 }
 
                                 case SELECT_CHAT -> {
@@ -786,10 +790,19 @@ public class TUI implements Runnable, ViewObserver {
                 printStatus();
             }
             case 2 -> {
-                chatState = ChatState.SELECT_CHAT;
+                for (Player p : view.getFields().keySet()){
+                    if (!p.getNickname().equals(view.getNickname())) {
+                        System.out.println(cli + p.getNickname() + " :");
+                        printer.printField(p.getNickname());
+                    }
+                 }
                 printStatus();
             }
             case 3 -> {
+                chatState = ChatState.SELECT_CHAT;
+                printStatus();
+            }
+            case 4 -> {
                 try {
                     quitLobby();
                 } catch (InterruptedException e) {

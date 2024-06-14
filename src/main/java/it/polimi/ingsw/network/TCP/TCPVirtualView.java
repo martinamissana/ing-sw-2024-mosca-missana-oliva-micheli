@@ -126,7 +126,7 @@ public class TCPVirtualView implements Runnable, Observer {
 
                 }
                 case CardAddedToHandEvent e -> {
-                    if (e.getPlayer().getNickname().equals(nickname)) {
+                    if (e.getID().equals(ID)) {
                         CardAddedToHandMessage m = new CardAddedToHandMessage(e.getPlayer(), e.getCard());
                         out.writeObject(m);
                     }
@@ -394,6 +394,7 @@ public class TCPVirtualView implements Runnable, Observer {
     private void disconnect() throws IOException {
         c.getGh().removeObserver(this);
         try {
+            if(ID!=null)
                 c.leaveLobby(nickname, ID);
             } catch (LobbyDoesNotExistsException | GameDoesNotExistException | UnexistentUserException e) {
             throw new RuntimeException(e);
