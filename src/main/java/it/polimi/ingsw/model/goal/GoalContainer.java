@@ -12,6 +12,7 @@ public class GoalContainer implements Serializable {
 
     /**
      * class constructor
+     *
      * @throws IOException produced by failed or interrupted I/O operations
      */
     public GoalContainer() throws IOException {
@@ -22,16 +23,16 @@ public class GoalContainer implements Serializable {
 
     /**
      * method to pick a random goal from goalContainer
+     *
      * @return Goal
      */
     public Goal getGoal() {
-        if(!goals.isEmpty()) {
+        if (!goals.isEmpty()) {
             Collections.shuffle(goals);
             Goal goal = goals.getFirst();
             goals.removeFirst();
             return goal;
-        }
-        else {
+        } else {
             return null;
         }
     }

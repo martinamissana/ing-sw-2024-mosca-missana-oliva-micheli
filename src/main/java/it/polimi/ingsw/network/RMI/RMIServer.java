@@ -35,10 +35,10 @@ public class RMIServer extends UnicastRemoteObject implements RemoteInterface {
     }
 
     /**
-     * login method
-     * it creates the virtual view for that client
-     * it calls the method login in controller
-     * it starts a thread to check if the client is present calling the client method heartbeat every 3 seconds
+     * login method,
+     * it creates the virtual view for that client,
+     * it calls the method login in controller,
+     * it starts a thread to check if the client is present calling the client method heartbeat every 3 seconds,
      * @param username nickname of the client
      * @param client Client remote interface used by the server to send messages to the client
      * @throws NicknameAlreadyTakenException thrown if a user with that nickname is already present

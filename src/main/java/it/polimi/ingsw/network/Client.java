@@ -8,6 +8,9 @@ import java.util.Scanner;
 
 import static java.lang.System.exit;
 
+/**
+ * The main class that starts either the TUI or the GUI on the client side
+ */
 public class Client {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
@@ -16,10 +19,10 @@ public class Client {
         Scanner input = new Scanner(System.in);
         if (choice.equalsIgnoreCase("TUI")) {
             new Thread(() -> {
-                try{
+                try {
                     TUI tui = new TUI();
                     tui.run();
-                }catch (NullPointerException e) {
+                } catch (NullPointerException e) {
                     System.out.println("connection lost with server");
                     Thread.currentThread().interrupt();
                 }

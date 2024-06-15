@@ -11,20 +11,23 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 
+/**
+ * The main class that starts a thread both for the TCP server and the RMI server
+ */
 public class Server {
-    public static void main(String[] args){
+    public static void main(String[] args) {
 
-        Controller c=new Controller(new GameHandler());
+        Controller c = new Controller(new GameHandler());
         new Thread(() -> {
 
             try {
-                InetAddress IP = InetAddress. getLocalHost();
-                System. out. println("IP of the server is := "+IP. getHostAddress());
+                InetAddress IP = InetAddress.getLocalHost();
+                System.out.println("IP of the server is := " + IP.getHostAddress()); //works on windows
             } catch (UnknownHostException e) {
                 throw new RuntimeException(e);
             }
 
-            TCPServer server = new TCPServer(4321,c);
+            TCPServer server = new TCPServer(4321, c);
 
         }).start();
         new Thread(() -> {

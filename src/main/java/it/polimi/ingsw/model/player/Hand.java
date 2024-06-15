@@ -12,10 +12,11 @@ import java.util.NoSuchElementException;
  * each player has an associated hand containing all their available cards
  */
 public class Hand implements Serializable {
-    private ArrayList<Card> handList = new ArrayList<>();
+    private final ArrayList<Card> handList = new ArrayList<>();
 
     /**
      * returns number of cards in hand
+     *
      * @return size
      */
     public int getSize() {
@@ -24,6 +25,7 @@ public class Hand implements Serializable {
 
     /**
      * returns the card at the specified position in the hand
+     *
      * @param pos position of the desired card
      * @return Card
      * @throws IndexOutOfBoundsException thrown if the position requested isn't in the list
@@ -32,6 +34,7 @@ public class Hand implements Serializable {
 
     /**
      * adds a card to the hand
+     *
      * @param card card to add to the hand
      * @throws HandIsFullException thrown if the hand already contains three (or more) cards
      */
@@ -44,6 +47,7 @@ public class Hand implements Serializable {
     /**
      * removes a card from the hand
      * returns false if the specified card wasn't in the hand
+     *
      * @param card card to remove from the hand
      */
     public void removeCard(Card card) {
@@ -54,7 +58,7 @@ public class Hand implements Serializable {
     /**
      * remove all the cards from the hand, used for the testing of this class
      */
-    public void removeAllCards(){
+    public void removeAllCards() {
         handList.clear();
 
     }

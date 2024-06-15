@@ -19,24 +19,25 @@ import java.lang.reflect.Type;
 public class CornerDeserializer implements JsonDeserializer<Corner> {
     /**
      * method called in CardsPreset to help with the deserialization and the instantiation of the corners associated to each card
-     * @param jsonElement -the element that will be deserialized
-     * @param type - the type of the element that will be deserialized
-     * @param jsonDeserializationContext - the context in which the element is deserialized
+     *
+     * @param jsonElement                the element that will be deserialized
+     * @param type                       the type of the element that will be deserialized
+     * @param jsonDeserializationContext the context in which the element is deserialized
      * @return Corner with its associated item
-     * @throws JsonParseException - if there is an issue that occurs during the parsing of a Json string
+     * @throws JsonParseException if there is an issue that occurs during the parsing of a Json string
      */
     @Override
     public Corner deserialize(JsonElement jsonElement, Type type, JsonDeserializationContext jsonDeserializationContext) throws JsonParseException {
         String value = jsonElement.getAsString();
         ItemBox item;
-        if(value.equals("EMPTY"))
+        if (value.equals("EMPTY"))
             item = jsonDeserializationContext.deserialize(jsonElement, CornerStatus.class);
-        else if(value.equals("ANIMAL") ||
+        else if (value.equals("ANIMAL") ||
                 value.equals("FUNGI") ||
                 value.equals("INSECT") ||
                 value.equals("PLANT"))
             item = jsonDeserializationContext.deserialize(jsonElement, Kingdom.class);
-        else if(value.equals("QUILL") ||
+        else if (value.equals("QUILL") ||
                 value.equals("INKWELL") ||
                 value.equals("MANUSCRIPT"))
             item = jsonDeserializationContext.deserialize(jsonElement, Resource.class);

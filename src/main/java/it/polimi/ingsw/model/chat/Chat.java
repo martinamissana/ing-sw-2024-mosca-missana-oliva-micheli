@@ -24,7 +24,7 @@ public class Chat implements Serializable {
     /**
      * getter
      *
-     * @return receivedMessages - the list of received messages
+     * @return receivedMessages the list of received messages
      */
     public ArrayList<Message> getReceivedMessages() {
         return receivedMessages;
@@ -33,7 +33,7 @@ public class Chat implements Serializable {
     /**
      * getter
      *
-     * @return sentMessages - the list of sent messages
+     * @return sentMessages the list of sent messages
      */
     public ArrayList<Message> getSentMessages() {
         return sentMessages;
@@ -42,7 +42,7 @@ public class Chat implements Serializable {
     /**
      * getter
      *
-     * @param sender - the player that sent the messages
+     * @param sender the player that sent the messages
      * @return list of the messages received from a specified player
      */
     private ArrayList<Message> getReceivedMessagesFromPlayer(Player sender) {
@@ -59,7 +59,7 @@ public class Chat implements Serializable {
     /**
      * getter
      *
-     * @param receiver - the player that received the messages
+     * @param receiver the player that received the messages
      * @return list of the messages sent to a specified player
      */
     private ArrayList<Message> getSentMessagesToPlayer(Player receiver) {
@@ -145,7 +145,7 @@ public class Chat implements Serializable {
     /**
      * getter
      *
-     * @param nickname - the player from which you want to get the private chat
+     * @param player the player from which you want to get the private chat
      * @return list of the sent and received messages in a private chat in the order they have been sent
      */
     public ArrayList<Message> getPrivateChat(Player player) {

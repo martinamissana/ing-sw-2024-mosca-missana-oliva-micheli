@@ -26,7 +26,7 @@ import java.util.HashMap;
 /**
  * View class, it contains what the client can see and the methods the client can call to play
  */
-public abstract class View extends ViewObservable<NetMessage> {
+public abstract class View extends ViewObservable {
     private String nickname;
     private HashMap<Integer, Lobby> lobbies = new HashMap<>();
     private Player player;
@@ -40,7 +40,7 @@ public abstract class View extends ViewObservable<NetMessage> {
     private Goal secretGoal;
     private Pawn pawn;
     private boolean firstPlayer = false;
-    private boolean lastRound=false;
+    private boolean lastRound = false;
     private ArrayList<Goal> secretGoalChoices = new ArrayList<>();
     private HashMap<Player, Integer> scoreboard = new HashMap<>();
     private HashMap<DeckBufferType, DeckBuffer> deckBuffers = new HashMap<>();
@@ -50,8 +50,7 @@ public abstract class View extends ViewObservable<NetMessage> {
     private Goal commonGoal2;
     private GamePhase gamePhase;
     private ArrayList<Player> winners = new ArrayList<>();
-    private final ArrayList<String> errorMessages = new ArrayList<>();
-    private HashMap <Player, Integer> goalsDone = new HashMap<>();
+    private HashMap<Player, Integer> goalsDone = new HashMap<>();
 
 
     /**
@@ -178,10 +177,6 @@ public abstract class View extends ViewObservable<NetMessage> {
      */
     public ArrayList<Player> getWinners() {
         return winners;
-    }
-
-    public ArrayList<String> getErrorMessages() {
-        return errorMessages;
     }
 
     /**
@@ -333,7 +328,7 @@ public abstract class View extends ViewObservable<NetMessage> {
         this.pawn = pawn;
     }
 
-    public void     setFirstPlayer(boolean firstPlayer) {
+    public void setFirstPlayer(boolean firstPlayer) {
         this.firstPlayer = firstPlayer;
     }
 
@@ -447,7 +442,8 @@ public abstract class View extends ViewObservable<NetMessage> {
                     ID = m.getID();
                     this.chat = new Chat();
                     notify(m);
-                } if (ID == null) notify(m);
+                }
+                if (ID == null) notify(m);
             }
             case LobbyJoinedMessage m -> {
                 if (m.getPlayer().getNickname().equals(player.getNickname())) {
@@ -479,7 +475,7 @@ public abstract class View extends ViewObservable<NetMessage> {
                     player.initialize();
                     hand.removeAllCards();
                     secretGoalChoices.clear();
-                    secretGoal=null;
+                    secretGoal = null;
                     notify(m);
                 } else if (m.getID().equals(ID) || ID == null) {
                     notify(m);
@@ -522,8 +518,8 @@ public abstract class View extends ViewObservable<NetMessage> {
                         firstPlayer = false;
                         yourTurn = false;
                     }
-                    for(Player p: lobbies.get(ID).getPlayers())
-                        fields.put(p,new Field());
+                    for (Player p : lobbies.get(ID).getPlayers())
+                        fields.put(p, new Field());
                     scoreboard = m.getScoreboard();
                     deckBuffers = m.getDeckBuffers();
                     topResourceCard = m.getTopResourceCard();
@@ -553,7 +549,7 @@ public abstract class View extends ViewObservable<NetMessage> {
                 }
             }
             case CardPlacedOnFieldMessage m -> {
-                if(!m.getSide().equals(m.getCard().getSide()))m.getCard().flip();
+                if (!m.getSide().equals(m.getCard().getSide())) m.getCard().flip();
 
                 if (m.getNickname().equals(nickname)) {
                     if (m.getCard().getClass().equals(StarterCard.class)) {
@@ -569,11 +565,10 @@ public abstract class View extends ViewObservable<NetMessage> {
                 } else {
                     for (Player p : fields.keySet()) {
                         if (m.getNickname().equals(p.getNickname())) {
-                            if (m.getCard().getClass().equals(StarterCard.class)){
+                            if (m.getCard().getClass().equals(StarterCard.class)) {
                                 fields.get(p).addCard((StarterCard) m.getCard());
                                 notify(m);
-                            }
-                            else try {
+                            } else try {
                                 fields.get(p).addCard((ResourceCard) m.getCard(), m.getCoords());
                                 notify(m);
                             } catch (IllegalMoveException e) {
@@ -612,15 +607,15 @@ public abstract class View extends ViewObservable<NetMessage> {
                     yourTurn = true;
                 else if (m.getID().equals(ID) && !m.getNickname().equals(nickname))
                     yourTurn = false;
-                if (m.getID().equals(ID)){
-                    lastRound=m.isLastRound();
+                if (m.getID().equals(ID)) {
+                    lastRound = m.isLastRound();
                     notify(m);
                 }
             }
             case GameWinnersAnnouncedMessage m -> {
                 if (m.getID().equals(ID)) {
                     winners = m.getWinners();
-                    goalsDone=m.getGoalsDone();
+                    goalsDone = m.getGoalsDone();
                     notify(m);
                 }
             }
@@ -630,11 +625,9 @@ public abstract class View extends ViewObservable<NetMessage> {
                     player.initialize();
                     firstPlayer = false;
                     yourTurn = false;
-                    lastRound=false;
+                    lastRound = false;
                     scoreboard = null;
-                    deckBuffers = null;
-                    topResourceCard = null;
-                    topGoldenCard = null;
+                    deckBuffers.clear();
                     commonGoal1 = null;
                     commonGoal2 = null;
                     gamePhase = null;
@@ -643,13 +636,13 @@ public abstract class View extends ViewObservable<NetMessage> {
                     pawn = null;
                     hand.removeAllCards();
                     secretGoalChoices.clear();
-                    secretGoal=null;
+                    secretGoal = null;
                     fields.clear();
-                    chat=null;
-                    topResourceCard=null;
-                    topGoldenCard=null;
-                    commonGoal1=null;
-                    commonGoal2=null;
+                    chat = null;
+                    topResourceCard = null;
+                    topGoldenCard = null;
+                    commonGoal1 = null;
+                    commonGoal2 = null;
                     notify(m);
                 }
             }
@@ -691,7 +684,7 @@ public abstract class View extends ViewObservable<NetMessage> {
                     }
                 }
             }
-            case HeartBeatMessage m -> {
+            case HeartBeatMessage ignored -> {
             }
             case FailMessage m -> {
                 if (m.getNickname().equals(nickname))
