@@ -886,11 +886,21 @@ public class Controller implements Serializable {
     // RMI related methods
     // ~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~
 
-    //TODO: javadoc
+    /**
+     * method used in RMI. Called from the RMIServer, it notifies the virtual views about the active lobbies
+     * @param nickname name of user who requested the current status
+     * @throws IOException general class of exceptions produced by failed or interrupted I/ O operations.
+     */
     public void getCurrentStatus(String nickname) throws IOException {
         gh.notify(new CurrentStatusEvent(gh.getLobbies(), nickname));
     }
-    //TODO: javadoc
+
+    /**
+     * method used in RMI to remove the virtual view of the disconnected client from the controller observers
+     * @param nickname name of the user disconnected
+     * @param ID ID of the lobby/game
+     * @throws IOException general class of exceptions produced by failed or interrupted I/ O operations.
+     */
     public void disconnect(String nickname, Integer ID) throws IOException {
         gh.notify(new DisconnectEvent(this, nickname, ID));
     }
