@@ -174,7 +174,9 @@ public class TUI implements Runnable, ViewObserver {
                     System.out.println(cli + m.getPlayer().getNickname() + " left the lobby");
                     state = TUIState.MENU;
                 } else if (m.getID().equals(view.getID())) {
+                    System.out.println(cli + m.getPlayer().getNickname() + " left the lobby");
                     chatState = null;
+                    printStatus();
                 } else printStatus();
 
             }
