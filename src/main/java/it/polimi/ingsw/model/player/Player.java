@@ -20,6 +20,7 @@ public class Player implements Serializable {
 
     /**
      * Class constructor
+     *
      * @param nickname player's nickname
      */
     public Player(String nickname) {
@@ -36,9 +37,10 @@ public class Player implements Serializable {
 
     /**
      * Class constructor
-     * @param nickname player's nickname
+     *
+     * @param nickname  player's nickname
      * @param goesFirst signals that the player is the first of each turn in the game
-     * @param pawn player's pawn
+     * @param pawn      player's pawn
      */
     // might not be needed
     public Player(String nickname, boolean goesFirst, Pawn pawn) {
@@ -54,70 +56,80 @@ public class Player implements Serializable {
 
     /**
      * sets the player to be the one to go first
+     *
      * @param goesFirst signals that the player is the first of each turn in the game
      */
     public void setGoesFirst(boolean goesFirst) { this.goesFirst = goesFirst; }
 
     /**
      * sets the player's secret goal
+     *
      * @param goal goal to set as the player's private goal
      */
     public void setSecretGoal(Goal goal) { this.secretGoal = goal; }
 
     /**
      * sets the player's pawn
+     *
      * @param pawn pawn to set
      */
     public void setPawn(Pawn pawn) { this.pawn = pawn; }
 
     /**
      * returns the player's nickname
+     *
      * @return String
      */
     public String getNickname() { return nickname; }
 
     /**
      * returns the player's hand
+     *
      * @return Hand
      */
     public Hand getHand() { return hand; }
 
     /**
      * returns the player's field
+     *
      * @return Field
      */
     public Field getField() { return field; }
 
     /**
      * returns the player's chat
+     *
      * @return Chat
      */
     public Chat getChat() { return chat; }
 
     /**
      * returns whether the player goes first or not
+     *
      * @return boolean
      */
     public boolean getGoesFirst() { return goesFirst; }
 
     /**
      * returns the player's secret goal
+     *
      * @return Goal
      */
     public Goal getSecretGoal() {
         return secretGoal;
     }
 
-    public int getGoalsDone(){
+    public int getGoalsDone() {
         return goalsDone;
     }
 
     public void addGoalDone() {
-        this.goalsDone ++;
+        this.goalsDone++;
     }
 
     /**
      * returns the player's pawn
+     *
      * @return Pawn
      */
     public Pawn getPawn() { return pawn; }
@@ -125,7 +137,7 @@ public class Player implements Serializable {
     /**
      * initializes all the attributes related to a game, used when a players is no longer in a lobby or in a game
      */
-    public void initialize(){
+    public void initialize() {
         this.hand.removeAllCards();
         this.field = new Field();
         this.chat = new Chat();
@@ -138,6 +150,7 @@ public class Player implements Serializable {
 
     /**
      * getter
+     *
      * @return the list of choosable goals
      */
     public ArrayList<Goal> getChoosableGoals() {

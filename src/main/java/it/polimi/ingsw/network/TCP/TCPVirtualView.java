@@ -16,6 +16,9 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 
+/**
+ * The virtual view on the server associated with a view on the client side
+ */
 public class TCPVirtualView implements Runnable, Observer {
     private final Socket socket;
     private final ObjectInputStream in;
@@ -26,6 +29,13 @@ public class TCPVirtualView implements Runnable, Observer {
     private String nickname;
 
 
+    /**
+     * Class constructor
+     *
+     * @param socket the socket to communicate trough TCP
+     * @param c      the linked Controller
+     * @throws IOException produced by failed or interrupted I/O operations
+     */
     public TCPVirtualView(Socket socket, Controller c) throws IOException {
         this.socket = socket;
         this.out = new ObjectOutputStream(socket.getOutputStream());
@@ -43,22 +53,62 @@ public class TCPVirtualView implements Runnable, Observer {
         }).start();
     }
 
+    /**
+     * getter
+     *
+     * @return the object input stream used to receive the messages
+     */
     public ObjectInputStream getIn() {
         return in;
     }
 
+    /**
+     * getter
+     *
+     * @return the object output stream used to send the messages
+     */
     public ObjectOutputStream getOut() {
         return out;
     }
 
+    /**
+     * getter
+     *
+     * @return the nickname linked to the virtual view
+     */
     public String getNickname() {
         return nickname;
     }
 
+    /**
+     * getter
+     *
+     * @return the lobby/game ID linked to the virtual view
+     */
     public Integer getID() {
         return ID;
     }
 
+    /**
+     * setter
+     *
+     * @param ID the lobby/game ID assigned to the virtual view
+     */
+    public void setID(Integer ID) {
+        this.ID = ID;
+    }
+
+    /**
+     * setter
+     *
+     * @param nickname the nickname assigned to the virtual view
+     */
+    public void setNickname(String nickname) {
+        this.nickname = nickname;
+    }
+
+
+    @Override
     public void run() {
         try {
             NetMessage deserialized;
@@ -126,7 +176,7 @@ public class TCPVirtualView implements Runnable, Observer {
 
                 }
                 case CardAddedToHandEvent e -> {
-                    if (e.getPlayer().getNickname().equals(nickname)) {
+                    if (e.getID().equals(ID)) {
                         CardAddedToHandMessage m = new CardAddedToHandMessage(e.getPlayer(), e.getCard());
                         out.writeObject(m);
                     }
@@ -181,7 +231,7 @@ public class TCPVirtualView implements Runnable, Observer {
                 }
                 case GameWinnersAnnouncedEvent e -> {
                     if (e.getID().equals(ID)) {
-                        GameWinnersAnnouncedMessage m = new GameWinnersAnnouncedMessage(e.getID(), e.getWinners(),e.getGoalsDone());
+                        GameWinnersAnnouncedMessage m = new GameWinnersAnnouncedMessage(e.getID(), e.getWinners(), e.getGoalsDone());
                         out.writeObject(m);
                     }
                 }
@@ -210,6 +260,12 @@ public class TCPVirtualView implements Runnable, Observer {
 
     }
 
+    /**
+     * elaborates the messages received from the client through the connection
+     *
+     * @param message the received message
+     * @throws IOException produced by failed or interrupted I/O operations
+     */
     private void elaborate(NetMessage message) throws IOException {
         switch (message) {
             case MyNickname m -> {
@@ -315,7 +371,7 @@ public class TCPVirtualView implements Runnable, Observer {
             }
             case PlayCardMessage m -> {
                 try {
-                    c.playCard(m.getGameID(), m.getNickname(), m.getHandPos(), m.getCoords(),m.getSide());
+                    c.playCard(m.getGameID(), m.getNickname(), m.getHandPos(), m.getCoords(), m.getSide());
                 } catch (IllegalActionException e) {
                     FailMessage failMessage = new FailMessage("Not play action", m.getNickname());
                     out.writeObject(failMessage);
@@ -323,10 +379,10 @@ public class TCPVirtualView implements Runnable, Observer {
                     FailMessage failMessage = new FailMessage("Not your turn", m.getNickname());
                     out.writeObject(failMessage);
                 } catch (IllegalMoveException e) {
-                    if(e.getClass().equals(IllegalCoordsException.class)) {
+                    if (e.getClass().equals(IllegalCoordsException.class)) {
                         FailMessage failMessage = new FailMessage("Illegal coords", m.getNickname());
                         out.writeObject(failMessage);
-                    } else if(e.getClass().equals(RequirementsNotSatisfiedException.class)) {
+                    } else if (e.getClass().equals(RequirementsNotSatisfiedException.class)) {
                         FailMessage failMessage = new FailMessage("requirements not satisfied", m.getNickname());
                         out.writeObject(failMessage);
                     }
@@ -369,16 +425,8 @@ public class TCPVirtualView implements Runnable, Observer {
         }
     }
 
-    public void setID(Integer ID) {
-        this.ID = ID;
-    }
-
-    public void setNickname(String nickname) {
-        this.nickname = nickname;
-    }
-
     /**
-     * called to send an HeartBeatMessage to check if the client is still alive.
+     * called to send an HeartBeatMessage to check if the client is still alive,
      * if an IOException is caught the client will assume tha the client has crashed and will disconnect
      */
     public void checkClientConnection() throws IOException {
@@ -391,11 +439,17 @@ public class TCPVirtualView implements Runnable, Observer {
         }
     }
 
+    /**
+     * removes the virtual view from the observer, eventually makes the linked player leave the lobby and finally removes them from the user list,
+     * it also interrupts the thread the virtual view is running on
+     * @throws IOException produced by failed or interrupted I/O operations
+     */
     private void disconnect() throws IOException {
         c.getGh().removeObserver(this);
         try {
+            if (ID != null)
                 c.leaveLobby(nickname, ID);
-            } catch (LobbyDoesNotExistsException | GameDoesNotExistException | UnexistentUserException e) {
+        } catch (LobbyDoesNotExistsException | GameDoesNotExistException | UnexistentUserException e) {
             throw new RuntimeException(e);
         }
         c.getGh().removeUser(nickname);

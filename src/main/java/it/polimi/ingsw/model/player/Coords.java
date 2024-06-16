@@ -13,6 +13,7 @@ public class Coords implements Serializable {
 
     /**
      * Class constructor
+     *
      * @param x first coordinate of the matrix. positive and negative values correspond to positions to the east and west respectively
      * @param y second coordinate of the matrix. positive and negative values correspond to positions to the north and south respectively
      */
@@ -23,6 +24,7 @@ public class Coords implements Serializable {
 
     /**
      * gets X coordinate
+     *
      * @return int
      */
     public int getX() {
@@ -31,6 +33,7 @@ public class Coords implements Serializable {
 
     /**
      * gets Y coordinate
+     *
      * @return int
      */
     public int getY() {
@@ -39,6 +42,7 @@ public class Coords implements Serializable {
 
     /**
      * pairs of coordinates are equal to each other if and only if both the x and y values of the first pair are equal to the second pair's
+     *
      * @param o object to compare with the caller
      * @return boolean
      */

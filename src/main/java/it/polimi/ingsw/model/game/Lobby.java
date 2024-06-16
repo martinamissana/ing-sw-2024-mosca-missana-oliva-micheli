@@ -21,10 +21,10 @@ public class Lobby implements Serializable {
     /**
      * Constructor
      *
-     * @param id
-     * @param numOfPlayers - number of players required
+     * @param id the id that identifies the lobby
+     * @param numOfPlayers number of players required
      */
-    public Lobby(int id, int numOfPlayers){
+    public Lobby(int id, int numOfPlayers) {
         ID = id;
         this.numOfPlayers = numOfPlayers;
         this.players = new ArrayList<>();
@@ -33,7 +33,8 @@ public class Lobby implements Serializable {
 
     /**
      * getter
-     * @return int - numOfPlayers
+     *
+     * @return int numOfPlayers
      */
     public int getNumOfPlayers() {
         return numOfPlayers;
@@ -41,7 +42,8 @@ public class Lobby implements Serializable {
 
     /**
      * getter
-     * @return ArrayList<Player> - players
+     *
+     * @return ArrayList<Player> players
      */
     public ArrayList<Player> getPlayers() {
         return players;
@@ -49,16 +51,18 @@ public class Lobby implements Serializable {
 
     /**
      * getter
+     *
      * @return PawnBuffer, the class where there are stored the available pawns
      */
     public PawnBuffer getPawnBuffer() {return pawnBuffer;}
 
     /**
      * method to add players to the lobby
-     * @param  player - player to add to the lobby
-     * @throws FullLobbyException - the lobby is full
+     *
+     * @param player player to add to the lobby
+     * @throws FullLobbyException the lobby is full
      */
-    public void addPlayer(Player player) throws FullLobbyException{
+    public void addPlayer(Player player) throws FullLobbyException {
         if (lobbyFull()) {
             throw new FullLobbyException();
         }
@@ -67,22 +71,25 @@ public class Lobby implements Serializable {
 
     /**
      * method to remove players from the lobby
-     * @param player
+     *
+     * @param player the player you wish to remove
      */
-    public void removePlayer(Player player){
+    public void removePlayer(Player player) {
         players.remove(player);
     }
 
     /**
      * method that returns true if the lobby is full
+     *
      * @return boolean
      */
-    private boolean lobbyFull(){
+    private boolean lobbyFull() {
         return players.size() >= numOfPlayers;
     }
 
     /**
      * returns the lobby ID
+     *
      * @return int
      */
     public int getID() {

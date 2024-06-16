@@ -12,8 +12,10 @@ module PSP001 {
     opens it.polimi.ingsw.model.commonItem;
     opens it.polimi.ingsw.model.goal;
     opens it.polimi.ingsw.view.GUI;
+    opens it.polimi.ingsw.view.GUIFX;
 
     exports it.polimi.ingsw.view.GUI;
+    exports it.polimi.ingsw.view.GUIFX;
     exports it.polimi.ingsw.network.RMI;
     exports it.polimi.ingsw.controller.exceptions;
     exports it.polimi.ingsw.model.exceptions;

@@ -17,6 +17,9 @@ import it.polimi.ingsw.model.player.Player;
 
 import java.util.Objects;
 
+/**
+ * Controller class used to check if an action is allowed in the view
+ */
 public class ViewController {
 
     View view;

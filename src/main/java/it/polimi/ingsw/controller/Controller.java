@@ -5,7 +5,6 @@ import it.polimi.ingsw.model.card.Card;
 import it.polimi.ingsw.model.card.CardSide;
 import it.polimi.ingsw.model.card.ResourceCard;
 import it.polimi.ingsw.model.card.StarterCard;
-import it.polimi.ingsw.model.chat.Chat;
 import it.polimi.ingsw.model.chat.Message;
 import it.polimi.ingsw.model.commonItem.ItemBox;
 import it.polimi.ingsw.model.deck.DeckBufferType;
@@ -55,6 +54,7 @@ public class Controller implements Serializable {
     public synchronized void login(String username) throws NicknameAlreadyTakenException, IOException {
         gh.addUser(new Player(username));
     }
+
     // ~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~
     // Lobby related methods:
     // ~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~
@@ -64,9 +64,9 @@ public class Controller implements Serializable {
      * the creator needs to specify the desired amount of player for the game,
      * the creator will automatically join the lobby
      *
-     * @param numOfPlayers - the number of player needed for the game to starts
-     * @param creator      - the player that created the lobby
-     * @throws LobbyDoesNotExistsException - this will never be thrown
+     * @param numOfPlayers the number of player needed for the game to starts
+     * @param creator      the player that created the lobby
+     * @throws LobbyDoesNotExistsException this will never be thrown
      */
     public synchronized void createLobby(int numOfPlayers, String creator) throws LobbyDoesNotExistsException, UnexistentUserException, CannotJoinMultipleLobbiesException {
         Player lobbyCreator = null;
@@ -91,10 +91,10 @@ public class Controller implements Serializable {
      * adds the player to the specified lobby
      * when the chosen number or player for the game is reached, a game is created
      *
-     * @param nickname - the player that will be added to the lobby
-     * @param lobbyID  - the lobby the player wants to join
-     * @throws FullLobbyException          - if the lobby is already  full
-     * @throws LobbyDoesNotExistsException - if the lobby does not exist
+     * @param nickname the player that will be added to the lobby
+     * @param lobbyID  the lobby the player wants to join
+     * @throws FullLobbyException          if the lobby is already  full
+     * @throws LobbyDoesNotExistsException if the lobby does not exist
      */
     public synchronized void joinLobby(String nickname, int lobbyID) throws FullLobbyException, LobbyDoesNotExistsException, IOException, CannotJoinMultipleLobbiesException, UnexistentUserException {
         Player player = null;
@@ -102,6 +102,7 @@ public class Controller implements Serializable {
             if (p.getNickname().equals(nickname)) player = p;
         }
         if (player == null) throw new UnexistentUserException();
+
         //lobbyID is the index in lobbies
         for (Lobby l : gh.getLobbies().values()) {
             if (l.getPlayers().contains(player)) throw new CannotJoinMultipleLobbiesException();
@@ -117,8 +118,8 @@ public class Controller implements Serializable {
      * the specified player will be removed from the lobby, automatically deletes the lobby if there are no players left
      *
      * @param nickname the player that will leave the lobby
-     * @param lobbyID  - the ID of the lobby from which the player will be deleted
-     * @throws LobbyDoesNotExistsException - if the lobby does not exist
+     * @param lobbyID  the ID of the lobby from which the player will be deleted
+     * @throws LobbyDoesNotExistsException if the lobby does not exist
      */
     public synchronized void leaveLobby(String nickname, int lobbyID) throws LobbyDoesNotExistsException, GameDoesNotExistException, IOException, UnexistentUserException {
         Player player = null;
@@ -134,7 +135,7 @@ public class Controller implements Serializable {
             if (gh.getLobbies().get(lobbyID).getPlayers().isEmpty()) {
                 deleteLobby(lobbyID);
             }
-            if (gh.getActiveGames().containsKey(lobbyID)){
+            if (gh.getActiveGames().containsKey(lobbyID)) {
                 leaveGame(lobbyID, player.getNickname());
             }
         } else throw new LobbyDoesNotExistsException("Lobby with ID " + lobbyID + " does not exist");
@@ -143,7 +144,7 @@ public class Controller implements Serializable {
     /**
      * deletes the specified lobby from the list of lobbies
      *
-     * @param lobbyID - the ID of the lobby that will be deleted
+     * @param lobbyID the ID of the lobby that will be deleted
      * @throws LobbyDoesNotExistsException if the lobby does not exist
      */
     private synchronized void deleteLobby(int lobbyID) throws LobbyDoesNotExistsException, IOException {
@@ -214,10 +215,10 @@ public class Controller implements Serializable {
      * deletes the specified game from the list of active games and also the associated lobby
      *
      * @param gameID the ID of the game that will be deleted
-     * @throws GameDoesNotExistException - if the game does not exist
+     * @throws GameDoesNotExistException if the game does not exist
      */
     public synchronized void terminateGame(Integer gameID) throws GameDoesNotExistException, LobbyDoesNotExistsException, IOException {
-        if(gh.getGame(gameID).getGamePhase().equals(GamePhase.PLAYING_GAME))winner(gameID);
+        if (gh.getGame(gameID).getGamePhase().equals(GamePhase.PLAYING_GAME)) winner(gameID);
         if (gh.getActiveGames().containsKey(gameID)) {
             for (Player p : gh.getGame(gameID).getPlayers()) {
                 p.initialize();
@@ -238,7 +239,7 @@ public class Controller implements Serializable {
      *
      * @param message the message that will be sent
      * @param ID      the ID of the game where the player that sends the message is found
-     * @throws GameDoesNotExistException- if the game does not exist
+     * @throws GameDoesNotExistException if the game does not exist
      */
     public synchronized void send(Message message, int ID) throws GameDoesNotExistException, LobbyDoesNotExistsException, PlayerChatMismatchException, UnexistentUserException {
         Player sender = null;
@@ -322,7 +323,7 @@ public class Controller implements Serializable {
         for (Player p : players) {
             try {
                 p.getHand().addCard(starter.removeLast());
-                gh.notify(new CardAddedToHandEvent(p, p.getHand().getCard(0)));
+                gh.notify(new CardAddedToHandEvent(p, p.getHand().getCard(0), gameID));
             } catch (HandIsFullException e) {
                 throw new RuntimeException(e);
             }
@@ -406,11 +407,11 @@ public class Controller implements Serializable {
 
         for (Player p : game.getPlayers()) {
             p.getHand().addCard(game.getResourceDeck().draw());
-            gh.notify(new CardAddedToHandEvent(p, p.getHand().getCard(0)));
+            gh.notify(new CardAddedToHandEvent(p, p.getHand().getCard(0), gameID));
             p.getHand().addCard(game.getResourceDeck().draw());
-            gh.notify(new CardAddedToHandEvent(p, p.getHand().getCard(1)));
+            gh.notify(new CardAddedToHandEvent(p, p.getHand().getCard(1), gameID));
             p.getHand().addCard(game.getGoldenDeck().draw());
-            gh.notify(new CardAddedToHandEvent(p, p.getHand().getCard(2)));
+            gh.notify(new CardAddedToHandEvent(p, p.getHand().getCard(2), gameID));
         }
     }
 
@@ -582,7 +583,7 @@ public class Controller implements Serializable {
         // draw a card and add it to the current player's hand
         ResourceCard newCard = game.drawFromSource(deckTypeBox);
         player.getHand().addCard(newCard);
-        gh.notify(new CardAddedToHandEvent(player, newCard));
+        gh.notify(new CardAddedToHandEvent(player, newCard, gameID));
 
         if (deckTypeBox.equals(DeckType.RESOURCE) || deckTypeBox.equals(DeckBufferType.RES1) || deckTypeBox.equals(DeckBufferType.RES2)) {
             gh.notify(new CardDrawnFromSourceEvent(gameID, deckTypeBox, game.getDeck(DeckType.RESOURCE).getCards().getLast()));
@@ -632,7 +633,7 @@ public class Controller implements Serializable {
      * updates the game's state, setting it to its last round if a player
      * has reached 20 points or if there's no remaining cards in both decks
      *
-     * @param gameID - the ID of the game where the status is checked
+     * @param gameID the ID of the game where the status is checked
      */
     public synchronized void updateLastRound(Integer gameID) {
         Game game = gh.getActiveGames().get(gameID);
@@ -647,7 +648,7 @@ public class Controller implements Serializable {
 
         // if someone has reached 20 points
         for (Map.Entry<Player, Integer> entry : game.getScoreboard().entrySet())
-            if (entry.getValue() >= 20) {        // TODO: 20 points
+            if (entry.getValue() >= 20) {
                 game.setLastRound(true);
             }
     }
@@ -718,7 +719,7 @@ public class Controller implements Serializable {
      */
     public synchronized void winner(Integer gameID) throws IOException {
         Game game = gh.getActiveGames().get(gameID);
-        HashMap <Player,Integer> goalsDone= new HashMap<>();
+        HashMap<Player, Integer> goalsDone = new HashMap<>();
         evaluateSecretGoal(gameID);
         evaluateCommonGoal(gameID);
         HashMap<Player, Integer> scoreboard = game.getScoreboard();
@@ -730,25 +731,25 @@ public class Controller implements Serializable {
                 maxValue = entry.getValue();
             }
         }
-        for(Player p: game.getPlayers()){
-            if(scoreboard.get(p) == maxValue && p.getGoalsDone() > maxGoalsDone) {
+        for (Player p : game.getPlayers()) {
+            if (scoreboard.get(p) == maxValue && p.getGoalsDone() > maxGoalsDone) {
                 maxGoalsDone = p.getGoalsDone();
             }
         }
         for (Player p : scoreboard.keySet()) {
             if (scoreboard.get(p) == maxValue && p.getGoalsDone() == maxGoalsDone) winners.add(p);
-            goalsDone.put(p,p.getGoalsDone());
+            goalsDone.put(p, p.getGoalsDone());
         }
         game.setWinners(winners);
-        gh.notify(new GameWinnersAnnouncedEvent(gameID, game.getWinners(),goalsDone));
+        gh.notify(new GameWinnersAnnouncedEvent(gameID, game.getWinners(), goalsDone));
     }
 
     /**
      * checks the presence of the Diagonal goal in the field and adds the points to the scoreboard
      *
-     * @param gameID   index of the game where the evaluation is done
-     * @param goal     goal that needs to be found in the field
-     * @param p player who has to complete the goal
+     * @param gameID index of the game where the evaluation is done
+     * @param goal   goal that needs to be found in the field
+     * @param p      player who has to complete the goal
      */
     private synchronized void diagonalEvaluator(Integer gameID, DiagonalGoal goal, Player p) throws UnexistentUserException, IOException {
         if (p == null) throw new UnexistentUserException();
@@ -765,7 +766,7 @@ public class Controller implements Serializable {
                     done.add(thirdCard);
                     game.addToScore(p, goal.getPoints());
                     p.addGoalDone();
-                    gh.notify(new ScoreIncrementedEvent(gameID,p,goal.getPoints()));
+                    gh.notify(new ScoreIncrementedEvent(gameID, p, goal.getPoints()));
                 }
             }
         } else {
@@ -778,7 +779,7 @@ public class Controller implements Serializable {
                     done.add(thirdCard);
                     game.addToScore(p, goal.getPoints());
                     p.addGoalDone();
-                    gh.notify(new ScoreIncrementedEvent(gameID,p,goal.getPoints()));
+                    gh.notify(new ScoreIncrementedEvent(gameID, p, goal.getPoints()));
                 }
             }
         }
@@ -787,8 +788,8 @@ public class Controller implements Serializable {
     /**
      * checks the presence of the Resource goal in the field and adds the points to the scoreboard
      *
-     * @param gameID   index of the game where the evaluation is done
-     * @param goal     goal that needs to be found in the field
+     * @param gameID index of the game where the evaluation is done
+     * @param goal   goal that needs to be found in the field
      * @param player player who has to complete the goal
      */
     private synchronized void resourceEvaluator(Integer gameID, ResourceGoal goal, Player player) throws UnexistentUserException, IOException {
@@ -802,7 +803,7 @@ public class Controller implements Serializable {
             }
             game.addToScore(player, goal.getPoints());
             player.addGoalDone();
-            gh.notify(new ScoreIncrementedEvent(gameID,player, goal.getPoints()));
+            gh.notify(new ScoreIncrementedEvent(gameID, player, goal.getPoints()));
         }
 
     }
@@ -861,7 +862,7 @@ public class Controller implements Serializable {
      *
      * @param gameID     index of the game where the evaluation is done
      * @param goal       goal that needs to be found in the field
-     * @param player   player who has to complete the goal
+     * @param player     player who has to complete the goal
      * @param firstCard  coordinates of the card with a different color from the other two in the L_Shape
      * @param secondCard coordinates of one of the cards with the main L_Shape color
      * @param thirdCard  coordinates of one of the cards with the main L_Shape color
@@ -877,7 +878,7 @@ public class Controller implements Serializable {
             done.add(thirdCard);
             game.addToScore(player, goal.getPoints());
             player.addGoalDone();
-            gh.notify(new ScoreIncrementedEvent(gameID,player, goal.getPoints()));
+            gh.notify(new ScoreIncrementedEvent(gameID, player, goal.getPoints()));
         }
     }
 
@@ -885,11 +886,22 @@ public class Controller implements Serializable {
     // RMI related methods
     // ~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~
 
+    /**
+     * method used in RMI. Called from the RMIServer, it notifies the virtual views about the active lobbies
+     * @param nickname name of user who requested the current status
+     * @throws IOException general class of exceptions produced by failed or interrupted I/ O operations.
+     */
     public void getCurrentStatus(String nickname) throws IOException {
-        gh.notify(new CurrentStatusEvent(gh.getLobbies(),nickname));
+        gh.notify(new CurrentStatusEvent(gh.getLobbies(), nickname));
     }
 
+    /**
+     * method used in RMI to remove the virtual view of the disconnected client from the controller observers
+     * @param nickname name of the user disconnected
+     * @param ID ID of the lobby/game
+     * @throws IOException general class of exceptions produced by failed or interrupted I/ O operations.
+     */
     public void disconnect(String nickname, Integer ID) throws IOException {
-        gh.notify(new DisconnectEvent(this,nickname, ID));
+        gh.notify(new DisconnectEvent(this, nickname, ID));
     }
 }

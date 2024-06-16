@@ -21,10 +21,11 @@ public class GoalsPreset {
 
     /**
      * gets all the diagonal goals in a list
+     *
      * @return ArrayList<DiagonalGoal>
-     * @throws IOException
+     * @throws IOException produced by failed or interrupted I/O operations
      */
-    public static ArrayList<DiagonalGoal> getDiagonalGoals() throws IOException{
+    public static ArrayList<DiagonalGoal> getDiagonalGoals() throws IOException {
 
         InputStream inputStream = CardsPreset.class.getClassLoader().getResourceAsStream("diagonal_goals.json");
 
@@ -47,10 +48,11 @@ public class GoalsPreset {
 
     /**
      * gets all the L_shape goals in a list
+     *
      * @return ArrayList<L_ShapeGoal>
      * @throws IOException
      */
-    public static ArrayList<L_ShapeGoal> getLShapeGoals() throws IOException{
+    public static ArrayList<L_ShapeGoal> getLShapeGoals() throws IOException {
 
         InputStream inputStream = CardsPreset.class.getClassLoader().getResourceAsStream("L_shape_goals.json");
 
@@ -73,10 +75,11 @@ public class GoalsPreset {
 
     /**
      * gets all the resource goals in a list
+     *
      * @return ArrayList<ResourceGoal>
      * @throws IOException
      */
-    public static ArrayList<ResourceGoal> getResourceGoals() throws IOException{
+    public static ArrayList<ResourceGoal> getResourceGoals() throws IOException {
 
         InputStream inputStream = CardsPreset.class.getClassLoader().getResourceAsStream("resource_goals.json");
 

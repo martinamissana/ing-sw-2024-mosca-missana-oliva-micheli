@@ -32,18 +32,19 @@ public class Game implements Serializable {
     private final HashMap<DeckBufferType, DeckBuffer> deckBuffers = new HashMap<>();
     private final GoalContainer goals;
     private GamePhase gamePhase;
-    private ArrayList<Player> winners=new ArrayList<>();
+    private final ArrayList<Player> winners = new ArrayList<>();
 
 
     /**
      * Class Constructor
-     * @param gameID identifies univocally the game
+     *
+     * @param gameID       identifies univocally the game
      * @param numOfPlayers number of players of the game
-     * @param players HashMap<Integer, Player> maps PlayerID to Player
-     * @param scoreboard HashMap<Player,Integer> maps the player to his points
+     * @param players      HashMap<Integer, Player> maps PlayerID to Player
+     * @param scoreboard   HashMap<Player,Integer> maps the player to his points
      * @throws IOException produced by failed or interrupted I/O operations
      */
-    public Game(int gameID, int numOfPlayers, ArrayList<Player> players, HashMap<Player,Integer> scoreboard) throws IOException {
+    public Game(int gameID, int numOfPlayers, ArrayList<Player> players, HashMap<Player, Integer> scoreboard) throws IOException {
         this.numOfPlayers = numOfPlayers;
         this.players = players;
         this.gameID = gameID;
@@ -56,29 +57,41 @@ public class Game implements Serializable {
         this.deckBuffers.put(DeckBufferType.RES1, new DeckBuffer(this.ResourceDeck));
         this.deckBuffers.put(DeckBufferType.RES2, new DeckBuffer(this.ResourceDeck));
         this.goals = new GoalContainer();
-        this.gamePhase=GamePhase.PLACING_STARTER_CARD;
+        this.gamePhase = GamePhase.PLACING_STARTER_CARD;
     }
 
+    /**
+     * getter
+     *
+     * @return the list of winners of the game
+     */
     public ArrayList<Player> getWinners() {
         return winners;
     }
 
-    //TODO: add javadoc
-    public void setWinners(ArrayList<Player> winners){
+
+    /**
+     * setter
+     *
+     * @param winners list of the winners of the game
+     */
+    public void setWinners(ArrayList<Player> winners) {
         this.winners.addAll(winners);
     }
 
     /**
      * getter
+     *
      * @param type specifies the type of the deckbuffer needed (gold1,gold2,res1,res2)
      * @return Deckbuffer
      */
-    public DeckBuffer getDeckBuffer(DeckBufferType type){
+    public DeckBuffer getDeckBuffer(DeckBufferType type) {
         return deckBuffers.get(type);
     }
 
     /**
      * setter
+     *
      * @param whoseTurn int, indicates the index in the ArrayList players of who is playing when the method is called
      */
     public void setWhoseTurn(int whoseTurn) {
@@ -87,6 +100,7 @@ public class Game implements Serializable {
 
     /**
      * getter
+     *
      * @return int, index in the ArrayList players of who is playing when the method is called
      */
     public int getWhoseTurn() {
@@ -95,6 +109,7 @@ public class Game implements Serializable {
 
     /**
      * getter
+     *
      * @return int GameID, identifies the match
      */
     public int getGameID() {
@@ -103,6 +118,7 @@ public class Game implements Serializable {
 
     /**
      * getter
+     *
      * @return int, NumOfPlayers
      */
     public int getNumOfPlayers() {
@@ -111,7 +127,8 @@ public class Game implements Serializable {
 
     /**
      * getter
-     * @return HashMap<Integer,Player> players
+     *
+     * @return HashMap<Integer, Player> players
      */
     public ArrayList<Player> getPlayers() {
         return players;
@@ -119,6 +136,7 @@ public class Game implements Serializable {
 
     /**
      * getter
+     *
      * @return the action the player is allowed to do at that moment
      */
     public Action getAction() {
@@ -127,6 +145,7 @@ public class Game implements Serializable {
 
     /**
      * getter
+     *
      * @return list of goals
      */
     public GoalContainer getGoals() {
@@ -135,6 +154,7 @@ public class Game implements Serializable {
 
     /**
      * setter
+     *
      * @param action the action the player is allowed to do at that moment
      */
     public void setAction(Action action) {
@@ -143,6 +163,7 @@ public class Game implements Serializable {
 
     /**
      * getter
+     *
      * @return boolean isLastRound, the boolean that specify if it is the last round of the game
      */
     public boolean isLastRound() {
@@ -151,6 +172,7 @@ public class Game implements Serializable {
 
     /**
      * setter
+     *
      * @param lastRound, the boolean that specify if it is the last round of the game
      */
     public void setLastRound(boolean lastRound) {
@@ -159,6 +181,7 @@ public class Game implements Serializable {
 
     /**
      * getter
+     *
      * @return Goal, one of the two common goals
      */
     public Goal getCommonGoal1() {
@@ -167,6 +190,7 @@ public class Game implements Serializable {
 
     /**
      * getter
+     *
      * @return Goal, one of the two common goals
      */
     public Goal getCommonGoal2() {
@@ -175,7 +199,8 @@ public class Game implements Serializable {
 
     /**
      * setter
-     * @param commonGoal1 - Goal
+     *
+     * @param commonGoal1 Goal
      */
     public void setCommonGoal1(Goal commonGoal1) {
         this.commonGoal1 = commonGoal1;
@@ -183,7 +208,8 @@ public class Game implements Serializable {
 
     /**
      * setter
-     * @param commonGoal2 - Goal
+     *
+     * @param commonGoal2 Goal
      */
     public void setCommonGoal2(Goal commonGoal2) {
         this.commonGoal2 = commonGoal2;
@@ -191,24 +217,17 @@ public class Game implements Serializable {
 
     /**
      * increments the points of a player
+     *
      * @param player the player that will have their points incremented
      * @param points the amount of points added to the player score
      */
-    public void addToScore(Player player,int points){
-        scoreboard.put(player,scoreboard.get(player)+points);
-    }
-
-    /**
-     * setter
-     * @param player the player that will have their points set
-     * @param points the amount of points set to the player score
-     */
-    public void setPlayerScore(Player player,int points) {
-        this.scoreboard.put(player,points);
+    public void addToScore(Player player, int points) {
+        scoreboard.put(player, scoreboard.get(player) + points);
     }
 
     /**
      * getter
+     *
      * @param player the player that you want to get the points from
      * @return int, the points of the specified player
      */
@@ -218,15 +237,17 @@ public class Game implements Serializable {
 
     /**
      * getter
+     *
      * @return Player, the player who is playing at the moment
      */
-    public Player getCurrPlayer(){
+    public Player getCurrPlayer() {
         return players.get(whoseTurn);
     }
 
     /**
      * getter
-     * @return HashMap<Player,Integer> - the entire scoreboard
+     *
+     * @return HashMap<Player, Integer> the entire scoreboard
      */
     public HashMap<Player, Integer> getScoreboard() {
         return scoreboard;
@@ -234,6 +255,7 @@ public class Game implements Serializable {
 
     /**
      * getter
+     *
      * @return Deck, ResourceDeck of the game
      */
     public Deck getResourceDeck() {
@@ -242,6 +264,7 @@ public class Game implements Serializable {
 
     /**
      * getter
+     *
      * @return Deck, GoldenDeck of the game
      */
     public Deck getGoldenDeck() {
@@ -250,17 +273,19 @@ public class Game implements Serializable {
 
     /**
      * getter of a specific deck
-     * @param type - defines the type of deck wanted
+     *
+     * @param type defines the type of deck wanted
      * @return Deck
      */
-    public Deck getDeck(DeckType type){
-        if(type==DeckType.RESOURCE) return ResourceDeck;
+    public Deck getDeck(DeckType type) {
+        if (type == DeckType.RESOURCE) return ResourceDeck;
         else return GoldenDeck;
     }
 
 
     /**
      * draws a card from the specified source (Deck or DeckBuffer)
+     *
      * @param src source to draw the card from
      * @return ResourceCard
      * @throws EmptyDeckException thrown if the source has no cards
@@ -277,10 +302,20 @@ public class Game implements Serializable {
         }
     }
 
+    /**
+     * getter
+     *
+     * @return the phase the game is on
+     */
     public GamePhase getGamePhase() {
         return gamePhase;
     }
 
+    /**
+     * setter
+     *
+     * @param gamePhase the phase the game is on
+     */
     public void setGamePhase(GamePhase gamePhase) {
         this.gamePhase = gamePhase;
     }

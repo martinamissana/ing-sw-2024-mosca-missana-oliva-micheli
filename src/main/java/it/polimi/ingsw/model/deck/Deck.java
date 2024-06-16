@@ -18,8 +18,9 @@ public class Deck implements Drawable, Serializable {
 
     /**
      * Class constructor
-     * @param type - type of the deck (RESOURCE / GOLDEN)
-     * @throws IOException - for building the decks
+     *
+     * @param type type of the deck (RESOURCE / GOLDEN)
+     * @throws IOException for building the decks
      */
     public Deck(DeckType type) throws IOException {
         this.type = type;
@@ -27,14 +28,14 @@ public class Deck implements Drawable, Serializable {
 
         if (type == DeckType.RESOURCE) {
             this.cards.addAll(CardsPreset.getResourceCards());
-        }
-        else {
+        } else {
             this.cards.addAll(CardsPreset.getGoldenCards());
         }
     }
 
     /**
      * Gets the list of cards in the deck
+     *
      * @return cards
      */
     public ArrayList<ResourceCard> getCards() {
@@ -43,6 +44,7 @@ public class Deck implements Drawable, Serializable {
 
     /**
      * Gets the type of the deck
+     *
      * @return type
      */
     public DeckType getType() {
@@ -58,11 +60,12 @@ public class Deck implements Drawable, Serializable {
 
     /**
      * Draws the last card from the deck list
-     * @return last card on cards ArrayList
+     *
+     * @return last card from cards ArrayList
      */
     @Override
     public ResourceCard draw() throws EmptyDeckException {
-        if(!cards.isEmpty()) return cards.removeLast();
+        if (!cards.isEmpty()) return cards.removeLast();
         else throw new EmptyDeckException("Deck is empty. Cannot draw!");
     }
 }

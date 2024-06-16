@@ -16,6 +16,7 @@ public class DeckBuffer implements Drawable, Serializable {
 
     /**
      * Class constructor
+     *
      * @param deck from which the deck buffer draws
      */
     public DeckBuffer(Deck deck) {
@@ -25,6 +26,7 @@ public class DeckBuffer implements Drawable, Serializable {
 
     /**
      * Gets the card in the deck buffer
+     *
      * @return card
      */
     public ResourceCard getCard() {
@@ -37,16 +39,17 @@ public class DeckBuffer implements Drawable, Serializable {
      * Put a card in the deck buffer (if empty)
      */
     public void refill() {
-        if(!deck.getCards().isEmpty() && card == null)
+        if (!deck.getCards().isEmpty() && card == null)
             try {
                 this.card = this.deck.draw();
                 if (this.card.getSide().equals(CardSide.BACK)) card.flip();
+            } catch (EmptyDeckException ignored) {
             }
-            catch (EmptyDeckException ignored) {}
     }
 
     /**
      * Draws the card on the deck buffer
+     *
      * @return drawn
      */
     @Override
@@ -56,7 +59,6 @@ public class DeckBuffer implements Drawable, Serializable {
             card = null;
             this.refill();
             return drawn;
-        }
-        else throw new EmptyBufferException("Cannot draw from this card space!");
+        } else throw new EmptyBufferException("Cannot draw from this card space!");
     }
 }

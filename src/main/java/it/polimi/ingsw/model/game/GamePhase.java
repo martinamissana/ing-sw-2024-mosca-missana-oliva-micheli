@@ -6,6 +6,5 @@ package it.polimi.ingsw.model.game;
 public enum GamePhase {
     PLACING_STARTER_CARD,
     CHOOSING_SECRET_GOAL,
-    PLAYING_GAME,
-    GAME_FINISHED
+    PLAYING_GAME
 }

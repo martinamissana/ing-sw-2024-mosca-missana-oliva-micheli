@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane fx:id="scoreboard" prefHeight="170.0" prefWidth="235.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.ingsw.view.GUIFX.ScoreboardController">
+   <children>
+      <TextField fx:id="title" alignment="CENTER" prefWidth="235.0" style="-fx-background-color: #00000000;" text="SCOREBOARD" />
+      <TextField fx:id="player1" layoutX="10.0" layoutY="30.0" prefWidth="160.0" />
+      <TextField fx:id="player2" layoutX="10.0" layoutY="65.0" prefWidth="160.0" />
+      <TextField fx:id="player3" layoutX="10.0" layoutY="100.0" prefWidth="160.0" />
+      <TextField fx:id="player4" layoutX="10.0" layoutY="135.0" prefWidth="160.0" />
+      <TextField fx:id="score1" layoutX="170.0" layoutY="30.0" prefWidth="35.0" />
+      <TextField fx:id="score2" layoutX="170.0" layoutY="65.0" prefWidth="35.0" />
+      <TextField fx:id="score3" layoutX="170.0" layoutY="100.0" prefWidth="35.0" />
+      <TextField fx:id="score4" layoutX="170.0" layoutY="135.0" prefWidth="35.0" />
+      <Button fx:id="pawn1" layoutX="205.0" layoutY="30.0" mnemonicParsing="false" onMouseClicked="#showField" prefWidth="20.0" />
+      <Button fx:id="pawn2" layoutX="205.0" layoutY="65.0" mnemonicParsing="false" onMouseClicked="#showField" prefWidth="20.0" />
+      <Button fx:id="pawn3" layoutX="205.0" layoutY="100.0" mnemonicParsing="false" onMouseClicked="#showField" prefWidth="20.0" />
+      <Button fx:id="pawn4" layoutX="205.0" layoutY="135.0" mnemonicParsing="false" onMouseClicked="#showField" prefWidth="20.0" />
+   </children>
+</AnchorPane>

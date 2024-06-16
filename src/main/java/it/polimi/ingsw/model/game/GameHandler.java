@@ -17,10 +17,10 @@ import java.util.List;
  * Class GameHandler
  * stores all the data about multiple games and lobbies hosted in a server
  */
-public class GameHandler extends Observable implements Serializable  {
-    private HashMap<Integer,Game> activeGames;
-    private HashMap<Integer,Lobby> lobbies;
-    private int numOfLobbies=0;
+public class GameHandler extends Observable implements Serializable {
+    private HashMap<Integer, Game> activeGames;
+    private HashMap<Integer, Lobby> lobbies;
+    private int numOfLobbies = 0;
     private final ArrayList<Player> users;
 
     /**
@@ -29,12 +29,13 @@ public class GameHandler extends Observable implements Serializable  {
     public GameHandler() {
         this.activeGames = new HashMap<>();
         this.lobbies = new HashMap<>();
-        this.users=new ArrayList<>();
+        this.users = new ArrayList<>();
     }
 
     /**
      * getter
-     * @return activeGames - the HashMap with the active games
+     *
+     * @return activeGames the HashMap with the active games
      */
     public synchronized HashMap<Integer, Game> getActiveGames() {
         return activeGames;
@@ -42,13 +43,17 @@ public class GameHandler extends Observable implements Serializable  {
 
     /**
      * getter
-     * @return lobbies - the HashMap with the  current lobbies
+     *
+     * @return lobbies the HashMap with the  current lobbies
      */
-    public synchronized HashMap<Integer, Lobby> getLobbies() { return lobbies; }
+    public synchronized HashMap<Integer, Lobby> getLobbies() {
+        return lobbies;
+    }
 
     /**
      * getter
-     * @return users - the list of users connected
+     *
+     * @return users the list of users connected
      */
     public synchronized ArrayList<Player> getUsers() {
         return users;
@@ -56,12 +61,14 @@ public class GameHandler extends Observable implements Serializable  {
 
     /**
      * getter
-     * @return numOfLobbies - the number of lobbies that have been created
+     *
+     * @return numOfLobbies the number of lobbies that have been created
      */
     public synchronized int getNumOfLobbies() { return numOfLobbies; }
 
     /**
      * used to get a specific game
+     *
      * @param ID of the game you want to get from the list of active games
      * @return the specified game
      * @throws GameDoesNotExistException if the game doesn't exist
@@ -76,7 +83,8 @@ public class GameHandler extends Observable implements Serializable  {
 
     /**
      * used to get a specific lobby
-     * @param ID - of the lobby you want to get from the list of lobbies
+     *
+     * @param ID of the lobby you want to get from the list of lobbies
      * @return the specified lobby
      * @throws LobbyDoesNotExistsException if the lobby doesn't exist
      */
@@ -90,25 +98,26 @@ public class GameHandler extends Observable implements Serializable  {
 
     /**
      * setter
-     * @param numOfLobbies - the value you want to set for the number of lobbies
+     *
+     * @param numOfLobbies the value you want to set for the number of lobbies
      */
     public synchronized void setNumOfLobbies(int numOfLobbies) { this.numOfLobbies = numOfLobbies; }
 
     /**
      * used to add users to user list
-     * @param user - the user that will be added to the user list
-     * @throws NicknameAlreadyTakenException - when in user list there is already a user with the same nickname
+     *
+     * @param user the user that will be added to the user list
+     * @throws NicknameAlreadyTakenException when in user list there is already a user with the same nickname
      */
     public synchronized void addUser(Player user) throws NicknameAlreadyTakenException, IOException {
-        for (Player u: this.users){
-            if(u.getNickname().equals(user.getNickname())) throw new NicknameAlreadyTakenException();
+        for (Player u : this.users) {
+            if (u.getNickname().equals(user.getNickname())) throw new NicknameAlreadyTakenException();
         }
         getUsers().add(user);
         notify(new LoginEvent(user.getNickname()));
     }
 
-    public synchronized void removeUser(String nickname){
-        Player player = null;
+    public synchronized void removeUser(String nickname) {
         List<Player> copiedUsers = new ArrayList<>(users);
 
         for (Player p : copiedUsers) {
@@ -119,7 +128,8 @@ public class GameHandler extends Observable implements Serializable  {
 
     /**
      * used to save the GameHandler status with all the data about all active games and lobbies
-     * @throws IOException - produced by failed or interrupted I/O operations
+     *
+     * @throws IOException produced by failed or interrupted I/O operations
      */
     public synchronized void save() throws IOException {
         FileOutputStream fileOutputStream = new FileOutputStream("./data.ser");
@@ -131,15 +141,16 @@ public class GameHandler extends Observable implements Serializable  {
 
     /**
      * used to load all the data about active games and lobbies in case the server crashes
-     * @throws IOException - produced by failed or interrupted I/O operations
-     * @throws ClassNotFoundException  -  if no definition for the class with the specified name could be found
+     *
+     * @throws IOException            produced by failed or interrupted I/O operations
+     * @throws ClassNotFoundException  if no definition for the class with the specified name could be found
      */
     public synchronized void load() throws IOException, ClassNotFoundException {
         FileInputStream fileInputStream = new FileInputStream("./data.ser");
         ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
         GameHandler deserialized = (GameHandler) objectInputStream.readObject();
-        this.activeGames=deserialized.activeGames;
-        this.lobbies=deserialized.lobbies;
+        this.activeGames = deserialized.activeGames;
+        this.lobbies = deserialized.lobbies;
         fileInputStream.close();
         objectInputStream.close();
     }

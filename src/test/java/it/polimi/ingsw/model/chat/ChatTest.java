@@ -17,40 +17,40 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
 public class ChatTest {
-    GameHandler gameHandler=new GameHandler();
-    Player anna,eric,giorgio;
-    Message m1,m2,m3,m4,m5,m6,m7,m8,m9,m10,m11,m12;
+    GameHandler gameHandler = new GameHandler();
+    Player anna, eric, giorgio;
+    Message m1, m2, m3, m4, m5, m6, m7, m8, m9, m10, m11, m12;
     Controller c;
 
     @BeforeEach
     public void setUp() throws GameDoesNotExistException, IOException, FullLobbyException, LobbyDoesNotExistsException, NicknameAlreadyTakenException, CannotJoinMultipleLobbiesException, PlayerChatMismatchException, GameAlreadyStartedException, PawnAlreadyTakenException, UnexistentUserException {
 
-        gameHandler= new GameHandler();
-        c=new Controller(gameHandler);
-        anna=new Player("anna");
-        eric=new Player("eric");
-        giorgio=new Player("giorgio");
+        gameHandler = new GameHandler();
+        c = new Controller(gameHandler);
+        anna = new Player("anna");
+        eric = new Player("eric");
+        giorgio = new Player("giorgio");
         c.getGh().getUsers().add(anna);
         c.getGh().getUsers().add(eric);
         c.getGh().getUsers().add(giorgio);
         gameHandler.getLobbies().clear();
-        c.createLobby(3,anna.getNickname());
-        c.joinLobby(eric.getNickname(),0);
-        c.joinLobby(giorgio.getNickname(),0);
+        c.createLobby(3, anna.getNickname());
+        c.joinLobby(eric.getNickname(), 0);
+        c.joinLobby(giorgio.getNickname(), 0);
         //gameHandler.setNumOfGames(0);
         //c.createGame(gameHandler.getLobbies().get(0));
-        m1=new Message("ciao",anna,eric,false);
-        m2=new Message("come va",eric,anna,false);
-        m3=new Message("ciao a tutti",giorgio,null,true);
-        m4=new Message("e che hai fatto oggi",eric,anna,false);
-        m5=new Message("tutto bene",anna,eric,false);
-        m6=new Message("meccanica",anna,eric,false);
-        m7=new Message("tu?",anna,eric,false);
-        m8=new Message("niente",eric,anna,false);
-        m9=new Message("ciaooo",anna,eric,false);
-        m10=new Message("quando inizia la partita?",eric,null,true);
-        m11=new Message("non so",anna,null,true);
-        m12=new Message("a breve",giorgio,null,true);
+        m1 = new Message("ciao", anna, eric, false);
+        m2 = new Message("come va", eric, anna, false);
+        m3 = new Message("ciao a tutti", giorgio, null, true);
+        m4 = new Message("e che hai fatto oggi", eric, anna, false);
+        m5 = new Message("tutto bene", anna, eric, false);
+        m6 = new Message("meccanica", anna, eric, false);
+        m7 = new Message("tu?", anna, eric, false);
+        m8 = new Message("niente", eric, anna, false);
+        m9 = new Message("ciaooo", anna, eric, false);
+        m10 = new Message("quando inizia la partita?", eric, null, true);
+        m11 = new Message("non so", anna, null, true);
+        m12 = new Message("a breve", giorgio, null, true);
         c.send(m1, 0);
         c.send(m2, 0);
         c.send(m3, 0);
@@ -66,7 +66,7 @@ public class ChatTest {
     }
 
     @Test
-    public void testSend(){
+    public void testSend() {
         assertEquals(anna.getChat().getSentMessages().get(0), m1);
         assertEquals(anna.getChat().getReceivedMessages().get(0), m2);
         assertEquals(anna.getChat().getReceivedMessages().get(1), m3);
@@ -78,31 +78,35 @@ public class ChatTest {
     }
 
     @Test
-    public void testGetPrivateChatAndGlobalChat(){
+    public void testGetPrivateChatAndGlobalChat() {
         int i;
         System.out.println("\nprivate chat:");
-        for(i=0;i<anna.getChat().getPrivateChat(eric).size();i++) {
-            if (anna.getChat().getPrivateChat(eric).get(i).getSender() == anna)
+        for (i = 0; i < anna.getChat().getPrivateChat(eric).size(); i++) {
+            if (anna.getChat().getPrivateChat(eric).get(i).getSender().equals(anna))
                 System.out.println("you:" + anna.getChat().getPrivateChat(eric).get(i).getText());
-            else System.out.println(anna.getChat().getPrivateChat(eric).get(i).getSender().getNickname() +":"+ anna.getChat().getPrivateChat(eric).get(i).getText());
+            else
+                System.out.println(anna.getChat().getPrivateChat(eric).get(i).getSender().getNickname() + ":" + anna.getChat().getPrivateChat(eric).get(i).getText());
         }
         System.out.println("\nprivate chat:");
-        for(i=0;i<eric.getChat().getPrivateChat(anna).size();i++) {
-            if (eric.getChat().getPrivateChat(anna).get(i).getSender() == eric)
+        for (i = 0; i < eric.getChat().getPrivateChat(anna).size(); i++) {
+            if (eric.getChat().getPrivateChat(anna).get(i).getSender().equals(eric))
                 System.out.println("you:" + eric.getChat().getPrivateChat(anna).get(i).getText());
-            else System.out.println(eric.getChat().getPrivateChat(anna).get(i).getSender().getNickname() +":"+ eric.getChat().getPrivateChat(anna).get(i).getText());
+            else
+                System.out.println(eric.getChat().getPrivateChat(anna).get(i).getSender().getNickname() + ":" + eric.getChat().getPrivateChat(anna).get(i).getText());
         }
         System.out.println("\nglobal chat:");
-        for(i=0;i<eric.getChat().getGlobalChat().size();i++) {
-            if (eric.getChat().getGlobalChat().get(i).getSender() == eric)
+        for (i = 0; i < eric.getChat().getGlobalChat().size(); i++) {
+            if (eric.getChat().getGlobalChat().get(i).getSender().equals(eric))
                 System.out.println("you:" + eric.getChat().getGlobalChat().get(i).getText());
-            else System.out.println(eric.getChat().getGlobalChat().get(i).getSender().getNickname() +":"+ eric.getChat().getGlobalChat().get(i).getText());
+            else
+                System.out.println(eric.getChat().getGlobalChat().get(i).getSender().getNickname() + ":" + eric.getChat().getGlobalChat().get(i).getText());
         }
         System.out.println("\nglobal chat:");
-        for(i=0;i<giorgio.getChat().getGlobalChat().size();i++) {
-            if (giorgio.getChat().getGlobalChat().get(i).getSender() == giorgio)
+        for (i = 0; i < giorgio.getChat().getGlobalChat().size(); i++) {
+            if (giorgio.getChat().getGlobalChat().get(i).getSender().equals(giorgio))
                 System.out.println("you:" + giorgio.getChat().getGlobalChat().get(i).getText());
-            else System.out.println(giorgio.getChat().getGlobalChat().get(i).getSender().getNickname() +":"+ giorgio.getChat().getGlobalChat().get(i).getText());
+            else
+                System.out.println(giorgio.getChat().getGlobalChat().get(i).getSender().getNickname() + ":" + giorgio.getChat().getGlobalChat().get(i).getText());
         }
     }
 }

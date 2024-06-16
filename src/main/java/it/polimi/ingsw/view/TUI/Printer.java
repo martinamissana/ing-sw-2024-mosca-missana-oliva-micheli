@@ -1,7 +1,6 @@
 package it.polimi.ingsw.view.TUI;
 
 import it.polimi.ingsw.model.card.*;
-import it.polimi.ingsw.model.chat.Message;
 import it.polimi.ingsw.model.commonItem.CornerStatus;
 import it.polimi.ingsw.model.commonItem.ItemBox;
 import it.polimi.ingsw.model.commonItem.Kingdom;
@@ -70,20 +69,8 @@ public class Printer {
         System.out.println("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
     }
 
-    public void printDots() {
-        try {
-            Thread.sleep(500);
-            for (int i = 0; i < 3; i++) {
-                System.out.print(".");
-                Thread.sleep(500);
-            }
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
     // ~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~
-    // Main Menu + Lobby printing methods:
+    // Main Menu printing methods:
     // ~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~
 
     public void printOpenLobbies() {
@@ -108,6 +95,94 @@ public class Printer {
         }
         System.out.println();
     }
+
+    public void printRules() {
+        System.out.println("""
+            
+            \t ,-----. ,-----. ,------.  ,------.,--.   ,--.   ,--.  ,--.          ,--.                         ,--.,--.      \s
+            \t'  .--./'  .-.  '|  .-.  \\ |  .---' \\  `.'  /    |  ,'.|  | ,--,--.,-'  '-.,--.,--.,--.--. ,--,--.|  |`--' ,---.\s
+            \t|  |    |  | |  ||  |  \\  :|  `--,   .'    \\     |  |' '  |' ,-.  |'-.  .-'|  ||  ||  .--'' ,-.  ||  |,--.(  .-'\s
+            \t'  '--'\\'  '-'  '|  '--'  /|  `---. /  .'.  \\    |  | `   |\\ '-'  |  |  |  '  ''  '|  |   \\ '-'  ||  ||  |.-'  `)
+            \t `-----' `-----' `-------' `------''--'   '--'   `--'  `--' `--`--'  `--'   `----' `--'    `--`--'`--'`--'`----'\s
+            
+                                                             ONLINE GAME CREATED BY:
+                                                                 Micheli Giorgio
+                                                                 Missana Martina
+                                                                  Mosca Silvia
+                                                                  Oliva Antonio
+            
+            """);
+
+            String text = """
+            PLAYING THE GAME:
+            A game consists of several rounds that players take one after
+            another in a clockwise direction. In turn, the player must perform
+            the following two actions in order:
+            
+            1. Play a card from their hand
+            2. Draw a card
+            
+            
+            PLAY CARD:
+            The player chooses one of the 3 cards in their hand and places it
+            in their play area according to the illustration and respecting these
+            2 rules:
+            
+            - PLACEMENT RULE: The card must cover one or several visible corners
+                of cards already present in their play area. It cannot cover more
+                than one corner of the same card. Only the card already present in
+                the play area may contain the necessary visible corners.
+                
+                Important: if the player does not like the front of the card,
+                they can play it face-down.
+            
+            - GOLD CARDS RULE: To place the Gold cards, the player must possess
+                the indicated resources visible in their play area. The resources
+                must be visible before they place the card, but they may be covered
+                afterwards.
+                
+            SCORING POINTS:
+            If the card placed allows the player to score points, they must be
+            immediately added to the Score track. The cards are detailed later.
+            
+            
+            DRAW CARD:
+            After placing a card in their play area, the player chooses a new
+            card either from the four cards face-up in the center of the table
+            (a new card is then revealed to replace the one just taken), or the
+            first card from one of the two decks.
+            
+            
+            END OF GAME:
+            The end of the game is triggered when a player reaches 20 points
+            (or more) or if the two decks are empty. Players finish the round
+            and then each have a last turn before the game ends.
+            
+            Each player counts the points from the Objective cards (2 common
+            objectives + the secret objective) and adds them to the points
+            already scored on the Score track.
+            
+            Important: When counting the objective points, each Resource or
+            Gold card in the play area may only be counted once
+            
+            The player with the most points wins the game. In case of a tie,
+            the player with the most Objective card points wins. If there is
+            still a tie, the players share the victory.
+            """;
+
+        for (int i = 0; i < text.length(); i++) {
+            System.out.print(text.charAt(i));
+            try {
+                Thread.sleep(1);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+        }
+    }
+
+    // ~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~
+    // In lobby printing methods:
+    // ~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~
 
     public void printRemainingPlayers() {
         HashMap<Integer, Lobby> lobbies = view.getLobbies();
@@ -181,7 +256,7 @@ public class Printer {
         System.out.println();
         printGoal(view.getSecretGoal());
 
-        System.out.println("\n");
+        //printResources();
 
         Card next = view.getTopResourceCard();
         HashMap<DeckBufferType, DeckBuffer> cardSpaces = view.getDeckBuffers();
@@ -242,7 +317,7 @@ public class Printer {
         if (next != null) next.flip();
     }
 
-    public void printField(String nickname) {
+    public void printField(String nickname) { // TODO: Add CornerToString()
         Field field = null;
         if (nickname.equals(view.getNickname())) field = view.getMyField();
         else {
@@ -256,7 +331,10 @@ public class Printer {
 //        Field field = new Field();
 //        try {
 //            Deck deck = new Deck(DeckType.RESOURCE);
-//            field.addCard(CardsPreset.getStarterCards().getFirst());
+//            Deck gd = new Deck(DeckType.GOLDEN);
+//            StarterCard starterCard = CardsPreset.getStarterCards().get(CardsPreset.getStarterCards().size() - 2);
+//            starterCard.flip();
+//            field.addCard(starterCard);
 //            field.addCard(deck.getCards().get(23), new Coords(0, 1));
 //            field.addCard(deck.getCards().get(10), new Coords(0, 2));
 //            field.addCard(deck.getCards().get(11), new Coords(1, 0));
@@ -267,12 +345,24 @@ public class Printer {
 //            field.addCard(deck.getCards().get(2), new Coords(-1, -1));
 //            field.addCard(deck.getCards().get(6), new Coords(-2, -1));
 //            field.addCard(deck.getCards().get(25), new Coords(3, -1));
+//            ResourceCard resourceCard = deck.getCards().getFirst();
+//            resourceCard.flip();
+//            field.addCard(resourceCard, new Coords(-1, 0));
+
+            // Case when it is not possible to play any card:
+//            field.addCard(deck.getCards().get(31), new Coords(0, 1));
+//            field.addCard(gd.getCards().get(38), new Coords(1, 1));
+//            field.addCard(deck.getCards().get(22), new Coords(1, 0));
+//            field.addCard(gd.getCards().get(36), new Coords(1, -1));
+//            field.addCard(gd.getCards().get(28), new Coords(-1, 1));
+
 //
 //        } catch (IOException | IllegalMoveException e) {
 //            throw new RuntimeException(e);
 //        }
 
-        int firstDiagonal = field.getMatrix().keySet().stream().mapToInt(c -> c.getX() + c.getY()).distinct().max().orElse(-80);
+
+        int firstDiagonal = field.getMatrix().keySet().stream().mapToInt(c -> c.getX() + c.getY()).distinct().max().orElse(-80) + 1;
         int lastDiagonal = field.getMatrix().keySet().stream().mapToInt(c -> c.getX() + c.getY()).distinct().min().orElse(-80);
         int firstColumn = field.getMatrix().keySet().stream().mapToInt(c -> c.getX() - c.getY()).distinct().min().orElse(-80);
         int lastColumn = field.getMatrix().keySet().stream().mapToInt(c -> c.getX() - c.getY()).distinct().max().orElse(-80);
@@ -297,90 +387,79 @@ public class Printer {
                 Card up_left = field.getMatrix().get(new Coords(c.getX(), c.getY() + 1));
                 Card card = field.getMatrix().get(c);
 
+                // Bottom part of first up-left card printed:
                 if (c.getX() == firstCoordinate.getX() && firstCoordinate.getX() - firstCoordinate.getY() != firstColumn) {
-                    if (up_left == null) fieldBuilder.append("       ");
+                    if (up_left == null) fieldBuilder.append("        ");
                     else {
-                        cardColor = ItemsToColor(up_left.getKingdom());
-                        if (!(up_left instanceof CardBlock) && up_left.getCorner(CornerType.WEST) != null) fieldBuilder.append(Color.corner).append("  ").append(Color.reset);
-                        else fieldBuilder.append(cardColor).append("  ").append(Color.reset);
+                        if (up_left instanceof CardBlock) cardColor = Color.black.label;
+                        else cardColor = ItemsToColor(up_left.getKingdom());
+
+                        if (up_left instanceof CardBlock) fieldBuilder.append(cardColor).append("   ").append(Color.reset);
+                        else if (up_left.getCorner(CornerType.WEST) != null && !up_left.getCorner(CornerType.WEST).isCovered())
+                            fieldBuilder.append(CornerToString(up_left, CornerType.WEST));
+
                         fieldBuilder.append(cardColor).append("     ").append(Color.reset);
                     }
                 }
 
                 // North corner printed:
-                // IF card exists in coordinates, is not block card and has corner NORTH (UP-LEFT corner) != null
-                if ((card != null && !(card instanceof CardBlock) && card.getCorner(CornerType.NORTH) != null) ||
-                        // Card to the up-left of current card exists, is not block card and has corner SOUTH (DOWN-RIGHT corner) != null
-                        (up_left != null && !(up_left instanceof CardBlock) && up_left.getCorner(CornerType.SOUTH) != null)) {
+                if (card == null) {
+                    if (up_left == null) fieldBuilder.append("   ");
+                    else if (up_left instanceof CardBlock) fieldBuilder.append(Color.black).append("   ").append(Color.reset);
+                    else fieldBuilder.append(CornerToString(up_left, CornerType.SOUTH));
 
-                    // Print a corner
-                    fieldBuilder.append(Color.corner).append("  ").append(Color.reset);
+                } else if (card instanceof CardBlock) {
+                    if (up_left == null || up_left instanceof CardBlock) fieldBuilder.append(Color.black).append("   ").append(Color.reset);
+                    else if (up_left.getCorner(CornerType.SOUTH) == null) fieldBuilder.append(ItemsToColor(up_left.getKingdom())).append("   ").append(Color.reset);
+                    else fieldBuilder.append(CornerToString(up_left, CornerType.SOUTH));
+
+                } else {
+                    if (up_left == null || up_left instanceof CardBlock || (up_left.getCorner(CornerType.SOUTH) != null && up_left.getCorner(CornerType.SOUTH).isCovered())) {
+                        if (card.getCorner(CornerType.NORTH) != null) fieldBuilder.append(CornerToString(card, CornerType.NORTH));
+                        else fieldBuilder.append(ItemsToColor(card.getKingdom())).append("   ").append(Color.reset);
+
+                    } else if (up_left.getCorner(CornerType.SOUTH) != null && !up_left.getCorner(CornerType.SOUTH).isCovered()) {
+                        fieldBuilder.append(CornerToString(up_left, CornerType.SOUTH));
+                    } else fieldBuilder.append(ItemsToColor(up_left.getKingdom())).append("   ").append(Color.reset);
                 }
-                // ELSE IF card is not a block card and its corner NORTH is null
-                else if (card != null && !(card instanceof CardBlock) && card.getCorner(CornerType.NORTH) == null) {
-                    cardColor = ItemsToColor(card.getKingdom());
-                    fieldBuilder.append(cardColor).append("  ").append(Color.reset);
-                } else if (up_left != null && !(up_left instanceof CardBlock) && up_left.getCorner(CornerType.SOUTH) == null) {
-                    cardColor = ItemsToColor(up_left.getKingdom());
-                    fieldBuilder.append(cardColor).append("  ").append(Color.reset);
-                }
-                // ELSE IF card exists and is a block card
-                else if (card instanceof CardBlock || up_left instanceof CardBlock) {
-
-                    // print black corner
-                    fieldBuilder.append(Color.black).append("  ").append(Color.reset);
-
-                } else fieldBuilder.append("  ");
 
                 // Upper middle part printed:
-                if (card != null && !(card instanceof CardBlock || card instanceof StarterCard))
+                if (card != null && !(card instanceof CardBlock))
                     cardColor = ItemsToColor(card.getKingdom());
-                else if (card instanceof CardBlock) cardColor = Color.black.label;
-                else if (card != null) cardColor = Color.starter.label;
+                else if (card != null) cardColor = Color.black.label;
                 else cardColor = "";
 
                 fieldBuilder.append(cardColor).append("     ").append(Color.reset);
 
                 Card up_right = field.getMatrix().get(new Coords(c.getX() + 1, c.getY()));
+
                 // East corner printed:
-                if ((card != null && !(card instanceof CardBlock) && card.getCorner(CornerType.EAST) != null) ||
-                        // Card to the up-left of current card exists, is not block card and has corner SOUTH (DOWN-RIGHT corner) != null
-                        (up_right != null && !(up_right instanceof CardBlock) && up_right.getCorner(CornerType.WEST) != null)) {
+                if (card == null) {
+                    if (up_right == null) fieldBuilder.append("   ");
+                    else if (up_right instanceof CardBlock) fieldBuilder.append(Color.black).append("   ").append(Color.reset);
+                    else fieldBuilder.append(CornerToString(up_right, CornerType.WEST));
 
-                    // Print a corner
-                    fieldBuilder.append(Color.corner).append("  ").append(Color.reset);
+                } else if (card instanceof CardBlock) {
+                    if (up_right == null || up_right instanceof CardBlock) fieldBuilder.append(Color.black).append("   ").append(Color.reset);
+                    else if (up_right.getCorner(CornerType.WEST) == null) fieldBuilder.append(ItemsToColor(up_right.getKingdom())).append("   ").append(Color.reset);
+                    else fieldBuilder.append(CornerToString(up_right, CornerType.WEST));
+
+                } else {
+                    if (up_right == null || up_right instanceof CardBlock || (up_right.getCorner(CornerType.WEST) != null && up_right.getCorner(CornerType.WEST).isCovered())) {
+                        if (card.getCorner(CornerType.EAST) != null) fieldBuilder.append(CornerToString(card, CornerType.EAST));
+                        else fieldBuilder.append(ItemsToColor(card.getKingdom())).append("   ").append(Color.reset);
+
+                    } else if (up_right.getCorner(CornerType.WEST) != null && !up_right.getCorner(CornerType.WEST).isCovered()) {
+                        fieldBuilder.append(CornerToString(up_right, CornerType.WEST));
+                    } else fieldBuilder.append(ItemsToColor(up_right.getKingdom())).append("   ").append(Color.reset);
                 }
-                // ELSE IF card is not a block card and its corner NORTH is null
-                else if (card != null && !(card instanceof CardBlock) && card.getCorner(CornerType.EAST) == null) {
-                    cardColor = ItemsToColor(card.getKingdom());
-                    fieldBuilder.append(cardColor).append("  ").append(Color.reset);
-                } else if (up_right != null && !(up_right instanceof CardBlock) && up_right.getCorner(CornerType.WEST) == null) {
-                    cardColor = ItemsToColor(up_right.getKingdom());
-                    fieldBuilder.append(cardColor).append("  ").append(Color.reset);
-                }
-                // ELSE IF card exists and is a block card
-                else if (card instanceof CardBlock || up_right instanceof CardBlock) {
-
-                    // print black corner
-                    fieldBuilder.append(Color.black).append("  ").append(Color.reset);
-
-                } else fieldBuilder.append("  ");
 
                 // Lower part of up-right card printed:
-                if (up_right != null && !(up_right instanceof CardBlock || up_right instanceof StarterCard))
-                    cardColor = ItemsToColor(up_right.getKingdom());
-                else if (up_right instanceof CardBlock) cardColor = Color.black.label;
-                else if (up_right != null) cardColor = Color.starter.label;
+                if (up_right != null && !(up_right instanceof CardBlock)) cardColor = ItemsToColor(up_right.getKingdom());
+                else if (up_right != null) cardColor = Color.black.label;
                 else cardColor = "";
 
                 fieldBuilder.append(cardColor).append("     ").append(Color.reset);
-
-                if ((c.getX() + 1) + c.getY() <= firstDiagonal && (c.getX() + 1) - c.getY() == lastColumn && (c.getX() + 1) - (c.getY() - 1) != lastColumn) {
-                    if (up_right instanceof CardBlock) fieldBuilder.append(Color.black).append("  ").append(Color.reset);
-                    else if (up_right != null && up_right.getCorner(CornerType.SOUTH) == null) fieldBuilder.append(cardColor).append("  ").append(Color.reset);
-                    else if (up_right != null && up_right.getCorner(CornerType.SOUTH) != null) fieldBuilder.append(Color.corner).append("  ").append(Color.reset);
-                    else fieldBuilder.append("  ");
-                }
             }
             fieldBuilder.append("\n");
 
@@ -388,16 +467,14 @@ public class Printer {
             for (Coords c = firstCoordinate; c.getX() != lastCoordinate.getX() + 1 && c.getY() != lastCoordinate.getY() - 1; c = new Coords(c.getX() + 1, c.getY() - 1)) {
                 Card card = field.getMatrix().get(c);
 
-                if (c.getX() == firstCoordinate.getX() && firstCoordinate.getX() - firstCoordinate.getY() != firstColumn) fieldBuilder.append("       ");
+                if (c.getX() == firstCoordinate.getX() && firstCoordinate.getX() - firstCoordinate.getY() != firstColumn) fieldBuilder.append("        ");
 
-                if (card != null && !(card instanceof CardBlock || card instanceof StarterCard))
-                    cardColor = ItemsToColor(card.getKingdom());
-                else if (card instanceof CardBlock) cardColor = Color.black.label;
-                else if (card != null) cardColor = Color.starter.label;
+                if (card instanceof CardBlock) cardColor = Color.black.label;
+                else if (card != null) cardColor = ItemsToColor(card.getKingdom());
                 else cardColor = "";
 
-                if (!(card instanceof CardBlock)) {
-                    fieldBuilder.append(cardColor).append(" ");
+                if (card == null) {
+                    fieldBuilder.append(cardColor).append("  ");
                     if (c.getX() >= 0 && c.getX() < 10) fieldBuilder.append("  ").append(c.getX());
                     else if (c.getX() > -10) fieldBuilder.append(" ").append(c.getX());
                     else fieldBuilder.append(c.getX());
@@ -408,8 +485,35 @@ public class Printer {
                     else if (c.getY() > -10) fieldBuilder.append(c.getY()).append(" ");
                     else fieldBuilder.append(c.getY());
 
-                    fieldBuilder.append(" ");
-                } else fieldBuilder.append(cardColor).append("         ");
+                    fieldBuilder.append("  ");
+                } else if (!(card instanceof CardBlock) && card.getSide() == CardSide.BACK) {
+
+                    StringBuilder permRes = new StringBuilder();
+                    if (card instanceof StarterCard) {
+                        for (ItemBox item : ((StarterCard) card).getPermanentRes().keySet()) {
+                            switch (item) {
+                                case Kingdom.ANIMAL -> permRes.append("A ".repeat(Math.max(0, ((StarterCard) card).getPermanentRes().get(item))));
+                                case Kingdom.FUNGI -> permRes.append("F ".repeat(Math.max(0, ((StarterCard) card).getPermanentRes().get(item))));
+                                case Kingdom.INSECT -> permRes.append("I ".repeat(Math.max(0, ((StarterCard) card).getPermanentRes().get(item))));
+                                case Kingdom.PLANT -> permRes.append("P ".repeat(Math.max(0, ((StarterCard) card).getPermanentRes().get(item))));
+                                default -> {}
+                            }
+                        }
+                    } else switch (card.getKingdom()) {
+                        case ANIMAL -> permRes.append("A ");
+                        case FUNGI -> permRes.append("F ");
+                        case INSECT -> permRes.append("I ");
+                        case PLANT -> permRes.append("P ");
+                    }
+
+                    fieldBuilder.append(cardColor).append(switch(permRes.length()) {
+                        case 2 -> "     " + permRes + "    ";
+                        case 4 -> "    " + permRes + "   ";
+                        case 6 -> "   " + permRes + "  ";
+                        default -> throw new IllegalStateException("Unexpected value: " + permRes.length());
+                    }).append(Color.reset);
+
+                } else fieldBuilder.append(cardColor).append("           ");
                 fieldBuilder.append(Color.reset).append("     ");
             }
             fieldBuilder.append("\n");
@@ -426,7 +530,9 @@ public class Printer {
         // Print last lower string:
 
 
-        System.out.println(cli + "Your field:\n\n" + fieldBuilder);
+        if(view.getNickname().equals(nickname))System.out.println(cli + "Your field:\n" + fieldBuilder);
+        else  System.out.println(cli + nickname +"'s field:\n" + fieldBuilder);
+        //printResources();
     }
 
     public void printResources() {
@@ -441,6 +547,26 @@ public class Printer {
         for (Player p : scoreboard.keySet()) {
             System.out.print(cli + "[" + p.getNickname() + " - " + scoreboard.get(p) + "]");
         } System.out.println();
+    }
+
+    public void printFinalScoreboard() {
+        HashMap<Player, Integer> scoreboard = view.getScoreboard();
+        HashMap<Player, Integer> goalsDone = view.getGoalsDone();
+
+        ArrayList<Player> sortedPlayers = new ArrayList<>(scoreboard.keySet());
+        sortedPlayers.sort((p1, p2) -> {
+            int scoreComparison = scoreboard.get(p1).compareTo(scoreboard.get(p2));
+            if (scoreComparison != 0) {
+                return scoreComparison;
+            } else {
+                return goalsDone.get(p1).compareTo(goalsDone.get(p2));
+            }
+        });
+
+        for (Player p : sortedPlayers) {
+            System.out.print(cli + "[" + p.getNickname() + " - " + scoreboard.get(p) + " with " + goalsDone.get(p) + " goals done]");
+        }
+        System.out.println();
     }
 
     // Card + Hand printing methods:
@@ -458,7 +584,7 @@ public class Printer {
     }
 
     public String CornerToString(Card card, CornerType type) {
-        ItemBox item = card.getCorner(type);
+        ItemBox item = card.getItemFromCorner(type);
 
         if (item == null) return ItemsToColor(card.getKingdom()) + "   " + Color.reset.label;
         if (item.equals(Resource.INKWELL)) return Color.gold.label + " I " + Color.reset.label;
