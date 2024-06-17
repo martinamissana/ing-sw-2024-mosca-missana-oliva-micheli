@@ -3,6 +3,7 @@ package it.polimi.ingsw.view.GUIFX;
 import it.polimi.ingsw.model.exceptions.FullLobbyException;
 import it.polimi.ingsw.model.exceptions.NicknameAlreadyTakenException;
 import it.polimi.ingsw.network.netMessage.NetMessage;
+import it.polimi.ingsw.network.netMessage.c2s.DisconnectMessage;
 import it.polimi.ingsw.network.netMessage.s2c.CurrentStatusMessage;
 import it.polimi.ingsw.network.netMessage.s2c.LoginFail_NicknameAlreadyTaken;
 import it.polimi.ingsw.network.netMessage.s2c.LoginMessage;
@@ -78,6 +79,7 @@ public class LoginController implements ViewObserver {
             sem.acquire();
             viewSing.getView().getCurrentStatus();
             sem.acquire();
+            viewSing.getView().removeObserver(this);
 
             //Creation of scene
             Parent root;
@@ -104,14 +106,10 @@ public class LoginController implements ViewObserver {
     public void update(NetMessage message) throws IOException {
         switch (message) {
             case LoginMessage m -> {
-                if (m.getNickname().equals(nicknameField.getText())) {
-                    sem.release();
-                }
+                if (m.getNickname().equals(nicknameField.getText())) sem.release();
             }
-            case LoginFail_NicknameAlreadyTaken ignored -> {
-                statusMessage.setText("Nickname already taken");
-                exit(1);
-            }
+            case LoginFail_NicknameAlreadyTaken ignored -> exit(1);
+            case DisconnectMessage ignored -> exit(1);
             case CurrentStatusMessage ignored -> sem.release();
             default -> {}
         }

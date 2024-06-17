@@ -128,6 +128,7 @@ public class ScoreboardController {
     }
 
     private void setBgColor(Button button, Pawn pawn) {
-        if (pawn != null) button.setStyle("-fx-background-color: " + pawn.toString().toLowerCase());
+        if (pawn == Pawn.YELLOW) button.setStyle("-fx-background-color: gold");
+        else if (pawn != null) button.setStyle("-fx-background-color: " + pawn.toString().toLowerCase());
     }
 }

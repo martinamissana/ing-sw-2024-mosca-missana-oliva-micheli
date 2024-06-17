@@ -3,11 +3,10 @@ package it.polimi.ingsw.view.GUIFX;
 import it.polimi.ingsw.controller.exceptions.GameAlreadyStartedException;
 import it.polimi.ingsw.controller.exceptions.NotConnectedToLobbyException;
 import it.polimi.ingsw.controller.exceptions.UnexistentUserException;
-import it.polimi.ingsw.model.exceptions.FullLobbyException;
-import it.polimi.ingsw.model.exceptions.GameDoesNotExistException;
-import it.polimi.ingsw.model.exceptions.LobbyDoesNotExistsException;
-import it.polimi.ingsw.model.exceptions.NicknameAlreadyTakenException;
+import it.polimi.ingsw.model.exceptions.*;
 import it.polimi.ingsw.model.game.Lobby;
+import it.polimi.ingsw.model.player.Pawn;
+import it.polimi.ingsw.model.player.Player;
 import it.polimi.ingsw.network.netMessage.NetMessage;
 import it.polimi.ingsw.network.netMessage.c2s.LobbyJoinedMessage;
 import it.polimi.ingsw.network.netMessage.s2c.LobbyLeftMessage;
@@ -35,6 +34,14 @@ public class InLobbyController implements ViewObserver, Initializable {
     Button quitButton;
     @FXML
     Pane players;
+    @FXML
+    Button redPawn;
+    @FXML
+    Button yellowPawn;
+    @FXML
+    Button greenPawn;
+    @FXML
+    Button bluePawn;
 
     private final ViewSingleton viewSingleton = ViewSingleton.getInstance();
     private Lobby lobby;
@@ -45,6 +52,16 @@ public class InLobbyController implements ViewObserver, Initializable {
         viewSingleton.getView().addObserver(this);
         this.lobby = viewSingleton.getView().getLobbies().get(viewSingleton.getView().getID());
         updatePlayers();
+
+        for (Player p : lobby.getPlayers()) {
+            switch (p.getPawn()) {
+                case RED -> redPawn.setVisible(false);
+                case YELLOW -> yellowPawn.setVisible(false);
+                case GREEN -> greenPawn.setVisible(false);
+                case BLUE -> bluePawn.setVisible(false);
+                case null -> {}
+            }
+        }
     }
 
     public void leaveLobby(MouseEvent mouseEvent) {
@@ -86,6 +103,48 @@ public class InLobbyController implements ViewObserver, Initializable {
         });
     }
 
+    public void setPawn(MouseEvent mouseEvent) {
+        try {
+            if (mouseEvent.getSource().equals(redPawn)) {
+                viewSingleton.getView().choosePawn(Pawn.RED);
+                redPawn.setVisible(false);
+
+                yellowPawn.setOnMouseClicked(event -> {});
+                greenPawn.setOnMouseClicked(event -> {});
+                bluePawn.setOnMouseClicked(event -> {});
+            }
+            else if (mouseEvent.getSource().equals(yellowPawn)) {
+                viewSingleton.getView().choosePawn(Pawn.YELLOW);
+                yellowPawn.setVisible(false);
+
+                redPawn.setOnMouseClicked(event -> {});
+                greenPawn.setOnMouseClicked(event -> {});
+                bluePawn.setOnMouseClicked(event -> {});
+            }
+            else if (mouseEvent.getSource().equals(greenPawn)) {
+                viewSingleton.getView().choosePawn(Pawn.GREEN);
+                greenPawn.setVisible(false);
+
+                redPawn.setOnMouseClicked(event -> {});
+                yellowPawn.setOnMouseClicked(event -> {});
+                bluePawn.setOnMouseClicked(event -> {});
+            }
+            else if (mouseEvent.getSource().equals(bluePawn)) {
+                viewSingleton.getView().choosePawn(Pawn.BLUE);
+                bluePawn.setVisible(false);
+
+                redPawn.setOnMouseClicked(event -> {});
+                yellowPawn.setOnMouseClicked(event -> {});
+                greenPawn.setOnMouseClicked(event -> {});
+            }
+
+        } catch (PawnAlreadyTakenException e) {
+            System.out.println("Pawn taken");
+        } catch (IOException | UnexistentUserException e) {
+            throw new RuntimeException(e);
+        } catch (LobbyDoesNotExistsException | GameAlreadyStartedException | GameDoesNotExistException ignored) {}
+    }
+
     @Override
     public void update(NetMessage message) throws IOException {
         switch (message) {
@@ -94,8 +153,39 @@ public class InLobbyController implements ViewObserver, Initializable {
                 else updatePlayers();
             }
             case LobbyJoinedMessage ignored -> updatePlayers();
-            case PawnAssignedMessage ignored -> updatePlayers();
+            case PawnAssignedMessage m -> {
+                updatePlayers();
+                switch (m.getColor()) {
+                    case RED -> redPawn.setVisible(false);
+                    case GREEN -> greenPawn.setVisible(false);
+                    case YELLOW -> yellowPawn.setVisible(false);
+                    case BLUE -> bluePawn.setVisible(false);
+                }
+                // checkStartGame();        // GameScreen not yet implemented
+            }
             default -> {}
         }
+    }
+
+    private void checkStartGame() {
+        if (lobby.getPlayers().size() != lobby.getNumOfPlayers()) return;
+
+        for (Player p : lobby.getPlayers()) {
+            if (p.equals(viewSingleton.getView().getPlayer()) && viewSingleton.getView().getPawn() == null) return;
+            else if (p.getPawn() == null) return;
+        }
+
+        viewSingleton.getView().removeObserver(this);
+        Platform.runLater(() -> {
+            try {
+                Parent root = FXMLLoader.load(getClass().getResource("/fxml/GameScreen.fxml"));
+                Stage stage = (Stage) redPawn.getScene().getWindow();
+                stage.setScene(new Scene(root));
+                stage.show();
+
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        });
     }
 }

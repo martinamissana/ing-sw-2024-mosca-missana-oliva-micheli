@@ -12,9 +12,9 @@ public class GUI extends Application {
     public void start(Stage stage) throws Exception {
         try {
             Parent root = FXMLLoader.load(getClass().getResource("/fxml/Login.fxml"));
-            Scene sceneLogin = new Scene(root);
+            Scene scene = new Scene(root);
             stage.setTitle("CODEX NATURALIS");
-            stage.setScene(sceneLogin);
+            stage.setScene(scene);
 
             stage.setOnCloseRequest(t -> {
                 Platform.exit();
