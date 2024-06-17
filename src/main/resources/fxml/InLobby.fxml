@@ -7,5 +7,12 @@
    <children>
       <Button fx:id="quitButton" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onMouseClicked="#leaveLobby" text="Leave lobby" />
       <Pane fx:id="players" layoutX="100.0" layoutY="200.0" prefHeight="170.0" prefWidth="235.0" />
+      <Pane layoutX="500.0" layoutY="255.0" prefHeight="60.0" prefWidth="200.0" style="-fx-background-color: white; -fx-border-color: gray; -fx-background-radius: 15; -fx-border-radius: 15;">
+         <children>
+            <Button fx:id="bluePawn" layoutX="155.0" layoutY="10.0" mnemonicParsing="false" onMouseClicked="#setPawn" prefHeight="40.0" prefWidth="40.0" style="-fx-background-color: blue; -fx-background-radius: 50%; -fx-border-radius: 50%;" />
+            <Button fx:id="redPawn" layoutX="5.0" layoutY="10.0" mnemonicParsing="false" onMouseClicked="#setPawn" prefHeight="40.0" prefWidth="40.0" style="-fx-background-color: red; -fx-background-radius: 50%; -fx-border-radius: 50%;" />
+            <Button fx:id="yellowPawn" layoutX="55.0" layoutY="10.0" mnemonicParsing="false" onMouseClicked="#setPawn" prefHeight="40.0" prefWidth="40.0" style="-fx-background-color: gold; -fx-background-radius: 50%; -fx-border-radius: 50%;" />
+            <Button fx:id="greenPawn" layoutX="105.0" layoutY="10.0" mnemonicParsing="false" onMouseClicked="#setPawn" prefHeight="40.0" prefWidth="40.0" style="-fx-background-color: green; -fx-background-radius: 50%; -fx-border-radius: 50%;" />
+         </children></Pane>
    </children>
 </AnchorPane>

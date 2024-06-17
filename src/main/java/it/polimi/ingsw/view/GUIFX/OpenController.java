@@ -8,7 +8,6 @@ import it.polimi.ingsw.model.exceptions.NicknameAlreadyTakenException;
 import it.polimi.ingsw.model.game.Lobby;
 import it.polimi.ingsw.network.netMessage.NetMessage;
 import it.polimi.ingsw.network.netMessage.c2s.LobbyJoinedMessage;
-import it.polimi.ingsw.network.netMessage.s2c.CurrentStatusMessage;
 import it.polimi.ingsw.network.netMessage.s2c.LobbyCreatedMessage;
 import it.polimi.ingsw.network.netMessage.s2c.LobbyDeletedMessage;
 import it.polimi.ingsw.network.netMessage.s2c.LobbyLeftMessage;
@@ -60,7 +59,7 @@ public class OpenController implements ViewObserver, Initializable {
         updateLobbies();
     }
 
-    public void updateLobbies() {
+    public void updateLobbies() {       // TODO: Fix bug
         lobbies.getItems().removeAll();
         HashMap<Integer, Lobby> lobbiesMap = viewSingleton.getView().getLobbies();
 
@@ -95,9 +94,9 @@ public class OpenController implements ViewObserver, Initializable {
                 try {
                     root = FXMLLoader.load(getClass().getResource("/fxml/InLobby.fxml"));
                     Stage stage = (Stage) ((Node) mouseEvent.getSource()).getScene().getWindow();
-                    Scene scene = new Scene(root);
-                    stage.setScene(scene);
+                    stage.setScene(new Scene(root));
                     stage.show();
+
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
@@ -123,9 +122,8 @@ public class OpenController implements ViewObserver, Initializable {
                 if (viewSingleton.getView().getID() == null) updateLobbies();
                 else sem.release();
             }
-            case CurrentStatusMessage ignored -> updateLobbies();
-            case LobbyJoinedMessage m -> {
-                if (m.getID() == null) updateLobbies();
+            case LobbyJoinedMessage ignored -> {
+                if (viewSingleton.getView().getID() == null) updateLobbies();
             }
             case LobbyLeftMessage ignored -> updateLobbies();
             case LobbyDeletedMessage ignored -> updateLobbies();

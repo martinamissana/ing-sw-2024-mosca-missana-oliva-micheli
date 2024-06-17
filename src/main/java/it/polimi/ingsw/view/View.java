@@ -449,7 +449,13 @@ public abstract class View extends ViewObservable {
                 if (m.getPlayer().getNickname().equals(player.getNickname())) {
                     ID = m.getID();
                     this.chat = new Chat();
-
+                    pawn=null;
+                    player.initialize();
+                    hand.removeAllCards();
+                    myField=null;
+                    gamePhase=null;
+                    secretGoal = null;
+                    secretGoalChoices.clear();
                 }
                 try {
                     getLobbies().get(m.getID()).addPlayer(m.getPlayer());

@@ -315,7 +315,7 @@ public class TUI implements Runnable, ViewObserver {
                         // Taking all players currently in lobby (except the player itself)
                         ArrayList<Player> players = getOtherPlayers();
 
-                        System.out.print(cli + "Which chat do you want to open?" + cli + "1. Global chat");
+                        System.out.print(cli + "Which chat do you want to open? (-1 to return to selection)" + cli + "1. Global chat");
                         for (int i = 0; i < players.size(); i++) {
                             System.out.print(cli + (i + 2) + ". Private chat with " + players.get(i).getNickname());
                         }
@@ -405,7 +405,7 @@ public class TUI implements Runnable, ViewObserver {
                                     // Taking all players currently in lobby (except the player itself)
                                     ArrayList<Player> players = getOtherPlayers();
 
-                                    System.out.print(cli + "Which chat do you want to open?" + cli + "1. Global chat");
+                                    System.out.print(cli + "Which chat do you want to open? (-1 to return to selection)" + cli + "1. Global chat");
                                     for (int i = 0; i < players.size(); i++) {
                                         System.out.print(cli + (i + 2) + ". Private chat with " + players.get(i).getNickname());
                                     }
@@ -447,46 +447,50 @@ public class TUI implements Runnable, ViewObserver {
     // ~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~
 
     private void chooseConnectionType() {
-        System.out.print(cli + "Insert your connection type: [TCP|RMI]" + user);
-        String choice = scanner.nextLine();
+        String choice="";
 
-        if (choice.equalsIgnoreCase("TCP")) {
+        while (!choice.equalsIgnoreCase("TCP") && !choice.equalsIgnoreCase("RMI")) {
+            System.out.print(cli + "Insert your connection type: [TCP|RMI]" + user);
+            choice = scanner.nextLine();
 
-            System.out.print(cli + "Insert the server IP" + user);
-            String IP = scanner.nextLine();
-            // IP = "127.0.0.1";
+            if (choice.equalsIgnoreCase("TCP")) {
 
-            try {
-                this.view = new TCPView(IP, 4321);
-            } catch (IOException e) {
-                if (view != null) view.removeObserver(this);
-                Thread.currentThread().interrupt();
-            }
-            new Thread(() -> {
+                System.out.print(cli + "Insert the server IP" + user);
+                String IP = scanner.nextLine();
+                // IP = "127.0.0.1";
+
                 try {
-                    ((TCPView) view).startClient();
-                } catch (IOException | ClassNotFoundException | NullPointerException e) {
+                    this.view = new TCPView(IP, 4321);
+                } catch (IOException e) {
                     if (view != null) view.removeObserver(this);
                     Thread.currentThread().interrupt();
                 }
-            }).start();
+                new Thread(() -> {
+                    try {
+                        ((TCPView) view).startClient();
+                    } catch (IOException | ClassNotFoundException | NullPointerException e) {
+                        if (view != null) view.removeObserver(this);
+                        Thread.currentThread().interrupt();
+                    }
+                }).start();
 
-        } else if (choice.equalsIgnoreCase("RMI")) {
-            Registry registry;
-            try {
-                registry = LocateRegistry.getRegistry();
+            } else if (choice.equalsIgnoreCase("RMI")) {
+                Registry registry;
+                try {
+                    registry = LocateRegistry.getRegistry();
 
-                String remoteObjectName = "RMIServer";
-                RemoteInterface RMIServer;
+                    String remoteObjectName = "RMIServer";
+                    RemoteInterface RMIServer;
 
-                RMIServer = (RemoteInterface) registry.lookup(remoteObjectName);
-                this.view = new RMIView(RMIServer);
+                    RMIServer = (RemoteInterface) registry.lookup(remoteObjectName);
+                    this.view = new RMIView(RMIServer);
 
-            } catch (RemoteException | NotBoundException ex) {
-                view.removeObserver(this);
-                exit(1);
-            }
-        } else exit(1);
+                } catch (RemoteException | NotBoundException ex) {
+                    view.removeObserver(this);
+                    exit(1);
+                }
+            } else System.out.println(Color.warning + "Invalid choice!!\n" + Color.reset);
+        }
     }
 
     // ~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~
@@ -496,7 +500,7 @@ public class TUI implements Runnable, ViewObserver {
     private void chooseMenuAction(String in) throws InterruptedException {
         if (state != TUIState.MENU) return;
         if (!isNumeric(in)) {
-            System.out.println(Color.warning + "didn't insert numeric value!!" + Color.reset);
+            System.out.println(Color.warning + "Numeric value required!!" + Color.reset);
             return;
         }
 
@@ -521,7 +525,10 @@ public class TUI implements Runnable, ViewObserver {
                 }
                 exit(0);
             }
-            default -> System.out.println(Color.warning + "Invalid choice!!\n" + Color.reset);
+            default -> {
+                System.out.println(Color.warning + "Invalid choice!!\n" + Color.reset);
+                printStatus();
+            }
         }
     }
 
@@ -532,7 +539,7 @@ public class TUI implements Runnable, ViewObserver {
             return;
         }
         if (!isNumeric(in)) {
-            System.out.println(Color.warning + "Didn't insert numeric value!!" + Color.reset);
+            System.out.println(Color.warning + "Numeric value required!!" + Color.reset);
             printStatus();
             return;
         }
@@ -568,7 +575,7 @@ public class TUI implements Runnable, ViewObserver {
             return;
         }
         if (!isNumeric(in)) {
-            System.out.println(Color.warning + "Didn't insert numeric value!!" + Color.reset);
+            System.out.println(Color.warning + "Numeric value required!!" + Color.reset);
             printStatus();
             return;
         }
@@ -643,7 +650,7 @@ public class TUI implements Runnable, ViewObserver {
 
     private void chooseInLobbyAction(String in) throws InterruptedException {
         if (!isNumeric(in)) {
-            System.out.println(Color.warning + "didn't insert numeric value!!" + Color.reset);
+            System.out.println(Color.warning + "Numeric value required!!" + Color.reset);
             return;
         }
         int choice = Integer.parseInt(in);
@@ -653,6 +660,9 @@ public class TUI implements Runnable, ViewObserver {
                 printStatus();
             }
             case 2 -> quitLobby();
+            default -> {
+                System.out.println(Color.warning + "Invalid choice!!\n" + Color.reset);
+            }
         }
     }
 
@@ -664,13 +674,20 @@ public class TUI implements Runnable, ViewObserver {
 
                 if (isNumeric(in)) desiredChat = Integer.parseInt(in);
                 else {
-                    System.out.println(Color.warning + "didn't insert numeric value!!" + Color.reset);
+                    System.out.println(Color.warning + "Numeric value required!!" + Color.reset);
+                    return;
+                }
+
+                if(desiredChat==-1){
+                    chatState = null;
+                    printStatus();
                     return;
                 }
 
                 System.out.println(cli + "Opening chat...");
                 if (desiredChat < 1 || desiredChat > getOtherPlayers().size() + 1) {
                     System.out.println(Color.warning + "Invalid choice!!\n" + Color.reset);
+                    printStatus();
                     return;
                 }
 
@@ -713,7 +730,7 @@ public class TUI implements Runnable, ViewObserver {
         try {
             check.checkLeaveLobby();
         } catch (NotConnectedToLobbyException e) {
-            System.out.println(Color.warning + "Non connected to a lobby!!" + Color.reset);
+            System.out.println(Color.warning + "Not connected to a lobby!!" + Color.reset);
             printStatus();
         }
 
@@ -745,6 +762,7 @@ public class TUI implements Runnable, ViewObserver {
         };
         if (side == null) {
             System.out.println(Color.warning + "Invalid choice!!\n" + Color.reset);
+            printStatus();
             return;
         }
 
@@ -763,7 +781,9 @@ public class TUI implements Runnable, ViewObserver {
         if (view.getSecretGoal() != null) return;
 
         if (!isNumeric(choice)) {
-            System.out.println(Color.warning + "didn't insert numeric value!!" + Color.reset);
+            System.out.println(Color.warning + "Numeric value required!!" + Color.reset);
+            printStatus();
+            return;
         }
         int id = Integer.parseInt(choice);
 
@@ -780,7 +800,8 @@ public class TUI implements Runnable, ViewObserver {
 
     private void chooseInGameAction(String in) {
         if (!isNumeric(in)) {
-            System.out.println(Color.warning + "Didn't insert numeric value!!" + Color.reset);
+            System.out.println(Color.warning + "Numeric value required!!" + Color.reset);
+            printStatus();
             return;
         }
         int action = Integer.parseInt(in);
@@ -812,6 +833,9 @@ public class TUI implements Runnable, ViewObserver {
                     throw new RuntimeException(e);
                 }
             }
+            default -> {
+                System.out.println(Color.warning + "Invalid choice!!\n" + Color.reset);
+            }
         }
     }
 
@@ -826,13 +850,14 @@ public class TUI implements Runnable, ViewObserver {
                 } else {
 
                     if (!isNumeric(in)) {
-                        System.out.println(Color.warning + "Didn't insert numeric value!!" + Color.reset);
+                        System.out.println(Color.warning + "Numeric value required!!" + Color.reset);
                         return;
                     }
                     int pos = Integer.parseInt(in);
 
                     if (pos < 0 || pos >= view.getHand().getSize()) {
                         System.out.println(Color.warning + "Invalid choice!!\n" + Color.reset);
+                        printStatus();
                     } else {
                         actionState = ActionState.PLAY_SELECT_COORDS;
                         ActionState.PLAY_SELECT_COORDS.setNum(pos);
@@ -846,14 +871,14 @@ public class TUI implements Runnable, ViewObserver {
                 String Y;
                 List<String> coords = Arrays.asList(in.split("\\s+"));
                 if ((long) coords.size() != 2) {
-                    System.out.println(Color.warning + "[ERROR]: Inserted wrong format!!" + Color.reset);
+                    System.out.println(Color.warning + "Wrong format inserted!!" + Color.reset);
                     return;
                 }
                 X = coords.getFirst();
                 Y = coords.getLast();
 
                 if (!isNumeric(X) || !isNumeric(Y)) {
-                    System.out.println(Color.warning + "[ERROR]: didn't insert numeric value!!" + Color.reset);
+                    System.out.println(Color.warning + "Numeric value required!!" + Color.reset);
                     return;
                 }
                 int x = Integer.parseInt(X);
@@ -881,12 +906,12 @@ public class TUI implements Runnable, ViewObserver {
                         printStatus();
                     }
                     if (e instanceof RequirementsNotSatisfiedException) {
-                        System.out.println(Color.warning + "[ERROR]: You don't have enough resources to play this card!!");
+                        System.out.println(Color.warning + "You don't have enough resources to play this card!!");
                         actionState = ActionState.PLAY_SELECT_CARD;
                         printStatus();
                     }
                     if (e instanceof UnreachablePositionException) {
-                        System.out.println(Color.warning + "[ERROR]: Invalid position!!");
+                        System.out.println(Color.warning + "Invalid position!!");
                         actionState = ActionState.PLAY_SELECT_CARD;
                         printStatus();
                     }

@@ -126,7 +126,7 @@ public class Controller implements Serializable {
         for (Player p : gh.getUsers()) {
             if (p.getNickname().equals(nickname)) player = p;
         }
-        if (player == null) throw new UnexistentUserException();
+        if (player == null) return;
         if (gh.getLobbies().containsKey(lobbyID)) {
             gh.getLobbies().get(lobbyID).getPlayers().remove(player);
             gh.getLobby(lobbyID).getPawnBuffer().getPawnList().add(player.getPawn());
