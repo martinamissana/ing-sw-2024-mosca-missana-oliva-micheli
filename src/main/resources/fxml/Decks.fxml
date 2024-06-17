@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane prefHeight="263.34" prefWidth="235.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.ingsw.view.GUIFX.DecksController">
+   <children>
+      <Pane fx:id="resDeck" layoutX="10.0" layoutY="35.0" onMouseClicked="#drawCard" prefHeight="66.66" prefWidth="100.0" />
+      <Pane fx:id="goldDeck" layoutX="125.0" layoutY="35.0" onMouseClicked="#drawCard" prefHeight="66.66" prefWidth="100.0" />
+      <Pane fx:id="res1" layoutX="10.0" layoutY="111.66" onMouseClicked="#drawCard" prefHeight="66.66" prefWidth="100.0" />
+      <Pane fx:id="gold1" layoutX="125.0" layoutY="111.66" onMouseClicked="#drawCard" prefHeight="66.66" prefWidth="100.0" />
+      <Pane fx:id="res2" layoutX="10.0" layoutY="188.32" onMouseClicked="#drawCard" prefHeight="66.66" prefWidth="100.0" />
+      <Pane fx:id="gold2" layoutX="125.0" layoutY="188.32" onMouseClicked="#drawCard" prefHeight="66.66" prefWidth="100.0" />
+      <Label alignment="CENTER" layoutX="-1.0" layoutY="3.0" prefHeight="31.0" prefWidth="235.0" text="DECKS" />
+   </children>
+</AnchorPane>
