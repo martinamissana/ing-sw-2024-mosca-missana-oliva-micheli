@@ -2,6 +2,7 @@
 
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 
 <AnchorPane prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.ingsw.view.GUIFX.InLobbyController">
    <children>
@@ -14,5 +15,10 @@
             <Button fx:id="yellowPawn" layoutX="55.0" layoutY="10.0" mnemonicParsing="false" onMouseClicked="#setPawn" prefHeight="40.0" prefWidth="40.0" style="-fx-background-color: gold; -fx-background-radius: 50%; -fx-border-radius: 50%;" />
             <Button fx:id="greenPawn" layoutX="105.0" layoutY="10.0" mnemonicParsing="false" onMouseClicked="#setPawn" prefHeight="40.0" prefWidth="40.0" style="-fx-background-color: green; -fx-background-radius: 50%; -fx-border-radius: 50%;" />
          </children></Pane>
+      <Label layoutX="527.0" layoutY="230.0" text="Available pawns">
+         <font>
+            <Font size="18.0" />
+         </font>
+      </Label>
    </children>
 </AnchorPane>

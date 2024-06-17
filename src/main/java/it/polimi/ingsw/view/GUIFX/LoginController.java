@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.util.concurrent.Semaphore;
 
 import static java.lang.System.exit;
+import static java.lang.System.load;
 
 public class LoginController implements ViewObserver {
     @FXML
@@ -41,6 +42,11 @@ public class LoginController implements ViewObserver {
 
     ViewSingleton viewSing = ViewSingleton.getInstance();
     Semaphore sem = new Semaphore(0);
+    MainLayout mainLayout;
+
+    public void setMainLayout(MainLayout mainLayout) {
+        this.mainLayout = mainLayout;
+    }
 
     @FXML
     public void menuOptions(MouseEvent mouseEvent) {
@@ -80,19 +86,11 @@ public class LoginController implements ViewObserver {
             viewSing.getView().getCurrentStatus();
             sem.acquire();
             viewSing.getView().removeObserver(this);
+            viewSing.getView().addObserver(mainLayout);
+            mainLayout.viewSingleton = this.viewSing;
 
             //Creation of scene
-            Parent root;
-            try {
-                root = FXMLLoader.load(getClass().getResource("/fxml/Open.fxml"));
-
-                Stage stage = (Stage) ((Node) mouseEvent.getSource()).getScene().getWindow();
-                Scene scene = new Scene(root);
-                stage.setScene(scene);
-                stage.show();
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
+            mainLayout.setScene("Open");
 
         } catch (NicknameAlreadyTakenException | IOException | FullLobbyException | ClassNotFoundException e) {
             statusMessage.setText("Nickname already taken");

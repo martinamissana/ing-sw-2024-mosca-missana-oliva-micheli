@@ -11,10 +11,13 @@ public class GUI extends Application {
     @Override
     public void start(Stage stage) throws Exception {
         try {
-            Parent root = FXMLLoader.load(getClass().getResource("/fxml/Login.fxml"));
-            Scene scene = new Scene(root);
-            stage.setTitle("CODEX NATURALIS");
-            stage.setScene(scene);
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/MainLayout.fxml"));
+            Parent root = loader.load();
+            stage.setScene(new Scene(root));
+            MainLayout controller = loader.getController();
+            controller.setStage(stage);
+            controller.setStyle();
+            controller.setScene("Login");
 
             stage.setOnCloseRequest(t -> {
                 Platform.exit();

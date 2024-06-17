@@ -1,39 +1,36 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.Cursor?>
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.TextField?>
-<?import javafx.scene.control.ToggleButton?>
-<?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.text.Font?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 
-<AnchorPane fx:id="TopBar" minHeight="35.0" minWidth="500.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane minHeight="35.0" minWidth="900.0" onMouseDragged="#move" onMousePressed="#setPosition" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.ingsw.view.GUIFX.TopBarController">
        <children>
-           <TextField id="title" fx:id="title" accessibleRole="TEXT" alignment="CENTER" editable="false" focusTraversable="false" mouseTransparent="true" prefHeight="25.0" prefWidth="125.0" style="-fx-background-color: #FFFFFFBF; -fx-background-radius: 100px; -fx-min-height: 25px; -fx-max-height: 25px;" text="Codex Naturalis" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="5.0" AnchorPane.topAnchor="5.0">
+           <TextField accessibleRole="TEXT" alignment="CENTER" editable="false" focusTraversable="false" layoutX="5.0" layoutY="5.0" mouseTransparent="true" prefHeight="25.0" prefWidth="125.0" style="-fx-background-color: #FFFFFFBF; -fx-background-radius: 100px; -fx-min-height: 25px; -fx-max-height: 25px;" text="Codex Naturalis" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="5.0" AnchorPane.topAnchor="5.0">
                <font>
                    <Font name="Roboto Mono Regular" size="12.0" />
                </font>
            </TextField>
-           <HBox id="buttonBar" fx:id="buttonBar" alignment="CENTER" layoutX="517.0" style="-fx-background-color: #FFFFFFBF; -fx-background-radius: 100px; -fx-padding: 5px; -fx-spacing: 5px; -fx-min-height: 25px; -fx-max-height: 25px;" AnchorPane.bottomAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="5.0">
+           <HBox id="buttonBar" alignment="CENTER" layoutX="830.0" layoutY="5.0" prefHeight="25.0" prefWidth="65.0" style="-fx-background-color: #FFFFFFBF; -fx-background-radius: 100px; -fx-padding: 5px; -fx-spacing: 5px; -fx-min-height: 25px; -fx-max-height: 25px;" AnchorPane.bottomAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="5.0">
                <children>
-                   <Button id="minimize" fx:id="minimizeButton" alignment="CENTER" contentDisplay="GRAPHIC_ONLY" focusTraversable="false" graphicTextGap="0.0" layoutX="35.0" layoutY="15.0" mnemonicParsing="false" style="-fx-background-color: #72b043; -fx-background-radius: 5em; -fx-min-width: 15px; -fx-min-height: 15px; -fx-max-width: 15px; -fx-max-height: 15px; -fx-background-insets: 0px;">
+                   <ToggleButton fx:id="fullscreenButton" contentDisplay="GRAPHIC_ONLY" focusTraversable="false" graphicTextGap="0.0" layoutX="35.0" layoutY="15.0" mnemonicParsing="false" onMouseClicked="#setFullscreen" style="-fx-background-color: #72b043; -fx-background-radius: 5em; -fx-min-width: 15px; -fx-min-height: 15px; -fx-max-width: 15px; -fx-max-height: 15px; -fx-background-insets: 0px;">
                        <cursor>
                            <Cursor fx:constant="HAND" />
                        </cursor>
                        <font>
                            <Font size="6.0" />
                        </font>
-                   </Button>
-                   <ToggleButton id="fullscreen" fx:id="fullscreenButton" contentDisplay="GRAPHIC_ONLY" focusTraversable="false" graphicTextGap="0.0" mnemonicParsing="false" style="-fx-background-color: #f8cc1b; -fx-background-radius: 5em; -fx-min-width: 15px; -fx-min-height: 15px; -fx-max-width: 15px; -fx-max-height: 15px; -fx-background-insets: 0px;">
-                       <font>
-                           <Font size="6.0" />
-                       </font>
-                       <cursor>
-                           <Cursor fx:constant="HAND" />
-                       </cursor>
                    </ToggleButton>
-                   <Button id="quit" fx:id="quitButton" alignment="CENTER" cancelButton="true" contentDisplay="GRAPHIC_ONLY" focusTraversable="false" graphicTextGap="0.0" style="-fx-background-color: #e12729; -fx-background-radius: 5em; -fx-min-width: 15px; -fx-min-height: 15px; -fx-max-width: 15px; -fx-max-height: 15px; -fx-background-insets: 0px;">
+                   <Button fx:id="minimizeButton" alignment="CENTER" contentDisplay="GRAPHIC_ONLY" focusTraversable="false" graphicTextGap="0.0" mnemonicParsing="false" onMouseClicked="#minimizeScreen" style="-fx-background-color: #f8cc1b; -fx-background-radius: 5em; -fx-min-width: 15px; -fx-min-height: 15px; -fx-max-width: 15px; -fx-max-height: 15px; -fx-background-insets: 0px;">
+                       <font>
+                           <Font size="6.0" />
+                       </font>
+                       <cursor>
+                           <Cursor fx:constant="HAND" />
+                       </cursor>
+                   </Button>
+                   <Button fx:id="quitButton" alignment="CENTER" cancelButton="true" contentDisplay="GRAPHIC_ONLY" focusTraversable="false" graphicTextGap="0.0" onMouseClicked="#exitGame" style="-fx-background-color: #e12729; -fx-background-radius: 5em; -fx-min-width: 15px; -fx-min-height: 15px; -fx-max-width: 15px; -fx-max-height: 15px; -fx-background-insets: 0px;">
                        <cursor>
                            <Cursor fx:constant="HAND" />
                        </cursor>

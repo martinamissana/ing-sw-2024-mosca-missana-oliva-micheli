@@ -71,12 +71,6 @@ public class InLobbyController implements ViewObserver, Initializable {
             sem.acquire();
 
             viewSingleton.getView().removeObserver(this);
-            Parent root = FXMLLoader.load(getClass().getResource("/fxml/Open.fxml"));
-
-            Stage stage = (Stage) ((Node) mouseEvent.getSource()).getScene().getWindow();
-            Scene scene = new Scene(root);
-            stage.setScene(scene);
-            stage.show();
 
         } catch (NotConnectedToLobbyException e) {
             System.out.println("Not in lobby");
@@ -92,7 +86,7 @@ public class InLobbyController implements ViewObserver, Initializable {
     public void updatePlayers() {
         Platform.runLater(() -> {
             try {
-                players.getChildren().clear(); // Clear the children before adding new ones
+                players.getChildren().clear();
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/Scoreboard.fxml"));
                 players.getChildren().add(loader.load());
                 ScoreboardController controller = loader.getController();
@@ -176,16 +170,5 @@ public class InLobbyController implements ViewObserver, Initializable {
         }
 
         viewSingleton.getView().removeObserver(this);
-        Platform.runLater(() -> {
-            try {
-                Parent root = FXMLLoader.load(getClass().getResource("/fxml/GameScreen.fxml"));
-                Stage stage = (Stage) redPawn.getScene().getWindow();
-                stage.setScene(new Scene(root));
-                stage.show();
-
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        });
     }
 }

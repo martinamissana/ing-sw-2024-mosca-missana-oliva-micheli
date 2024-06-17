@@ -11,6 +11,7 @@ import it.polimi.ingsw.network.netMessage.c2s.LobbyJoinedMessage;
 import it.polimi.ingsw.network.netMessage.s2c.LobbyCreatedMessage;
 import it.polimi.ingsw.network.netMessage.s2c.LobbyDeletedMessage;
 import it.polimi.ingsw.network.netMessage.s2c.LobbyLeftMessage;
+import it.polimi.ingsw.network.netMessage.s2c.PawnAssignedMessage;
 import it.polimi.ingsw.view.ViewObserver;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -88,20 +89,6 @@ public class OpenController implements ViewObserver, Initializable {
             viewSingleton.getViewController().checkCreateLobby(Integer.parseInt(playersNumber.getText()));
             viewSingleton.getView().createLobby(Integer.parseInt(playersNumber.getText()));
             sem.acquire();
-
-            Platform.runLater(() -> {
-                Parent root;
-                try {
-                    root = FXMLLoader.load(getClass().getResource("/fxml/InLobby.fxml"));
-                    Stage stage = (Stage) ((Node) mouseEvent.getSource()).getScene().getWindow();
-                    stage.setScene(new Scene(root));
-                    stage.show();
-
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-
-            });
 
         } catch (CannotJoinMultipleLobbiesException e) {
             System.out.println("Multiple lobbies");

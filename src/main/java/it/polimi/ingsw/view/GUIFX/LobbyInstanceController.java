@@ -53,12 +53,6 @@ public class LobbyInstanceController implements ViewObserver, Initializable {
             sem.acquire();
             viewSingleton.getView().removeObserver(this);
 
-            Parent root = FXMLLoader.load(getClass().getResource("/fxml/InLobby.fxml"));
-            Stage stage = (Stage) ((Node) mouseEvent.getSource()).getScene().getWindow();
-            Scene scene = new Scene(root);
-            stage.setScene(scene);
-            stage.show();
-
         } catch (LobbyDoesNotExistsException ignored) {}
         catch (FullLobbyException e) {
             System.out.println("Full lobby");
