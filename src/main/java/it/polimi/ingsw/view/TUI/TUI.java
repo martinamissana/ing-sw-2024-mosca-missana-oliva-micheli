@@ -46,10 +46,18 @@ public class TUI implements Runnable, ViewObserver {
     private String in;
 
 
+    /**
+     * Check if string is a numeric value
+     * @param s         string to check
+     * @return boolean  if string is a numeric value
+     */
     public boolean isNumeric(String s) {
         return s.matches("-?\\d+");
     }
 
+    /**
+     * Main method
+     */
     @Override
     public void run() {
         // printer.printLogo();
@@ -109,6 +117,11 @@ public class TUI implements Runnable, ViewObserver {
 
     }
 
+    /**
+     * Update main method when receiving a message
+     * @param message       the message that they have to handle
+     * @throws IOException  produced by failed or interrupted I/O operations
+     */
     @Override
     public synchronized void update(NetMessage message) throws IOException {
         // System.out.println(message.getClass().getName());
@@ -284,6 +297,9 @@ public class TUI implements Runnable, ViewObserver {
 
     }
 
+    /**
+     * Prints what the main method is supposed to see
+     */
     public void printStatus() {
         switch (state) {
             // print status: prints what the player is supposed to see
@@ -433,6 +449,10 @@ public class TUI implements Runnable, ViewObserver {
         }
     }
 
+    /**
+     * Get players currently in same lobby as the one playing
+     * @return list of players
+     */
     private ArrayList<Player> getOtherPlayers() {
         ArrayList<Player> players = new ArrayList<>();
         for (int i = 0; i < view.getLobbies().get(view.getID()).getPlayers().size(); i++) {
@@ -446,6 +466,9 @@ public class TUI implements Runnable, ViewObserver {
     // Login methods:
     // ~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~
 
+    /**
+     * Method to choose type of connection (TCP / RMI) + server IP to connect
+     */
     private void chooseConnectionType() {
         String choice="";
 
@@ -497,7 +520,11 @@ public class TUI implements Runnable, ViewObserver {
     // Main Menu methods:
     // ~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~
 
-    private void chooseMenuAction(String in) throws InterruptedException {
+    /**
+     * Main menu actions
+     * @param in                        input inserted by the user
+     */
+    private void chooseMenuAction(String in) {
         if (state != TUIState.MENU) return;
         if (!isNumeric(in)) {
             System.out.println(Color.warning + "Numeric value required!!" + Color.reset);
@@ -532,6 +559,11 @@ public class TUI implements Runnable, ViewObserver {
         }
     }
 
+    /**
+     * Method to create a new lobby
+     * @param in                        input inserted by the user (supposed to be numOfPlayers or -1)
+     * @throws InterruptedException     throws this exception if thread is interrupted
+     */
     private void createLobby(String in) throws InterruptedException {
         if (view.getID() != null) {
             System.out.println(Color.warning + "\nCannot create a lobby while in another lobby!!" + Color.reset);
@@ -569,6 +601,11 @@ public class TUI implements Runnable, ViewObserver {
 
     }
 
+    /**
+     * Method to join a lobby already created
+     * @param in                        input inserted by the user (supposed to be ID of the lobby or -1)
+     * @throws InterruptedException     throws this exception if thread is interrupted
+     */
     private void chooseLobby(String in) throws InterruptedException {
         if (view.getID() != null) {
             System.out.println(Color.warning + "\nCannot create a lobby while in another lobby!!" + Color.reset);
@@ -615,6 +652,11 @@ public class TUI implements Runnable, ViewObserver {
     // In Lobby methods:
     // ~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~
 
+    /**
+     * Method for pawn selection
+     * @param color                     input inserted by the user (supposed to be color of pawn chosen)
+     * @throws InterruptedException     throws this exception if thread is interrupted
+     */
     private void setPawnColor(String color) throws InterruptedException {
         if (view.getPawn() != null) {
             System.out.println(view.getPawn().toString());
@@ -648,7 +690,11 @@ public class TUI implements Runnable, ViewObserver {
 
     }
 
-    private void chooseInLobbyAction(String in) throws InterruptedException {
+    /**
+     * In lobby actions
+     * @param in                        input inserted by the user
+     */
+    private void chooseInLobbyAction(String in) {
         if (!isNumeric(in)) {
             System.out.println(Color.warning + "Numeric value required!!" + Color.reset);
             return;
@@ -659,13 +705,21 @@ public class TUI implements Runnable, ViewObserver {
                 chatState = ChatState.SELECT_CHAT;
                 printStatus();
             }
-            case 2 -> quitLobby();
-            default -> {
-                System.out.println(Color.warning + "Invalid choice!!\n" + Color.reset);
+            case 2 -> {
+                try {
+                    quitLobby();
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
             }
+            default -> System.out.println(Color.warning + "Invalid choice!!\n" + Color.reset);
         }
     }
 
+    /**
+     * Method for chat actions
+     * @param in    input inserted by the user
+     */
     private void chat(String in) {
         switch (chatState) {
             case null -> {}
@@ -726,6 +780,10 @@ public class TUI implements Runnable, ViewObserver {
         }
     }
 
+    /**
+     * Method for leaving lobby the player is currently in
+     * @throws InterruptedException throws this exception if thread is interrupted
+     */
     private void quitLobby() throws InterruptedException {
         try {
             check.checkLeaveLobby();
@@ -751,6 +809,11 @@ public class TUI implements Runnable, ViewObserver {
     // In Game methods:
     // ~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~
 
+    /**
+     * Method for choosing side of starter card and placing it on field
+     * @param choice                    input inserted by the user (supposed to be card's side)
+     * @throws InterruptedException     throws this exception if thread is interrupted
+     */
     private void placeStarterCard(String choice) throws InterruptedException {
         if (view.getHand().getSize() == 0 || !view.getHand().getCard(0).getClass().equals(StarterCard.class)) return;
         StarterCard card = (StarterCard) view.getHand().getCard(0);
@@ -777,6 +840,11 @@ public class TUI implements Runnable, ViewObserver {
                  UnexistentUserException | WrongGamePhaseException ignored) {}
     }
 
+    /**
+     * Method for selecting secret goal
+     * @param choice                    input inserted by the user (supposed to be ID of the chosen goal)
+     * @throws InterruptedException     throws this exception if thread is interrupted
+     */
     private void chooseSecretGoal(String choice) throws InterruptedException {
         if (view.getSecretGoal() != null) return;
 
@@ -798,6 +866,10 @@ public class TUI implements Runnable, ViewObserver {
         }
     }
 
+    /**
+     * In game actions (when it's not player's turn)
+     * @param in    input inserted by the user
+     */
     private void chooseInGameAction(String in) {
         if (!isNumeric(in)) {
             System.out.println(Color.warning + "Numeric value required!!" + Color.reset);
@@ -815,11 +887,11 @@ public class TUI implements Runnable, ViewObserver {
                 printStatus();
             }
             case 2 -> {
-                for (Player p : view.getFields().keySet()){
+                for (Player p : getOtherPlayers()) {
                     if (!p.getNickname().equals(view.getNickname())) {
                         printer.printField(p.getNickname());
                     }
-                 }
+                }
                 printStatus();
             }
             case 3 -> {
@@ -833,12 +905,14 @@ public class TUI implements Runnable, ViewObserver {
                     throw new RuntimeException(e);
                 }
             }
-            default -> {
-                System.out.println(Color.warning + "Invalid choice!!\n" + Color.reset);
-            }
+            default -> System.out.println(Color.warning + "Invalid choice!!\n" + Color.reset);
         }
     }
 
+    /**
+     * Method for selecting and playing card from hand to field
+     * @param in        input inserted by the user
+     */
     private void playCard(String in) {
         switch (actionState) {
             case PLAY_SELECT_CARD -> {
@@ -922,7 +996,11 @@ public class TUI implements Runnable, ViewObserver {
         }
     }
 
-
+    /**
+     * Method for drawing card
+     * @param choice                    where the player wants to draw
+     * @throws InterruptedException     throws this exception if thread is interrupted
+     */
     protected void drawCard(String choice) throws InterruptedException {
         if (!view.isYourTurn()) {
             System.out.println(Color.warning + "Cannot draw card because it's not your turn!!" + Color.reset);

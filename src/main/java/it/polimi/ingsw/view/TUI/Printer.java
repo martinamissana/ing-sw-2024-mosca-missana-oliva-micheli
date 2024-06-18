@@ -5,12 +5,8 @@ import it.polimi.ingsw.model.commonItem.CornerStatus;
 import it.polimi.ingsw.model.commonItem.ItemBox;
 import it.polimi.ingsw.model.commonItem.Kingdom;
 import it.polimi.ingsw.model.commonItem.Resource;
-import it.polimi.ingsw.model.deck.Deck;
 import it.polimi.ingsw.model.deck.DeckBuffer;
 import it.polimi.ingsw.model.deck.DeckBufferType;
-import it.polimi.ingsw.model.deck.DeckType;
-import it.polimi.ingsw.model.exceptions.IllegalMoveException;
-import it.polimi.ingsw.model.game.CardsPreset;
 import it.polimi.ingsw.model.game.Lobby;
 import it.polimi.ingsw.model.goal.DiagonalGoal;
 import it.polimi.ingsw.model.goal.Goal;
@@ -19,20 +15,22 @@ import it.polimi.ingsw.model.goal.ResourceGoal;
 import it.polimi.ingsw.model.player.*;
 import it.polimi.ingsw.view.View;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Printer {
     private final View view;
     private final String cli = Color.console + "\n[+] " + Color.reset;
-    
+
+    /**
+     * Class constructor
+     * @param view what player sees
+     */
     public Printer(View view) {
         this.view = view;
     }
     
     public void printLogo() {
-        // TODO: I need to stretch it out
         System.out.println("                          .##.          .-.  ..#####-.    .-+..+..    .+.                       ");
         System.out.println("                  ...   .#####-.      .-#...-....-#####+. .... .#+.  .-#-                       ");
         System.out.println("             .-+##-...+#########++---+##.. ..     ..-#####+-.  -##-...##+.-.                    ");
@@ -73,6 +71,9 @@ public class Printer {
     // Main Menu printing methods:
     // ~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~
 
+    /**
+     * Prints all lobbies that are not full nor empty
+     */
     public void printOpenLobbies() {
         System.out.print(cli + "Open lobbies:");
         HashMap<Integer, Lobby> lobbies = view.getLobbies();
@@ -96,6 +97,9 @@ public class Printer {
         System.out.println();
     }
 
+    /**
+     * Print rules of the game + explanation of keys used in online version
+     */
     public void printRules() {
         System.out.println("""
             
@@ -168,12 +172,32 @@ public class Printer {
             The player with the most points wins the game. In case of a tie,
             the player with the most Objective card points wins. If there is
             still a tie, the players share the victory.
+            
+            
+            KINGDOMS:
+             A - Animal
+             F - Fungi
+             I - Insect
+             P - Plant
+            
+            GOLD RESOURCES:
+             I - Inkwell
+             M - Manuscript
+             Q - Quill
+            
+            Insect and Inkwell are distinguished by the background (Inkwell has a gold background)
+            
+            GOALS:
+             2xC - 2 points for each corner covered by the card when is placed
+             1xI / 1xM / 1xQ - 1 point for each gold resource you have on field after positioning the card
+            
+            
             """;
 
         for (int i = 0; i < text.length(); i++) {
             System.out.print(text.charAt(i));
             try {
-                Thread.sleep(1);
+                Thread.sleep(3);
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
             }
@@ -184,6 +208,9 @@ public class Printer {
     // In lobby printing methods:
     // ~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~
 
+    /**
+     * Prints how many players are left to start the game
+     */
     public void printRemainingPlayers() {
         HashMap<Integer, Lobby> lobbies = view.getLobbies();
         int ID = view.getID();
@@ -205,6 +232,9 @@ public class Printer {
         }
     }
 
+    /**
+     * Prints pawn not yet selected in the lobby
+     */
     public void printAvailablePawns() {
         ArrayList<Pawn> pawns = new ArrayList<>();
         for (Player p : view.getLobbies().get(view.getID()).getPlayers()) {
@@ -224,6 +254,10 @@ public class Printer {
         }
     }
 
+    /**
+     * Prints players currently in lobby / in game
+     * @param ID ID of the lobby / game
+     */
     public void printPlayers(Integer ID) {
         Lobby lobby = view.getLobbies().get(ID);
         Pawn pawn;
@@ -249,14 +283,15 @@ public class Printer {
     // Game printing methods:
     // ~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~
 
+    /**
+     * Prints common goals, secret goal of player, decks and deck buffers
+     */
     public void printGameArea() {
         System.out.print("\n" + cli + "Common goals:");
         printGoal(view.getCommonGoal1());
         printGoal(view.getCommonGoal2());
         System.out.println();
         printGoal(view.getSecretGoal());
-
-        //printResources();
 
         Card next = view.getTopResourceCard();
         HashMap<DeckBufferType, DeckBuffer> cardSpaces = view.getDeckBuffers();
@@ -317,7 +352,11 @@ public class Printer {
         if (next != null) next.flip();
     }
 
-    public void printField(String nickname) { // TODO: Add CornerToString()
+    /**
+     * Prints the field of selected player
+     * @param nickname nickname of selected player
+     */
+    public void printField(String nickname) {
         Field field = null;
         if (nickname.equals(view.getNickname())) field = view.getMyField();
         else {
@@ -326,41 +365,6 @@ public class Printer {
             }
         }
         if (field == null) return;
-
-        // TODO: Remove when functioning:
-//        Field field = new Field();
-//        try {
-//            Deck deck = new Deck(DeckType.RESOURCE);
-//            Deck gd = new Deck(DeckType.GOLDEN);
-//            StarterCard starterCard = CardsPreset.getStarterCards().get(CardsPreset.getStarterCards().size() - 2);
-//            starterCard.flip();
-//            field.addCard(starterCard);
-//            field.addCard(deck.getCards().get(23), new Coords(0, 1));
-//            field.addCard(deck.getCards().get(10), new Coords(0, 2));
-//            field.addCard(deck.getCards().get(11), new Coords(1, 0));
-//            field.addCard(deck.getCards().get(3), new Coords(2, 0));
-//            field.addCard(deck.getCards().get(31), new Coords(0, -1));
-//            field.addCard(deck.getCards().get(34), new Coords(1, -1));
-//            field.addCard(deck.getCards().get(35), new Coords(2, -1));
-//            field.addCard(deck.getCards().get(2), new Coords(-1, -1));
-//            field.addCard(deck.getCards().get(6), new Coords(-2, -1));
-//            field.addCard(deck.getCards().get(25), new Coords(3, -1));
-//            ResourceCard resourceCard = deck.getCards().getFirst();
-//            resourceCard.flip();
-//            field.addCard(resourceCard, new Coords(-1, 0));
-
-            // Case when it is not possible to play any card:
-//            field.addCard(deck.getCards().get(31), new Coords(0, 1));
-//            field.addCard(gd.getCards().get(38), new Coords(1, 1));
-//            field.addCard(deck.getCards().get(22), new Coords(1, 0));
-//            field.addCard(gd.getCards().get(36), new Coords(1, -1));
-//            field.addCard(gd.getCards().get(28), new Coords(-1, 1));
-
-//
-//        } catch (IOException | IllegalMoveException e) {
-//            throw new RuntimeException(e);
-//        }
-
 
         int firstDiagonal = field.getMatrix().keySet().stream().mapToInt(c -> c.getX() + c.getY()).distinct().max().orElse(-80) + 1;
         int lastDiagonal = field.getMatrix().keySet().stream().mapToInt(c -> c.getX() + c.getY()).distinct().min().orElse(-80);
@@ -377,7 +381,6 @@ public class Printer {
         Coords lastCoordinate;
         if ((firstDiagonal + lastColumn) % 2 == 0) lastCoordinate = new Coords((int) Math.floor((firstDiagonal + lastColumn) / 2.0), (int) Math.floor((firstDiagonal - lastColumn) / 2.0));
         else lastCoordinate = new Coords((int) Math.floor((firstDiagonal + lastColumn) / 2.0) + 1, (int) Math.floor((firstDiagonal - lastColumn) / 2.0));
-        lastColumn = lastCoordinate.getX() - lastCoordinate.getY();
 
         String cardColor;
         StringBuilder fieldBuilder = new StringBuilder();
@@ -532,16 +535,11 @@ public class Printer {
 
         if(view.getNickname().equals(nickname))System.out.println(cli + "Your field:\n" + fieldBuilder);
         else  System.out.println(cli + nickname +"'s field:\n" + fieldBuilder);
-        //printResources();
     }
 
-    public void printResources() {
-        System.out.print(cli + "Your total resources:");
-        for (ItemBox item : view.getMyField().getTotalResources().keySet()) {
-            System.out.print(cli + " - " + item + ": " + view.getMyField().getTotalResources().get(item));
-        } System.out.println();
-    }
-
+    /**
+     * Prints the scoreboard in format [player - score]
+     */
     public void printScoreboard() {
         HashMap<Player, Integer> scoreboard = view.getScoreboard();
         for (Player p : scoreboard.keySet()) {
@@ -549,6 +547,9 @@ public class Printer {
         } System.out.println();
     }
 
+    /**
+     * Prints the scoreboard in format [player - score + goals done]
+     */
     public void printFinalScoreboard() {
         HashMap<Player, Integer> scoreboard = view.getScoreboard();
         HashMap<Player, Integer> goalsDone = view.getGoalsDone();
@@ -570,6 +571,12 @@ public class Printer {
     }
 
     // Card + Hand printing methods:
+
+    /**
+     * Converts item to its correlated String color
+     * @param item item to convert into color
+     * @return color String correlated to item
+     */
     public String ItemsToColor(ItemBox item) {
         return switch(item) {
             case Kingdom.ANIMAL -> Color.animal.label;
@@ -583,6 +590,12 @@ public class Printer {
         };
     }
 
+    /**
+     * Converts a corner into its correlated string
+     * @param card card from which the corner is taken
+     * @param type which corner is converted
+     * @return correlated string of the corner
+     */
     public String CornerToString(Card card, CornerType type) {
         ItemBox item = card.getItemFromCorner(type);
 
@@ -609,6 +622,11 @@ public class Printer {
         } + Color.reset.label;
     }
 
+    /**
+     * Converts card into its upper part string (with corners NORTH and EAST + eventual points)
+     * @param card card to convert
+     * @return string of upper part of the card
+     */
     public String printUpper(Card card) {
         if (card.getClass().equals(CardBlock.class))
             return Color.black.label + "             " + Color.reset.label;
@@ -648,6 +666,11 @@ public class Printer {
         return north + kingdom + "  " + Color.reset.label + points + kingdom + "  " + Color.reset.label + east;
     }
 
+    /**
+     * Converts card into its middle part string (with eventual permanent resources)
+     * @param card card to convert
+     * @return string of middle part of the card
+     */
     public String printMiddle(Card card) {
         if (card.getClass().equals(CardBlock.class))
             return Color.black.label + "             " + Color.reset.label;
@@ -691,6 +714,11 @@ public class Printer {
         return ItemsToColor(card.getKingdom()) + "     " + kingdom + "     " + Color.reset;
     }
 
+    /**
+     * Converts card into its lower part string (with corners WEST and SOUTH + eventual placement requirements)
+     * @param card card to convert
+     * @return string of lower part of the card
+     */
     public String printLower(Card card) {
         if (card.getClass().equals(CardBlock.class))
             return Color.black.label + "             " + Color.reset.label;
@@ -723,10 +751,17 @@ public class Printer {
         return west + kingdom + "       " + Color.reset + south;
     }
 
+    /**
+     * Prints cart as a String
+     * @param card card to be printed
+     */
     public void printCard(Card card) {
         System.out.println(cli + printUpper(card) + cli + printMiddle(card) + cli + printLower(card) + "\n");
     }
 
+    /**
+     * Prints the hand of the player
+     */
     public void printHand() {
         Hand hand = view.getHand();
 
@@ -746,7 +781,11 @@ public class Printer {
     }
 
     // Goal printing methods:
-    public void printGoal(Goal goal) {
+    /**
+     * Prints a string representing the goal
+     * @param goal goal to be printed
+     */
+    public void printGoal(Goal goal) {          // TODO: L-Shape and Diagonal as a mini printField?
         if (goal.getClass().equals(L_ShapeGoal.class)) {
             System.out.print(cli + "L-Shape Goal " + goal.getGoalID() + ": " + ((L_ShapeGoal) goal).getType() + " with two " + ((L_ShapeGoal) goal).getMainColor() + " and " + ((L_ShapeGoal) goal).getSecondaryColor() + ". Points = " + goal.getPoints());
         } else if (goal.getClass().equals(DiagonalGoal.class)) {
