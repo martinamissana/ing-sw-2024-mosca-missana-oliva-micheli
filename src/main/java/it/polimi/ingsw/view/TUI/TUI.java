@@ -340,7 +340,7 @@ public class TUI implements Runnable, ViewObserver {
             case GAME -> {
                 switch (view.getGamePhase()) {
                     case PLACING_STARTER_CARD -> {
-                        if (view.getHand().getSize() == 0 && !(view.getHand().getCard(0) instanceof StarterCard))
+                        if (view.getHand().getSize() == 0)
                             return;
                         System.out.print(cli + "Choose the starter card's side you prefer (front / back):");
                         StarterCard card = (StarterCard) view.getHand().getCard(0);

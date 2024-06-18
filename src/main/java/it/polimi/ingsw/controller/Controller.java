@@ -78,6 +78,7 @@ public class Controller implements Serializable {
             if (l.getPlayers().contains(lobbyCreator)) throw new CannotJoinMultipleLobbiesException();
         }
         try {
+            lobbyCreator.initialize();
             gh.getLobbies().put(gh.getNumOfLobbies(), new Lobby(getGh().getNumOfLobbies(), numOfPlayers));
             gh.getLobby(gh.getNumOfLobbies()).addPlayer(lobbyCreator);
             gh.notify(new LobbyCreatedEvent(lobbyCreator, gh.getLobby(getGh().getNumOfLobbies()), gh.getNumOfLobbies()));
@@ -109,6 +110,7 @@ public class Controller implements Serializable {
         }
 
         if (gh.getLobbies().containsKey(lobbyID)) {
+            player.initialize();
             gh.getLobbies().get(lobbyID).addPlayer(player);
             gh.notify(new LobbyJoinedEvent(player, lobbyID));
         } else throw new LobbyDoesNotExistsException("Lobby with ID " + lobbyID + " does not exist");

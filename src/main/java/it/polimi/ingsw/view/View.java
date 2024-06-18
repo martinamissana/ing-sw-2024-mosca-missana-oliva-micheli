@@ -437,25 +437,22 @@ public abstract class View extends ViewObservable {
             }
             case LobbyCreatedMessage m -> {
                 lobbies.put(m.getID(), m.getLobby());
+                lobbies.get(m.getID()).getPlayers().get(0).initialize();
 
                 if (m.getCreator().equals(player)) {
+                    initialize();
+                    player.initialize();
                     ID = m.getID();
-                    this.chat = new Chat();
                     notify(m);
                 }
                 if (ID == null) notify(m);
             }
             case LobbyJoinedMessage m -> {
                 if (m.getPlayer().getNickname().equals(player.getNickname())) {
-                    ID = m.getID();
-                    this.chat = new Chat();
-                    pawn=null;
+                    initialize();
                     player.initialize();
-                    hand.removeAllCards();
-                    myField=null;
+                    ID = m.getID();
                     gamePhase=null;
-                    secretGoal = null;
-                    secretGoalChoices.clear();
                 }
                 try {
                     getLobbies().get(m.getID()).addPlayer(m.getPlayer());
@@ -473,17 +470,18 @@ public abstract class View extends ViewObservable {
                     }
 
                 lobbies.get(m.getID()).removePlayer(m.getPlayer());
+
                 if (scoreboard != null) scoreboard.remove(m.getPlayer());
+
                 if (m.getPlayer().getNickname().equals(nickname)) {
-                    ID = null;
-                    pawn = null;
-                    chat = null;
-                    player.initialize();
-                    hand.removeAllCards();
-                    secretGoalChoices.clear();
-                    secretGoal = null;
+                    initialize();
                     notify(m);
+
                 } else if (m.getID().equals(ID) || ID == null) {
+                    if(gamePhase!=null) {
+                        pawn=null;
+                        player.setPawn(null);
+                    }
                     notify(m);
                 }
             }
@@ -534,9 +532,6 @@ public abstract class View extends ViewObservable {
                     commonGoal2 = m.getCommonGoal2();
                     gamePhase = m.getGamePhase();
                     action = m.getAction();
-                    chat = new Chat();
-                    winners.clear();
-                    myField = new Field();
                     notify(message);
                 }
             }
@@ -628,27 +623,7 @@ public abstract class View extends ViewObservable {
             case GameTerminatedMessage m -> {
                 if (m.getID().equals(ID)) {
                     lobbies.remove(ID);
-                    player.initialize();
-                    firstPlayer = false;
-                    yourTurn = false;
-                    lastRound = false;
-                    scoreboard = null;
-                    deckBuffers.clear();
-                    commonGoal1 = null;
-                    commonGoal2 = null;
-                    gamePhase = null;
-                    action = null;
-                    ID = null;
-                    pawn = null;
-                    hand.removeAllCards();
-                    secretGoalChoices.clear();
-                    secretGoal = null;
-                    fields.clear();
-                    chat = null;
-                    topResourceCard = null;
-                    topGoldenCard = null;
-                    commonGoal1 = null;
-                    commonGoal2 = null;
+                    initialize();
                     notify(m);
                 }
             }
@@ -698,5 +673,32 @@ public abstract class View extends ViewObservable {
             }
             default -> throw new IllegalStateException("Unexpected value: " + message);
         }
+    }
+
+    /**
+     * Initializes the value of the view when needed (when someone leaves a game or joins a lobby)
+     */
+    public void initialize(){
+        player.initialize();
+        firstPlayer = false;
+        yourTurn = false;
+        lastRound = false;
+        scoreboard = null;
+        deckBuffers.clear();
+        commonGoal1 = null;
+        commonGoal2 = null;
+        action = null;
+        ID = null;
+        pawn = null;
+        hand.removeAllCards();
+        secretGoalChoices.clear();
+        secretGoal = null;
+        chat = new Chat();
+        myField = new Field();
+        topResourceCard = null;
+        topGoldenCard = null;
+        commonGoal1 = null;
+        commonGoal2 = null;
+        winners.clear();
     }
 }
