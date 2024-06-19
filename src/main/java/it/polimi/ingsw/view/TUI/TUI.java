@@ -112,8 +112,8 @@ public class TUI implements Runnable, ViewObserver {
                         }
                     }
                 }
-            } catch (InterruptedException | IOException | ClassNotFoundException e) {
-                throw new RuntimeException(e);
+            } catch (InterruptedException | IOException | ClassNotFoundException ignored) {
+               // throw new RuntimeException(e);
             } catch (FullLobbyException | NicknameAlreadyTakenException ignored) {}
         }).start();
 
@@ -917,6 +917,7 @@ public class TUI implements Runnable, ViewObserver {
      */
     private void playCard(String in) {
 
+
         switch (actionState) {
             case PLAY_SELECT_CARD -> {
                 if (in.equalsIgnoreCase("f") || in.equalsIgnoreCase("flip")) {
@@ -971,6 +972,7 @@ public class TUI implements Runnable, ViewObserver {
 
                     view.playCard(pos, position, side);
                     semaphore.acquire();
+
                     for (int i = 0; i < view.getHand().getSize(); i++) {
                         if (view.getHand().getCard(i).getSide().equals(CardSide.BACK)) view.getHand().getCard(i).flip();
                     }

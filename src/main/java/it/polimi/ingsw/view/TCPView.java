@@ -72,7 +72,7 @@ public class TCPView extends View {
         } catch (IOException | ClassNotFoundException e) {
             disconnect(super.getNickname());
 
-        } catch (FullLobbyException | NicknameAlreadyTakenException | IllegalMoveException | HandIsFullException e) {
+        } catch ( NicknameAlreadyTakenException e) {
             throw new RuntimeException(e);
         }
     }

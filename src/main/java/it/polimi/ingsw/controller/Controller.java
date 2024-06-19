@@ -409,10 +409,16 @@ public class Controller implements Serializable {
 
         for (Player p : game.getPlayers()) {
             p.getHand().addCard(game.getResourceDeck().draw());
-            gh.notify(new CardAddedToHandEvent(p, p.getHand().getCard(0), gameID));
             p.getHand().addCard(game.getResourceDeck().draw());
-            gh.notify(new CardAddedToHandEvent(p, p.getHand().getCard(1), gameID));
             p.getHand().addCard(game.getGoldenDeck().draw());
+        }
+
+        gh.notify(new CardDrawnFromSourceEvent(gameID, DeckType.RESOURCE, game.getDeck(DeckType.RESOURCE).getCards().getLast()));
+        gh.notify(new CardDrawnFromSourceEvent(gameID, DeckType.GOLDEN, game.getDeck(DeckType.GOLDEN).getCards().getLast()));
+
+        for (Player p : game.getPlayers()) {
+            gh.notify(new CardAddedToHandEvent(p, p.getHand().getCard(0), gameID));
+            gh.notify(new CardAddedToHandEvent(p, p.getHand().getCard(1), gameID));
             gh.notify(new CardAddedToHandEvent(p, p.getHand().getCard(2), gameID));
         }
     }

@@ -423,7 +423,7 @@ public abstract class View extends ViewObservable {
      * @throws HandIsFullException           thrown if the hand is full
      * @throws IllegalMoveException          thrown when violating the game's rules when placing a card
      */
-    public void elaborate(NetMessage message) throws IOException, FullLobbyException, NicknameAlreadyTakenException, HandIsFullException, IllegalMoveException {
+    public void elaborate(NetMessage message) throws IOException, NicknameAlreadyTakenException {
         switch (message) {
             case LoginMessage m -> {
                 if (nickname.equals(m.getNickname())) {
@@ -557,7 +557,10 @@ public abstract class View extends ViewObservable {
                         myField.addCard((StarterCard) m.getCard());
                         notify(m);
                     } else try {
-                        myField.addCard((ResourceCard) m.getCard(), m.getCoords());
+                        ResourceCard card = (ResourceCard) m.getCard();
+                        if (!m.getSide().equals(card.getSide())) card.flip();
+
+                        myField.addCard(card, m.getCoords());
                         notify(m);
                     } catch (IllegalMoveException e) {
                         e.printStackTrace();
