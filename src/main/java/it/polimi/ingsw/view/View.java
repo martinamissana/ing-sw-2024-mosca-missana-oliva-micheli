@@ -637,28 +637,28 @@ public abstract class View extends ViewObservable {
                     switch (m.getType()) {
                         case DeckType.RESOURCE -> {
                             topResourceCard = m.getCard();
-                            if (topResourceCard.getSide().equals(CardSide.FRONT)) topResourceCard.flip();
+                            if (topResourceCard != null && topResourceCard.getSide().equals(CardSide.FRONT)) topResourceCard.flip();
                         }
 
                         case DeckType.GOLDEN -> {
                             topGoldenCard = m.getCard();
-                            if (topGoldenCard.getSide().equals(CardSide.FRONT)) topGoldenCard.flip();
+                            if (topGoldenCard != null && topGoldenCard.getSide().equals(CardSide.FRONT)) topGoldenCard.flip();
                         }
 
                         case DeckBufferType.RES1, DeckBufferType.RES2 -> {
-                            if (topResourceCard.getSide().equals(CardSide.BACK)) topResourceCard.flip();
+                            if (topResourceCard != null && topResourceCard.getSide().equals(CardSide.BACK)) topResourceCard.flip();
                             deckBuffers.get((DeckBufferType) m.getType()).setCard((ResourceCard) topResourceCard);
 
                             topResourceCard = m.getCard();
-                            if (topResourceCard.getSide().equals(CardSide.FRONT)) topResourceCard.flip();
+                            if (topResourceCard != null && topResourceCard.getSide().equals(CardSide.FRONT)) topResourceCard.flip();
                         }
 
                         case DeckBufferType.GOLD1, DeckBufferType.GOLD2 -> {
-                            if (topGoldenCard.getSide().equals(CardSide.BACK)) topGoldenCard.flip();
+                            if (topGoldenCard != null && topGoldenCard.getSide().equals(CardSide.BACK)) topGoldenCard.flip();
                             deckBuffers.get((DeckBufferType) m.getType()).setCard((GoldenCard) topGoldenCard);
 
                             topGoldenCard = m.getCard();
-                            if (topGoldenCard.getSide().equals(CardSide.FRONT)) topGoldenCard.flip();
+                            if (topGoldenCard != null && topGoldenCard.getSide().equals(CardSide.FRONT)) topGoldenCard.flip();
                         }
 
                         default -> throw new IllegalStateException("Unexpected value: " + m.getType());

@@ -588,9 +588,11 @@ public class Controller implements Serializable {
         gh.notify(new CardAddedToHandEvent(player, newCard, gameID));
 
         if (deckTypeBox.equals(DeckType.RESOURCE) || deckTypeBox.equals(DeckBufferType.RES1) || deckTypeBox.equals(DeckBufferType.RES2)) {
-            gh.notify(new CardDrawnFromSourceEvent(gameID, deckTypeBox, game.getDeck(DeckType.RESOURCE).getCards().getLast()));
+            if (!game.getDeck(DeckType.RESOURCE).getCards().isEmpty()) gh.notify(new CardDrawnFromSourceEvent(gameID, deckTypeBox, game.getDeck(DeckType.RESOURCE).getCards().getLast()));
+            else gh.notify(new CardDrawnFromSourceEvent(gameID, deckTypeBox, null));
         } else if (deckTypeBox.equals(DeckType.GOLDEN) || deckTypeBox.equals(DeckBufferType.GOLD1) || deckTypeBox.equals(DeckBufferType.GOLD2)) {
-            gh.notify(new CardDrawnFromSourceEvent(gameID, deckTypeBox, game.getDeck(DeckType.GOLDEN).getCards().getLast()));
+            if (!game.getDeck(DeckType.GOLDEN).getCards().isEmpty()) gh.notify(new CardDrawnFromSourceEvent(gameID, deckTypeBox, game.getDeck(DeckType.GOLDEN).getCards().getLast()));
+            else gh.notify(new CardDrawnFromSourceEvent(gameID, deckTypeBox, null));
         }
 
         // set the game's current action to PLAY after drawing a card
