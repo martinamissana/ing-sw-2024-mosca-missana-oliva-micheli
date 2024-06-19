@@ -45,6 +45,8 @@ public class TUI implements Runnable, ViewObserver {
     private static final String user = Color.console + "\n[-] " + Color.reset;
     private String in;
 
+    private CardSide side=CardSide.FRONT; //attribute used locally to determinate the side on which all the cards of the hand are on
+
 
     /**
      * Check if string is a numeric value
@@ -914,7 +916,7 @@ public class TUI implements Runnable, ViewObserver {
      * @param in        input inserted by the user
      */
     private void playCard(String in) {
-        CardSide side=CardSide.FRONT;
+
         switch (actionState) {
             case PLAY_SELECT_CARD -> {
                 if (in.equalsIgnoreCase("f") || in.equalsIgnoreCase("flip")) {
@@ -972,6 +974,7 @@ public class TUI implements Runnable, ViewObserver {
                     for (int i = 0; i < view.getHand().getSize(); i++) {
                         if (view.getHand().getCard(i).getSide().equals(CardSide.BACK)) view.getHand().getCard(i).flip();
                     }
+                    side=CardSide.FRONT;
 
                 } catch (IllegalActionException | NotYourTurnException | LobbyDoesNotExistsException |
                          GameDoesNotExistException ignored) {
