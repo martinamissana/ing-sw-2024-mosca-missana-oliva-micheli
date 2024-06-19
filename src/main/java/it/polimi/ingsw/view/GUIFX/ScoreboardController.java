@@ -4,7 +4,6 @@ import it.polimi.ingsw.model.game.Lobby;
 import it.polimi.ingsw.model.player.Pawn;
 import it.polimi.ingsw.model.player.Player;
 import it.polimi.ingsw.view.GUI.ViewSingleton;
-import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Button;
@@ -12,7 +11,7 @@ import javafx.scene.control.Button;
 import javafx.scene.input.MouseEvent;
 import java.util.HashMap;
 
-public class ScoreboardController {
+public class ScoreboardController{
     private final ViewSingleton viewSing = ViewSingleton.getInstance();
     private Lobby lobby;
 
@@ -89,7 +88,9 @@ public class ScoreboardController {
         score4.setVisible(false);
     }
 
-    public void setScoreboard() {
+
+    public void setScoreboard(Lobby lobby) {
+        this.lobby=lobby;
         this.title.setText("SCOREBOARD");
         setPlayersAndPawns(0, player1, pawn1);
         setPlayersAndPawns(1, player2, pawn2);

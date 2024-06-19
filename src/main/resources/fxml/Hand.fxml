@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane prefHeight="126.66" prefWidth="435.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.ingsw.view.GUIFX.HandController">
+   <children>
+      <Pane fx:id="card0" layoutX="10.0" layoutY="25.0" onMouseClicked="#playCard" prefHeight="66.66" prefWidth="100.0" />
+      <Pane fx:id="card1" layoutX="168.0" layoutY="25.0" onMouseClicked="#playCard" prefHeight="66.66" prefWidth="100.0" />
+      <Pane fx:id="card2" layoutX="325.0" layoutY="25.0" onMouseClicked="#playCard" prefHeight="66.66" prefWidth="100.0" />
+      <Button fx:id="flip1" layoutX="200.0" layoutY="96.0" mnemonicParsing="false" onMouseClicked="#flip" text="Flip" />
+      <Button fx:id="flip0" layoutX="42.0" layoutY="96.0" mnemonicParsing="false" onMouseClicked="#flip" text="Flip" />
+      <Button fx:id="flip2" layoutX="357.0" layoutY="96.0" mnemonicParsing="false" onMouseClicked="#flip" text="Flip" />
+      <Label layoutX="200.0" layoutY="5.0" text="HAND" />
+   </children>
+</AnchorPane>

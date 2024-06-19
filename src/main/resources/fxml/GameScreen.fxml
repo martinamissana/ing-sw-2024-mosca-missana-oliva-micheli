@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.ingsw.view.GUIFX.GameScreenController">
+   <children>
+      <Pane fx:id="hand" layoutX="14.0" layoutY="430.0" prefHeight="126.66" prefWidth="435.0" />
+      <Pane fx:id="goals" layoutX="455.0" layoutY="463.34" prefHeight="126.66" prefWidth="435.0" />
+      <Pane fx:id="decks" layoutX="655.0" layoutY="190.0" prefHeight="263.34" prefWidth="235.0" />
+      <Pane fx:id="scoreboard" layoutX="655.0" layoutY="10.0" prefHeight="170.0" prefWidth="235.0" />
+      <Pane fx:id="field" layoutX="10.0" layoutY="10.0" prefHeight="443.34" prefWidth="635.0" />
+      <ToggleButton layoutX="10.0" layoutY="10.0" mnemonicParsing="false" text="Chat" />
+      <Pane fx:id="chooseGoal" layoutX="655.0" layoutY="10.0" prefHeight="443.34" prefWidth="235.0" />
+   </children>
+</AnchorPane>

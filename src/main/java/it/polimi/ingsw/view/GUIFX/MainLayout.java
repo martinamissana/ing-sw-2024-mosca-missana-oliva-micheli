@@ -11,10 +11,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.scene.image.Image;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.BackgroundImage;
-import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
@@ -56,10 +53,7 @@ public class MainLayout implements ViewObserver {
             TopBarController controller = loader.getController();
             controller.setStage(stage);
             controller.setMainLayout(this);
-
-            Image bgImage = new Image(String.valueOf(getClass().getResource("/fxml/bg.png")));
-            Background background = new Background(new BackgroundImage(bgImage, null, null, null, null));
-            layout.setBackground(background);
+            layout.setStyle("-fx-background-color: #F2DEBD;");
 
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -79,8 +73,7 @@ public class MainLayout implements ViewObserver {
                 if (m.getPlayer().equals(viewSingleton.getView().getPlayer())) setScene("Open");
             }
             case GameCreatedMessage m -> {
-                layout.setBackground(null);
-                // if (m.getID().equals(viewSingleton.getView().getID())) setScene("GameScreen");
+                if(m.getID().equals(viewSingleton.getView().getID())) setScene("GameScreen");
             }
             default -> System.out.println(message.getClass());
         }

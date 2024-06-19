@@ -44,8 +44,8 @@ public class SecretGoalController {
     }
 
     public void initialize(){
-        firstGoal.getChildren().add(new GoalBuilder(first));
-        secondGoal.getChildren().add(new GoalBuilder(second));
+        firstGoal.getChildren().add(new GoalBuilder(first).getGoalImage());
+        secondGoal.getChildren().add(new GoalBuilder(second).getGoalImage());
     }
 
 }

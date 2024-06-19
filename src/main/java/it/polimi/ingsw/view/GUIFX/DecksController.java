@@ -12,7 +12,7 @@ import it.polimi.ingsw.model.exceptions.*;
 import it.polimi.ingsw.model.game.Action;
 import it.polimi.ingsw.network.netMessage.NetMessage;
 import it.polimi.ingsw.network.netMessage.s2c.CardDrawnFromSourceMessage;
-import it.polimi.ingsw.view.GUI.ViewSingleton;
+import it.polimi.ingsw.view.View;
 import it.polimi.ingsw.view.ViewObserver;
 import javafx.fxml.FXML;
 import javafx.scene.input.MouseEvent;
@@ -21,8 +21,7 @@ import javafx.scene.layout.Pane;
 import java.io.IOException;
 
 public class DecksController implements ViewObserver {
-    private final ViewSingleton viewSing = ViewSingleton.getInstance();
-
+    private View view;
     @FXML
     private Pane resDeck;
     @FXML
@@ -36,15 +35,25 @@ public class DecksController implements ViewObserver {
     @FXML
     private Pane gold2;
 
+    public void setView(View view) {
+        this.view = view;
+        view.addObserver(this);
+        setDecks();
+    }
 
-    public void initialize(){
-        viewSing.getView().addObserver(this);
-        resDeck.getChildren().add(new CardBuilder(viewSing.getView().getTopResourceCard()));
-        goldDeck.getChildren().add(new CardBuilder(viewSing.getView().getTopGoldenCard()));
-        res1.getChildren().add(new CardBuilder(viewSing.getView().getDeckBuffers().get(DeckBufferType.RES1).getCard()));
-        res2.getChildren().add(new CardBuilder(viewSing.getView().getDeckBuffers().get(DeckBufferType.RES2).getCard()));
-        gold1.getChildren().add(new CardBuilder(viewSing.getView().getDeckBuffers().get(DeckBufferType.GOLD1).getCard()));
-        gold2.getChildren().add(new CardBuilder(viewSing.getView().getDeckBuffers().get(DeckBufferType.GOLD2).getCard()));
+    public void setDecks(){
+        if(view.getTopResourceCard().getSide() == CardSide.FRONT) view.getTopResourceCard().flip();
+        resDeck.getChildren().add(new CardBuilder(view.getTopResourceCard()).getCardImage());
+        if(view.getTopGoldenCard().getSide() == CardSide.FRONT) view.getTopGoldenCard().flip();
+        goldDeck.getChildren().add(new CardBuilder(view.getTopGoldenCard()).getCardImage());
+        for (DeckBufferType d : view.getDeckBuffers().keySet())
+        {
+            if(view.getDeckBuffers().get(d).getCard().getSide() == CardSide.BACK) view.getDeckBuffers().get(d).getCard().flip();
+        }
+        res1.getChildren().add(new CardBuilder(view.getDeckBuffers().get(DeckBufferType.RES1).getCard()).getCardImage());
+        res2.getChildren().add(new CardBuilder(view.getDeckBuffers().get(DeckBufferType.RES2).getCard()).getCardImage());
+        gold1.getChildren().add(new CardBuilder(view.getDeckBuffers().get(DeckBufferType.GOLD1).getCard()).getCardImage());
+        gold2.getChildren().add(new CardBuilder(view.getDeckBuffers().get(DeckBufferType.GOLD2).getCard()).getCardImage());
     }
 
 
@@ -58,56 +67,56 @@ public class DecksController implements ViewObserver {
     private void refresh(DeckTypeBox deck) {
         switch (deck){
             case DeckType.RESOURCE -> {
-                Card topResDeck = viewSing.getView().getTopResourceCard();
+                Card topResDeck = view.getTopResourceCard();
                 if (!(topResDeck == null)) {
                     resDeck.getChildren().removeAll();
                     if (topResDeck.getSide().equals(CardSide.FRONT)) topResDeck.flip();
-                    resDeck.getChildren().add(new CardBuilder(topResDeck));
+                    resDeck.getChildren().add(new CardBuilder(topResDeck).getCardImage());
                 }
             }
             case DeckType.GOLDEN -> {
-                Card topGoldDeck = viewSing.getView().getTopGoldenCard();
+                Card topGoldDeck = view.getTopGoldenCard();
                 if (!(topGoldDeck == null)) {
                     goldDeck.getChildren().removeAll();
                     if (topGoldDeck.getSide().equals(CardSide.FRONT))
                         topGoldDeck.flip();
-                    goldDeck.getChildren().add(new CardBuilder(topGoldDeck));
+                    goldDeck.getChildren().add(new CardBuilder(topGoldDeck).getCardImage());
                 }
             }
             case DeckBufferType.RES1 -> {
-                Card deckBuffRes1 = viewSing.getView().getDeckBuffers().get(DeckBufferType.RES1).getCard();
+                Card deckBuffRes1 = view.getDeckBuffers().get(DeckBufferType.RES1).getCard();
                 if (!(deckBuffRes1 == null)) {
                     res1.getChildren().removeAll();
                     if (deckBuffRes1.getSide().equals(CardSide.BACK))
                         deckBuffRes1.flip();
-                    res1.getChildren().add(new CardBuilder(deckBuffRes1));
+                    res1.getChildren().add(new CardBuilder(deckBuffRes1).getCardImage());
                 }
             }
             case DeckBufferType.RES2 -> {
-                Card deckBuffRes2 = viewSing.getView().getDeckBuffers().get(DeckBufferType.RES2).getCard();
+                Card deckBuffRes2 = view.getDeckBuffers().get(DeckBufferType.RES2).getCard();
                 if (!(deckBuffRes2 == null)){
                     res2.getChildren().removeAll();
                     if (deckBuffRes2.getSide().equals(CardSide.BACK))
                         deckBuffRes2.flip();
-                    res2.getChildren().add(new CardBuilder(deckBuffRes2));
+                    res2.getChildren().add(new CardBuilder(deckBuffRes2).getCardImage());
                 }
             }
             case DeckBufferType.GOLD1 -> {
-                Card deckBuffGold1 = viewSing.getView().getDeckBuffers().get(DeckBufferType.GOLD1).getCard();
+                Card deckBuffGold1 = view.getDeckBuffers().get(DeckBufferType.GOLD1).getCard();
                 if (!(deckBuffGold1 == null)){
                     gold1.getChildren().removeAll();
                     if (deckBuffGold1.getSide().equals(CardSide.BACK))
                         deckBuffGold1.flip();
-                    gold1.getChildren().add(new CardBuilder(deckBuffGold1));
+                    gold1.getChildren().add(new CardBuilder(deckBuffGold1).getCardImage());
                 }
             }
             case DeckBufferType.GOLD2 -> {
-                Card deckBuffGold2 = viewSing.getView().getDeckBuffers().get(DeckBufferType.GOLD2).getCard();
+                Card deckBuffGold2 = view.getDeckBuffers().get(DeckBufferType.GOLD2).getCard();
                 if (!(deckBuffGold2 == null)){
                     gold2.getChildren().removeAll();
                     if (deckBuffGold2.getSide().equals(CardSide.BACK))
                         deckBuffGold2.flip();
-                    gold2.getChildren().add(new CardBuilder(deckBuffGold2));
+                    gold2.getChildren().add(new CardBuilder(deckBuffGold2).getCardImage());
                 }
             }
             case null, default -> {}
@@ -116,11 +125,11 @@ public class DecksController implements ViewObserver {
     }
 
     public void drawCard(MouseEvent mouseEvent) {
-        if (!viewSing.getView().isYourTurn() || !viewSing.getView().getAction().equals(Action.DRAW) || mouseEvent.getSource() == null)
+        if (!view.isYourTurn() || !view.getAction().equals(Action.DRAW) || mouseEvent.getSource() == null)
             return;
         if (mouseEvent.getSource() == resDeck) {
             try {
-                viewSing.getView().drawCard(DeckType.RESOURCE);
+                view.drawCard(DeckType.RESOURCE);
             } catch (IllegalActionException | NotYourTurnException | EmptyBufferException | GameDoesNotExistException |
                      HandIsFullException | LobbyDoesNotExistsException | EmptyDeckException ignored) {
             } catch (IOException | UnexistentUserException e) {
@@ -131,7 +140,7 @@ public class DecksController implements ViewObserver {
         }
         if (mouseEvent.getSource() == goldDeck) {
             try {
-                viewSing.getView().drawCard(DeckType.GOLDEN);
+                view.drawCard(DeckType.GOLDEN);
             } catch (IllegalActionException | NotYourTurnException | EmptyBufferException | GameDoesNotExistException |
                      HandIsFullException | LobbyDoesNotExistsException | EmptyDeckException ignored) {
             } catch (IOException | UnexistentUserException e) {
@@ -142,7 +151,7 @@ public class DecksController implements ViewObserver {
         }
         if (mouseEvent.getSource() == res1) {
             try {
-                viewSing.getView().drawCard(DeckBufferType.RES1);
+                view.drawCard(DeckBufferType.RES1);
             } catch (IllegalActionException | NotYourTurnException | EmptyBufferException | GameDoesNotExistException |
                      HandIsFullException | LobbyDoesNotExistsException | EmptyDeckException ignored) {
             } catch (IOException | UnexistentUserException e) {
@@ -153,7 +162,7 @@ public class DecksController implements ViewObserver {
         }
         if (mouseEvent.getSource() == res2) {
             try {
-                viewSing.getView().drawCard(DeckBufferType.RES2);
+                view.drawCard(DeckBufferType.RES2);
             } catch (IllegalActionException | NotYourTurnException | EmptyBufferException | GameDoesNotExistException |
                      HandIsFullException | LobbyDoesNotExistsException | EmptyDeckException ignored) {
             } catch (IOException | UnexistentUserException e) {
@@ -164,7 +173,7 @@ public class DecksController implements ViewObserver {
         }
         if (mouseEvent.getSource() == gold1) {
             try {
-                viewSing.getView().drawCard(DeckBufferType.GOLD1);
+                view.drawCard(DeckBufferType.GOLD1);
             } catch (IllegalActionException | NotYourTurnException | EmptyBufferException | GameDoesNotExistException |
                      HandIsFullException | LobbyDoesNotExistsException | EmptyDeckException ignored) {
             } catch (IOException | UnexistentUserException e) {
@@ -175,7 +184,7 @@ public class DecksController implements ViewObserver {
         }
         if (mouseEvent.getSource() == gold2) {
             try {
-                viewSing.getView().drawCard(DeckBufferType.GOLD2);
+                view.drawCard(DeckBufferType.GOLD2);
             } catch (IllegalActionException | NotYourTurnException | EmptyBufferException | GameDoesNotExistException |
                      HandIsFullException | LobbyDoesNotExistsException | EmptyDeckException ignored) {
             } catch (IOException | UnexistentUserException e) {
