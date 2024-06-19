@@ -193,8 +193,8 @@ public class TCPView extends View {
      * @throws IOException general class of exceptions produced by failed or interrupted I/O operations
      */
     @Override
-    public void playCard(int handPos, Coords coords) throws IOException {
-        PlayCardMessage m = new PlayCardMessage(super.getID(), super.getNickname(), handPos, coords, super.getHand().getCard(handPos).getSide());
+    public void playCard(int handPos, Coords coords, CardSide side) throws IOException {
+        PlayCardMessage m = new PlayCardMessage(super.getID(), super.getNickname(), handPos, coords, side);
         out.writeObject(m);
     }
 

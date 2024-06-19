@@ -213,8 +213,8 @@ public class RMIView extends View implements ClientRemoteInterface , Serializabl
      * @throws IOException general class of exceptions produced by failed or interrupted I/O operations
      */
     @Override
-    public void playCard(int handPos, Coords coords) throws IllegalActionException, NotYourTurnException, IllegalMoveException, GameDoesNotExistException, LobbyDoesNotExistsException, UnexistentUserException, IOException {
-        RMIServer.playCard(super.getID(), super.getPlayer().getNickname(), handPos, coords, super.getHand().getCard(handPos).getSide());
+    public void playCard(int handPos, Coords coords, CardSide side) throws IllegalActionException, NotYourTurnException, IllegalMoveException, GameDoesNotExistException, LobbyDoesNotExistsException, UnexistentUserException, IOException {
+        RMIServer.playCard(super.getID(), super.getPlayer().getNickname(), handPos, coords, side);
     }
 
     /**

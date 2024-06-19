@@ -914,11 +914,14 @@ public class TUI implements Runnable, ViewObserver {
      * @param in        input inserted by the user
      */
     private void playCard(String in) {
+        CardSide side=CardSide.FRONT;
         switch (actionState) {
             case PLAY_SELECT_CARD -> {
                 if (in.equalsIgnoreCase("f") || in.equalsIgnoreCase("flip")) {
                     for (int i = 0; i < view.getHand().getSize(); i++) {
                         view.getHand().getCard(i).flip();
+                        if(CardSide.FRONT.equals(side)) side=CardSide.BACK;
+                        else side=CardSide.FRONT;
                     }
                     printStatus();
                 } else {
@@ -964,7 +967,7 @@ public class TUI implements Runnable, ViewObserver {
                 try {
                     check.checkPlayCard(pos, position);
 
-                    view.playCard(pos, position);
+                    view.playCard(pos, position, side);
                     semaphore.acquire();
                     for (int i = 0; i < view.getHand().getSize(); i++) {
                         if (view.getHand().getCard(i).getSide().equals(CardSide.BACK)) view.getHand().getCard(i).flip();
