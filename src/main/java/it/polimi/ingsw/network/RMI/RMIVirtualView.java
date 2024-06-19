@@ -160,7 +160,7 @@ public class RMIVirtualView implements Observer {
             case CardPlacedOnFieldEvent e -> {
                 if(e.getID().equals(ID)) {
                     try {
-                        view.elaborate(new CardPlacedOnFieldMessage(e.getCoords(), e.getID(), e.getCard(),e.getCard().getSide(), e.getNickname()));
+                        view.elaborate(new CardPlacedOnFieldMessage(e.getCoords(), e.getID(), e.getCard(), e.getSide(), e.getNickname()));
                     } catch (FullLobbyException | NicknameAlreadyTakenException | HandIsFullException |
                              IllegalMoveException ex) {
                         throw new RuntimeException(ex);

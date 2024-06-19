@@ -386,7 +386,7 @@ public class Controller implements Serializable {
         StarterCard card = (StarterCard) player.getHand().getCard(0);
         if (!card.getSide().equals(side)) card.flip();
         player.getField().addCard(card);
-        gh.notify(new CardPlacedOnFieldEvent(new Coords(0, 0), gameID, card, nickname));
+        gh.notify(new CardPlacedOnFieldEvent(new Coords(0, 0), gameID, card,side,nickname));
         player.getHand().removeCard(card);
         gh.notify(new CardRemovedFromHandEvent(player, card));
 
@@ -542,7 +542,7 @@ public class Controller implements Serializable {
 
         gh.notify(new ScoreIncrementedEvent(gameID, player, points));
         gh.notify(new CardRemovedFromHandEvent(player, card));
-        gh.notify(new CardPlacedOnFieldEvent(coords, gameID, card, nickname));
+        gh.notify(new CardPlacedOnFieldEvent(coords, gameID, card, side,nickname));
 
         // set the game's current action to DRAW after playing a card
         // only if it's not the last round (because if it is,
