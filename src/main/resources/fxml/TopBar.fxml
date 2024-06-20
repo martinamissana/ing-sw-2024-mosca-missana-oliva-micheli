@@ -5,7 +5,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<AnchorPane minHeight="35.0" minWidth="900.0" onMouseDragged="#move" onMousePressed="#setPosition" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.ingsw.view.GUIFX.TopBarController">
+<AnchorPane minHeight="35.0" minWidth="900.0" onMouseDragged="#move" onMousePressed="#setPosition" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.ingsw.view.GUI.TopBarController">
        <children>
            <TextField accessibleRole="TEXT" alignment="CENTER" editable="false" focusTraversable="false" layoutX="5.0" layoutY="5.0" mouseTransparent="true" prefHeight="25.0" prefWidth="125.0" style="-fx-background-color: #FFFFFFBF; -fx-background-radius: 100px; -fx-min-height: 25px; -fx-max-height: 25px;" text="Codex Naturalis" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="5.0" AnchorPane.topAnchor="5.0">
                <font>

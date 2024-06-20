@@ -1,9 +1,7 @@
-package it.polimi.ingsw.view.GUIFX;
+package it.polimi.ingsw.view.GUI;
 
 import it.polimi.ingsw.network.netMessage.NetMessage;
 import it.polimi.ingsw.network.netMessage.s2c.SecretGoalAssignedMessage;
-import it.polimi.ingsw.network.netMessage.s2c.SecretGoalsListAssignedMessage;
-import it.polimi.ingsw.view.GUI.ViewSingleton;
 import it.polimi.ingsw.view.View;
 import it.polimi.ingsw.view.ViewObserver;
 import javafx.fxml.FXML;

@@ -1,4 +1,4 @@
-package it.polimi.ingsw.view.GUIFX;
+package it.polimi.ingsw.view.GUI;
 
 import it.polimi.ingsw.network.netMessage.NetMessage;
 import it.polimi.ingsw.network.netMessage.s2c.CardAddedToHandMessage;

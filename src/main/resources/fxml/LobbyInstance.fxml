@@ -3,7 +3,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane prefHeight="100.0" prefWidth="380.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.ingsw.view.GUIFX.LobbyInstanceController">
+<AnchorPane prefHeight="100.0" prefWidth="380.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.ingsw.view.GUI.LobbyInstanceController">
    <children>
       <Button fx:id="joinButton" layoutX="325.0" layoutY="65.0" mnemonicParsing="false" onMouseClicked="#joinLobby" text="JOIN" />
       <TextField fx:id="idLobby" editable="false" layoutX="10.0" layoutY="10.0" prefHeight="25.0" prefWidth="360.0" />

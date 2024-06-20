@@ -3,7 +3,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.ingsw.view.GUIFX.GameScreenController">
+<AnchorPane prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.ingsw.view.GUI.GameScreenController">
    <children>
       <Pane fx:id="hand" layoutX="14.0" layoutY="430.0" prefHeight="126.66" prefWidth="435.0" />
       <Pane fx:id="goals" layoutX="455.0" layoutY="463.34" prefHeight="126.66" prefWidth="435.0" />

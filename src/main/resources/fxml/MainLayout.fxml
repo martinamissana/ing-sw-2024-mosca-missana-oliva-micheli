@@ -6,4 +6,4 @@
 <BorderPane fx:id="layout" prefHeight="600.0" prefWidth="900.0"
             xmlns="http://javafx.com/javafx/17.0.2-ea"
             xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="it.polimi.ingsw.view.GUIFX.MainLayout"/>
+            fx:controller="it.polimi.ingsw.view.GUI.MainLayout"/>

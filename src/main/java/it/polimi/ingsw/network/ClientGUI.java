@@ -1,6 +1,6 @@
 package it.polimi.ingsw.network;
 
-import it.polimi.ingsw.view.GUIFX.GUI;
+import it.polimi.ingsw.view.GUI.GUI;
 
 import javafx.application.Application;
 

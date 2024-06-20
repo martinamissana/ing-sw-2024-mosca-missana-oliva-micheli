@@ -1,4 +1,4 @@
-package it.polimi.ingsw.view.GUIFX;
+package it.polimi.ingsw.view.GUI;
 
 import it.polimi.ingsw.model.exceptions.FullLobbyException;
 import it.polimi.ingsw.model.exceptions.NicknameAlreadyTakenException;
@@ -10,21 +10,15 @@ import it.polimi.ingsw.network.netMessage.s2c.LoginMessage;
 import it.polimi.ingsw.view.ViewObserver;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
-import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.util.concurrent.Semaphore;
 
 import static java.lang.System.exit;
-import static java.lang.System.load;
 
 public class LoginController implements ViewObserver {
     @FXML

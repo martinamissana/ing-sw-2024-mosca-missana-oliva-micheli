@@ -1,4 +1,4 @@
-package it.polimi.ingsw.view.GUIFX;
+package it.polimi.ingsw.view.GUI;
 
 import it.polimi.ingsw.controller.exceptions.IllegalActionException;
 import it.polimi.ingsw.controller.exceptions.NotYourTurnException;

@@ -1,11 +1,10 @@
-package it.polimi.ingsw.view.GUIFX;
+package it.polimi.ingsw.view.GUI;
 
 import it.polimi.ingsw.controller.exceptions.IllegalGoalChosenException;
 import it.polimi.ingsw.controller.exceptions.UnexistentUserException;
 import it.polimi.ingsw.controller.exceptions.WrongGamePhaseException;
 import it.polimi.ingsw.model.exceptions.GameDoesNotExistException;
 import it.polimi.ingsw.model.goal.Goal;
-import it.polimi.ingsw.view.GUI.ViewSingleton;
 import javafx.fxml.FXML;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;

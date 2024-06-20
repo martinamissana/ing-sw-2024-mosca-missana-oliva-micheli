@@ -1,15 +1,9 @@
-package it.polimi.ingsw.view.GUIFX;
+package it.polimi.ingsw.view.GUI;
 
 import it.polimi.ingsw.model.goal.Goal;
-import it.polimi.ingsw.view.RMIView;
 import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
-import javafx.scene.Node;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-
-import java.net.URL;
-import java.util.ResourceBundle;
 
 public class GoalBuilder {
     @FXML
