@@ -82,21 +82,21 @@ public class HandController implements ViewObserver {
 
     public void flip(MouseEvent mouseEvent) {
         if(mouseEvent.getSource().equals(flip0)){
-            if(view.getHand().getCard(0) == null) return;
+            if(view.getHand().getSize() == 0) return;
             view.getHand().getCard(0).flip();
             card0.getChildren().removeAll();
             card0.getChildren().add(new CardBuilder( view.getHand().getCard(0)).getCardImage());
             return;
         }
         if(mouseEvent.getSource().equals(flip1)){
-            if(view.getHand().getCard(1) == null) return;
+            if(view.getHand().getSize() < 2) return;
             view.getHand().getCard(1).flip();
             card1.getChildren().removeAll();
             card1.getChildren().add(new CardBuilder( view.getHand().getCard(1)).getCardImage());
             return;
         }
         if(mouseEvent.getSource().equals(flip2)){
-            if(view.getHand().getCard(2) == null) return;
+            if(view.getHand().getSize() < 3) return;
             view.getHand().getCard(2).flip();
             card2.getChildren().removeAll();
             card2.getChildren().add(new CardBuilder( view.getHand().getCard(2)).getCardImage());

@@ -42,6 +42,7 @@ public class GameScreenController implements ViewObserver {
             }
             scoreboard.getChildren().add(center);
             ScoreboardController controller = loader.getController();
+            controller.setView(viewSingleton.getView());
             controller.setScoreboard(viewSingleton.getView().getLobbies().get(viewSingleton.getView().getID()));
 
 
