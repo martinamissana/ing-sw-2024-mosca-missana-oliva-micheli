@@ -17,6 +17,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 
@@ -27,17 +28,22 @@ import java.util.concurrent.Semaphore;
 
 public class InLobbyController implements ViewObserver, Initializable {
     @FXML
-    Button quitButton;
+    private Label pawnsLabel;
     @FXML
-    Pane players;
+    private Pane pawnContainer;
     @FXML
-    Button redPawn;
+    private Pane chats;
     @FXML
-    Button yellowPawn;
+    private Pane players;
     @FXML
-    Button greenPawn;
+    private Button redPawn;
     @FXML
-    Button bluePawn;
+    private Button yellowPawn;
+    @FXML
+    private Button greenPawn;
+    @FXML
+    private Button bluePawn;
+
 
     private final ViewSingleton viewSingleton = ViewSingleton.getInstance();
     private Lobby lobby;
@@ -58,9 +64,18 @@ public class InLobbyController implements ViewObserver, Initializable {
                 case null -> {}
             }
         }
+
+        Platform.runLater(() -> {
+            try {
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/Chat.fxml"));
+                chats.getChildren().add(loader.load());
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        });
     }
 
-    public void leaveLobby(MouseEvent mouseEvent) {
+    public void leaveLobby() {
         try {
             viewSingleton.getViewController().checkLeaveLobby();
             viewSingleton.getView().leaveLobby();
@@ -95,38 +110,12 @@ public class InLobbyController implements ViewObserver, Initializable {
 
     public void setPawn(MouseEvent mouseEvent) {
         try {
-            if (mouseEvent.getSource().equals(redPawn)) {
-                viewSingleton.getView().choosePawn(Pawn.RED);
-                redPawn.setVisible(false);
-
-                yellowPawn.setOnMouseClicked(event -> {});
-                greenPawn.setOnMouseClicked(event -> {});
-                bluePawn.setOnMouseClicked(event -> {});
-            }
-            else if (mouseEvent.getSource().equals(yellowPawn)) {
-                viewSingleton.getView().choosePawn(Pawn.YELLOW);
-                yellowPawn.setVisible(false);
-
-                redPawn.setOnMouseClicked(event -> {});
-                greenPawn.setOnMouseClicked(event -> {});
-                bluePawn.setOnMouseClicked(event -> {});
-            }
-            else if (mouseEvent.getSource().equals(greenPawn)) {
-                viewSingleton.getView().choosePawn(Pawn.GREEN);
-                greenPawn.setVisible(false);
-
-                redPawn.setOnMouseClicked(event -> {});
-                yellowPawn.setOnMouseClicked(event -> {});
-                bluePawn.setOnMouseClicked(event -> {});
-            }
-            else if (mouseEvent.getSource().equals(bluePawn)) {
-                viewSingleton.getView().choosePawn(Pawn.BLUE);
-                bluePawn.setVisible(false);
-
-                redPawn.setOnMouseClicked(event -> {});
-                yellowPawn.setOnMouseClicked(event -> {});
-                greenPawn.setOnMouseClicked(event -> {});
-            }
+            if (mouseEvent.getSource().equals(redPawn)) viewSingleton.getView().choosePawn(Pawn.RED);
+            else if (mouseEvent.getSource().equals(yellowPawn)) viewSingleton.getView().choosePawn(Pawn.YELLOW);
+            else if (mouseEvent.getSource().equals(greenPawn)) viewSingleton.getView().choosePawn(Pawn.GREEN);
+            else if (mouseEvent.getSource().equals(bluePawn)) viewSingleton.getView().choosePawn(Pawn.BLUE);
+            pawnContainer.setVisible(false);
+            pawnsLabel.setVisible(false);
 
         } catch (PawnAlreadyTakenException e) {
             System.out.println("Pawn taken");
@@ -151,7 +140,7 @@ public class InLobbyController implements ViewObserver, Initializable {
                     case YELLOW -> yellowPawn.setVisible(false);
                     case BLUE -> bluePawn.setVisible(false);
                 }
-                // checkStartGame();        // GameScreen not yet implemented
+                checkStartGame();
             }
             default -> {}
         }

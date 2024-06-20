@@ -22,28 +22,26 @@ import static java.lang.System.exit;
 
 public class LoginController implements ViewObserver {
     @FXML
-    TextField nicknameField;
+    private TextField nicknameField;
     @FXML
-    MenuButton connectionMenu;
+    private MenuButton connectionMenu;
     @FXML
-    Button loginButton;
+    private MenuItem TCP;
     @FXML
-    MenuItem TCP;
+    private MenuItem RMI;
     @FXML
-    MenuItem RMI;
-    @FXML
-    Label statusMessage;
+    private Label statusMessage;
 
-    ViewSingleton viewSing = ViewSingleton.getInstance();
-    Semaphore sem = new Semaphore(0);
-    MainLayout mainLayout;
+    private final ViewSingleton viewSing = ViewSingleton.getInstance();
+    private final Semaphore sem = new Semaphore(0);
+    private MainLayout mainLayout;
 
     public void setMainLayout(MainLayout mainLayout) {
         this.mainLayout = mainLayout;
     }
 
     @FXML
-    public void menuOptions(MouseEvent mouseEvent) {
+    public void menuOptions() {
         connectionMenu.fire();
     }
 
@@ -57,11 +55,11 @@ public class LoginController implements ViewObserver {
             statusMessage.setText("character limit reached");
         } else statusMessage.setText("");
 
-        if (keyEvent.getCode() == KeyCode.ENTER) loginButton.fire();
+        if (keyEvent.getCode() == KeyCode.ENTER) login();
     }
 
     @FXML
-    public void login(MouseEvent mouseEvent) {
+    public void login() {
         statusMessage.setText("");
         nicknameField.setText(nicknameField.getText().strip());
 

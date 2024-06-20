@@ -9,7 +9,8 @@ import it.polimi.ingsw.view.ViewObserver;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.layout.*;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
@@ -17,9 +18,9 @@ import java.io.IOException;
 
 public class MainLayout implements ViewObserver {
     @FXML
-    BorderPane layout;
-    Stage stage;
-    ViewSingleton viewSingleton;
+    private BorderPane layout;
+    private Stage stage;
+    protected ViewSingleton viewSingleton;      // protected because it's set after login (by LoginController)
 
     public void setStage(Stage stage) {
         this.stage = stage;

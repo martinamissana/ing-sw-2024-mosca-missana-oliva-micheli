@@ -23,15 +23,20 @@ import java.util.concurrent.Semaphore;
 
 public class LobbyInstanceController implements ViewObserver, Initializable {
     @FXML
-    Label players;
+    private Label players;
     @FXML
-    TextField idLobby;
+    private TextField idLobby;
     @FXML
-    Button joinButton;
+    private Button joinButton;
 
     private Lobby lobby;
     private final ViewSingleton viewSingleton = ViewSingleton.getInstance();
     private final Semaphore sem = new Semaphore(0);
+
+    @Override
+    public void initialize(URL url, ResourceBundle resourceBundle) {
+        viewSingleton.getView().addObserver(this);
+    }
 
     public void setLobby(Lobby lobby) {
         this.lobby = lobby;
@@ -40,7 +45,8 @@ public class LobbyInstanceController implements ViewObserver, Initializable {
         players.setText(lobby.getPlayers().size() + " / " + lobby.getNumOfPlayers());
     }
 
-    public void joinLobby(MouseEvent mouseEvent) {
+    @FXML
+    public void joinLobby() {
         joinButton.fire();
         try {
             viewSingleton.getViewController().checkJoinLobby(lobby.getID());
@@ -62,10 +68,5 @@ public class LobbyInstanceController implements ViewObserver, Initializable {
     @Override
     public void update(NetMessage message) throws IOException {
         if (message instanceof LobbyJoinedMessage) sem.release();
-    }
-
-    @Override
-    public void initialize(URL url, ResourceBundle resourceBundle) {
-        viewSingleton.getView().addObserver(this);
     }
 }

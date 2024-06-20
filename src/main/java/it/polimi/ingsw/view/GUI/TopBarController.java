@@ -2,21 +2,12 @@ package it.polimi.ingsw.view.GUI;
 
 import javafx.application.Platform;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.ToggleButton;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 
 import static java.lang.System.exit;
 
 public class TopBarController {
-    @FXML
-    ToggleButton fullscreenButton;
-    @FXML
-    Button minimizeButton;
-    @FXML
-    Button quitButton;
-
     private double xPos;
     private double yPos;
     private Stage stage;

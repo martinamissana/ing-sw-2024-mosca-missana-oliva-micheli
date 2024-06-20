@@ -29,23 +29,21 @@ import java.util.concurrent.Semaphore;
 
 public class OpenController implements ViewObserver, Initializable {
     @FXML
-    MenuButton playersNumber;
+    private MenuButton playersNumber;
     @FXML
-    MenuItem two;
+    private MenuItem two;
     @FXML
-    MenuItem three;
+    private MenuItem three;
     @FXML
-    MenuItem four;
+    private MenuItem four;
 
     @FXML
-    ListView<Pane> lobbies;
+    private ListView<Pane> lobbies;
     @FXML
-    Button lobbyCreation;
-    @FXML
-    Label helloLabel;
+    private Label helloLabel;
 
     private final ViewSingleton viewSingleton = ViewSingleton.getInstance();
-    Semaphore sem = new Semaphore(0);
+    private final Semaphore sem = new Semaphore(0);
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -67,7 +65,7 @@ public class OpenController implements ViewObserver, Initializable {
 
                 lobbies.getItems().add(lobbyPane);
             } catch (IOException e) {
-                e.printStackTrace();
+                throw new RuntimeException(e);
             }
         }
     }
@@ -78,7 +76,7 @@ public class OpenController implements ViewObserver, Initializable {
         else playersNumber.setText(four.getText());
     }
 
-    public void createLobby(MouseEvent mouseEvent) {
+    public void createLobby() {
         try {
             viewSingleton.getViewController().checkCreateLobby(Integer.parseInt(playersNumber.getText()));
             viewSingleton.getView().createLobby(Integer.parseInt(playersNumber.getText()));
