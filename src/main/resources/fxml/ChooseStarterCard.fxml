@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+
+<AnchorPane prefHeight="400.0" prefWidth="635.0" style="-fx-background-color: #935F2F;" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.ingsw.view.GUI.ChooseStarterCardController">
+   <children>
+      <Button fx:id="front" layoutX="240.0" layoutY="200.0" mnemonicParsing="false" onMouseClicked="#playStarterCard" text="Front" />
+      <Button fx:id="back" layoutX="351.0" layoutY="200.0" mnemonicParsing="false" onMouseClicked="#playStarterCard" prefWidth="44.0" text="Back" />
+      <Label layoutX="224.0" layoutY="163.0" text="Choose the side of the Starter Card" textFill="WHITE" />
+   </children>
+</AnchorPane>

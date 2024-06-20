@@ -1,9 +1,15 @@
 package it.polimi.ingsw.view.GUI;
 
+import it.polimi.ingsw.model.card.CardSide;
+import it.polimi.ingsw.model.card.StarterCard;
+import it.polimi.ingsw.model.game.GamePhase;
 import it.polimi.ingsw.network.netMessage.NetMessage;
 import it.polimi.ingsw.network.netMessage.s2c.CardAddedToHandMessage;
+import it.polimi.ingsw.network.netMessage.s2c.CardPlacedOnFieldMessage;
+import it.polimi.ingsw.network.netMessage.s2c.GamePhaseChangedMessage;
 import it.polimi.ingsw.view.View;
 import it.polimi.ingsw.view.ViewObserver;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.input.MouseEvent;
@@ -37,11 +43,26 @@ public class HandController implements ViewObserver {
 
     @Override
     public void update(NetMessage message) throws IOException {
+        System.out.println(message.getClass());
         switch (message){
-            case CardAddedToHandMessage ignored -> {
-                card0.getChildren().add(new CardBuilder(view.getHand().getCard(0)).getCardImage());
-                card1.getChildren().add(new CardBuilder(view.getHand().getCard(1)).getCardImage());
-                card2.getChildren().add(new CardBuilder(view.getHand().getCard(2)).getCardImage());
+            case CardPlacedOnFieldMessage m -> {
+                if(m.getCard() instanceof StarterCard) {
+                    card0.getChildren().removeAll();
+                }
+            }
+            case GamePhaseChangedMessage m -> {
+                if(m.getGamePhase().equals(GamePhase.CHOOSING_SECRET_GOAL)){
+                    Platform.runLater(() -> {
+                        for(int i=0; i<3; i++){
+                            if(view.getHand().getCard(i).getSide() == CardSide.BACK){
+                                view.getHand().getCard(i).flip();
+                            }
+                        }
+                        card0.getChildren().add(new CardBuilder(view.getHand().getCard(0)).getCardImage());
+                        card1.getChildren().add(new CardBuilder(view.getHand().getCard(1)).getCardImage());
+                        card2.getChildren().add(new CardBuilder(view.getHand().getCard(2)).getCardImage());
+                    });
+                }
             }
             default -> {}
         }

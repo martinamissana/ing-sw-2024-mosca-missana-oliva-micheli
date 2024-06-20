@@ -1,6 +1,11 @@
 package it.polimi.ingsw.view.GUI;
 
+import it.polimi.ingsw.model.card.StarterCard;
+import it.polimi.ingsw.model.game.GamePhase;
 import it.polimi.ingsw.network.netMessage.NetMessage;
+import it.polimi.ingsw.network.netMessage.s2c.CardPlacedOnFieldMessage;
+import it.polimi.ingsw.network.netMessage.s2c.GamePhaseChangedMessage;
+import it.polimi.ingsw.network.netMessage.s2c.SecretGoalAssignedMessage;
 import it.polimi.ingsw.view.ViewObserver;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -13,6 +18,7 @@ import java.io.IOException;
 public class GameScreenController implements ViewObserver {
 
     private final ViewSingleton viewSingleton = ViewSingleton.getInstance();
+    private HandController handController;
 
     @FXML
     private Pane scoreboard;
@@ -26,6 +32,8 @@ public class GameScreenController implements ViewObserver {
     private Button chat;
     @FXML
     private Pane hand;
+    @FXML
+    private Pane chooseGoal;
 
     public void initialize() {
         viewSingleton.getView().addObserver(this);
@@ -77,22 +85,63 @@ public class GameScreenController implements ViewObserver {
             HandController handController = handLoader.getController();
             handController.setView(viewSingleton.getView());
 
-
-            FXMLLoader fieldLoader = new FXMLLoader(getClass().getResource("/fxml/Field.fxml"));
-            Pane fieldCenter = null;
+            FXMLLoader chooseStarterLoader = new FXMLLoader(getClass().getResource("/fxml/ChooseStarterCard.fxml"));
+            Pane chooseStarterCenter = null;
             try {
-                fieldCenter = fieldLoader.load();
+                chooseStarterCenter = chooseStarterLoader.load();
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
-            field.getChildren().add(fieldCenter);
-            FieldController fieldController = fieldLoader.getController();
-            fieldController.setView(viewSingleton.getView());
+            field.getChildren().add(chooseStarterCenter);
+            ChooseStarterCardController chooseStarterController = chooseStarterLoader.getController();
+            chooseStarterController.setView(viewSingleton.getView());
+
         });
     }
 
     @Override
-    public void update(NetMessage m) throws IOException {
+    public void update(NetMessage message) throws IOException {
+        switch (message){
+            case CardPlacedOnFieldMessage m-> {
+                if(m.getCard() instanceof StarterCard) {
+                    if (m.getNickname().equals(viewSingleton.getView().getNickname())) {
+                        Platform.runLater(() -> {
+                            FXMLLoader fieldLoader = new FXMLLoader(getClass().getResource("/fxml/Field.fxml"));
+                            Pane fieldCenter = null;
+                            try {
+                                fieldCenter = fieldLoader.load();
+                            } catch (IOException e) {
+                                throw new RuntimeException(e);
+                            }
+                            field.getChildren().removeAll();
+                            field.getChildren().add(fieldCenter);
+                            FieldController fieldController = fieldLoader.getController();
+                            fieldController.setView(viewSingleton.getView());
+                        });
+                    }
 
+                }
+            }
+            case GamePhaseChangedMessage m ->{
+                if(m.getGamePhase().equals(GamePhase.CHOOSING_SECRET_GOAL)){
+                    Platform.runLater(() -> {
+                        FXMLLoader secretGoalLoader = new FXMLLoader(getClass().getResource("/fxml/ChooseSecretGoal.fxml"));
+                        Pane secretGoalCenter = null;
+                        try {
+                            secretGoalCenter = secretGoalLoader.load();
+                        } catch (IOException e) {
+                            throw new RuntimeException(e);
+                        }
+                        chooseGoal.getChildren().add(secretGoalCenter);
+                        SecretGoalController secretGoalController = secretGoalLoader.getController();
+                        secretGoalController.setView(viewSingleton.getView());
+                    });
+                }
+            }
+            case SecretGoalAssignedMessage m ->{
+                Platform.runLater(()->{ chooseGoal.getChildren().clear();});
+            }
+            default -> {}
+        }
     }
 }

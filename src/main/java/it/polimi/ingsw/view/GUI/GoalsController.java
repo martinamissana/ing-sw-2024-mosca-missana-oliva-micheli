@@ -4,6 +4,7 @@ import it.polimi.ingsw.network.netMessage.NetMessage;
 import it.polimi.ingsw.network.netMessage.s2c.SecretGoalAssignedMessage;
 import it.polimi.ingsw.view.View;
 import it.polimi.ingsw.view.ViewObserver;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.layout.Pane;
 
@@ -36,7 +37,9 @@ public class GoalsController implements ViewObserver {
     public void update(NetMessage message) throws IOException {
         switch (message) {
             case SecretGoalAssignedMessage m -> {
-                secretGoal.getChildren().add(new GoalBuilder(m.getGoal()).getGoalImage());
+                Platform.runLater(() -> {
+                    secretGoal.getChildren().add(new GoalBuilder(m.getGoal()).getGoalImage());
+                });
             }
             default -> {
             }
