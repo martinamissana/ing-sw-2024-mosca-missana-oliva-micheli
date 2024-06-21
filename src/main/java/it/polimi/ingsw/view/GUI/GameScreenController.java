@@ -10,7 +10,6 @@ import it.polimi.ingsw.view.ViewObserver;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.control.Button;
 import javafx.scene.layout.Pane;
 
 import java.io.IOException;
@@ -21,6 +20,8 @@ public class GameScreenController implements ViewObserver {
     private HandController handController;
 
     @FXML
+    private Pane chats;
+    @FXML
     private Pane scoreboard;
     @FXML
     private Pane goals;
@@ -28,8 +29,6 @@ public class GameScreenController implements ViewObserver {
     private Pane decks;
     @FXML
     private Pane field;
-    @FXML
-    private Button chat;
     @FXML
     private Pane hand;
     @FXML
@@ -39,7 +38,7 @@ public class GameScreenController implements ViewObserver {
         viewSingleton.getView().addObserver(this);
         Platform.runLater(() -> {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/Scoreboard.fxml"));
-            Pane center = null;
+            Pane center;
             try {
                 center = loader.load();
             } catch (IOException e) {
@@ -52,7 +51,7 @@ public class GameScreenController implements ViewObserver {
 
 
             FXMLLoader decksLoader = new FXMLLoader(getClass().getResource("/fxml/Decks.fxml"));
-            Pane decksCenter = null;
+            Pane decksCenter;
             try {
                 decksCenter = decksLoader.load();
             } catch (IOException e) {
@@ -64,7 +63,7 @@ public class GameScreenController implements ViewObserver {
 
 
             FXMLLoader goalsLoader = new FXMLLoader(getClass().getResource("/fxml/Goals.fxml"));
-            Pane goalsCenter = null;
+            Pane goalsCenter;
             try {
                 goalsCenter = goalsLoader.load();
             } catch (IOException e) {
@@ -75,7 +74,7 @@ public class GameScreenController implements ViewObserver {
             goalsController.setView(viewSingleton.getView());
 
             FXMLLoader handLoader = new FXMLLoader(getClass().getResource("/fxml/Hand.fxml"));
-            Pane handCenter = null;
+            Pane handCenter;
             try {
                 handCenter = handLoader.load();
             } catch (IOException e) {
@@ -86,7 +85,7 @@ public class GameScreenController implements ViewObserver {
             handController.setView(viewSingleton.getView());
 
             FXMLLoader chooseStarterLoader = new FXMLLoader(getClass().getResource("/fxml/ChooseStarterCard.fxml"));
-            Pane chooseStarterCenter = null;
+            Pane chooseStarterCenter;
             try {
                 chooseStarterCenter = chooseStarterLoader.load();
             } catch (IOException e) {
@@ -96,6 +95,17 @@ public class GameScreenController implements ViewObserver {
             ChooseStarterCardController chooseStarterController = chooseStarterLoader.getController();
             chooseStarterController.setView(viewSingleton.getView());
 
+            FXMLLoader chatLoader = new FXMLLoader(getClass().getResource("/fxml/Chat.fxml"));
+            Pane chatCenter;
+            try {
+                chatCenter = chatLoader.load();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+            chats.getChildren().add(chatCenter);
+            ChatController chatController = chatLoader.getController();
+            chatController.setChats();
+            chats.setVisible(false);
         });
     }
 
@@ -107,7 +117,7 @@ public class GameScreenController implements ViewObserver {
                     if (m.getNickname().equals(viewSingleton.getView().getNickname())) {
                         Platform.runLater(() -> {
                             FXMLLoader fieldLoader = new FXMLLoader(getClass().getResource("/fxml/Field.fxml"));
-                            Pane fieldCenter = null;
+                            Pane fieldCenter;
                             try {
                                 fieldCenter = fieldLoader.load();
                             } catch (IOException e) {
@@ -122,11 +132,11 @@ public class GameScreenController implements ViewObserver {
 
                 }
             }
-            case GamePhaseChangedMessage m ->{
-                if(m.getGamePhase().equals(GamePhase.CHOOSING_SECRET_GOAL)){
+            case GamePhaseChangedMessage m -> {
+                if(m.getGamePhase().equals(GamePhase.CHOOSING_SECRET_GOAL)) {
                     Platform.runLater(() -> {
                         FXMLLoader secretGoalLoader = new FXMLLoader(getClass().getResource("/fxml/ChooseSecretGoal.fxml"));
-                        Pane secretGoalCenter = null;
+                        Pane secretGoalCenter;
                         try {
                             secretGoalCenter = secretGoalLoader.load();
                         } catch (IOException e) {
@@ -138,10 +148,13 @@ public class GameScreenController implements ViewObserver {
                     });
                 }
             }
-            case SecretGoalAssignedMessage m ->{
-                Platform.runLater(()->{ chooseGoal.getChildren().clear();});
-            }
+            case SecretGoalAssignedMessage ignored -> Platform.runLater(()-> chooseGoal.getChildren().clear());
             default -> {}
         }
+    }
+
+    public void toggleChats() {
+        chats.setVisible(!chats.isVisible());
+
     }
 }

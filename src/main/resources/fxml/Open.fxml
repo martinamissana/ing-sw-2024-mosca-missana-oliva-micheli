@@ -8,7 +8,7 @@
    <children>
       <Label layoutX="40.0" layoutY="80.0" text="Open lobbies" />
       <ListView fx:id="lobbies" layoutX="40.0" layoutY="100.0" prefHeight="450.0" prefWidth="400.0" />
-      <Label fx:id="helloLabel" alignment="CENTER" contentDisplay="CENTER" layoutX="435.0" layoutY="14.0" textAlignment="CENTER">
+      <Label fx:id="helloLabel" alignment="CENTER" contentDisplay="CENTER" layoutX="435.0" layoutY="14.0" textAlignment="CENTER" AnchorPane.leftAnchor="50.0" AnchorPane.rightAnchor="50.0">
          <font>
             <Font size="30.0" />
          </font>
@@ -16,7 +16,7 @@
       <Pane layoutX="500.0" layoutY="100.0" prefHeight="300.0" prefWidth="300.0">
          <children>
             <Label layoutX="67.5" layoutY="100.0" prefHeight="15.0" prefWidth="165.0" text="Insert number of players" />
-            <Button fx:id="lobbyCreation" layoutX="140.0" layoutY="125.0" mnemonicParsing="false" onMouseClicked="#createLobby" prefHeight="25.0" prefWidth="70.0" text="Create" />
+            <Button layoutX="140.0" layoutY="125.0" mnemonicParsing="false" onMouseClicked="#createLobby" prefHeight="25.0" prefWidth="70.0" text="Create" />
             <MenuButton fx:id="playersNumber" layoutX="85.0" layoutY="125.0" mnemonicParsing="false" onMouseClicked="#menuOptions" prefHeight="25.0" prefWidth="45.0" text="2">
               <items>
                 <MenuItem fx:id="two" mnemonicParsing="false" onAction="#choosePlayers" text="2" />

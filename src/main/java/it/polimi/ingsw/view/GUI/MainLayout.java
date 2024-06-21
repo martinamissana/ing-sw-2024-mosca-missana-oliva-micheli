@@ -3,6 +3,7 @@ package it.polimi.ingsw.view.GUI;
 import it.polimi.ingsw.network.netMessage.NetMessage;
 import it.polimi.ingsw.network.netMessage.c2s.LobbyJoinedMessage;
 import it.polimi.ingsw.network.netMessage.s2c.GameCreatedMessage;
+import it.polimi.ingsw.network.netMessage.s2c.GameTerminatedMessage;
 import it.polimi.ingsw.network.netMessage.s2c.LobbyCreatedMessage;
 import it.polimi.ingsw.network.netMessage.s2c.LobbyLeftMessage;
 import it.polimi.ingsw.view.ViewObserver;
@@ -71,8 +72,9 @@ public class MainLayout implements ViewObserver {
                 if (m.getPlayer().equals(viewSingleton.getView().getPlayer())) setScene("Open");
             }
             case GameCreatedMessage m -> {
-                if(m.getID().equals(viewSingleton.getView().getID())) setScene("GameScreen");
+                if (m.getID().equals(viewSingleton.getView().getID())) setScene("GameScreen");
             }
+            case GameTerminatedMessage ignored -> setScene("Open");
             default -> System.out.println(message.getClass());
         }
     }

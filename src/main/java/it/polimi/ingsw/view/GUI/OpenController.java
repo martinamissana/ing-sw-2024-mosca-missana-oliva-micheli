@@ -12,6 +12,7 @@ import it.polimi.ingsw.network.netMessage.s2c.LobbyCreatedMessage;
 import it.polimi.ingsw.network.netMessage.s2c.LobbyDeletedMessage;
 import it.polimi.ingsw.network.netMessage.s2c.LobbyLeftMessage;
 import it.polimi.ingsw.view.ViewObserver;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -53,21 +54,23 @@ public class OpenController implements ViewObserver, Initializable {
     }
 
     public void updateLobbies() {       // TODO: Fix bug
-        lobbies.getItems().removeAll();
-        HashMap<Integer, Lobby> lobbiesMap = viewSingleton.getView().getLobbies();
+        Platform.runLater(() -> {
+            lobbies.getItems().clear();
+            HashMap<Integer, Lobby> lobbiesMap = viewSingleton.getView().getLobbies();
 
-        for (Integer i : lobbiesMap.keySet()) {
-            try {
-                FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/LobbyInstance.fxml"));
-                AnchorPane lobbyPane = loader.load();
-                LobbyInstanceController controller = loader.getController();
-                controller.setLobby(lobbiesMap.get(i));
+            for (Integer i : lobbiesMap.keySet()) {
+                try {
+                    FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/LobbyInstance.fxml"));
+                    AnchorPane lobbyPane = loader.load();
+                    LobbyInstanceController controller = loader.getController();
+                    controller.setLobby(lobbiesMap.get(i));
 
-                lobbies.getItems().add(lobbyPane);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
+                    lobbies.getItems().add(lobbyPane);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
             }
-        }
+        });
     }
 
     public void choosePlayers(ActionEvent actionEvent) {
