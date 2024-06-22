@@ -23,7 +23,7 @@ public class Client {
                     TUI tui = new TUI();
                     tui.run();
                 } catch (NullPointerException e) {
-                    System.out.println("connection lost with server");
+                    System.out.println("Connection lost with server.");
                     Thread.currentThread().interrupt();
                 }
 

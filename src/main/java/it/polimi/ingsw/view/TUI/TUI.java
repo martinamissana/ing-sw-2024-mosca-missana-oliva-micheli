@@ -142,7 +142,7 @@ public class TUI implements Runnable, ViewObserver {
             }
 
             case DisconnectMessage ignored -> {
-                System.out.print(cli + "The server crashed. Exiting game");
+                System.out.print(cli + "Connection lost with the server. Exiting game");
                 view.removeObserver(this);
                 exit(0);
             }
@@ -168,11 +168,12 @@ public class TUI implements Runnable, ViewObserver {
                     System.out.println(cli + "Joined lobby #" + m.getID());
                     printer.printRemainingPlayers();
                     state = TUIState.CHOOSE_PAWN;
-                } else {
+                    printStatus();
+                } else if(view.getID()!=null && view.getID().equals(m.getID())){
                     System.out.println(cli + m.getPlayer().getNickname() + " joined the lobby!");
                     printer.printRemainingPlayers();
-                }
-                printStatus();
+                    printStatus();
+                }else if (state == TUIState.JOIN_LOBBY) printStatus();
                 semaphore.release();
             }
 
@@ -192,7 +193,7 @@ public class TUI implements Runnable, ViewObserver {
                     System.out.println(cli + m.getPlayer().getNickname() + " left the lobby");
                     chatState = null;
                     printStatus();
-                } else printStatus();
+                } else if(state.equals(TUIState.JOIN_LOBBY)) printStatus();
 
             }
 
@@ -695,7 +696,10 @@ public class TUI implements Runnable, ViewObserver {
                 view.removeObserver(this);
                 Thread.currentThread().interrupt();
             }
-        } else System.out.println(Color.warning + "Color chosen does not exist!" + Color.reset);
+        } else {
+            System.out.println(Color.warning + "Color chosen does not exist!" + Color.reset);
+            printStatus();
+        }
 
     }
 
@@ -721,7 +725,10 @@ public class TUI implements Runnable, ViewObserver {
                     throw new RuntimeException(e);
                 }
             }
-            default -> System.out.println(Color.warning + "Invalid choice!!\n" + Color.reset);
+            default -> {
+                System.out.println(Color.warning + "Invalid choice!!\n" + Color.reset);
+                printStatus();
+            }
         }
     }
 
@@ -738,6 +745,7 @@ public class TUI implements Runnable, ViewObserver {
                 if (isNumeric(in)) desiredChat = Integer.parseInt(in);
                 else {
                     System.out.println(Color.warning + "Numeric value required!!" + Color.reset);
+                    printStatus();
                     return;
                 }
 
@@ -914,7 +922,10 @@ public class TUI implements Runnable, ViewObserver {
                     throw new RuntimeException(e);
                 }
             }
-            default -> System.out.println(Color.warning + "Invalid choice!!\n" + Color.reset);
+            default -> {
+                System.out.println(Color.warning + "Invalid choice!!\n" + Color.reset);
+                printStatus();
+            }
         }
     }
 
@@ -923,7 +934,6 @@ public class TUI implements Runnable, ViewObserver {
      * @param in        input inserted by the user
      */
     private void playCard(String in) {
-
 
         switch (actionState) {
             case PLAY_SELECT_CARD -> {
@@ -938,6 +948,7 @@ public class TUI implements Runnable, ViewObserver {
 
                     if (!isNumeric(in)) {
                         System.out.println(Color.warning + "Numeric value required!!" + Color.reset);
+                        printStatus();
                         return;
                     }
                     int pos = Integer.parseInt(in);
@@ -959,6 +970,7 @@ public class TUI implements Runnable, ViewObserver {
                 List<String> coords = Arrays.asList(in.split("\\s+"));
                 if ((long) coords.size() != 2) {
                     System.out.println(Color.warning + "Wrong format inserted!!" + Color.reset);
+                    printStatus();
                     return;
                 }
                 X = coords.getFirst();
@@ -966,6 +978,7 @@ public class TUI implements Runnable, ViewObserver {
 
                 if (!isNumeric(X) || !isNumeric(Y)) {
                     System.out.println(Color.warning + "Numeric value required!!" + Color.reset);
+                    printStatus();
                     return;
                 }
                 int x = Integer.parseInt(X);
