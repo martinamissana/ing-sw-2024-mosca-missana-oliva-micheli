@@ -35,11 +35,10 @@ public class TCPServer {
             System.err.println(e.getMessage());
             return;
         }
-        System.out.println("Server ready");
+
         while (true) {
             try {
                 Socket socket = serverSocket.accept();
-                System.out.println("New connection!");
                 TCPVirtualView vv = new TCPVirtualView(socket, c);
                 executor.submit(vv);
             } catch (IOException e) {

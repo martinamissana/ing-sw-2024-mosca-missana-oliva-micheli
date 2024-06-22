@@ -473,8 +473,9 @@ public class TUI implements Runnable, ViewObserver {
      */
     private void chooseConnectionType() {
         String choice="";
+        String port="";
 
-        while (!choice.equalsIgnoreCase("TCP") && !choice.equalsIgnoreCase("RMI")) {
+        while (!choice.equalsIgnoreCase("TCP") && !choice.equalsIgnoreCase("RMI") && !isNumeric(port)) {
             System.out.print(cli + "Insert your connection type: [TCP|RMI]" + user);
             choice = scanner.nextLine();
 
@@ -484,11 +485,16 @@ public class TUI implements Runnable, ViewObserver {
                 String IP = scanner.nextLine();
                 // IP = "127.0.0.1";
 
+                System.out.print(cli + "Insert the server port" + user);
+                port = scanner.nextLine();
+                //port="4321";
+
                 try {
-                    this.view = new TCPView(IP, 4321);
+                    this.view = new TCPView(IP, Integer.parseInt(port));
                 } catch (IOException e) {
                     if (view != null) view.removeObserver(this);
                     Thread.currentThread().interrupt();
+                } catch (NumberFormatException ignored) {
                 }
                 new Thread(() -> {
                     try {
@@ -500,6 +506,7 @@ public class TUI implements Runnable, ViewObserver {
                 }).start();
 
             } else if (choice.equalsIgnoreCase("RMI")) {
+                port="0";
                 Registry registry;
                 try {
                     registry = LocateRegistry.getRegistry();
