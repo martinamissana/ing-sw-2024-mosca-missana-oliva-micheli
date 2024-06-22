@@ -2,7 +2,6 @@ package it.polimi.ingsw.controller;
 
 import it.polimi.ingsw.controller.exceptions.*;
 import it.polimi.ingsw.model.card.*;
-import it.polimi.ingsw.model.commonItem.CornerStatus;
 import it.polimi.ingsw.model.commonItem.ItemBox;
 import it.polimi.ingsw.model.commonItem.Kingdom;
 import it.polimi.ingsw.model.commonItem.Resource;
@@ -28,8 +27,6 @@ public class ControllerTest {
     GameHandler gameHandler=new GameHandler();
     HashMap<CornerType, Corner> frontCorners;
     HashMap<CornerType, Corner> backCorners;
-    Corner corner1=new Corner(CornerStatus.EMPTY);
-    Corner corner2=new Corner(Resource.INKWELL);
     ResourceCard card= new ResourceCard(0, CardSide.FRONT, frontCorners,backCorners,0, Kingdom.FUNGI);
     Player anna, eric, giorgio,sara,paola ,anna1,eric1,giorgio1;
     Controller c=new Controller(gameHandler);
@@ -84,7 +81,7 @@ public class ControllerTest {
 
         assertEquals(gameHandler.getGame(1).getGamePhase(), GamePhase.CHOOSING_SECRET_GOAL);
         c.chooseSecretGoal(1,anna1.getNickname(),anna1.getChoosableGoals().get(1).getGoalID());
-        c.chooseSecretGoal(1,eric1.getNickname(),eric1.getChoosableGoals().get(0).getGoalID());
+        c.chooseSecretGoal(1,eric1.getNickname(),eric1.getChoosableGoals().getFirst().getGoalID());
         c.chooseSecretGoal(1,giorgio1.getNickname(),giorgio1.getChoosableGoals().get(1).getGoalID());
 
         assertEquals(gameHandler.getGame(1).getGamePhase(), GamePhase.PLAYING_GAME);
@@ -92,13 +89,12 @@ public class ControllerTest {
     }
 
     @Test
-    public void testCreateGameAndTerminateGame() throws GameDoesNotExistException, LobbyDoesNotExistsException, IOException {
+    public void testCreateGameAndTerminateGame() throws GameDoesNotExistException, LobbyDoesNotExistsException, IOException, UnexistentUserException {
         assertTrue(gameHandler.getGame(0).getPlayers().contains(anna));
         assertTrue(gameHandler.getGame(0).getPlayers().contains(eric));
         assertTrue(gameHandler.getGame(0).getPlayers().contains(giorgio));
-        c.terminateGame(0);
-        assertTrue(gameHandler.getActiveGames().isEmpty());
-        assertTrue(gameHandler.getLobbies().isEmpty());
+        c.leaveLobby("anna",0);
+        assertThrows(GameDoesNotExistException.class, () -> gameHandler.getGame(0));
     }
     @Test
     public void testJoinLobbyButLobbyIsFull() throws LobbyDoesNotExistsException, GameDoesNotExistException {
@@ -113,7 +109,7 @@ public class ControllerTest {
         assertFalse(gameHandler.getGame(0).getPlayers().contains(sara));
     }
     @Test
-    public void leaveLobby() throws FullLobbyException, LobbyDoesNotExistsException, IOException, CannotJoinMultipleLobbiesException, GameDoesNotExistException, UnexistentUserException {
+    public void testLeaveLobby() throws FullLobbyException, LobbyDoesNotExistsException, IOException, CannotJoinMultipleLobbiesException, GameDoesNotExistException, UnexistentUserException {
         c.createLobby(3, sara.getNickname());
         c.joinLobby(paola.getNickname(),1);
         c.leaveLobby(sara.getNickname(), 1);
@@ -122,7 +118,7 @@ public class ControllerTest {
         assertFalse(gameHandler.getLobbies().containsKey(1));
     }
     @Test
-    public void SetUpTest() throws IOException, HandIsFullException, FullLobbyException, LobbyDoesNotExistsException, NicknameAlreadyTakenException, GameDoesNotExistException, EmptyDeckException, PawnAlreadyTakenException, IllegalGoalChosenException, WrongGamePhaseException, GameAlreadyStartedException, CannotJoinMultipleLobbiesException, UnexistentUserException {
+    public void setGameAreaTest() throws IOException, HandIsFullException, FullLobbyException, LobbyDoesNotExistsException, NicknameAlreadyTakenException, GameDoesNotExistException, EmptyDeckException, PawnAlreadyTakenException, IllegalGoalChosenException, WrongGamePhaseException, GameAlreadyStartedException, CannotJoinMultipleLobbiesException, UnexistentUserException {
         GameHandler gh = new GameHandler();
         Controller c = new Controller(gh);
 
@@ -154,35 +150,20 @@ public class ControllerTest {
 
         // Player + Pawn + Hand printing:
         for (Player p : players) {
-            System.out.print(p.getNickname() + " (" + p.getPawn().name() + " - " + gh.getGame(0).getScoreboard().get(p) + "): ");
-            for(int i = 0; i < 3; i++) {
-                System.out.print("[" + p.getHand().getCard(i).getCardID() + "]");
-            }
-            System.out.println("   goal: (" + p.getSecretGoal().getGoalID() + ")");
+               for(int i = 0; i < 3; i++)
+                assertNotEquals(p.getHand().getCard(i),null);
+            assertNotEquals(p.getSecretGoal(),null);
         }
 
         // Deck + Deck Buffers printing
-        System.out.println("\nResource Deck (" + gh.getGame(0).getResourceDeck().getCards().size() + " cards):");
-        for (int i = 0; i < gh.getGame(0).getResourceDeck().getCards().size(); i++) {
-            System.out.print("[" + gh.getGame(0).getResourceDeck().getCards().get(i).getCardID() + "]");
-        }
-        System.out.println("\nDeck Buffers:  [" + gh.getGame(0).getDeckBuffer(DeckBufferType.RES1).getCard().getCardID() + "] " +
-                "[" + gh.getGame(0).getDeckBuffer(DeckBufferType.RES2).getCard().getCardID() + "]");
+        assertNotEquals(gh.getGame(0).getDeckBuffer(DeckBufferType.RES1),null);
+        assertNotEquals(gh.getGame(0).getDeckBuffer(DeckBufferType.RES2),null);
+        assertNotEquals(gh.getGame(0).getDeckBuffer(DeckBufferType.GOLD1),null);
+        assertNotEquals(gh.getGame(0).getDeckBuffer(DeckBufferType.GOLD2),null);
 
-        System.out.println("\nGolden Deck (" + gh.getGame(0).getGoldenDeck().getCards().size() + " cards):");
-        for (int i = 0; i < gh.getGame(0).getGoldenDeck().getCards().size(); i++) {
-            System.out.print("[" + gh.getGame(0).getGoldenDeck().getCards().get(i).getCardID() + "]");
-        }
-        System.out.println("\nDeck Buffers:  [" + gh.getGame(0).getDeckBuffer(DeckBufferType.GOLD1).getCard().getCardID() + "] [" + gh.getGame(0).getDeckBuffer(DeckBufferType.GOLD2).getCard().getCardID() + "]\n");
-
-        // Goals printing:
-        System.out.println("Common goals: (" + gh.getGame(0).getCommonGoal1().getGoalID() + ") (" + gh.getGame(0).getCommonGoal2().getGoalID() + ")\n\n");
-
-        // Field printing:
-        for (Player p: players) {
-            System.out.println(p.getNickname() + ": (starterID = " + p.getField().getMatrix().get(new Coords(0, 0)).getCardID() + ")");
-            System.out.println(p.getField());
-        }
+        assertNotEquals(gh.getGame(0).getCommonGoal1(),null);
+        assertNotEquals(gh.getGame(0).getCommonGoal2(),null);
+        assertNotEquals(gh.getGame(0).getCommonGoal1(),gh.getGame(0).getCommonGoal2());
     }
 
     @Test
@@ -201,23 +182,23 @@ public class ControllerTest {
         // lobby + game
         con.createLobby(2, players.getFirst().getNickname());
         con.joinLobby(players.get(1).getNickname(), 0);
-        con.choosePawn(0,players.get(0).getNickname(),Pawn.RED);
+        con.choosePawn(0,players.getFirst().getNickname(),Pawn.RED);
         con.choosePawn(0,players.get(1).getNickname(),Pawn.BLUE);
         Game game = con.getGh().getGame(0);
 
-        con.chooseCardSide(game.getGameID(),players.get(0).getNickname(),CardSide.FRONT);
+        con.chooseCardSide(game.getGameID(),players.getFirst().getNickname(),CardSide.FRONT);
         con.chooseCardSide(game.getGameID(),players.get(1).getNickname(),CardSide.FRONT);
 
-        con.chooseSecretGoal(0,players.get(0).getNickname(),players.get(0).getChoosableGoals().getFirst().getGoalID());
+        con.chooseSecretGoal(0,players.getFirst().getNickname(),players.getFirst().getChoosableGoals().getFirst().getGoalID());
         con.chooseSecretGoal(0,players.get(1).getNickname(),players.get(1).getChoosableGoals().getLast().getGoalID());
 
         // card flipping
-        con.flipCard(0, game.getPlayers().get(0).getNickname(), 0);
-        assert(CardSide.BACK == game.getPlayers().get(0).getHand().getCard(0).getSide());
-        con.flipCard(0, game.getPlayers().get(0).getNickname(), 1);
-        assert(CardSide.BACK == game.getPlayers().get(0).getHand().getCard(1).getSide());
-        con.flipCard(0, game.getPlayers().get(0).getNickname(), 2);
-        assert(CardSide.BACK == game.getPlayers().get(0).getHand().getCard(2).getSide());
+        con.flipCard(0, game.getPlayers().getFirst().getNickname(), 0);
+        assert(CardSide.BACK == game.getPlayers().getFirst().getHand().getCard(0).getSide());
+        con.flipCard(0, game.getPlayers().getFirst().getNickname(), 1);
+        assert(CardSide.BACK == game.getPlayers().getFirst().getHand().getCard(1).getSide());
+        con.flipCard(0, game.getPlayers().getFirst().getNickname(), 2);
+        assert(CardSide.BACK == game.getPlayers().getFirst().getHand().getCard(2).getSide());
         con.flipCard(0, game.getPlayers().get(1).getNickname(), 0);
         assert(CardSide.BACK == game.getPlayers().get(1).getHand().getCard(0).getSide());
         con.flipCard(0, game.getPlayers().get(1).getNickname(), 1);
@@ -242,7 +223,7 @@ public class ControllerTest {
         // lobby + game
         con.createLobby(2, players.getFirst().getNickname());
         con.joinLobby(players.get(1).getNickname(), 0);
-        con.choosePawn(0,players.get(0).getNickname(),Pawn.BLUE);
+        con.choosePawn(0,players.getFirst().getNickname(),Pawn.BLUE);
         con.choosePawn(0,players.get(1).getNickname(),Pawn.RED);
 
         Game game = con.getGh().getGame(0);
@@ -250,11 +231,11 @@ public class ControllerTest {
 
         // starter cards (switching randomly drawn ones with specific ones)
         for (Player p : players) p.getHand().removeAllCards();
-        players.get(0).getHand().addCard(CardsPreset.getStarterCards().get(0));
+        players.getFirst().getHand().addCard(CardsPreset.getStarterCards().getFirst());
         players.get(1).getHand().addCard(CardsPreset.getStarterCards().get(1));
 
-        con.chooseCardSide(0, players.get(0).getNickname(), CardSide.FRONT);
-        assertEquals(CardsPreset.getStarterCards().get(0), players.get(0).getField().getMatrix().get(new Coords(0,0)));
+        con.chooseCardSide(0, players.getFirst().getNickname(), CardSide.FRONT);
+        assertEquals(CardsPreset.getStarterCards().getFirst(), players.getFirst().getField().getMatrix().get(new Coords(0,0)));
         con.chooseCardSide(0, players.get(1).getNickname(), CardSide.FRONT);
         assertEquals(CardsPreset.getStarterCards().get(1), players.get(1).getField().getMatrix().get(new Coords(0,0)));
 
@@ -266,14 +247,14 @@ public class ControllerTest {
         ArrayList<ResourceCard> resourceCards = CardsPreset.getResourceCards();
         ArrayList<GoldenCard> goldenCards = CardsPreset.getGoldenCards();
 
-        players.get(0).getHand().removeAllCards();
+        players.getFirst().getHand().removeAllCards();
         players.get(1).getHand().removeAllCards();
-        players.get(0).getHand().addCard(resourceCards.get(0));
-        assertEquals(players.get(0).getHand().getCard(0), resourceCards.get(0));
-        players.get(0).getHand().addCard(resourceCards.get(1));
-        assertEquals(players.get(0).getHand().getCard(1), resourceCards.get(1));
-        players.get(0).getHand().addCard(goldenCards.get(0));
-        assertEquals(players.get(0).getHand().getCard(2), goldenCards.get(0));
+        players.getFirst().getHand().addCard(resourceCards.getFirst());
+        assertEquals(players.getFirst().getHand().getCard(0), resourceCards.getFirst());
+        players.getFirst().getHand().addCard(resourceCards.get(1));
+        assertEquals(players.getFirst().getHand().getCard(1), resourceCards.get(1));
+        players.getFirst().getHand().addCard(goldenCards.getFirst());
+        assertEquals(players.getFirst().getHand().getCard(2), goldenCards.getFirst());
         players.get(1).getHand().addCard(resourceCards.get(2));
         assertEquals(players.get(1).getHand().getCard(0), resourceCards.get(2));
         players.get(1).getHand().addCard(resourceCards.get(3));
@@ -286,13 +267,13 @@ public class ControllerTest {
                 assertEquals(p.getHand().getCard(i).getSide(), CardSide.FRONT);
 
         // card placement, one resource and one golden for each player
-        con.playCard(0, players.get(0).getNickname(), 0, new Coords(1,0), CardSide.FRONT);
-        assertEquals(players.get(0).getField().getMatrix().get(new Coords(0,0)), CardsPreset.getStarterCards().get(0));
-        assertEquals(players.get(0).getField().getMatrix().get(new Coords(1,0)), resourceCards.get(0));
-        assertEquals(players.get(0).getField().getMatrix().get(new Coords(1,-1)), players.get(0).getField().getCardBlock());
-        con.drawCard(0, game.getPlayers().get(0).getNickname(), DeckType.RESOURCE);
-        assertNotEquals(players.get(0).getHand().getCard(2), goldenCards.get(0));
-        assertEquals(players.get(0).getHand().getCard(1), goldenCards.get(0));
+        con.playCard(0, players.getFirst().getNickname(), 0, new Coords(1,0), CardSide.FRONT);
+        assertEquals(players.getFirst().getField().getMatrix().get(new Coords(0,0)), CardsPreset.getStarterCards().getFirst());
+        assertEquals(players.getFirst().getField().getMatrix().get(new Coords(1,0)), resourceCards.getFirst());
+        assertEquals(players.getFirst().getField().getMatrix().get(new Coords(1,-1)), players.getFirst().getField().getCardBlock());
+        con.drawCard(0, game.getPlayers().getFirst().getNickname(), DeckType.RESOURCE);
+        assertNotEquals(players.getFirst().getHand().getCard(2), goldenCards.getFirst());
+        assertEquals(players.getFirst().getHand().getCard(1), goldenCards.getFirst());
 
         con.playCard(0, game.getPlayers().get(1).getNickname(), 0, new Coords(-1,0), CardSide.FRONT);
         assertEquals(players.get(1).getField().getMatrix().get(new Coords(0,0)), CardsPreset.getStarterCards().get(1));
@@ -302,18 +283,18 @@ public class ControllerTest {
         assertNotEquals(players.get(1).getHand().getCard(2), goldenCards.get(1));
         assertEquals(players.get(1).getHand().getCard(1), goldenCards.get(1));
 
-        con.playCard(0, game.getPlayers().get(0).getNickname(), 0, new Coords(2,0), CardSide.FRONT);
-        assertEquals(players.get(0).getField().getMatrix().get(new Coords(2,0)), resourceCards.get(1));
-        con.drawCard(0, game.getPlayers().get(0).getNickname(), DeckType.RESOURCE);
+        con.playCard(0, game.getPlayers().getFirst().getNickname(), 0, new Coords(2,0), CardSide.FRONT);
+        assertEquals(players.getFirst().getField().getMatrix().get(new Coords(2,0)), resourceCards.get(1));
+        con.drawCard(0, game.getPlayers().getFirst().getNickname(), DeckType.RESOURCE);
 
         con.playCard(0, game.getPlayers().get(1).getNickname(), 0, new Coords(1,0), CardSide.FRONT);
         assertEquals(players.get(1).getField().getMatrix().get(new Coords(1,0)), resourceCards.get(3));
-        assertEquals(players.get(1).getField().getMatrix().get(new Coords(1,1)), players.get(0).getField().getCardBlock());
+        assertEquals(players.get(1).getField().getMatrix().get(new Coords(1,1)), players.getFirst().getField().getCardBlock());
         con.drawCard(0, game.getPlayers().get(1).getNickname(), DeckType.RESOURCE);
 
-        con.playCard(0, game.getPlayers().get(0).getNickname(), 0, new Coords(1,1), CardSide.FRONT);
-        assertEquals(players.get(0).getField().getMatrix().get(new Coords(1,1)), goldenCards.get(0));
-        con.drawCard(0, game.getPlayers().get(0).getNickname(), DeckType.RESOURCE);
+        con.playCard(0, game.getPlayers().getFirst().getNickname(), 0, new Coords(1,1), CardSide.FRONT);
+        assertEquals(players.getFirst().getField().getMatrix().get(new Coords(1,1)), goldenCards.getFirst());
+        con.drawCard(0, game.getPlayers().getFirst().getNickname(), DeckType.RESOURCE);
 
         con.playCard(0, game.getPlayers().get(1).getNickname(), 0, new Coords(-1,-1), CardSide.FRONT);
         assertEquals(players.get(1).getField().getMatrix().get(new Coords(-1,-1)), goldenCards.get(1));
@@ -351,7 +332,7 @@ public class ControllerTest {
         Goal goal0 = new ResourceGoal(15, resourceList, 2);
         Goal goal1 = new DiagonalGoal(0, 2, Kingdom.FUNGI, DiagonalGoalType.UPWARD);
         Goal goal2 = new L_ShapeGoal(4, 3, Kingdom.FUNGI, Kingdom.PLANT, L_ShapeGoalType.DOWN_RIGHT);
-        Player player0 = gh.getGame(0).getPlayers().get(0);
+        Player player0 = gh.getGame(0).getPlayers().getFirst();
         Player player1 = gh.getGame(0).getPlayers().get(1);
         Player player2 = gh.getGame(0).getPlayers().get(2);
         player0.setSecretGoal(goal0);
@@ -366,7 +347,7 @@ public class ControllerTest {
         ArrayList<ResourceCard> cards = CardsPreset.getResourceCards();
         player0.getField().addCard(cards.get(4), new Coords(1, 0));
         player0.getField().addCard(cards.get(14), new Coords(0, 1));
-        player1.getField().addCard(cards.get(0), new Coords(0, -1));
+        player1.getField().addCard(cards.getFirst(), new Coords(0, -1));
         player1.getField().addCard(cards.get(1), new Coords(-1, -1));
         player1.getField().addCard(cards.get(2), new Coords(1, -1));
         player2.getField().addCard(cards.get(3), new Coords(0, -1));

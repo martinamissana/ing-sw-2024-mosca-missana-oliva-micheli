@@ -5,6 +5,4 @@ package it.polimi.ingsw.model.exceptions;
  * already occupied by a card or blocked by any adjacent card's corner
  */
 public class OccupiedCoordsException extends IllegalCoordsException {
-    public OccupiedCoordsException() { super(); }
-    public OccupiedCoordsException(String string) { super(string);}
 }

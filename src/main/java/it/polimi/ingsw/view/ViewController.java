@@ -65,7 +65,7 @@ public class ViewController {
 
         // if the lobby doesn't exist
         if (!view.getLobbies().containsKey(lobbyID))
-            throw new LobbyDoesNotExistsException("Lobby doesn't exist");
+            throw new LobbyDoesNotExistsException();
 
         // if the lobby is full
         if (view.getLobbies().get(lobbyID).getNumOfPlayers() ==
@@ -206,12 +206,12 @@ public class ViewController {
             throw new IllegalActionException();
 
         switch (source) {
-            case DeckType.RESOURCE -> { if (view.getTopResourceCard() == null) throw new EmptyDeckException("This deck is empty"); }
-            case DeckType.GOLDEN ->  { if (view.getTopGoldenCard() == null) throw new EmptyDeckException("This deck is empty"); }
-            case DeckBufferType.RES1 ->  { if (view.getDeckBuffers().get(DeckBufferType.RES1) == null) throw new EmptyBufferException("No card here"); }
-            case DeckBufferType.RES2 ->  { if (view.getDeckBuffers().get(DeckBufferType.RES2) == null) throw new EmptyBufferException("No card here"); }
-            case DeckBufferType.GOLD1 ->  { if (view.getDeckBuffers().get(DeckBufferType.GOLD1) == null) throw new EmptyBufferException("No card here"); }
-            case DeckBufferType.GOLD2 ->  { if (view.getDeckBuffers().get(DeckBufferType.GOLD2) == null) throw new EmptyBufferException("No card here"); }
+            case DeckType.RESOURCE -> { if (view.getTopResourceCard() == null) throw new EmptyDeckException(); }
+            case DeckType.GOLDEN ->  { if (view.getTopGoldenCard() == null) throw new EmptyDeckException(); }
+            case DeckBufferType.RES1 ->  { if (view.getDeckBuffers().get(DeckBufferType.RES1) == null) throw new EmptyBufferException(); }
+            case DeckBufferType.RES2 ->  { if (view.getDeckBuffers().get(DeckBufferType.RES2) == null) throw new EmptyBufferException(); }
+            case DeckBufferType.GOLD1 ->  { if (view.getDeckBuffers().get(DeckBufferType.GOLD1) == null) throw new EmptyBufferException(); }
+            case DeckBufferType.GOLD2 ->  { if (view.getDeckBuffers().get(DeckBufferType.GOLD2) == null) throw new EmptyBufferException(); }
             default -> throw new IllegalArgumentException("Unexpected value: " + source);
         }
     }

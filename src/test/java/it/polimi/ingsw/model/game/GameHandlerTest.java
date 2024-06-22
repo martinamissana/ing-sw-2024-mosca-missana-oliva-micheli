@@ -48,15 +48,13 @@ public class GameHandlerTest {
         gameHandler.addUser(anna);
         gameHandler.addUser(giorgio);
         gameHandler.addUser(eric);
-        assertThrows(NicknameAlreadyTakenException.class, () -> {
-            gameHandler.addUser(anna1);
-        });
+        assertThrows(NicknameAlreadyTakenException.class, () -> gameHandler.addUser(anna1));
         assertTrue(gameHandler.getUsers().contains(anna));
         assertTrue(gameHandler.getUsers().contains(eric));
         assertTrue(gameHandler.getUsers().contains(giorgio));
     }
     @Test
-    public void testSaveAndLoad() throws IOException, ClassNotFoundException, GameDoesNotExistException, FullLobbyException, NicknameAlreadyTakenException, LobbyDoesNotExistsException, HandIsFullException, CannotJoinMultipleLobbiesException, GameAlreadyStartedException, PawnAlreadyTakenException, UnexistentUserException {
+    public void testSaveAndLoad() throws IOException, ClassNotFoundException, GameDoesNotExistException, FullLobbyException,LobbyDoesNotExistsException, HandIsFullException, CannotJoinMultipleLobbiesException, GameAlreadyStartedException, PawnAlreadyTakenException, UnexistentUserException {
         c.getGh().getUsers().add(anna);
         c.getGh().getUsers().add(eric);
         c.getGh().getUsers().add(giorgio);
@@ -72,7 +70,7 @@ public class GameHandlerTest {
         gameHandler.save();
         GameHandler gameHandler1=new GameHandler();
         gameHandler1.load();
-        assertEquals(gameHandler.getGame(0).getPlayers().get(0).getNickname(), gameHandler1.getActiveGames().get(0).getPlayers().get(0).getNickname());
-        assertEquals(gameHandler.getGame(0).getPlayers().get(0).getHand().getCard(0).getCardID(), gameHandler1.getActiveGames().get(0).getPlayers().get(0).getHand().getCard(0).getCardID());
+        assertEquals(gameHandler.getGame(0).getPlayers().getFirst().getNickname(), gameHandler1.getActiveGames().get(0).getPlayers().getFirst().getNickname());
+        assertEquals(gameHandler.getGame(0).getPlayers().getFirst().getHand().getCard(0).getCardID(), gameHandler1.getActiveGames().get(0).getPlayers().getFirst().getHand().getCard(0).getCardID());
     }
 }

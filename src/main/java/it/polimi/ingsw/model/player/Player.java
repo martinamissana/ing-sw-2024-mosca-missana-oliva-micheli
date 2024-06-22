@@ -15,7 +15,7 @@ public class Player implements Serializable {
     private boolean goesFirst;
     private Goal secretGoal;
     private Pawn pawn;
-    private ArrayList<Goal> choosableGoals;
+    private final ArrayList<Goal> choosableGoals;
     private int goalsDone;
 
     /**
@@ -32,25 +32,6 @@ public class Player implements Serializable {
         this.secretGoal = null;
         this.pawn = null;
         this.choosableGoals = new ArrayList<>();
-        this.goalsDone = 0;
-    }
-
-    /**
-     * Class constructor
-     *
-     * @param nickname  player's nickname
-     * @param goesFirst signals that the player is the first of each turn in the game
-     * @param pawn      player's pawn
-     */
-    // might not be needed
-    public Player(String nickname, boolean goesFirst, Pawn pawn) {
-        this.nickname = nickname;
-        this.hand = new Hand();
-        this.field = new Field();
-        this.chat = new Chat();
-        this.goesFirst = goesFirst;
-        this.secretGoal = null;
-        this.pawn = pawn;
         this.goalsDone = 0;
     }
 
@@ -102,13 +83,6 @@ public class Player implements Serializable {
      * @return Chat
      */
     public Chat getChat() { return chat; }
-
-    /**
-     * returns whether the player goes first or not
-     *
-     * @return boolean
-     */
-    public boolean getGoesFirst() { return goesFirst; }
 
     /**
      * returns the player's secret goal

@@ -77,7 +77,7 @@ public class GameHandler extends Observable implements Serializable {
         if (activeGames.containsKey(ID)) {
             return activeGames.get(ID);
         } else {
-            throw new GameDoesNotExistException("Game with ID " + ID + " does not exist");
+            throw new GameDoesNotExistException();
         }
     }
 
@@ -92,7 +92,7 @@ public class GameHandler extends Observable implements Serializable {
         if (lobbies.containsKey(ID)) {
             return lobbies.get(ID);
         } else {
-            throw new LobbyDoesNotExistsException("Lobby with ID " + ID + " does not exist");
+            throw new LobbyDoesNotExistsException();
         }
     }
 

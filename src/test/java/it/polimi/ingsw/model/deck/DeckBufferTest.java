@@ -15,8 +15,6 @@ public class DeckBufferTest {
         DeckBuffer db = new DeckBuffer(deck);
         while(!deck.getCards().isEmpty()) deck.draw();
         db.refill();
-        assertThrows(EmptyBufferException.class, () -> {
-            db.draw();
-        });
+        assertThrows(EmptyBufferException.class, () -> db.draw());
     }
 }

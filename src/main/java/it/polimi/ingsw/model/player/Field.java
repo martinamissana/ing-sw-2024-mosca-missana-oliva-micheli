@@ -58,17 +58,6 @@ public class Field implements Serializable {
      */
     public CardBlock getCardBlock() { return cardBlock; }
 
-    @Override
-    public String toString() {
-        StringBuilder out = new StringBuilder("Total Res:\n");
-        for (HashMap.Entry<ItemBox, Integer> entry : totalResources.entrySet())
-            out.append("\t").append(entry.getKey()).append(": ").append(entry.getValue()).append("\n");
-        out.append("\nMatrix:\n");
-        for (HashMap.Entry<Coords, Card> entry : matrix.entrySet())
-            out.append("\t").append(entry.getKey().toString()).append(": ").append(entry.getValue().toStringReadable()).append("\n");
-        return out.toString();
-    }
-
     /**
      * adds a starter card at the origin of the field (0,0) with no checks whatsoever
      *
@@ -112,9 +101,7 @@ public class Field implements Serializable {
         // if there's already a card at that position (including a CardBlock,
         // meaning the position would be blocked by a corner), throw an exception
         if (this.matrix.get(coords) != null) {
-            String cardInfo = matrix.get(coords).getClass().equals(CardBlock.class) ? "CardBlock already present at " + coords.toString() :
-                    (matrix.get(coords).getClass().getSimpleName() + " already present at " + coords.toString() + ", ID: " + matrix.get(coords).getCardID());
-            throw new OccupiedCoordsException(cardInfo);
+            throw new OccupiedCoordsException();
         }
 
         // if any of the adjacent positions has a card with a non-blocking corner
@@ -143,9 +130,7 @@ public class Field implements Serializable {
         // if any resource required is insufficient, throw exception
         for (Map.Entry<Kingdom, Integer> entry : ((GoldenCard) card).getRequirements().entrySet())  // for each required resource's quantity
             if (entry.getValue() > this.totalResources.get(entry.getKey())) {                       // if it's greater than the corresponding total
-                String resInfo = "Insufficient " + entry.getKey().toString().toLowerCase() +        // the card's requirements are not met
-                        "s: needed " + entry.getValue() + ", have " + totalResources.get(entry.getKey());
-                throw new RequirementsNotSatisfiedException(resInfo);
+                  throw new RequirementsNotSatisfiedException();
             }
 
         // else, requirements are met. return true

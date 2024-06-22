@@ -66,6 +66,6 @@ public class Deck implements Drawable, Serializable {
     @Override
     public ResourceCard draw() throws EmptyDeckException {
         if (!cards.isEmpty()) return cards.removeLast();
-        else throw new EmptyDeckException("Deck is empty. Cannot draw!");
+        else throw new EmptyDeckException();
     }
 }
