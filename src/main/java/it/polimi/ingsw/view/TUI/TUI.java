@@ -241,7 +241,7 @@ public class TUI implements Runnable, ViewObserver {
                 if (m.getCard() instanceof StarterCard)
                     System.out.print(cli + "Card placed in position (0, 0), wait for other players to continue...");
                 else if (m.getCard() instanceof ResourceCard) {
-                    System.out.println(cli + "Card placed successfully on coords (" + m.getCoords().getX() + ", " + m.getCoords().getY() + ")");
+                    System.out.println(cli + "Card placed successfully on coords " + m.getCoords());
                     if (!view.isLastRound()) actionState = ActionState.DRAW;
                     else return;
                     printStatus();
@@ -261,11 +261,11 @@ public class TUI implements Runnable, ViewObserver {
                 if (m.getID().equals(view.getID())) {
                     printer.printFinalScoreboard();
 
-                    ArrayList<Player> winners = view.getWinners();
+                    ArrayList<Player> winners = m.getWinners();
                     if (winners.size() == 1) {
-                        if (m.getWinners().contains(view.getPlayer())) System.out.println(cli + "You win!!");
+                        if (winners.contains(view.getPlayer())) System.out.println(cli + "You win!!");
                         else
-                            System.out.println(cli + "THE WINNER IS " + Color.gold + winners.getFirst().getNickname().toUpperCase() + Color.reset + "!!");
+                            System.out.println(cli + "The winner is " + Color.gold + winners.getFirst().getNickname() + Color.reset + "!!");
                     } else {
                         System.out.print(cli + "The winners are ");
                         for (Player winner : winners) {
@@ -487,7 +487,7 @@ public class TUI implements Runnable, ViewObserver {
 
                 System.out.print(cli + "Insert the server port" + user);
                 port = scanner.nextLine();
-                //port="4321";
+                if (port.isEmpty()) port = "4321";
 
                 try {
                     this.view = new TCPView(IP, Integer.parseInt(port));
@@ -506,7 +506,7 @@ public class TUI implements Runnable, ViewObserver {
                 }).start();
 
             } else if (choice.equalsIgnoreCase("RMI")) {
-                port="0";
+                port = "0";
                 Registry registry;
                 try {
                     registry = LocateRegistry.getRegistry();

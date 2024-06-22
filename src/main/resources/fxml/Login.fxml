@@ -6,18 +6,24 @@
 
 <AnchorPane prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.ingsw.view.GUI.LoginController">
    <children>
-      <MenuButton fx:id="connectionMenu" layoutX="455.0" layoutY="340.0" mnemonicParsing="false" onMouseClicked="#menuOptions" popupSide="TOP" text="TCP">
+      <MenuButton fx:id="connectionMenu" layoutX="455.0" layoutY="340.0" mnemonicParsing="false" onMouseClicked="#menuOptions" text="TCP">
         <items>
           <MenuItem fx:id="TCP" onAction="#chooseConnection" text="TCP" />
           <MenuItem fx:id="RMI" onAction="#chooseConnection" text="RMI" />
         </items>
       </MenuButton>
-      <TextField fx:id="nicknameField" alignment="CENTER" layoutX="340.0" layoutY="288.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" onKeyTyped="#modifyNickname" prefWidth="220.0" promptText="Insert username" />
+      <TextField fx:id="nicknameField" alignment="CENTER" layoutX="340.0" layoutY="288.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" onKeyTyped="#modifyTags" prefWidth="220.0" promptText="Insert username" />
       <Button layoutX="385.0" layoutY="340.0" mnemonicParsing="false" onMouseClicked="#login" prefWidth="55.0" text="Login" />
       <Label fx:id="statusMessage" layoutX="394.0" layoutY="318.0" />
       <ImageView fitHeight="250.0" fitWidth="250.0" layoutX="325.0" layoutY="15.0" pickOnBounds="true" preserveRatio="true">
          <image>
-            <Image url="@logo.png" />
+            <Image url="@../images/logo.png" />
          </image></ImageView>
+      <Pane fx:id="connectionPane" layoutX="325.0" layoutY="400.0" prefHeight="150.0" prefWidth="250.0">
+         <children>
+            <TextField fx:id="IP" alignment="CENTER" layoutX="40.0" layoutY="40.0" onKeyTyped="#modifyTags" prefHeight="25.0" prefWidth="170.0" promptText="Insert IP address" />
+            <TextField fx:id="port" alignment="CENTER" layoutX="40.0" layoutY="85.0" onKeyTyped="#modifyTags" prefHeight="25.0" prefWidth="170.0" promptText="Insert port" />
+            <Label fx:id="connectionError" alignment="CENTER" layoutX="50.0" layoutY="120.0" prefWidth="150.0" textFill="RED" />
+         </children></Pane>
    </children>
 </AnchorPane>
