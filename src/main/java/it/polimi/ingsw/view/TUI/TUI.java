@@ -293,7 +293,7 @@ public class TUI implements Runnable, ViewObserver {
                 semaphore.release();
             }
 
-            default -> throw new IllegalStateException("Unexpected value: " + message);
+            default -> {}
         }
         //if (!message.getClass().equals(HeartBeatMessage.class)) System.out.println(message.toString());
 

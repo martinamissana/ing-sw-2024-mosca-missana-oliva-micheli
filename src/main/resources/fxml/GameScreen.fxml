@@ -5,7 +5,7 @@
 
 <AnchorPane prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.ingsw.view.GUI.GameScreenController">
    <children>
-      <Pane fx:id="hand" layoutX="14.0" layoutY="430.0" prefHeight="126.66" prefWidth="435.0" />
+      <Pane fx:id="hand" layoutX="17.0" layoutY="434.0" prefHeight="126.66" prefWidth="435.0" />
       <Pane fx:id="goals" layoutX="455.0" layoutY="463.34" prefHeight="126.66" prefWidth="435.0" />
       <Pane fx:id="decks" layoutX="655.0" layoutY="190.0" prefHeight="263.34" prefWidth="235.0" />
       <Pane fx:id="scoreboard" layoutX="655.0" layoutY="10.0" prefHeight="170.0" prefWidth="235.0" />
@@ -13,5 +13,6 @@
       <ToggleButton layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onMouseClicked="#toggleChats" text="Chat" />
       <Pane fx:id="chooseGoal" layoutX="655.0" layoutY="10.0" prefHeight="443.34" prefWidth="235.0" />
       <Pane fx:id="chats" layoutX="60.0" layoutY="10.0" prefHeight="240.0" prefWidth="350.0" visible="false" />
+      <TextField fx:id="informations" editable="false" layoutX="10.0" layoutY="415.0" promptText="Informations" style="-fx-background-color: #F2DEBD;" />
    </children>
 </AnchorPane>

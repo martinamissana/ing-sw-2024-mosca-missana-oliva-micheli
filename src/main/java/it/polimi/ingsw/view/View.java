@@ -599,8 +599,10 @@ public abstract class View extends ViewObservable {
                 }
             }
             case GameActionSwitchedMessage m -> {
-                if (m.getID().equals(ID))
+                if (m.getID().equals(ID)) {
                     action = m.getAction();
+                    notify(m);
+                }
             }
             case LastRoundStartedMessage m -> {
                 if (m.getID().equals(ID))
@@ -633,6 +635,7 @@ public abstract class View extends ViewObservable {
             case ScoreIncrementedMessage m -> {
                 if (ID != null && ID.equals(m.getID())) {
                     scoreboard.put(m.getPlayer(), getScoreboard().get(m.getPlayer()) + m.getPoints());
+                    notify(m);
                 }
             }
             case CardDrawnFromSourceMessage m -> {
@@ -666,6 +669,7 @@ public abstract class View extends ViewObservable {
 
                         default -> throw new IllegalStateException("Unexpected value: " + m.getType());
                     }
+                    notify(m);
                 }
             }
             case HeartBeatMessage ignored -> {

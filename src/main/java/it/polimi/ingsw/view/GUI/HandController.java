@@ -5,6 +5,7 @@ import it.polimi.ingsw.model.card.StarterCard;
 import it.polimi.ingsw.model.game.GamePhase;
 import it.polimi.ingsw.network.netMessage.NetMessage;
 import it.polimi.ingsw.network.netMessage.s2c.CardAddedToHandMessage;
+import it.polimi.ingsw.network.netMessage.s2c.CardDrawnFromSourceMessage;
 import it.polimi.ingsw.network.netMessage.s2c.CardPlacedOnFieldMessage;
 import it.polimi.ingsw.network.netMessage.s2c.GamePhaseChangedMessage;
 import it.polimi.ingsw.view.View;
@@ -20,7 +21,7 @@ import java.io.IOException;
 
 public class HandController implements ViewObserver {
     private View view;
-    private int cardPlacedPos;
+    private Integer cardPlacedPos = null;
 
     @FXML
     private Pane card0;
@@ -43,11 +44,32 @@ public class HandController implements ViewObserver {
 
     @Override
     public void update(NetMessage message) throws IOException {
-        System.out.println(message.getClass());
         switch (message){
             case CardPlacedOnFieldMessage m -> {
-                if(m.getCard() instanceof StarterCard) {
-                    card0.getChildren().removeAll();
+                if(m.getNickname().equals(view.getNickname())) {
+                    if (m.getCard() instanceof StarterCard) {
+                        card0.getChildren().removeAll();
+                    } else {
+                        Platform.runLater(() -> {
+                            card0.getChildren().clear();
+                            card1.getChildren().clear();
+                            card2.getChildren().clear();
+                            card0.getChildren().add(new CardBuilder(view.getHand().getCard(0)).getCardImage());
+                            card1.getChildren().add(new CardBuilder(view.getHand().getCard(1)).getCardImage());
+                        });
+                    }
+                }
+            }
+            case CardDrawnFromSourceMessage m ->{
+                if(view.getHand()!=null&&view.getHand().getSize()>2){
+                    if(view.getHand().getCard(2)!=null) {
+                        if ((view.getHand().getCard(2).getSide().equals(CardSide.BACK)))
+                            view.getHand().getCard(2).flip();
+                        Platform.runLater(() -> {
+                            card2.getChildren().add(new CardBuilder(view.getHand().getCard(2)).getCardImage());
+
+                        });
+                    }
                 }
             }
             case GamePhaseChangedMessage m -> {
@@ -72,19 +94,6 @@ public class HandController implements ViewObserver {
         return cardPlacedPos;
     }
 
-    public void removeCard(int cardPlacedPos){
-        if(cardPlacedPos == 0){
-            card0.getChildren().removeAll();
-            return;
-        }
-        if(cardPlacedPos == 1){
-            card1.getChildren().removeAll();
-            return;
-        }
-        if(cardPlacedPos == 2){
-            card2.getChildren().removeAll();
-        }
-    }
 
     public void playCard(MouseEvent mouseEvent) {
         if (mouseEvent.getSource().equals(card0)){
@@ -95,7 +104,7 @@ public class HandController implements ViewObserver {
             cardPlacedPos = 1;
             return;
         }
-        if (mouseEvent.getSource().equals(card1)){
+        if (mouseEvent.getSource().equals(card2)){
             cardPlacedPos = 2;
         }
 

@@ -1,16 +1,17 @@
 package it.polimi.ingsw.view.GUI;
 
 import it.polimi.ingsw.model.card.StarterCard;
+import it.polimi.ingsw.model.game.Action;
 import it.polimi.ingsw.model.game.GamePhase;
 import it.polimi.ingsw.network.netMessage.NetMessage;
-import it.polimi.ingsw.network.netMessage.s2c.CardPlacedOnFieldMessage;
-import it.polimi.ingsw.network.netMessage.s2c.GamePhaseChangedMessage;
-import it.polimi.ingsw.network.netMessage.s2c.SecretGoalAssignedMessage;
+import it.polimi.ingsw.network.netMessage.s2c.*;
 import it.polimi.ingsw.view.ViewObserver;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.Pane;
+
 
 import java.io.IOException;
 
@@ -33,6 +34,8 @@ public class GameScreenController implements ViewObserver {
     private Pane hand;
     @FXML
     private Pane chooseGoal;
+    @FXML
+    private TextField informations;
 
     public void initialize() {
         viewSingleton.getView().addObserver(this);
@@ -81,7 +84,7 @@ public class GameScreenController implements ViewObserver {
                 throw new RuntimeException(e);
             }
             hand.getChildren().add(handCenter);
-            HandController handController = handLoader.getController();
+            this.handController = handLoader.getController();
             handController.setView(viewSingleton.getView());
 
             FXMLLoader chooseStarterLoader = new FXMLLoader(getClass().getResource("/fxml/ChooseStarterCard.fxml"));
@@ -94,6 +97,7 @@ public class GameScreenController implements ViewObserver {
             field.getChildren().add(chooseStarterCenter);
             ChooseStarterCardController chooseStarterController = chooseStarterLoader.getController();
             chooseStarterController.setView(viewSingleton.getView());
+
 
             FXMLLoader chatLoader = new FXMLLoader(getClass().getResource("/fxml/Chat.fxml"));
             Pane chatCenter;
@@ -113,7 +117,7 @@ public class GameScreenController implements ViewObserver {
     public void update(NetMessage message) throws IOException {
         switch (message){
             case CardPlacedOnFieldMessage m-> {
-                if(m.getCard() instanceof StarterCard) {
+                if (m.getCard() instanceof StarterCard) {
                     if (m.getNickname().equals(viewSingleton.getView().getNickname())) {
                         Platform.runLater(() -> {
                             FXMLLoader fieldLoader = new FXMLLoader(getClass().getResource("/fxml/Field.fxml"));
@@ -126,10 +130,16 @@ public class GameScreenController implements ViewObserver {
                             field.getChildren().removeAll();
                             field.getChildren().add(fieldCenter);
                             FieldController fieldController = fieldLoader.getController();
-                            fieldController.setView(viewSingleton.getView());
+                            fieldController.setView(viewSingleton.getView(), viewSingleton.getViewController());
+                            fieldController.setHand(handController);
                         });
                     }
 
+                }
+            }
+            case GameActionSwitchedMessage m -> {
+                if(viewSingleton.getView().isYourTurn()&&m.getAction().equals(Action.DRAW)){
+                    informations.setText("Draw a card!");
                 }
             }
             case GamePhaseChangedMessage m -> {
@@ -146,9 +156,16 @@ public class GameScreenController implements ViewObserver {
                         SecretGoalController secretGoalController = secretGoalLoader.getController();
                         secretGoalController.setView(viewSingleton.getView());
                     });
+                } else if (m.getGamePhase().equals(GamePhase.PLAYING_GAME)) {
+                    if(viewSingleton.getView().isYourTurn()) informations.setText("It's your turn!");
+                    else informations.setText("Wait for your turn...");
                 }
             }
-            case SecretGoalAssignedMessage ignored -> Platform.runLater(()-> chooseGoal.getChildren().clear());
+            case SecretGoalAssignedMessage ignored -> Platform.runLater(()-> chooseGoal.setVisible(false));
+            case TurnChangedMessage m -> {
+                if (!viewSingleton.getView().isYourTurn()) informations.setText("Wait for your turn...");
+                else informations.setText("It's your turn!");
+            }
             default -> {}
         }
     }

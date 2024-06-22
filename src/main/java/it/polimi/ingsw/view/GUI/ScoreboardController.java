@@ -4,15 +4,20 @@ import it.polimi.ingsw.model.game.Lobby;
 import it.polimi.ingsw.model.player.Pawn;
 import it.polimi.ingsw.model.player.Player;
 
+import it.polimi.ingsw.network.netMessage.NetMessage;
+import it.polimi.ingsw.network.netMessage.s2c.ScoreIncrementedMessage;
 import it.polimi.ingsw.view.View;
+import it.polimi.ingsw.view.ViewObserver;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Button;
 
 import javafx.scene.input.MouseEvent;
+
+import java.io.IOException;
 import java.util.HashMap;
 
-public class ScoreboardController{
+public class ScoreboardController implements ViewObserver {
     private View view;
     private Lobby lobby;
 
@@ -91,6 +96,7 @@ public class ScoreboardController{
 
     public void setView (View view){
         this.view = view;
+        view.addObserver(this);
     }
 
 
@@ -140,5 +146,15 @@ public class ScoreboardController{
     private void setBgColor(Button button, Pawn pawn) {
         if (pawn == Pawn.YELLOW) button.setStyle("-fx-background-color: gold");
         else if (pawn != null) button.setStyle("-fx-background-color: " + pawn.toString().toLowerCase());
+    }
+
+    @Override
+    public void update(NetMessage message) throws IOException {
+        switch (message){
+            case ScoreIncrementedMessage ignored -> {
+                refresh();
+            }
+            default -> {}
+        }
     }
 }

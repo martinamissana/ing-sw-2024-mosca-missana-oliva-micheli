@@ -75,7 +75,7 @@ public class MainLayout implements ViewObserver {
                 if (m.getID().equals(viewSingleton.getView().getID())) setScene("GameScreen");
             }
             case GameTerminatedMessage ignored -> setScene("Open");
-            default -> System.out.println(message.getClass());
+            default -> {}
         }
     }
 }
