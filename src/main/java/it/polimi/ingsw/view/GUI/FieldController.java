@@ -38,10 +38,11 @@ public class FieldController implements ViewObserver {
 
     private Button createButton(){
         Button button = new Button();
-        button.setStyle("-fx-background-radius: 15; -fx-background-color: #F2DEBD;");
+        button.setStyle("-fx-background-radius: 5; -fx-background-color: #F2DEBD;");
         button.setPrefWidth(100);
         button.setPrefHeight(66.66);
         button.setVisible(true);
+        button.setOpacity(0.5);
         return button;
     }
 

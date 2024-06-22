@@ -7,7 +7,7 @@
     <children>
         <ScrollPane hvalue="0.5" prefHeight="400.0" prefWidth="635.0" style="-fx-background-color: #935F2F;">
             <content>
-                <GridPane fx:id="fieldGrid" hgap="-27.11" prefHeight="400.0" prefWidth="636.0" style="-fx-background-color: #935F2F;" vgap="-30.22">
+                <GridPane fx:id="fieldGrid" prefHeight="400.0" prefWidth="636.0" hgap="-22.2" vgap="-26.6" style="-fx-background-color: #935F2F;">
                     <columnConstraints>
                         <ColumnConstraints hgrow="SOMETIMES" maxWidth="100" minWidth="100" prefWidth="100" />
                         <ColumnConstraints hgrow="SOMETIMES" maxWidth="100" minWidth="100" prefWidth="100" />
