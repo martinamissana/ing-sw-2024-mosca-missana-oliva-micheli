@@ -119,10 +119,10 @@ public class FieldController implements ViewObserver {
                             button.setOnAction(event -> {
                                 playCard(m.getCoords().getX(), m.getCoords().getY() + 1);
                             });
-                            fieldGrid.add(button, x - 1, y - 1);
+                            if(getNodeByRowColumnIndex(x - 1,y - 1)==null) fieldGrid.add(button, x - 1, y - 1);
                         } catch (IllegalCoordsException ignored) {
                             if(view.getMyField().getMatrix().get(new Coords(m.getCoords().getX(), m.getCoords().getY() + 1)).getClass() == CardBlock.class)
-                                fieldGrid.getChildren().remove(getNodeByRowColumnIndex(x-1,y-1,fieldGrid));
+                                fieldGrid.getChildren().remove(getNodeByRowColumnIndex(x-1,y-1));
                         }
 
                         try {
@@ -134,7 +134,7 @@ public class FieldController implements ViewObserver {
                             fieldGrid.add(button, x + 1, y + 1);
                         } catch (IllegalCoordsException ignored) {
                             if(view.getMyField().getMatrix().get(new Coords(m.getCoords().getX(), m.getCoords().getY() - 1)).getClass() == CardBlock.class)
-                                fieldGrid.getChildren().remove(getNodeByRowColumnIndex(x+1,y+1,fieldGrid));
+                                fieldGrid.getChildren().remove(getNodeByRowColumnIndex(x+1,y+1));
                         }
                         try {
                             view.getMyField().checkIfPlaceable(new Coords(m.getCoords().getX() + 1, m.getCoords().getY()));
@@ -145,7 +145,7 @@ public class FieldController implements ViewObserver {
                             fieldGrid.add(button, x + 1, y - 1);
                         } catch (IllegalCoordsException ignored) {
                             if(view.getMyField().getMatrix().get(new Coords(m.getCoords().getX() + 1, m.getCoords().getY())).getClass() == CardBlock.class)
-                                fieldGrid.getChildren().remove(getNodeByRowColumnIndex(x+1,y-1,fieldGrid));
+                                fieldGrid.getChildren().remove(getNodeByRowColumnIndex(x+1,y-1));
                         }
                         try {
                             view.getMyField().checkIfPlaceable(new Coords(m.getCoords().getX() - 1, m.getCoords().getY()));
@@ -156,8 +156,9 @@ public class FieldController implements ViewObserver {
                             fieldGrid.add(button, x - 1, y + 1);
                         } catch (IllegalCoordsException ignored) {
                             if(view.getMyField().getMatrix().get(new Coords(m.getCoords().getX()-1, m.getCoords().getY())).getClass() == CardBlock.class)
-                                fieldGrid.getChildren().remove(getNodeByRowColumnIndex(x-1,y+1,fieldGrid));
+                                fieldGrid.getChildren().remove(getNodeByRowColumnIndex(x-1,y+1));
                         }
+                        fieldGrid.getChildren().remove(getNodeByRowColumnIndex(x,y));
                         fieldGrid.add(new CardBuilder(m.getCard()).getCardImage(), x, y);
                     });
                 }
@@ -166,8 +167,8 @@ public class FieldController implements ViewObserver {
         }
     }
 
-    private Node getNodeByRowColumnIndex(final int row, final int column, GridPane gridPane) {
-        for (Node node : gridPane.getChildren()) {
+    private Node getNodeByRowColumnIndex(final int column, final int row) {
+        for (Node node : fieldGrid.getChildren()) {
             if (GridPane.getRowIndex(node) == row && GridPane.getColumnIndex(node) == column) {
                 return node;
             }
