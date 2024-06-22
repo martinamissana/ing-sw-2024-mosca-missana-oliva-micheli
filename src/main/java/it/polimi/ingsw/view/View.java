@@ -403,7 +403,7 @@ public abstract class View extends ViewObservable {
 
     public abstract void chooseCardSide(CardSide side) throws IOException, EmptyDeckException, GameDoesNotExistException, HandIsFullException, UnexistentUserException, WrongGamePhaseException;
 
-    public abstract void playCard(int handPos, Coords coords) throws IllegalActionException, NotYourTurnException, IllegalMoveException, GameDoesNotExistException, LobbyDoesNotExistsException, UnexistentUserException, IOException;
+    public abstract void playCard(int handPos, Coords coords, CardSide side) throws IllegalActionException, NotYourTurnException, IllegalMoveException, GameDoesNotExistException, LobbyDoesNotExistsException, UnexistentUserException, IOException;
 
     public abstract void drawCard(DeckTypeBox deckTypeBox) throws IllegalActionException, EmptyBufferException, NotYourTurnException, EmptyDeckException, GameDoesNotExistException, HandIsFullException, LobbyDoesNotExistsException, IOException, UnexistentUserException;
 
@@ -423,7 +423,7 @@ public abstract class View extends ViewObservable {
      * @throws HandIsFullException           thrown if the hand is full
      * @throws IllegalMoveException          thrown when violating the game's rules when placing a card
      */
-    public void elaborate(NetMessage message) throws IOException, FullLobbyException, NicknameAlreadyTakenException, HandIsFullException, IllegalMoveException {
+    public void elaborate(NetMessage message) throws IOException, NicknameAlreadyTakenException {
         switch (message) {
             case LoginMessage m -> {
                 if (nickname.equals(m.getNickname())) {
@@ -437,25 +437,22 @@ public abstract class View extends ViewObservable {
             }
             case LobbyCreatedMessage m -> {
                 lobbies.put(m.getID(), m.getLobby());
+                lobbies.get(m.getID()).getPlayers().get(0).initialize();
 
                 if (m.getCreator().equals(player)) {
+                    initialize();
+                    player.initialize();
                     ID = m.getID();
-                    this.chat = new Chat();
                     notify(m);
                 }
                 if (ID == null) notify(m);
             }
             case LobbyJoinedMessage m -> {
                 if (m.getPlayer().getNickname().equals(player.getNickname())) {
-                    ID = m.getID();
-                    this.chat = new Chat();
-                    pawn=null;
+                    initialize();
                     player.initialize();
-                    hand.removeAllCards();
-                    myField=null;
+                    ID = m.getID();
                     gamePhase=null;
-                    secretGoal = null;
-                    secretGoalChoices.clear();
                 }
                 try {
                     getLobbies().get(m.getID()).addPlayer(m.getPlayer());
@@ -473,17 +470,18 @@ public abstract class View extends ViewObservable {
                     }
 
                 lobbies.get(m.getID()).removePlayer(m.getPlayer());
+
                 if (scoreboard != null) scoreboard.remove(m.getPlayer());
+
                 if (m.getPlayer().getNickname().equals(nickname)) {
-                    ID = null;
-                    pawn = null;
-                    chat = null;
-                    player.initialize();
-                    hand.removeAllCards();
-                    secretGoalChoices.clear();
-                    secretGoal = null;
+                    initialize();
                     notify(m);
+
                 } else if (m.getID().equals(ID) || ID == null) {
+                    if(gamePhase!=null) {
+                        pawn=null;
+                        player.setPawn(null);
+                    }
                     notify(m);
                 }
             }
@@ -534,9 +532,6 @@ public abstract class View extends ViewObservable {
                     commonGoal2 = m.getCommonGoal2();
                     gamePhase = m.getGamePhase();
                     action = m.getAction();
-                    chat = new Chat();
-                    winners.clear();
-                    myField = new Field();
                     notify(message);
                 }
             }
@@ -562,7 +557,10 @@ public abstract class View extends ViewObservable {
                         myField.addCard((StarterCard) m.getCard());
                         notify(m);
                     } else try {
-                        myField.addCard((ResourceCard) m.getCard(), m.getCoords());
+                        ResourceCard card = (ResourceCard) m.getCard();
+                        if (!m.getSide().equals(card.getSide())) card.flip();
+
+                        myField.addCard(card, m.getCoords());
                         notify(m);
                     } catch (IllegalMoveException e) {
                         e.printStackTrace();
@@ -628,27 +626,7 @@ public abstract class View extends ViewObservable {
             case GameTerminatedMessage m -> {
                 if (m.getID().equals(ID)) {
                     lobbies.remove(ID);
-                    player.initialize();
-                    firstPlayer = false;
-                    yourTurn = false;
-                    lastRound = false;
-                    scoreboard = null;
-                    deckBuffers.clear();
-                    commonGoal1 = null;
-                    commonGoal2 = null;
-                    gamePhase = null;
-                    action = null;
-                    ID = null;
-                    pawn = null;
-                    hand.removeAllCards();
-                    secretGoalChoices.clear();
-                    secretGoal = null;
-                    fields.clear();
-                    chat = null;
-                    topResourceCard = null;
-                    topGoldenCard = null;
-                    commonGoal1 = null;
-                    commonGoal2 = null;
+                    initialize();
                     notify(m);
                 }
             }
@@ -662,28 +640,28 @@ public abstract class View extends ViewObservable {
                     switch (m.getType()) {
                         case DeckType.RESOURCE -> {
                             topResourceCard = m.getCard();
-                            if (topResourceCard.getSide().equals(CardSide.FRONT)) topResourceCard.flip();
+                            if (topResourceCard != null && topResourceCard.getSide().equals(CardSide.FRONT)) topResourceCard.flip();
                         }
 
                         case DeckType.GOLDEN -> {
                             topGoldenCard = m.getCard();
-                            if (topGoldenCard.getSide().equals(CardSide.FRONT)) topGoldenCard.flip();
+                            if (topGoldenCard != null && topGoldenCard.getSide().equals(CardSide.FRONT)) topGoldenCard.flip();
                         }
 
                         case DeckBufferType.RES1, DeckBufferType.RES2 -> {
-                            if (topResourceCard.getSide().equals(CardSide.BACK)) topResourceCard.flip();
+                            if (topResourceCard != null && topResourceCard.getSide().equals(CardSide.BACK)) topResourceCard.flip();
                             deckBuffers.get((DeckBufferType) m.getType()).setCard((ResourceCard) topResourceCard);
 
                             topResourceCard = m.getCard();
-                            if (topResourceCard.getSide().equals(CardSide.FRONT)) topResourceCard.flip();
+                            if (topResourceCard != null && topResourceCard.getSide().equals(CardSide.FRONT)) topResourceCard.flip();
                         }
 
                         case DeckBufferType.GOLD1, DeckBufferType.GOLD2 -> {
-                            if (topGoldenCard.getSide().equals(CardSide.BACK)) topGoldenCard.flip();
+                            if (topGoldenCard != null && topGoldenCard.getSide().equals(CardSide.BACK)) topGoldenCard.flip();
                             deckBuffers.get((DeckBufferType) m.getType()).setCard((GoldenCard) topGoldenCard);
 
                             topGoldenCard = m.getCard();
-                            if (topGoldenCard.getSide().equals(CardSide.FRONT)) topGoldenCard.flip();
+                            if (topGoldenCard != null && topGoldenCard.getSide().equals(CardSide.FRONT)) topGoldenCard.flip();
                         }
 
                         default -> throw new IllegalStateException("Unexpected value: " + m.getType());
@@ -698,5 +676,32 @@ public abstract class View extends ViewObservable {
             }
             default -> throw new IllegalStateException("Unexpected value: " + message);
         }
+    }
+
+    /**
+     * Initializes the value of the view when needed (when someone leaves a game or joins a lobby)
+     */
+    public void initialize(){
+        player.initialize();
+        firstPlayer = false;
+        yourTurn = false;
+        lastRound = false;
+        scoreboard = null;
+        deckBuffers.clear();
+        commonGoal1 = null;
+        commonGoal2 = null;
+        action = null;
+        ID = null;
+        pawn = null;
+        hand.removeAllCards();
+        secretGoalChoices.clear();
+        secretGoal = null;
+        chat = new Chat();
+        myField = new Field();
+        topResourceCard = null;
+        topGoldenCard = null;
+        commonGoal1 = null;
+        commonGoal2 = null;
+        winners.clear();
     }
 }

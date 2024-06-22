@@ -1,6 +1,5 @@
 package it.polimi.ingsw.view.GUI;
 
-import it.polimi.ingsw.network.RMI.ClientRemoteInterface;
 import it.polimi.ingsw.network.RMI.RemoteInterface;
 import it.polimi.ingsw.view.RMIView;
 import it.polimi.ingsw.view.TCPView;
@@ -12,11 +11,9 @@ import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
-import java.rmi.server.UnicastRemoteObject;
 
 public class ViewSingleton {
     private static ViewSingleton instance;
-
     private View view = null;
     private ViewController viewController = null;
 
@@ -28,14 +25,15 @@ public class ViewSingleton {
         return instance;
     }
 
-    public void initialize(Boolean isRMI) throws NotBoundException, IOException {
-        if (isRMI) {
+    public void initialize(String connection) {
+        if (connection.equalsIgnoreCase("RMI")) {
             try {
                 Registry registry = LocateRegistry.getRegistry();
                 String remoteObjectName = "RMIServer";
                 RemoteInterface RMIServer;
                 RMIServer = (RemoteInterface) registry.lookup(remoteObjectName);
                 this.view = new RMIView(RMIServer);
+
             } catch (RemoteException | NotBoundException e) {
                 e.printStackTrace();
             }

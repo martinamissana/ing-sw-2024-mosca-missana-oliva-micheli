@@ -1,4 +1,4 @@
-package it.polimi.ingsw.view.GUIFX;
+package it.polimi.ingsw.view.GUI;
 
 import it.polimi.ingsw.controller.exceptions.CannotJoinMultipleLobbiesException;
 import it.polimi.ingsw.controller.exceptions.UnexistentUserException;
@@ -17,14 +17,10 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.Node;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
-import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.net.URL;
@@ -34,23 +30,21 @@ import java.util.concurrent.Semaphore;
 
 public class OpenController implements ViewObserver, Initializable {
     @FXML
-    MenuButton playersNumber;
+    private MenuButton playersNumber;
     @FXML
-    MenuItem two;
+    private MenuItem two;
     @FXML
-    MenuItem three;
+    private MenuItem three;
     @FXML
-    MenuItem four;
+    private MenuItem four;
 
     @FXML
-    ListView<Pane> lobbies;
+    private ListView<Pane> lobbies;
     @FXML
-    Button lobbyCreation;
-    @FXML
-    Label helloLabel;
+    private Label helloLabel;
 
     private final ViewSingleton viewSingleton = ViewSingleton.getInstance();
-    Semaphore sem = new Semaphore(0);
+    private final Semaphore sem = new Semaphore(0);
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -60,21 +54,23 @@ public class OpenController implements ViewObserver, Initializable {
     }
 
     public void updateLobbies() {       // TODO: Fix bug
-        lobbies.getItems().removeAll();
-        HashMap<Integer, Lobby> lobbiesMap = viewSingleton.getView().getLobbies();
+        Platform.runLater(() -> {
+            lobbies.getItems().clear();
+            HashMap<Integer, Lobby> lobbiesMap = viewSingleton.getView().getLobbies();
 
-        for (Integer i : lobbiesMap.keySet()) {
-            try {
-                FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/LobbyInstance.fxml"));
-                AnchorPane lobbyPane = loader.load();
-                LobbyInstanceController controller = loader.getController();
-                controller.setLobby(lobbiesMap.get(i));
+            for (Integer i : lobbiesMap.keySet()) {
+                try {
+                    FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/LobbyInstance.fxml"));
+                    AnchorPane lobbyPane = loader.load();
+                    LobbyInstanceController controller = loader.getController();
+                    controller.setLobby(lobbiesMap.get(i));
 
-                lobbies.getItems().add(lobbyPane);
-            } catch (IOException e) {
-                e.printStackTrace();
+                    lobbies.getItems().add(lobbyPane);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
             }
-        }
+        });
     }
 
     public void choosePlayers(ActionEvent actionEvent) {
@@ -83,25 +79,11 @@ public class OpenController implements ViewObserver, Initializable {
         else playersNumber.setText(four.getText());
     }
 
-    public void createLobby(MouseEvent mouseEvent) {
+    public void createLobby() {
         try {
             viewSingleton.getViewController().checkCreateLobby(Integer.parseInt(playersNumber.getText()));
             viewSingleton.getView().createLobby(Integer.parseInt(playersNumber.getText()));
             sem.acquire();
-
-            Platform.runLater(() -> {
-                Parent root;
-                try {
-                    root = FXMLLoader.load(getClass().getResource("/fxml/InLobby.fxml"));
-                    Stage stage = (Stage) ((Node) mouseEvent.getSource()).getScene().getWindow();
-                    stage.setScene(new Scene(root));
-                    stage.show();
-
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-
-            });
 
         } catch (CannotJoinMultipleLobbiesException e) {
             System.out.println("Multiple lobbies");

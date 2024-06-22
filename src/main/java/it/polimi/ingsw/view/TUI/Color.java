@@ -1,5 +1,8 @@
 package it.polimi.ingsw.view.TUI;
 
+/**
+ * Enumeration of all colors used in TUI
+ */
 public enum Color {
     reset ("\u001B[0m"),
     console ("\u001B[38;2;255;165;0m"),
@@ -23,6 +26,10 @@ public enum Color {
 
     public final String label;
 
+    /**
+     * Class constructor
+     * @param label convert color into his String label
+     */
     Color(String label) {
         this.label = label;
     }

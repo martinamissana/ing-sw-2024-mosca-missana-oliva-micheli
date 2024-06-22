@@ -78,6 +78,7 @@ public class Controller implements Serializable {
             if (l.getPlayers().contains(lobbyCreator)) throw new CannotJoinMultipleLobbiesException();
         }
         try {
+            lobbyCreator.initialize();
             gh.getLobbies().put(gh.getNumOfLobbies(), new Lobby(getGh().getNumOfLobbies(), numOfPlayers));
             gh.getLobby(gh.getNumOfLobbies()).addPlayer(lobbyCreator);
             gh.notify(new LobbyCreatedEvent(lobbyCreator, gh.getLobby(getGh().getNumOfLobbies()), gh.getNumOfLobbies()));
@@ -109,6 +110,7 @@ public class Controller implements Serializable {
         }
 
         if (gh.getLobbies().containsKey(lobbyID)) {
+            player.initialize();
             gh.getLobbies().get(lobbyID).addPlayer(player);
             gh.notify(new LobbyJoinedEvent(player, lobbyID));
         } else throw new LobbyDoesNotExistsException("Lobby with ID " + lobbyID + " does not exist");
@@ -384,7 +386,7 @@ public class Controller implements Serializable {
         StarterCard card = (StarterCard) player.getHand().getCard(0);
         if (!card.getSide().equals(side)) card.flip();
         player.getField().addCard(card);
-        gh.notify(new CardPlacedOnFieldEvent(new Coords(0, 0), gameID, card, nickname));
+        gh.notify(new CardPlacedOnFieldEvent(new Coords(0, 0), gameID, card,side,nickname));
         player.getHand().removeCard(card);
         gh.notify(new CardRemovedFromHandEvent(player, card));
 
@@ -407,10 +409,16 @@ public class Controller implements Serializable {
 
         for (Player p : game.getPlayers()) {
             p.getHand().addCard(game.getResourceDeck().draw());
-            gh.notify(new CardAddedToHandEvent(p, p.getHand().getCard(0), gameID));
             p.getHand().addCard(game.getResourceDeck().draw());
-            gh.notify(new CardAddedToHandEvent(p, p.getHand().getCard(1), gameID));
             p.getHand().addCard(game.getGoldenDeck().draw());
+        }
+
+        gh.notify(new CardDrawnFromSourceEvent(gameID, DeckType.RESOURCE, game.getDeck(DeckType.RESOURCE).getCards().getLast()));
+        gh.notify(new CardDrawnFromSourceEvent(gameID, DeckType.GOLDEN, game.getDeck(DeckType.GOLDEN).getCards().getLast()));
+
+        for (Player p : game.getPlayers()) {
+            gh.notify(new CardAddedToHandEvent(p, p.getHand().getCard(0), gameID));
+            gh.notify(new CardAddedToHandEvent(p, p.getHand().getCard(1), gameID));
             gh.notify(new CardAddedToHandEvent(p, p.getHand().getCard(2), gameID));
         }
     }
@@ -540,7 +548,7 @@ public class Controller implements Serializable {
 
         gh.notify(new ScoreIncrementedEvent(gameID, player, points));
         gh.notify(new CardRemovedFromHandEvent(player, card));
-        gh.notify(new CardPlacedOnFieldEvent(coords, gameID, card, nickname));
+        gh.notify(new CardPlacedOnFieldEvent(coords, gameID, card, side,nickname));
 
         // set the game's current action to DRAW after playing a card
         // only if it's not the last round (because if it is,
@@ -586,9 +594,11 @@ public class Controller implements Serializable {
         gh.notify(new CardAddedToHandEvent(player, newCard, gameID));
 
         if (deckTypeBox.equals(DeckType.RESOURCE) || deckTypeBox.equals(DeckBufferType.RES1) || deckTypeBox.equals(DeckBufferType.RES2)) {
-            gh.notify(new CardDrawnFromSourceEvent(gameID, deckTypeBox, game.getDeck(DeckType.RESOURCE).getCards().getLast()));
+            if (!game.getDeck(DeckType.RESOURCE).getCards().isEmpty()) gh.notify(new CardDrawnFromSourceEvent(gameID, deckTypeBox, game.getDeck(DeckType.RESOURCE).getCards().getLast()));
+            else gh.notify(new CardDrawnFromSourceEvent(gameID, deckTypeBox, null));
         } else if (deckTypeBox.equals(DeckType.GOLDEN) || deckTypeBox.equals(DeckBufferType.GOLD1) || deckTypeBox.equals(DeckBufferType.GOLD2)) {
-            gh.notify(new CardDrawnFromSourceEvent(gameID, deckTypeBox, game.getDeck(DeckType.GOLDEN).getCards().getLast()));
+            if (!game.getDeck(DeckType.GOLDEN).getCards().isEmpty()) gh.notify(new CardDrawnFromSourceEvent(gameID, deckTypeBox, game.getDeck(DeckType.GOLDEN).getCards().getLast()));
+            else gh.notify(new CardDrawnFromSourceEvent(gameID, deckTypeBox, null));
         }
 
         // set the game's current action to PLAY after drawing a card

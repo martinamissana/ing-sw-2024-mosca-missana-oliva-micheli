@@ -189,7 +189,7 @@ public class TCPVirtualView implements Runnable, Observer {
                 }
                 case CardPlacedOnFieldEvent e -> {
                     if (e.getID().equals(ID)) {
-                        CardPlacedOnFieldMessage m = new CardPlacedOnFieldMessage(e.getCoords(), e.getID(), e.getCard(), e.getCard().getSide(), e.getNickname());
+                        CardPlacedOnFieldMessage m = new CardPlacedOnFieldMessage(e.getCoords(), e.getID(), e.getCard(), e.getSide(), e.getNickname());
                         out.writeObject(m);
                     }
                 }
@@ -449,8 +449,7 @@ public class TCPVirtualView implements Runnable, Observer {
         try {
             if (ID != null)
                 c.leaveLobby(nickname, ID);
-        } catch (LobbyDoesNotExistsException | GameDoesNotExistException | UnexistentUserException e) {
-            throw new RuntimeException(e);
+        } catch (LobbyDoesNotExistsException | GameDoesNotExistException | UnexistentUserException ignored) {
         }
         c.getGh().removeUser(nickname);
         socket.close();

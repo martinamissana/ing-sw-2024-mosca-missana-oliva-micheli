@@ -1,10 +1,10 @@
-package it.polimi.ingsw.view.GUIFX;
+package it.polimi.ingsw.view.GUI;
 
 import it.polimi.ingsw.model.game.Lobby;
 import it.polimi.ingsw.model.player.Pawn;
 import it.polimi.ingsw.model.player.Player;
-import it.polimi.ingsw.view.GUI.ViewSingleton;
-import javafx.application.Platform;
+
+import it.polimi.ingsw.view.View;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Button;
@@ -12,8 +12,8 @@ import javafx.scene.control.Button;
 import javafx.scene.input.MouseEvent;
 import java.util.HashMap;
 
-public class ScoreboardController {
-    private final ViewSingleton viewSing = ViewSingleton.getInstance();
+public class ScoreboardController{
+    private View view;
     private Lobby lobby;
 
     @FXML
@@ -46,16 +46,16 @@ public class ScoreboardController {
     @FXML
     public void showField(MouseEvent mouseEvent){
         if(mouseEvent.getSource().equals(pawn1)){
-            if(viewSing.getView().getNickname().equals(player1.toString())) return;
+            if(view.getNickname().equals(player1.toString())) return;
         }
         if(mouseEvent.getSource().equals(pawn2)){
-            if(viewSing.getView().getNickname().equals(player2.toString())) return;
+            if(view.getNickname().equals(player2.toString())) return;
         }
         if(mouseEvent.getSource().equals(pawn3)){
-            if(viewSing.getView().getNickname().equals(player3.toString())) return;
+            if(view.getNickname().equals(player3.toString())) return;
         }
         if(mouseEvent.getSource().equals(pawn4)){
-            if(viewSing.getView().getNickname().equals(player4.toString())) return;
+            if(view.getNickname().equals(player4.toString())) return;
         }
     }
 
@@ -89,15 +89,25 @@ public class ScoreboardController {
         score4.setVisible(false);
     }
 
-    public void setScoreboard() {
+    public void setView (View view){
+        this.view = view;
+    }
+
+
+    public void setScoreboard(Lobby lobby) {
+        this.lobby=lobby;
         this.title.setText("SCOREBOARD");
         setPlayersAndPawns(0, player1, pawn1);
+        score1.setText(view.getScoreboard().get(lobby.getPlayers().get(0)).toString());
         setPlayersAndPawns(1, player2, pawn2);
+        score2.setText(view.getScoreboard().get(lobby.getPlayers().get(1)).toString());
 
         if (lobby.getPlayers().size() > 2) {
             setPlayersAndPawns(2, player3, pawn3);
+            score3.setText(view.getScoreboard().get(lobby.getPlayers().get(2)).toString());
             if (lobby.getPlayers().size() == 4) {
                 setPlayersAndPawns(3, player4, pawn4);
+                score4.setText(view.getScoreboard().get(lobby.getPlayers().get(3)).toString());
             } else {
                 player4.setVisible(false);
                 score4.setVisible(false);
@@ -120,7 +130,7 @@ public class ScoreboardController {
     }
 
     public void refresh() {
-        HashMap<Player, Integer> scoreboard = viewSing.getView().getScoreboard();
+        HashMap<Player, Integer> scoreboard = view.getScoreboard();
         score1.setText(scoreboard.get(lobby.getPlayers().get(0)).toString());
         score2.setText(scoreboard.get(lobby.getPlayers().get(1)).toString());
         if (lobby.getNumOfPlayers() > 2) score3.setText(scoreboard.get(lobby.getPlayers().get(2)).toString());

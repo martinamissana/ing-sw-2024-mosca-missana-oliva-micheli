@@ -1,4 +1,4 @@
-package it.polimi.ingsw.view.GUIFX;
+package it.polimi.ingsw.view.GUI;
 
 import it.polimi.ingsw.model.exceptions.FullLobbyException;
 import it.polimi.ingsw.model.exceptions.NicknameAlreadyTakenException;
@@ -10,15 +10,10 @@ import it.polimi.ingsw.network.netMessage.s2c.LoginMessage;
 import it.polimi.ingsw.view.ViewObserver;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
-import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.util.concurrent.Semaphore;
@@ -27,23 +22,26 @@ import static java.lang.System.exit;
 
 public class LoginController implements ViewObserver {
     @FXML
-    TextField nicknameField;
+    private TextField nicknameField;
     @FXML
-    MenuButton connectionMenu;
+    private MenuButton connectionMenu;
     @FXML
-    Button loginButton;
+    private MenuItem TCP;
     @FXML
-    MenuItem TCP;
+    private MenuItem RMI;
     @FXML
-    MenuItem RMI;
-    @FXML
-    Label statusMessage;
+    private Label statusMessage;
 
-    ViewSingleton viewSing = ViewSingleton.getInstance();
-    Semaphore sem = new Semaphore(0);
+    private final ViewSingleton viewSing = ViewSingleton.getInstance();
+    private final Semaphore sem = new Semaphore(0);
+    private MainLayout mainLayout;
+
+    public void setMainLayout(MainLayout mainLayout) {
+        this.mainLayout = mainLayout;
+    }
 
     @FXML
-    public void menuOptions(MouseEvent mouseEvent) {
+    public void menuOptions() {
         connectionMenu.fire();
     }
 
@@ -57,11 +55,11 @@ public class LoginController implements ViewObserver {
             statusMessage.setText("character limit reached");
         } else statusMessage.setText("");
 
-        if (keyEvent.getCode() == KeyCode.ENTER) loginButton.fire();
+        if (keyEvent.getCode() == KeyCode.ENTER) login();
     }
 
     @FXML
-    public void login(MouseEvent mouseEvent) {
+    public void login() {
         statusMessage.setText("");
         nicknameField.setText(nicknameField.getText().strip());
 
@@ -80,19 +78,11 @@ public class LoginController implements ViewObserver {
             viewSing.getView().getCurrentStatus();
             sem.acquire();
             viewSing.getView().removeObserver(this);
+            viewSing.getView().addObserver(mainLayout);
+            mainLayout.viewSingleton = this.viewSing;
 
             //Creation of scene
-            Parent root;
-            try {
-                root = FXMLLoader.load(getClass().getResource("/fxml/Open.fxml"));
-
-                Stage stage = (Stage) ((Node) mouseEvent.getSource()).getScene().getWindow();
-                Scene scene = new Scene(root);
-                stage.setScene(scene);
-                stage.show();
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
+            mainLayout.setScene("Open");
 
         } catch (NicknameAlreadyTakenException | IOException | FullLobbyException | ClassNotFoundException e) {
             statusMessage.setText("Nickname already taken");

@@ -12,7 +12,7 @@ import java.util.HashMap;
  */
 public class GameWinnersAnnouncedEvent  extends Event {
     private Integer ID;
-    private ArrayList<Player> winners=new ArrayList<>();
+    private ArrayList<Player> winners = new ArrayList<>();
     private HashMap <Player, Integer> goalsDone = new HashMap<>();
 
     /**
@@ -26,6 +26,10 @@ public class GameWinnersAnnouncedEvent  extends Event {
         this.goalsDone=goalsDone;
     }
 
+    /**
+     * getter
+     * @return Hashmap <Player, Integer>  how many goals every player completed
+     */
     public HashMap<Player, Integer> getGoalsDone() {
         return goalsDone;
     }
