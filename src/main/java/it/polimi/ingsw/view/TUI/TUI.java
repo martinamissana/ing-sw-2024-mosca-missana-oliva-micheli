@@ -130,7 +130,7 @@ public class TUI implements Runnable, ViewObserver {
         switch (message) {
 
             // Login messages ·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~
-            case LoginMessage m -> {
+            case LoginSuccessMessage m -> {
                 System.out.println(cli + "Successfully logged in. Hello " + m.getNickname() + "!!");
                 semaphore.release();
             }
@@ -405,7 +405,7 @@ public class TUI implements Runnable, ViewObserver {
 
                                 case DRAW -> {
                                     printer.printGameArea();
-                                    System.out.print(cli + "From where do you want to draw?" + cli + "Resource Deck -> ResDeck" + cli + "Golden Deck -> GoldDeck" + cli + "Resource card spaces -> RES1 - RES2" + cli + "Golden card spaces -> GOLD1 - GOLD2" + user);
+                                    System.out.print(cli + "From where do you want to draw?" + cli + "Resource Deck -> ResDeck" + cli + "Golden Deck -> GoldDeck" + cli + "Resource deck buffers -> RES1 - RES2" + cli + "Golden deck buffers -> GOLD1 - GOLD2" + user);
                                 }
                             }
                         } else {

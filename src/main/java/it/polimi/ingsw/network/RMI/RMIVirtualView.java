@@ -42,7 +42,7 @@ public class RMIVirtualView implements Observer {
             case LoginEvent e -> {
                 if (Objects.equals(nickname, e.getNickname())) {
                     try {
-                        view.elaborate(new LoginMessage(e.getNickname()));
+                        view.elaborate(new LoginSuccessMessage(e.getNickname()));
                     } catch (FullLobbyException | NicknameAlreadyTakenException | HandIsFullException |
                              IllegalMoveException ex) {
                         throw new RuntimeException(ex);

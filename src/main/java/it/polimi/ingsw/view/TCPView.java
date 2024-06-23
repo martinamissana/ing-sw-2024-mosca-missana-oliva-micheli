@@ -82,7 +82,7 @@ public class TCPView extends View {
      */
     @Override
     public void login(String nickname) throws IOException {
-        MyNickname m = new MyNickname(nickname);
+        LoginRequestMessage m = new LoginRequestMessage(nickname);
         super.setPlayer(new Player(nickname));
         super.setNickname(nickname);
         out.writeObject(m);

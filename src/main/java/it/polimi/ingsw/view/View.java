@@ -351,7 +351,7 @@ public abstract class View extends ViewObservable {
      */
     public void elaborate(NetMessage message) throws IOException, NicknameAlreadyTakenException {
         switch (message) {
-            case LoginMessage m -> {
+            case LoginSuccessMessage m -> {
                 if (nickname.equals(m.getNickname())) {
                     notify(m);
                 }

@@ -6,7 +6,7 @@ import it.polimi.ingsw.network.netMessage.NetMessage;
 import it.polimi.ingsw.network.netMessage.c2s.DisconnectMessage;
 import it.polimi.ingsw.network.netMessage.s2c.CurrentStatusMessage;
 import it.polimi.ingsw.network.netMessage.s2c.LoginFail_NicknameAlreadyTaken;
-import it.polimi.ingsw.network.netMessage.s2c.LoginMessage;
+import it.polimi.ingsw.network.netMessage.s2c.LoginSuccessMessage;
 import it.polimi.ingsw.view.ViewObserver;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -113,7 +113,7 @@ public class LoginController implements ViewObserver {
     @Override
     public void update(NetMessage message) throws IOException {
         switch (message) {
-            case LoginMessage m -> {
+            case LoginSuccessMessage m -> {
                 if (m.getNickname().equals(nicknameField.getText())) sem.release();
             }
             case LoginFail_NicknameAlreadyTaken ignored -> exit(1);

@@ -299,7 +299,7 @@ public class Printer {
         // Printing resource deck + spaces
         if (next != null && next.getSide().equals(CardSide.FRONT)) next.flip();
 
-        System.out.print(cli + "Resource Deck + card spaces:" + cli);
+        System.out.print(cli + "Resource Deck +  resource deck buffers (res1 | res2):" + cli);
         if (next != null) System.out.print(printUpper(next) + "\t\t");
         else System.out.print("\t\t\t\t\t");
         if (cardSpaces.get(DeckBufferType.RES1).getCard() != null) System.out.print(printUpper(cardSpaces.get(DeckBufferType.RES1).getCard()) + "\t");
@@ -327,7 +327,7 @@ public class Printer {
         next = view.getTopGoldenCard();
         if (next != null && next.getSide().equals(CardSide.FRONT)) next.flip();
 
-        System.out.print(cli + "Golden Deck + card spaces:" + cli);
+        System.out.print(cli + "Golden Deck + golden deck buffers (gold1 | gold2):" + cli);
         if (next != null) System.out.print(printUpper(next) + "\t\t");
         else System.out.print("\t\t\t\t\t");
         if (cardSpaces.get(DeckBufferType.GOLD1).getCard() != null) System.out.print(printUpper(cardSpaces.get(DeckBufferType.GOLD1).getCard()) + "\t");

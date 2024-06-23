@@ -135,7 +135,7 @@ public class TCPVirtualView implements Runnable, Observer {
             switch (event) {
                 case LoginEvent e -> {
                     if (e.getNickname().equals(this.nickname)) {
-                        LoginMessage m = new LoginMessage(e.getNickname());
+                        LoginSuccessMessage m = new LoginSuccessMessage(e.getNickname());
                         out.writeObject(m);
                     }
                 }
@@ -268,7 +268,7 @@ public class TCPVirtualView implements Runnable, Observer {
      */
     private void elaborate(NetMessage message) throws IOException {
         switch (message) {
-            case MyNickname m -> {
+            case LoginRequestMessage m -> {
                 try {
                     setNickname(m.getNickname());
                     c.login(m.getNickname());
@@ -285,7 +285,7 @@ public class TCPVirtualView implements Runnable, Observer {
                     c.createLobby(m.getNumOfPlayers(), m.getCreator().getNickname());
                     setID(c.getGh().getNumOfLobbies() - 1);
                 } catch (CannotJoinMultipleLobbiesException e) {
-                    FailMessage failMessage = new FailMessage("Already in lobby", m.getCreator().getNickname());
+                    FailMessage failMessage = new FailMessage("Already in a lobby", m.getCreator().getNickname());
                     out.writeObject(failMessage);
                 } catch (LobbyDoesNotExistsException | UnexistentUserException e) {
                     e.printStackTrace();
@@ -296,13 +296,13 @@ public class TCPVirtualView implements Runnable, Observer {
                     c.joinLobby(m.getPlayer().getNickname(), m.getID());
                     setID(m.getID());
                 } catch (FullLobbyException e) {
-                    FailMessage failMessage = new FailMessage("Full lobby", m.getPlayer().getNickname());
+                    FailMessage failMessage = new FailMessage("The lobby is full", m.getPlayer().getNickname());
                     out.writeObject(failMessage);
                 } catch (LobbyDoesNotExistsException e) {
-                    FailMessage failMessage = new FailMessage("ID not found", m.getPlayer().getNickname());
+                    FailMessage failMessage = new FailMessage("Lobby ID not found", m.getPlayer().getNickname());
                     out.writeObject(failMessage);
                 } catch (CannotJoinMultipleLobbiesException e) {
-                    FailMessage failMessage = new FailMessage("Already in lobby", m.getPlayer().getNickname());
+                    FailMessage failMessage = new FailMessage("Already in a lobby", m.getPlayer().getNickname());
                     out.writeObject(failMessage);
                 } catch (UnexistentUserException e) {
                     e.printStackTrace();
@@ -323,7 +323,7 @@ public class TCPVirtualView implements Runnable, Observer {
                 try {
                     c.choosePawn(m.getLobbyID(), m.getPlayer().getNickname(), m.getColor());
                 } catch (PawnAlreadyTakenException e) {
-                    FailMessage failMessage = new FailMessage("Pawn taken", m.getPlayer().getNickname());
+                    FailMessage failMessage = new FailMessage("Pawn already taken", m.getPlayer().getNickname());
                     out.writeObject(failMessage);
                 } catch (LobbyDoesNotExistsException | GameAlreadyStartedException | IOException |
                          GameDoesNotExistException e) {
@@ -359,13 +359,13 @@ public class TCPVirtualView implements Runnable, Observer {
                     try {
                         c.chooseSecretGoal(m.getID(), m.getNickname(), m.getGoalID());
                     } catch (WrongGamePhaseException e) {
-                        FailMessage failMessage = new FailMessage("Wrong phase", m.getNickname());
+                        FailMessage failMessage = new FailMessage("Wrong game phase", m.getNickname());
                         out.writeObject(failMessage);
                     } catch (GameDoesNotExistException | UnexistentUserException e) {
                         e.printStackTrace();
                     }
                 } catch (IllegalGoalChosenException e) {
-                    FailMessage failMessage = new FailMessage("Goal not valid", m.getNickname());
+                    FailMessage failMessage = new FailMessage("Invalid goal", m.getNickname());
                     out.writeObject(failMessage);
                 }
             }
@@ -373,17 +373,17 @@ public class TCPVirtualView implements Runnable, Observer {
                 try {
                     c.playCard(m.getGameID(), m.getNickname(), m.getHandPos(), m.getCoords(), m.getSide());
                 } catch (IllegalActionException e) {
-                    FailMessage failMessage = new FailMessage("Not play action", m.getNickname());
+                    FailMessage failMessage = new FailMessage("Cannot play a card now", m.getNickname());
                     out.writeObject(failMessage);
                 } catch (NotYourTurnException e) {
                     FailMessage failMessage = new FailMessage("Not your turn", m.getNickname());
                     out.writeObject(failMessage);
                 } catch (IllegalMoveException e) {
                     if (e.getClass().equals(IllegalCoordsException.class)) {
-                        FailMessage failMessage = new FailMessage("Illegal coords", m.getNickname());
+                        FailMessage failMessage = new FailMessage("Move not allowed", m.getNickname());
                         out.writeObject(failMessage);
                     } else if (e.getClass().equals(RequirementsNotSatisfiedException.class)) {
-                        FailMessage failMessage = new FailMessage("requirements not satisfied", m.getNickname());
+                        FailMessage failMessage = new FailMessage("Requirements not satisfied to place the card", m.getNickname());
                         out.writeObject(failMessage);
                     }
                 } catch (LobbyDoesNotExistsException | GameDoesNotExistException | UnexistentUserException e) {
@@ -394,21 +394,21 @@ public class TCPVirtualView implements Runnable, Observer {
                 try {
                     c.drawCard(m.getGameID(), m.getNickname(), m.getDeckTypeBox());
                 } catch (IllegalActionException e) {
-                    FailMessage failMessage = new FailMessage("Not draw action", m.getNickname());
+                    FailMessage failMessage = new FailMessage("Cannot draw now", m.getNickname());
                     out.writeObject(failMessage);
                 } catch (EmptyBufferException e) {
-                    FailMessage failMessage = new FailMessage("Deck buffer empty", m.getNickname());
+                    FailMessage failMessage = new FailMessage("The selected deck buffer is empty", m.getNickname());
                     out.writeObject(failMessage);
                 } catch (NotYourTurnException e) {
                     FailMessage failMessage = new FailMessage("Not your turn", m.getNickname());
                     out.writeObject(failMessage);
                 } catch (EmptyDeckException e) {
-                    FailMessage failMessage = new FailMessage("Deck empty", m.getNickname());
+                    FailMessage failMessage = new FailMessage("The selected deck is empty", m.getNickname());
                     out.writeObject(failMessage);
                 } catch (GameDoesNotExistException | UnexistentUserException | LobbyDoesNotExistsException e) {
                     e.printStackTrace();
                 } catch (HandIsFullException e) {
-                    FailMessage failMessage = new FailMessage("Hand full", m.getNickname());
+                    FailMessage failMessage = new FailMessage("The hand is full", m.getNickname());
                     out.writeObject(failMessage);
                 }
             }
