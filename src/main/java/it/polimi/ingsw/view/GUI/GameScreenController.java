@@ -36,6 +36,8 @@ public class GameScreenController implements ViewObserver {
     private Pane chooseGoal;
     @FXML
     private TextField informations;
+    @FXML
+    private Pane otherField;
 
     public void initialize() {
         viewSingleton.getView().addObserver(this);
@@ -51,6 +53,7 @@ public class GameScreenController implements ViewObserver {
             ScoreboardController controller = loader.getController();
             controller.setView(viewSingleton.getView());
             controller.setScoreboard(viewSingleton.getView().getLobbies().get(viewSingleton.getView().getID()));
+            controller.setOtherField(otherField);
 
 
             FXMLLoader decksLoader = new FXMLLoader(getClass().getResource("/fxml/Decks.fxml"));
