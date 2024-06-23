@@ -382,6 +382,7 @@ public abstract class View extends ViewObservable {
                 }
                 try {
                     getLobbies().get(m.getID()).addPlayer(m.getPlayer());
+                    lobbies.get(m.getID()).getPlayers().getLast().initialize();
                 } catch (FullLobbyException e) {
                     e.printStackTrace();
                 }
@@ -443,6 +444,9 @@ public abstract class View extends ViewObservable {
                 if (m.getID().equals(ID)) {
                     for (Player p : lobbies.get(ID).getPlayers())
                         fields.put(p, new Field());
+                    if (m.getFirstPlayer().equals(player)) {
+                        yourTurn = true;
+                    } else yourTurn = false;
                     scoreboard = m.getScoreboard();
                     deckBuffers = m.getDeckBuffers();
                     topResourceCard = m.getTopResourceCard();
