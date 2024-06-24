@@ -33,13 +33,12 @@ public abstract class View extends ViewObservable {
     private Integer ID; // both game and lobby ID
     private Hand hand = new Hand();
     private Field myField = new Field();
-    private HashMap<Player, Field> fields = new HashMap<>(); // all other players' fields
+    private final HashMap<Player, Field> fields = new HashMap<>(); // all other players' fields
     private boolean yourTurn = false;
     private Action action;
     private Chat chat = new Chat();
     private Goal secretGoal;
     private Pawn pawn;
-    private boolean firstPlayer = false;
     private boolean lastRound = false;
     private ArrayList<Goal> secretGoalChoices = new ArrayList<>();
     private HashMap<Player, Integer> scoreboard = new HashMap<>();
@@ -170,14 +169,6 @@ public abstract class View extends ViewObservable {
         return secretGoal;
     }
 
-    /**
-     * gets an ArrayList with the winners of the match
-     *
-     * @return ArrayList <Player>
-     */
-    public ArrayList<Player> getWinners() {
-        return winners;
-    }
 
     /**
      * gets the player's pawn
@@ -188,9 +179,6 @@ public abstract class View extends ViewObservable {
         return pawn;
     }
 
-    public boolean isFirstPlayer() {
-        return firstPlayer;
-    }
 
     /**
      * returns true if it's the last round of the match
@@ -281,21 +269,11 @@ public abstract class View extends ViewObservable {
         this.hand = hand;
     }
 
-    public void setMyField(Field myField) {
-        this.myField = myField;
-    }
-
-    public void setFields(HashMap<Player, Field> fields) {
-        this.fields = fields;
-    }
 
     public void setLobbies(HashMap<Integer, Lobby> lobbies) {
         this.lobbies = lobbies;
     }
 
-    public void setYourTurn(boolean yourTurn) {
-        this.yourTurn = yourTurn;
-    }
 
     /**
      * sets the Action [PLAY - DRAW]
@@ -315,10 +293,6 @@ public abstract class View extends ViewObservable {
         this.chat = chat;
     }
 
-    public void setSecretGoal(Goal secretGoal) {
-        this.secretGoal = secretGoal;
-    }
-
     /**
      * sets the pawn color
      *
@@ -328,50 +302,9 @@ public abstract class View extends ViewObservable {
         this.pawn = pawn;
     }
 
-    public void setFirstPlayer(boolean firstPlayer) {
-        this.firstPlayer = firstPlayer;
-    }
-
-    public void setLastRound(boolean lastRound) {
-        this.lastRound = lastRound;
-    }
-
-    public void setSecretGoalChoices(ArrayList<Goal> secretGoalChoices) {
-        this.secretGoalChoices = secretGoalChoices;
-    }
 
     public void setScoreboard(HashMap<Player, Integer> scoreboard) {
         this.scoreboard = scoreboard;
-    }
-
-    public void setGamePhase(GamePhase gamePhase) {
-        this.gamePhase = gamePhase;
-    }
-
-    public void setDeckBuffers(HashMap<DeckBufferType, DeckBuffer> deckBuffers) {
-        this.deckBuffers = deckBuffers;
-    }
-
-    public void setCardInDeckBuffer(DeckBufferType deckBufferType, Card card) {
-        DeckBuffer d = new DeckBuffer(null);
-        d.setCard((ResourceCard) card);
-        this.deckBuffers.put(deckBufferType, d);
-    }
-
-    public void setTopResourceCard(Card topResourceCard) {
-        this.topResourceCard = topResourceCard;
-    }
-
-    public void setTopGoldenCard(Card topGoldenCard) {
-        this.topGoldenCard = topGoldenCard;
-    }
-
-    public void setCommonGoal1(Goal commonGoal1) {
-        this.commonGoal1 = commonGoal1;
-    }
-
-    public void setCommonGoal2(Goal commonGoal2) {
-        this.commonGoal2 = commonGoal2;
     }
 
     /**
@@ -381,10 +314,6 @@ public abstract class View extends ViewObservable {
      */
     public void setNickname(String nickname) {
         this.nickname = nickname;
-    }
-
-    public void setWinners(ArrayList<Player> winners) {
-        this.winners = winners;
     }
 
     public abstract void login(String nickname) throws NicknameAlreadyTakenException, IOException, FullLobbyException, ClassNotFoundException;
@@ -418,14 +347,11 @@ public abstract class View extends ViewObservable {
      *
      * @param message network message received from the server
      * @throws IOException                   general class of exceptions produced by failed or interrupted I/O operations
-     * @throws FullLobbyException            thrown if the lobby is full
      * @throws NicknameAlreadyTakenException thrown if the nickname is already taken
-     * @throws HandIsFullException           thrown if the hand is full
-     * @throws IllegalMoveException          thrown when violating the game's rules when placing a card
      */
     public void elaborate(NetMessage message) throws IOException, NicknameAlreadyTakenException {
         switch (message) {
-            case LoginMessage m -> {
+            case LoginSuccessMessage m -> {
                 if (nickname.equals(m.getNickname())) {
                     notify(m);
                 }
@@ -437,7 +363,7 @@ public abstract class View extends ViewObservable {
             }
             case LobbyCreatedMessage m -> {
                 lobbies.put(m.getID(), m.getLobby());
-                lobbies.get(m.getID()).getPlayers().get(0).initialize();
+                lobbies.get(m.getID()).getPlayers().getFirst().initialize();
 
                 if (m.getCreator().equals(player)) {
                     initialize();
@@ -452,10 +378,11 @@ public abstract class View extends ViewObservable {
                     initialize();
                     player.initialize();
                     ID = m.getID();
-                    gamePhase=null;
+                    gamePhase = null;
                 }
                 try {
                     getLobbies().get(m.getID()).addPlayer(m.getPlayer());
+                    lobbies.get(m.getID()).getPlayers().getLast().initialize();
                 } catch (FullLobbyException e) {
                     e.printStackTrace();
                 }
@@ -478,8 +405,8 @@ public abstract class View extends ViewObservable {
                     notify(m);
 
                 } else if (m.getID().equals(ID) || ID == null) {
-                    if(gamePhase!=null) {
-                        pawn=null;
+                    if (gamePhase != null) {
+                        pawn = null;
                         player.setPawn(null);
                     }
                     notify(m);
@@ -515,15 +442,11 @@ public abstract class View extends ViewObservable {
             }
             case GameCreatedMessage m -> {
                 if (m.getID().equals(ID)) {
-                    if (m.getFirstPlayer().equals(player)) {
-                        firstPlayer = true;
-                        yourTurn = true;
-                    } else {
-                        firstPlayer = false;
-                        yourTurn = false;
-                    }
                     for (Player p : lobbies.get(ID).getPlayers())
                         fields.put(p, new Field());
+                    if (m.getFirstPlayer().equals(player)) {
+                        yourTurn = true;
+                    } else yourTurn = false;
                     scoreboard = m.getScoreboard();
                     deckBuffers = m.getDeckBuffers();
                     topResourceCard = m.getTopResourceCard();
@@ -599,8 +522,10 @@ public abstract class View extends ViewObservable {
                 }
             }
             case GameActionSwitchedMessage m -> {
-                if (m.getID().equals(ID))
+                if (m.getID().equals(ID)) {
                     action = m.getAction();
+                    notify(m);
+                }
             }
             case LastRoundStartedMessage m -> {
                 if (m.getID().equals(ID))
@@ -633,6 +558,7 @@ public abstract class View extends ViewObservable {
             case ScoreIncrementedMessage m -> {
                 if (ID != null && ID.equals(m.getID())) {
                     scoreboard.put(m.getPlayer(), getScoreboard().get(m.getPlayer()) + m.getPoints());
+                    notify(m);
                 }
             }
             case CardDrawnFromSourceMessage m -> {
@@ -640,32 +566,39 @@ public abstract class View extends ViewObservable {
                     switch (m.getType()) {
                         case DeckType.RESOURCE -> {
                             topResourceCard = m.getCard();
-                            if (topResourceCard != null && topResourceCard.getSide().equals(CardSide.FRONT)) topResourceCard.flip();
+                            if (topResourceCard != null && topResourceCard.getSide().equals(CardSide.FRONT))
+                                topResourceCard.flip();
                         }
 
                         case DeckType.GOLDEN -> {
                             topGoldenCard = m.getCard();
-                            if (topGoldenCard != null && topGoldenCard.getSide().equals(CardSide.FRONT)) topGoldenCard.flip();
+                            if (topGoldenCard != null && topGoldenCard.getSide().equals(CardSide.FRONT))
+                                topGoldenCard.flip();
                         }
 
                         case DeckBufferType.RES1, DeckBufferType.RES2 -> {
-                            if (topResourceCard != null && topResourceCard.getSide().equals(CardSide.BACK)) topResourceCard.flip();
+                            if (topResourceCard != null && topResourceCard.getSide().equals(CardSide.BACK))
+                                topResourceCard.flip();
                             deckBuffers.get((DeckBufferType) m.getType()).setCard((ResourceCard) topResourceCard);
 
                             topResourceCard = m.getCard();
-                            if (topResourceCard != null && topResourceCard.getSide().equals(CardSide.FRONT)) topResourceCard.flip();
+                            if (topResourceCard != null && topResourceCard.getSide().equals(CardSide.FRONT))
+                                topResourceCard.flip();
                         }
 
                         case DeckBufferType.GOLD1, DeckBufferType.GOLD2 -> {
-                            if (topGoldenCard != null && topGoldenCard.getSide().equals(CardSide.BACK)) topGoldenCard.flip();
+                            if (topGoldenCard != null && topGoldenCard.getSide().equals(CardSide.BACK))
+                                topGoldenCard.flip();
                             deckBuffers.get((DeckBufferType) m.getType()).setCard((GoldenCard) topGoldenCard);
 
                             topGoldenCard = m.getCard();
-                            if (topGoldenCard != null && topGoldenCard.getSide().equals(CardSide.FRONT)) topGoldenCard.flip();
+                            if (topGoldenCard != null && topGoldenCard.getSide().equals(CardSide.FRONT))
+                                topGoldenCard.flip();
                         }
 
                         default -> throw new IllegalStateException("Unexpected value: " + m.getType());
                     }
+                    notify(m);
                 }
             }
             case HeartBeatMessage ignored -> {
@@ -681,9 +614,8 @@ public abstract class View extends ViewObservable {
     /**
      * Initializes the value of the view when needed (when someone leaves a game or joins a lobby)
      */
-    public void initialize(){
+    public void initialize() {
         player.initialize();
-        firstPlayer = false;
         yourTurn = false;
         lastRound = false;
         scoreboard = null;

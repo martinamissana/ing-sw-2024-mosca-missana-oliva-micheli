@@ -3,6 +3,9 @@ package it.polimi.ingsw.model.player;
 import it.polimi.ingsw.model.card.GoldenCard;
 import it.polimi.ingsw.model.card.ResourceCard;
 import it.polimi.ingsw.model.card.StarterCard;
+import it.polimi.ingsw.model.commonItem.ItemBox;
+import it.polimi.ingsw.model.commonItem.Kingdom;
+import it.polimi.ingsw.model.commonItem.Resource;
 import it.polimi.ingsw.model.exceptions.IllegalMoveException;
 import it.polimi.ingsw.model.exceptions.OccupiedCoordsException;
 import it.polimi.ingsw.model.exceptions.UnreachablePositionException;
@@ -11,8 +14,9 @@ import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class TestField {
 
@@ -23,33 +27,29 @@ public class TestField {
         ArrayList<GoldenCard> goldenCards = CardsPreset.getGoldenCards();
         Field field = new Field();
 
-        field.addCard(starterCards.get(0));
-        assertEquals(starterCards.get(0), field.getMatrix().get(new Coords(0, 0)));
+        field.addCard(starterCards.getFirst());
+        assertEquals(starterCards.getFirst(), field.getMatrix().get(new Coords(0, 0)));
 
-        field.addCard(resourceCards.get(0), new Coords(1,0));
-        assertEquals(resourceCards.get(0), field.getMatrix().get(new Coords(1, 0)));
-        assertEquals(starterCards.get(0), field.getMatrix().get(new Coords(0, 0)));
+        field.addCard(resourceCards.getFirst(), new Coords(1,0));
+        assertEquals(resourceCards.getFirst(), field.getMatrix().get(new Coords(1, 0)));
+        assertEquals(starterCards.getFirst(), field.getMatrix().get(new Coords(0, 0)));
         assertEquals(field.getCardBlock(), field.getMatrix().get(new Coords(1, -1)));
 
-        try {
-            field.addCard(resourceCards.get(0), new Coords(1, -1));
-        } catch (OccupiedCoordsException e) {
-            System.out.println("correct throw");
-        }
+        assertThrows(OccupiedCoordsException.class, () ->
+                field.addCard(resourceCards.getFirst(), new Coords(1, -1)));
 
-        try {
-            field.addCard(resourceCards.get(3), new Coords(3, -1));
-            field.addCard(resourceCards.get(3), new Coords(-2, -1));
-        } catch (UnreachablePositionException e) {
-            System.out.println("correct throw");
-        }
+        assertThrows(UnreachablePositionException.class, () ->
+                field.addCard(resourceCards.get(3), new Coords(3, -1)));
+
+        assertThrows(UnreachablePositionException.class, () ->
+                field.addCard(resourceCards.get(3), new Coords(-2, -1)));
 
         field.addCard(resourceCards.get(1), new Coords(0,-1));
         assertEquals(field.getCardBlock(), field.getMatrix().get(new Coords(1,-1)));
 
         field.addCard(resourceCards.get(21), new Coords(2,0));
-        field.addCard(goldenCards.get(0), new Coords(-1,0));
-        assertEquals(goldenCards.get(0), field.getMatrix().get(new Coords(-1,0)));
+        field.addCard(goldenCards.getFirst(), new Coords(-1,0));
+        assertEquals(goldenCards.getFirst(), field.getMatrix().get(new Coords(-1,0)));
     }
 
     @Test
@@ -58,12 +58,31 @@ public class TestField {
         ArrayList<ResourceCard> resourceCards = CardsPreset.getResourceCards();
         ArrayList<GoldenCard> goldenCards = CardsPreset.getGoldenCards();
         Field field = new Field();
-        System.out.printf(field.toString());
-        field.addCard(starterCards.get(0));
-        System.out.printf(field.toString());
-        field.addCard(resourceCards.get(0), new Coords(0,1));
-        System.out.printf(field.toString());
-        field.addCard(goldenCards.get(0), new Coords(0,-1));
-        System.out.printf(field.toString());
+
+        assertTrue(field.getMatrix().isEmpty());
+        for (HashMap.Entry<ItemBox, Integer> entry : field.getTotalResources().entrySet())
+            assertEquals(0, (int) entry.getValue());
+
+        field.addCard(starterCards.getFirst());
+        assertEquals(field.getMatrix().get(new Coords(0,0)).getCardID(),starterCards.getFirst().getCardID());
+        assertEquals(field.getTotalResources().get(Kingdom.FUNGI), 1);
+        assertEquals(field.getTotalResources().get(Kingdom.PLANT), 1);
+        assertEquals(field.getTotalResources().get(Kingdom.ANIMAL), 1);
+        assertEquals(field.getTotalResources().get(Kingdom.INSECT), 1);
+
+        field.addCard(resourceCards.getFirst(), new Coords(0,1));
+        assertEquals(field.getMatrix().get(new Coords(0,1)).getCardID(),resourceCards.getFirst().getCardID());
+        assertEquals(field.getTotalResources().get(Kingdom.FUNGI), 2);
+        assertEquals(field.getTotalResources().get(Kingdom.PLANT), 1);
+        assertEquals(field.getTotalResources().get(Kingdom.ANIMAL), 1);
+        assertEquals(field.getTotalResources().get(Kingdom.INSECT), 1);
+
+        field.addCard(goldenCards.getFirst(), new Coords(0,-1));
+        assertEquals(field.getMatrix().get(new Coords(0,-1)).getCardID(),goldenCards.getFirst().getCardID());
+        assertEquals(field.getTotalResources().get(Kingdom.FUNGI), 2);
+        assertEquals(field.getTotalResources().get(Kingdom.PLANT), 1);
+        assertEquals(field.getTotalResources().get(Kingdom.ANIMAL), 0);
+        assertEquals(field.getTotalResources().get(Kingdom.INSECT), 1);
+        assertEquals(field.getTotalResources().get(Resource.QUILL), 1);
     }
 }

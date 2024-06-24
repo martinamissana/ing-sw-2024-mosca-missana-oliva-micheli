@@ -77,7 +77,7 @@ public class GameHandler extends Observable implements Serializable {
         if (activeGames.containsKey(ID)) {
             return activeGames.get(ID);
         } else {
-            throw new GameDoesNotExistException("Game with ID " + ID + " does not exist");
+            throw new GameDoesNotExistException();
         }
     }
 
@@ -92,7 +92,7 @@ public class GameHandler extends Observable implements Serializable {
         if (lobbies.containsKey(ID)) {
             return lobbies.get(ID);
         } else {
-            throw new LobbyDoesNotExistsException("Lobby with ID " + ID + " does not exist");
+            throw new LobbyDoesNotExistsException();
         }
     }
 
@@ -125,33 +125,4 @@ public class GameHandler extends Observable implements Serializable {
         }
     }
 
-
-    /**
-     * used to save the GameHandler status with all the data about all active games and lobbies
-     *
-     * @throws IOException produced by failed or interrupted I/O operations
-     */
-    public synchronized void save() throws IOException {
-        FileOutputStream fileOutputStream = new FileOutputStream("./data.ser");
-        ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream);
-        objectOutputStream.writeObject(this);
-        fileOutputStream.close();
-        objectOutputStream.close();
-    }
-
-    /**
-     * used to load all the data about active games and lobbies in case the server crashes
-     *
-     * @throws IOException            produced by failed or interrupted I/O operations
-     * @throws ClassNotFoundException  if no definition for the class with the specified name could be found
-     */
-    public synchronized void load() throws IOException, ClassNotFoundException {
-        FileInputStream fileInputStream = new FileInputStream("./data.ser");
-        ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
-        GameHandler deserialized = (GameHandler) objectInputStream.readObject();
-        this.activeGames = deserialized.activeGames;
-        this.lobbies = deserialized.lobbies;
-        fileInputStream.close();
-        objectInputStream.close();
-    }
 }

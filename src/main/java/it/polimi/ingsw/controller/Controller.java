@@ -113,7 +113,7 @@ public class Controller implements Serializable {
             player.initialize();
             gh.getLobbies().get(lobbyID).addPlayer(player);
             gh.notify(new LobbyJoinedEvent(player, lobbyID));
-        } else throw new LobbyDoesNotExistsException("Lobby with ID " + lobbyID + " does not exist");
+        } else throw new LobbyDoesNotExistsException();
     }
 
     /**
@@ -140,7 +140,7 @@ public class Controller implements Serializable {
             if (gh.getActiveGames().containsKey(lobbyID)) {
                 leaveGame(lobbyID, player.getNickname());
             }
-        } else throw new LobbyDoesNotExistsException("Lobby with ID " + lobbyID + " does not exist");
+        } else throw new LobbyDoesNotExistsException();
     }
 
     /**
@@ -154,7 +154,7 @@ public class Controller implements Serializable {
             gh.getLobbies().remove(lobbyID);
             gh.getActiveGames().remove(lobbyID);
             gh.notify(new LobbyDeletedEvent(lobbyID));
-        } else throw new LobbyDoesNotExistsException("Lobby with ID " + lobbyID + " does not exist");
+        } else throw new LobbyDoesNotExistsException();
     }
 
     // ~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~
@@ -176,7 +176,6 @@ public class Controller implements Serializable {
         Random r = new Random();
         int i = r.nextInt(lobby.getNumOfPlayers()); // the first player is randomly chosen
         Collections.rotate(players, i);
-        players.getFirst().setGoesFirst(true);
 
         //scoreboard initialization->all values set at 0
         HashMap<Player, Integer> scoreboard = new HashMap<>();
@@ -210,7 +209,7 @@ public class Controller implements Serializable {
             gh.getActiveGames().get(gameID).getPlayers().remove(player);
             gh.getActiveGames().get(gameID).getScoreboard().remove(player);
             terminateGame(gameID);
-        } else throw new GameDoesNotExistException("Lobby with ID " + gameID + " does not exist");
+        } else throw new GameDoesNotExistException();
     }
 
     /**
@@ -219,7 +218,7 @@ public class Controller implements Serializable {
      * @param gameID the ID of the game that will be deleted
      * @throws GameDoesNotExistException if the game does not exist
      */
-    public synchronized void terminateGame(Integer gameID) throws GameDoesNotExistException, LobbyDoesNotExistsException, IOException {
+    private synchronized void terminateGame(Integer gameID) throws GameDoesNotExistException, LobbyDoesNotExistsException, IOException {
         if (gh.getGame(gameID).getGamePhase().equals(GamePhase.PLAYING_GAME)) winner(gameID);
         if (gh.getActiveGames().containsKey(gameID)) {
             for (Player p : gh.getGame(gameID).getPlayers()) {
@@ -228,7 +227,7 @@ public class Controller implements Serializable {
             gh.getActiveGames().remove(gameID);
             deleteLobby(gameID);
             gh.notify(new GameTerminatedEvent(gameID));
-        } else throw new GameDoesNotExistException("Game with ID " + gameID + " does not exist");
+        } else throw new GameDoesNotExistException();
     }
 
     /// ~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~
@@ -280,7 +279,7 @@ public class Controller implements Serializable {
             Message.setCounter(Message.getCounter() + 1);
             getGh().notify(new ChatMessageAddedEvent(message, ID));
         } catch (GameDoesNotExistException e) {
-            throw new GameDoesNotExistException("Game with ID " + ID + " does not exist");
+            throw new GameDoesNotExistException();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -378,10 +377,10 @@ public class Controller implements Serializable {
 
         Game game = gh.getGame(gameID);
 
-        if (game == null) throw new GameDoesNotExistException("Game with ID " + gameID + " does not exist");
+        if (game == null) throw new GameDoesNotExistException();
         if (game.getGamePhase() != GamePhase.PLACING_STARTER_CARD) throw new WrongGamePhaseException();
         Player player = game.getPlayers().stream().filter(p -> p.getNickname().equals(nickname)).findFirst().orElse(null);
-        if (player == null) throw new UnexistentUserException("User is not in the specified game");
+        if (player == null) throw new UnexistentUserException();
 
         StarterCard card = (StarterCard) player.getHand().getCard(0);
         if (!card.getSide().equals(side)) card.flip();
@@ -404,7 +403,7 @@ public class Controller implements Serializable {
      * @throws EmptyDeckException        (isn't supposed to happen)
      * @throws HandIsFullException       if in hands are already present other cards
      */
-    public synchronized void fillHands(Integer gameID) throws GameDoesNotExistException, EmptyDeckException, HandIsFullException, IOException {
+    private synchronized void fillHands(Integer gameID) throws GameDoesNotExistException, EmptyDeckException, HandIsFullException, IOException {
         Game game = gh.getGame(gameID);
 
         for (Player p : game.getPlayers()) {
@@ -429,7 +428,7 @@ public class Controller implements Serializable {
      * @param gameID ID of the game played
      * @throws GameDoesNotExistException if gameID does not correspond to a game in game handler
      */
-    public synchronized void setCommonGoals(Integer gameID) throws GameDoesNotExistException {
+    private synchronized void setCommonGoals(Integer gameID) throws GameDoesNotExistException {
         Game game = gh.getGame(gameID);
 
         game.setCommonGoal1(game.getGoals().getGoal());
@@ -441,7 +440,7 @@ public class Controller implements Serializable {
      *
      * @param gameID ID of the game played
      */
-    public synchronized void giveGoals(Integer gameID) throws GameDoesNotExistException, IOException {
+    private synchronized void giveGoals(Integer gameID) throws GameDoesNotExistException, IOException {
         Game game = gh.getGame(gameID);
 
         for (Player p : game.getPlayers()) {

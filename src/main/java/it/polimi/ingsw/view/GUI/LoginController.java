@@ -6,14 +6,14 @@ import it.polimi.ingsw.network.netMessage.NetMessage;
 import it.polimi.ingsw.network.netMessage.c2s.DisconnectMessage;
 import it.polimi.ingsw.network.netMessage.s2c.CurrentStatusMessage;
 import it.polimi.ingsw.network.netMessage.s2c.LoginFail_NicknameAlreadyTaken;
-import it.polimi.ingsw.network.netMessage.s2c.LoginMessage;
+import it.polimi.ingsw.network.netMessage.s2c.LoginSuccessMessage;
 import it.polimi.ingsw.view.ViewObserver;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.Pane;
 
 import java.io.IOException;
 import java.util.concurrent.Semaphore;
@@ -24,13 +24,21 @@ public class LoginController implements ViewObserver {
     @FXML
     private TextField nicknameField;
     @FXML
+    private Label statusMessage;
+    @FXML
     private MenuButton connectionMenu;
     @FXML
     private MenuItem TCP;
     @FXML
     private MenuItem RMI;
     @FXML
-    private Label statusMessage;
+    private Pane connectionPane;
+    @FXML
+    private TextField IP;
+    @FXML
+    private TextField port;
+    @FXML
+    private Label connectionError;
 
     private final ViewSingleton viewSing = ViewSingleton.getInstance();
     private final Semaphore sem = new Semaphore(0);
@@ -46,7 +54,9 @@ public class LoginController implements ViewObserver {
     }
 
     @FXML
-    public void modifyNickname(KeyEvent keyEvent) {
+    public void modifyTags(KeyEvent keyEvent) {
+        connectionError.setText("");
+
         // character length check
         if (nicknameField.getText().length() > 16) {
             nicknameField.setText(nicknameField.getText().substring(0, 16));
@@ -65,10 +75,18 @@ public class LoginController implements ViewObserver {
 
         // string validity + form check
         if (nicknameField.getText().isEmpty()) nicknameField.setText("Anto");
-        statusMessage.setText("Logging in...");
+        if (port.getText().isEmpty()) port.setText("4321");
 
         // create view
-        viewSing.initialize(connectionMenu.getText());
+        try {
+            viewSing.initialize(connectionMenu.getText(), IP.getText(), port.getText());
+        } catch (Exception e) {
+            nicknameField.setText("");
+            IP.setText("");
+            port.setText("");
+            connectionError.setText("Wrong values inserted");
+            return;
+        }
         viewSing.getView().addObserver(this);
 
         // login + get current lobby status
@@ -95,7 +113,7 @@ public class LoginController implements ViewObserver {
     @Override
     public void update(NetMessage message) throws IOException {
         switch (message) {
-            case LoginMessage m -> {
+            case LoginSuccessMessage m -> {
                 if (m.getNickname().equals(nicknameField.getText())) sem.release();
             }
             case LoginFail_NicknameAlreadyTaken ignored -> exit(1);
@@ -106,7 +124,13 @@ public class LoginController implements ViewObserver {
     }
 
     public void chooseConnection(ActionEvent actionEvent) {
-        if (actionEvent.getSource().equals(TCP)) connectionMenu.setText(TCP.getText());
-        else connectionMenu.setText(RMI.getText());
+        if (actionEvent.getSource().equals(TCP)) {
+            connectionMenu.setText(TCP.getText());
+            connectionPane.setVisible(true);
+        }
+        else {
+            connectionMenu.setText(RMI.getText());
+            connectionPane.setVisible(false);
+        }
     }
 }

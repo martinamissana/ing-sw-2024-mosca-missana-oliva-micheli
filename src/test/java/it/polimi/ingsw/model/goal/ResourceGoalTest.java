@@ -2,6 +2,7 @@ package it.polimi.ingsw.model.goal;
 
 import it.polimi.ingsw.model.commonItem.ItemBox;
 import it.polimi.ingsw.model.commonItem.Kingdom;
+import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 
@@ -9,6 +10,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ResourceGoalTest {
 
+    @Test
     public void testGetResourceList() {
         ArrayList<ItemBox> resourceList =new ArrayList<>();
         ItemBox e= Kingdom.ANIMAL;

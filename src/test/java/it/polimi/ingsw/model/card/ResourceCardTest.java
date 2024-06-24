@@ -3,14 +3,17 @@ package it.polimi.ingsw.model.card;
 import it.polimi.ingsw.model.commonItem.CornerStatus;
 import it.polimi.ingsw.model.commonItem.Kingdom;
 import it.polimi.ingsw.model.commonItem.Resource;
+import org.junit.jupiter.api.Test;
 
 
 import java.util.HashMap;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class ResourceCardTest {
 
+    @Test
     public void testFlip (){
         HashMap<CornerType,Corner> frontCorners= new HashMap<>();
         HashMap<CornerType,Corner> backCorners=new HashMap<>();
@@ -25,6 +28,7 @@ public class ResourceCardTest {
         assertEquals(card.getSide(), CardSide.FRONT);
     }
 
+    @Test
     public void testGetCornerTest(){
         HashMap<CornerType,Corner> frontCorners= new HashMap<>();
         HashMap<CornerType,Corner> backCorners=new HashMap<>();
@@ -36,7 +40,7 @@ public class ResourceCardTest {
         assertEquals(card.getItemFromCorner(CornerType.NORTH), CornerStatus.EMPTY);
         card.flip();
         assertEquals(card.getItemFromCorner(CornerType.NORTH), Resource.INKWELL);
-        assertEquals(card.getItemFromCorner(CornerType.SOUTH), null);
+        assertNull(card.getItemFromCorner(CornerType.SOUTH));
     }
 
 }

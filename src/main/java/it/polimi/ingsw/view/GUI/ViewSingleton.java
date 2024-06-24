@@ -25,7 +25,7 @@ public class ViewSingleton {
         return instance;
     }
 
-    public void initialize(String connection) {
+    public void initialize(String connection, String IP, String port) {
         if (connection.equalsIgnoreCase("RMI")) {
             try {
                 Registry registry = LocateRegistry.getRegistry();
@@ -39,7 +39,7 @@ public class ViewSingleton {
             }
         } else {
             try {
-                view = new TCPView("127.0.0.1", 4321);
+                this.view = new TCPView(IP, Integer.parseInt(port));
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
@@ -51,6 +51,7 @@ public class ViewSingleton {
                 }
             }).start();
         }
+
         viewController = new ViewController(view);
     }
 

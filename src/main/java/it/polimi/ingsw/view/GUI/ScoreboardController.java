@@ -1,20 +1,35 @@
 package it.polimi.ingsw.view.GUI;
 
+import it.polimi.ingsw.model.game.GamePhase;
 import it.polimi.ingsw.model.game.Lobby;
 import it.polimi.ingsw.model.player.Pawn;
 import it.polimi.ingsw.model.player.Player;
 
+import it.polimi.ingsw.network.netMessage.NetMessage;
+import it.polimi.ingsw.network.netMessage.s2c.GamePhaseChangedMessage;
+import it.polimi.ingsw.network.netMessage.s2c.ScoreIncrementedMessage;
 import it.polimi.ingsw.view.View;
+import it.polimi.ingsw.view.ViewObserver;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Button;
 
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.Pane;
+
+import java.io.IOException;
 import java.util.HashMap;
 
-public class ScoreboardController{
+public class ScoreboardController implements ViewObserver {
     private View view;
     private Lobby lobby;
+    private Pane field1;
+    private Pane field2;
+    private Pane field3;
+    private Pane field4;
+    private Pane otherField;
 
     @FXML
     private TextField title;
@@ -45,17 +60,30 @@ public class ScoreboardController{
 
     @FXML
     public void showField(MouseEvent mouseEvent){
+        if(!(view.getGamePhase().equals(GamePhase.PLAYING_GAME))) return;
         if(mouseEvent.getSource().equals(pawn1)){
-            if(view.getNickname().equals(player1.toString())) return;
+            if(view.getNickname().equals(lobby.getPlayers().getFirst().getNickname())) return;
+            otherField.getChildren().clear();
+            otherField.getChildren().add(field1);
+            otherField.setVisible(true);
         }
         if(mouseEvent.getSource().equals(pawn2)){
-            if(view.getNickname().equals(player2.toString())) return;
+            if(view.getNickname().equals(lobby.getPlayers().get(1).getNickname())) return;
+            otherField.getChildren().clear();
+            otherField.getChildren().add(field2);
+            otherField.setVisible(true);
         }
         if(mouseEvent.getSource().equals(pawn3)){
-            if(view.getNickname().equals(player3.toString())) return;
+            if(view.getNickname().equals(lobby.getPlayers().get(2).getNickname())) return;
+            otherField.getChildren().clear();
+            otherField.getChildren().add(field3);
+            otherField.setVisible(true);
         }
         if(mouseEvent.getSource().equals(pawn4)){
-            if(view.getNickname().equals(player4.toString())) return;
+            if(view.getNickname().equals(lobby.getPlayers().get(3).getNickname())) return;
+            otherField.getChildren().clear();
+            otherField.getChildren().add(field4);
+            otherField.setVisible(true);
         }
     }
 
@@ -91,6 +119,7 @@ public class ScoreboardController{
 
     public void setView (View view){
         this.view = view;
+        view.addObserver(this);
     }
 
 
@@ -98,7 +127,7 @@ public class ScoreboardController{
         this.lobby=lobby;
         this.title.setText("SCOREBOARD");
         setPlayersAndPawns(0, player1, pawn1);
-        score1.setText(view.getScoreboard().get(lobby.getPlayers().get(0)).toString());
+        score1.setText(view.getScoreboard().get(lobby.getPlayers().getFirst()).toString());
         setPlayersAndPawns(1, player2, pawn2);
         score2.setText(view.getScoreboard().get(lobby.getPlayers().get(1)).toString());
 
@@ -121,6 +150,7 @@ public class ScoreboardController{
             score4.setVisible(false);
             pawn4.setVisible(false);
         }
+
     }
 
     public void setPlayersAndPawns(int index, TextField player, Button pawn) {
@@ -140,5 +170,85 @@ public class ScoreboardController{
     private void setBgColor(Button button, Pawn pawn) {
         if (pawn == Pawn.YELLOW) button.setStyle("-fx-background-color: gold");
         else if (pawn != null) button.setStyle("-fx-background-color: " + pawn.toString().toLowerCase());
+    }
+
+    public void setOtherField(Pane otherField){
+        this.otherField=otherField;
+        otherField.setVisible(false);
+    }
+
+    @Override
+    public void update(NetMessage message) throws IOException {
+        switch (message){
+            case ScoreIncrementedMessage ignored -> {
+                refresh();
+            }
+            case GamePhaseChangedMessage m -> {
+                if(view.getGamePhase().equals(GamePhase.PLAYING_GAME)){
+                    if(!lobby.getPlayers().get(0).getNickname().equals(view.getNickname())) {
+                        Platform.runLater(() -> {
+                            FXMLLoader field1Loader = new FXMLLoader(getClass().getResource("/fxml/OtherPlayersField.fxml"));
+                            try {
+                                field1 = field1Loader.load();
+                            } catch (IOException e) {
+                                throw new RuntimeException(e);
+                            }
+                            OtherPlayersController field1Controller = field1Loader.getController();
+                            field1Controller.setView(view);
+                            field1Controller.setPlayer(lobby.getPlayers().getFirst().getNickname(),lobby);
+                            field1Controller.setVisible(otherField);
+                        });
+                    }
+                    if(!lobby.getPlayers().get(1).getNickname().equals(view.getNickname())) {
+                        Platform.runLater(() -> {
+                            FXMLLoader field2Loader = new FXMLLoader(getClass().getResource("/fxml/OtherPlayersField.fxml"));
+                            try {
+                                field2 = field2Loader.load();
+                            } catch (IOException e) {
+                                throw new RuntimeException(e);
+                            }
+                            OtherPlayersController field2Controller = field2Loader.getController();
+                            field2Controller.setView(view);
+                            field2Controller.setPlayer(lobby.getPlayers().get(1).getNickname(),lobby);
+                            field2Controller.setVisible(otherField);
+                        });
+                    }
+                    if (lobby.getPlayers().size() > 2) {
+                        if (!lobby.getPlayers().get(1).getNickname().equals(view.getNickname())) {
+                            Platform.runLater(() -> {
+                                FXMLLoader field3Loader = new FXMLLoader(getClass().getResource("/fxml/OtherPlayersField.fxml"));
+                                try {
+                                    field3 = field3Loader.load();
+                                } catch (IOException e) {
+                                    throw new RuntimeException(e);
+                                }
+                                OtherPlayersController field3Controller = field3Loader.getController();
+                                field3Controller.setView(view);
+                                field3Controller.setPlayer(lobby.getPlayers().get(2).getNickname(),lobby);
+                                field3Controller.setVisible(otherField);
+                            });
+                        }
+                    }
+                    if (lobby.getPlayers().size() == 4) {
+                        if(!lobby.getPlayers().get(3).getNickname().equals(view.getNickname())) {
+                            Platform.runLater(() -> {
+                                FXMLLoader field4Loader = new FXMLLoader(getClass().getResource("/fxml/OtherPlayersField.fxml"));
+                                try {
+                                    field4 = field4Loader.load();
+                                } catch (IOException e) {
+                                    throw new RuntimeException(e);
+                                }
+                                OtherPlayersController field4Controller = field4Loader.getController();
+                                field4Controller.setView(view);
+                                field4Controller.setPlayer(lobby.getPlayers().get(3).getNickname(),lobby);
+                                field4Controller.setVisible(otherField);
+                            });
+                        }
+                }
+                }
+
+            }
+            default -> {}
+        }
     }
 }

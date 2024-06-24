@@ -18,6 +18,14 @@ public class Server {
     public static void main(String[] args) {
 
         Controller c = new Controller(new GameHandler());
+
+        String TCP_Port = args[0];
+        //String TCP_Port="4321";
+
+        String RMI_Port = args[1];
+        //String RMI_Port="1099";
+
+
         new Thread(() -> {
 
             try {
@@ -27,19 +35,20 @@ public class Server {
                 throw new RuntimeException(e);
             }
 
-            TCPServer server = new TCPServer(4321, c);
+            TCPServer server = new TCPServer(Integer.parseInt(TCP_Port), c);
 
         }).start();
         new Thread(() -> {
             try {
                 RMIServer server = new RMIServer(c);
-                Registry registry = LocateRegistry.createRegistry(1099);
+                Registry registry = LocateRegistry.createRegistry(Integer.parseInt(RMI_Port));
                 registry.rebind("RMIServer", server);
-                System.out.println("RMI Server is ready:");
             } catch (RemoteException e) {
                 throw new RuntimeException(e);
             }
         }).start();
 
+        System.out.println("TCP port := " + TCP_Port);
+        System.out.println("RMI port := " + RMI_Port);
     }
 }

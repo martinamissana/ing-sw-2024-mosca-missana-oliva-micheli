@@ -59,6 +59,6 @@ public class DeckBuffer implements Drawable, Serializable {
             card = null;
             this.refill();
             return drawn;
-        } else throw new EmptyBufferException("Cannot draw from this card space!");
+        } else throw new EmptyBufferException();
     }
 }

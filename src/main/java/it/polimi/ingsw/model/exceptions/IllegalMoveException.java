@@ -5,8 +5,5 @@ import java.io.Serializable;
 /**
  * thrown when violating the game's rules when placing a card
  */
-public class IllegalMoveException extends Exception implements Serializable {
-    public IllegalMoveException() { super(); }
-
-    public IllegalMoveException(String string) { super(string); }
+public class IllegalMoveException extends Exception{
 }

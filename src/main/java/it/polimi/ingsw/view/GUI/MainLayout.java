@@ -1,11 +1,9 @@
 package it.polimi.ingsw.view.GUI;
 
+import it.polimi.ingsw.model.player.Player;
 import it.polimi.ingsw.network.netMessage.NetMessage;
 import it.polimi.ingsw.network.netMessage.c2s.LobbyJoinedMessage;
-import it.polimi.ingsw.network.netMessage.s2c.GameCreatedMessage;
-import it.polimi.ingsw.network.netMessage.s2c.GameTerminatedMessage;
-import it.polimi.ingsw.network.netMessage.s2c.LobbyCreatedMessage;
-import it.polimi.ingsw.network.netMessage.s2c.LobbyLeftMessage;
+import it.polimi.ingsw.network.netMessage.s2c.*;
 import it.polimi.ingsw.view.ViewObserver;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -16,12 +14,17 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 public class MainLayout implements ViewObserver {
     @FXML
     private BorderPane layout;
     private Stage stage;
     protected ViewSingleton viewSingleton;      // protected because it's set after login (by LoginController)
+    private HashMap<Player, Integer> scoreboard;
+    private HashMap<Player, Integer> goalsDone;
+    private final ArrayList<Player> winners = new ArrayList<>();
 
     public void setStage(Stage stage) {
         this.stage = stage;
@@ -36,6 +39,10 @@ public class MainLayout implements ViewObserver {
                 if (fxmlPath.equals("Login")) {
                     LoginController controller = loader.getController();
                     controller.setMainLayout(this);
+                } else if (fxmlPath.equals("Winners")) {
+                    WinnersController controller = loader.getController();
+                    controller.setMainLayout(this);
+                    controller.setWinners(this.scoreboard, this.goalsDone, this.winners);
                 }
 
             } catch (IOException e) {
@@ -74,8 +81,13 @@ public class MainLayout implements ViewObserver {
             case GameCreatedMessage m -> {
                 if (m.getID().equals(viewSingleton.getView().getID())) setScene("GameScreen");
             }
-            case GameTerminatedMessage ignored -> setScene("Open");
-            default -> System.out.println(message.getClass());
+            case GameWinnersAnnouncedMessage m -> {
+                this.scoreboard = viewSingleton.getView().getScoreboard();
+                this.goalsDone = m.getGoalsDone();
+                this.winners.addAll(m.getWinners());
+            }
+            case GameTerminatedMessage ignored -> setScene("Winners");
+            default -> {}
         }
     }
 }

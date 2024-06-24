@@ -3,9 +3,6 @@ package it.polimi.ingsw.view;
 import it.polimi.ingsw.model.card.CardSide;
 import it.polimi.ingsw.model.chat.Message;
 import it.polimi.ingsw.model.deck.DeckTypeBox;
-import it.polimi.ingsw.model.exceptions.FullLobbyException;
-import it.polimi.ingsw.model.exceptions.HandIsFullException;
-import it.polimi.ingsw.model.exceptions.IllegalMoveException;
 import it.polimi.ingsw.model.exceptions.NicknameAlreadyTakenException;
 import it.polimi.ingsw.model.player.Coords;
 import it.polimi.ingsw.model.player.Pawn;
@@ -85,7 +82,7 @@ public class TCPView extends View {
      */
     @Override
     public void login(String nickname) throws IOException {
-        MyNickname m = new MyNickname(nickname);
+        LoginRequestMessage m = new LoginRequestMessage(nickname);
         super.setPlayer(new Player(nickname));
         super.setNickname(nickname);
         out.writeObject(m);
