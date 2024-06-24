@@ -176,7 +176,6 @@ public class Controller implements Serializable {
         Random r = new Random();
         int i = r.nextInt(lobby.getNumOfPlayers()); // the first player is randomly chosen
         Collections.rotate(players, i);
-        players.getFirst().setGoesFirst(true);
 
         //scoreboard initialization->all values set at 0
         HashMap<Player, Integer> scoreboard = new HashMap<>();

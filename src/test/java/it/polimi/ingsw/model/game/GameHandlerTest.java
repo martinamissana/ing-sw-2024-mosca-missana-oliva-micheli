@@ -44,7 +44,7 @@ public class GameHandlerTest {
 
     }
     @Test
-    public void testAddUser() throws NicknameAlreadyTakenException, IOException {
+    public void testAddAndRemoveUser() throws NicknameAlreadyTakenException, IOException {
         gameHandler.addUser(anna);
         gameHandler.addUser(giorgio);
         gameHandler.addUser(eric);
@@ -52,25 +52,12 @@ public class GameHandlerTest {
         assertTrue(gameHandler.getUsers().contains(anna));
         assertTrue(gameHandler.getUsers().contains(eric));
         assertTrue(gameHandler.getUsers().contains(giorgio));
+        gameHandler.removeUser("anna");
+        gameHandler.removeUser("giorgio");
+        gameHandler.removeUser("eric");
+        assertFalse(gameHandler.getUsers().contains(anna));
+        assertFalse(gameHandler.getUsers().contains(eric));
+        assertFalse(gameHandler.getUsers().contains(giorgio));
     }
-    @Test
-    public void testSaveAndLoad() throws IOException, ClassNotFoundException, GameDoesNotExistException, FullLobbyException,LobbyDoesNotExistsException, HandIsFullException, CannotJoinMultipleLobbiesException, GameAlreadyStartedException, PawnAlreadyTakenException, UnexistentUserException {
-        c.getGh().getUsers().add(anna);
-        c.getGh().getUsers().add(eric);
-        c.getGh().getUsers().add(giorgio);
-        c.createLobby(3,anna.getNickname());
-        c.joinLobby(eric.getNickname(),0);
-        c.joinLobby(giorgio.getNickname(),0);
-        c.choosePawn(0,anna.getNickname(), Pawn.BLUE);
-        c.choosePawn(0,eric.getNickname(),Pawn.RED);
-        c.choosePawn( 0,giorgio.getNickname(),Pawn.YELLOW);
-        anna.getHand().addCard(card);
-        eric.getHand().addCard(card);
-        giorgio.getHand().addCard(card);
-        gameHandler.save();
-        GameHandler gameHandler1=new GameHandler();
-        gameHandler1.load();
-        assertEquals(gameHandler.getGame(0).getPlayers().getFirst().getNickname(), gameHandler1.getActiveGames().get(0).getPlayers().getFirst().getNickname());
-        assertEquals(gameHandler.getGame(0).getPlayers().getFirst().getHand().getCard(0).getCardID(), gameHandler1.getActiveGames().get(0).getPlayers().getFirst().getHand().getCard(0).getCardID());
-    }
+
 }

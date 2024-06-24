@@ -12,7 +12,6 @@ public class Player implements Serializable {
     private final Hand hand;
     private Field field;
     private Chat chat;
-    private boolean goesFirst;
     private Goal secretGoal;
     private Pawn pawn;
     private final ArrayList<Goal> choosableGoals;
@@ -28,19 +27,11 @@ public class Player implements Serializable {
         this.hand = new Hand();
         this.field = new Field();
         this.chat = new Chat();
-        this.goesFirst = false;
         this.secretGoal = null;
         this.pawn = null;
         this.choosableGoals = new ArrayList<>();
         this.goalsDone = 0;
     }
-
-    /**
-     * sets the player to be the one to go first
-     *
-     * @param goesFirst signals that the player is the first of each turn in the game
-     */
-    public void setGoesFirst(boolean goesFirst) { this.goesFirst = goesFirst; }
 
     /**
      * sets the player's secret goal
@@ -115,7 +106,6 @@ public class Player implements Serializable {
         this.hand.removeAllCards();
         this.field = new Field();
         this.chat = new Chat();
-        this.goesFirst = false;
         this.secretGoal = null;
         this.pawn = null;
         this.choosableGoals.clear();
@@ -139,8 +129,4 @@ public class Player implements Serializable {
         return Objects.equals(nickname, player.nickname);
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(nickname);
-    }
 }
