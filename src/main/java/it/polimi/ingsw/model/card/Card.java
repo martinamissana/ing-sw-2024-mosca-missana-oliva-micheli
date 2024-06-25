@@ -5,45 +5,39 @@ import it.polimi.ingsw.model.commonItem.Kingdom;
 
 import java.io.Serializable;
 import java.util.HashMap;
-import java.util.Objects;
 
 /**
- * Abstract Class Card
- * defines all the basic attributes and methods common to all the cards
+ * Abstract Class Card<br>
+ * defines all basic attributes and methods common to all cards
  */
 public abstract class Card implements Serializable {
     private final int ID;
     private CardSide side;
-    private final HashMap<CornerType, Corner> frontCorner;
-    private final HashMap<CornerType, Corner> backCorner;
+    private final HashMap<CornerType, Corner> frontCorners;
+    private final HashMap<CornerType, Corner> backCorners;
 
     /**
      * Class constructor
-     *
-     * @param ID          the card ID
-     * @param side        the side of the card that is visible
-     * @param frontCorner the list of corners in the front
-     * @param backCorner  the list of corners in the back
+     * @param ID           the card's ID
+     * @param side         indicates which side the card is currently on
+     * @param frontCorners list of corners on the front side
+     * @param backCorners  list of corners on the back side
      */
-    public Card(int ID, CardSide side, HashMap<CornerType, Corner> frontCorner, HashMap<CornerType, Corner> backCorner) {
+    public Card(int ID, CardSide side, HashMap<CornerType, Corner> frontCorners, HashMap<CornerType, Corner> backCorners) {
         this.ID = ID;
         this.side = side;
-        this.frontCorner = frontCorner;
-        this.backCorner = backCorner;
+        this.frontCorners = frontCorners;
+        this.backCorners = backCorners;
     }
 
     /**
-     * getter
-     *
-     * @return int card ID
+     * @return int
      */
-    public int getCardID() {
+    public int getID() {
         return this.ID;
     }
 
     /**
-     * getter
-     *
      * @return CardSide
      */
     public CardSide getSide() {
@@ -51,78 +45,63 @@ public abstract class Card implements Serializable {
     }
 
     /**
-     * getter
-     *
      * @return Kingdom
      */
-    public Kingdom getKingdom(){return null;}
+    public Kingdom getKingdom() { return null; }
 
     /**
-     * depends on which side the card is set,
-     * returns null if the corner does not exist
-     *
-     * @param cornerType the corner you want to get from the side the card is on
-     * @return ItemBox associated with the given corner
-     */
-    public ItemBox getItemFromCorner(CornerType cornerType) {
-        if (side == CardSide.FRONT) {
-            if (frontCorner.containsKey(cornerType)) {
-                return frontCorner.get(cornerType).getItem();
-            } else {
-                return null;
-            }
-        } else {
-            if (backCorner.containsKey(cornerType)) {
-                return backCorner.get(cornerType).getItem();
-            } else {
-                return null;
-            }
-        }
-    }
-
-    /**
-     * getter
-     *
-     * @param type the corner type you want
+     * returns the corner of the specified type
+     * on the side that the card is currently on, if there's one.<br>
+     * returns {@code null} otherwise.
+     * @param corner the corner type you want
      * @return Corner
      */
-    public Corner getCorner(CornerType type) {
-        if (this.side == CardSide.FRONT) return this.frontCorner.get(type);
-        else return this.backCorner.get(type);
+    public Corner getCorner(CornerType corner) {
+        if (this.side == CardSide.FRONT) return this.frontCorners.get(corner);
+        else return this.backCorners.get(corner);
     }
 
     /**
-     * Changes the value of side of the card from FRONT to BACK and vice-versa
+     * returns the item contained by the specified corner
+     * on the side that the card is currently on, if there's one.<br>
+     * returns {@code null} otherwise.
+     * @param corner corner to return the item of
+     * @return ItemBox
+     */
+    public ItemBox getItemFromCorner(CornerType corner) {
+        if (side == CardSide.FRONT)
+            return frontCorners.containsKey(corner) ? frontCorners.get(corner).getItem() : null;
+        else
+            return backCorners.containsKey(corner) ? backCorners.get(corner).getItem() : null;
+    }
+
+
+    /**
+     * switches the side that the card is on
      */
     public void flip() {
-        if (side == CardSide.FRONT) {
-            this.side = CardSide.BACK;
-        } else {
-            this.side = CardSide.FRONT;
-        }
+        this.side = (this.side == CardSide.FRONT) ? CardSide.BACK : CardSide.FRONT;
     }
 
     /**
-     * setter
-     * sets the side of the card
-     *
-     * @param side is the side that the card will be on
+     * sets the card's side to the specified one
+     * @param side
      */
     public void setSide(CardSide side) {
         this.side = side;
     }
 
 
+    /**
+     * two cards are defined to be equal if their IDs are the same
+     * @param o object to compare
+     * @return boolean
+     */
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Card card = (Card) o;
         return ID == card.ID;
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(ID);
     }
 }

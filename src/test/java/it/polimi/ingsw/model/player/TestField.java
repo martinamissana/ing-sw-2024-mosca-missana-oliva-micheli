@@ -64,21 +64,21 @@ public class TestField {
             assertEquals(0, (int) entry.getValue());
 
         field.addCard(starterCards.getFirst());
-        assertEquals(field.getMatrix().get(new Coords(0,0)).getCardID(),starterCards.getFirst().getCardID());
+        assertEquals(field.getMatrix().get(new Coords(0,0)).getID(),starterCards.getFirst().getID());
         assertEquals(field.getTotalResources().get(Kingdom.FUNGI), 1);
         assertEquals(field.getTotalResources().get(Kingdom.PLANT), 1);
         assertEquals(field.getTotalResources().get(Kingdom.ANIMAL), 1);
         assertEquals(field.getTotalResources().get(Kingdom.INSECT), 1);
 
         field.addCard(resourceCards.getFirst(), new Coords(0,1));
-        assertEquals(field.getMatrix().get(new Coords(0,1)).getCardID(),resourceCards.getFirst().getCardID());
+        assertEquals(field.getMatrix().get(new Coords(0,1)).getID(),resourceCards.getFirst().getID());
         assertEquals(field.getTotalResources().get(Kingdom.FUNGI), 2);
         assertEquals(field.getTotalResources().get(Kingdom.PLANT), 1);
         assertEquals(field.getTotalResources().get(Kingdom.ANIMAL), 1);
         assertEquals(field.getTotalResources().get(Kingdom.INSECT), 1);
 
         field.addCard(goldenCards.getFirst(), new Coords(0,-1));
-        assertEquals(field.getMatrix().get(new Coords(0,-1)).getCardID(),goldenCards.getFirst().getCardID());
+        assertEquals(field.getMatrix().get(new Coords(0,-1)).getID(),goldenCards.getFirst().getID());
         assertEquals(field.getTotalResources().get(Kingdom.FUNGI), 2);
         assertEquals(field.getTotalResources().get(Kingdom.PLANT), 1);
         assertEquals(field.getTotalResources().get(Kingdom.ANIMAL), 0);
