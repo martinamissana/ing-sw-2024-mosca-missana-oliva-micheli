@@ -33,6 +33,6 @@
                 </GridPane>
             </content>
         </ScrollPane>
-      <Button fx:id="close" layoutX="677.0" layoutY="8.0" maxHeight="15.2" maxWidth="15.2" minHeight="15.2" minWidth="15.2" mnemonicParsing="false" onMouseClicked="#close" prefHeight="15.2" prefWidth="15.2" style="-fx-background-radius: 15; -fx-background-color: #FF0000;" />
+      <Button layoutX="677.0" layoutY="8.0" maxHeight="15.2" maxWidth="15.2" minHeight="15.2" minWidth="15.2" mnemonicParsing="false" onMouseClicked="#close" prefHeight="15.2" prefWidth="15.2" style="-fx-background-radius: 15; -fx-background-color: #FF0000;" />
     </children>
 </AnchorPane>

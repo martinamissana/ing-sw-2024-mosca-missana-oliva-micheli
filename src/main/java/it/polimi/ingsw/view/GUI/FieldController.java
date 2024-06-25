@@ -1,23 +1,20 @@
 package it.polimi.ingsw.view.GUI;
 
-
-
 import it.polimi.ingsw.controller.exceptions.IllegalActionException;
 import it.polimi.ingsw.controller.exceptions.NotYourTurnException;
 import it.polimi.ingsw.controller.exceptions.UnexistentUserException;
 import it.polimi.ingsw.model.card.CardBlock;
+import it.polimi.ingsw.model.card.CornerType;
 import it.polimi.ingsw.model.card.StarterCard;
-import it.polimi.ingsw.model.exceptions.GameDoesNotExistException;
-import it.polimi.ingsw.model.exceptions.IllegalCoordsException;
-import it.polimi.ingsw.model.exceptions.IllegalMoveException;
-import it.polimi.ingsw.model.exceptions.LobbyDoesNotExistsException;
+import it.polimi.ingsw.model.exceptions.*;
 import it.polimi.ingsw.model.game.Action;
 import it.polimi.ingsw.model.game.GamePhase;
 import it.polimi.ingsw.model.player.Coords;
 import it.polimi.ingsw.network.netMessage.NetMessage;
 import it.polimi.ingsw.network.netMessage.s2c.CardPlacedOnFieldMessage;
+import it.polimi.ingsw.network.netMessage.s2c.GameWinnersAnnouncedMessage;
+import it.polimi.ingsw.network.netMessage.s2c.LobbyLeftMessage;
 import it.polimi.ingsw.view.View;
-import it.polimi.ingsw.view.ViewController;
 import it.polimi.ingsw.view.ViewObserver;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -26,14 +23,17 @@ import javafx.scene.control.Button;
 import javafx.scene.layout.GridPane;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 public class FieldController implements ViewObserver {
     private View view;
     private HandController hand;
-    private ViewController check;
 
     @FXML
     private GridPane fieldGrid;
+    private int starterX = 4;
+    private int starterY = 4;
 
 
     private Button createButton(){
@@ -46,47 +46,20 @@ public class FieldController implements ViewObserver {
         return button;
     }
 
-    public void setView(View view, ViewController  check) {
+    public void setView(View view) {
         this.view = view;
-        this.check = check;
         view.addObserver(this);
-        Platform.runLater(()->{
-            try {
-                view.getMyField().checkIfPlaceable(new Coords(0,1));
-                Button button = createButton();
-                button.setOnAction(event -> {
-                    playCard(0, 1);
-                });
-                fieldGrid.add(button,3,3);
-            } catch (IllegalCoordsException ignored) {}
-            try {
-                view.getMyField().checkIfPlaceable(new Coords(0,-1));
-                Button button = createButton();
-                button.setOnAction(event -> {
-                    playCard(0, -1);
-                });
-                fieldGrid.add(button,5,5);
-            } catch (IllegalCoordsException ignored) {
+        Platform.runLater(()-> {
+            for (Coords c : getNeighbors(new Coords(0, 0))) {
+                try {
+                    view.getMyField().checkIfPlaceable(c);
+                    Button button = createButton();
+                    button.setOnAction(event -> playCard(c.getX(), c.getY()));
+                    fieldGrid.add(button, starterX + c.getX() - c.getY(), starterY - c.getX() - c.getY());
+                } catch (IllegalCoordsException ignored) {}
             }
-            try {
-                view.getMyField().checkIfPlaceable(new Coords(1,0));
-                Button button = createButton();
-                button.setOnAction(event -> {
-                    playCard(1, 0);
-                });
-                fieldGrid.add(button,5,3);
-            } catch (IllegalCoordsException ignored) {
-            }
-            try {
-                view.getMyField().checkIfPlaceable(new Coords(-1, 0));
-                Button button = createButton();
-                button.setOnAction(event -> {
-                    playCard(-1, 0);
-                });
-                fieldGrid.add(button, 3, 5);
-            } catch (IllegalCoordsException ignored) {
-            }
-            fieldGrid.add(new CardBuilder(view.getMyField().getMatrix().get(new Coords(0,0))).getCardImage(), 4, 4);
+
+            fieldGrid.add(new CardBuilder(view.getMyField().getMatrix().get(new Coords(0,0))).getCardImage(), starterX, starterY);
         });
     }
 
@@ -94,7 +67,7 @@ public class FieldController implements ViewObserver {
         this.hand = hand;
     }
 
-    public void playCard(int x,int y){
+    public void playCard(int x,int y) {
         if(!view.isYourTurn()||!view.getGamePhase().equals(GamePhase.PLAYING_GAME)||!view.getAction().equals(Action.PLAY)) return;
         try {
             view.playCard(hand.getCardPlacedPos(),new Coords(x,y),view.getHand().getCard(hand.getCardPlacedPos()).getSide());
@@ -106,63 +79,51 @@ public class FieldController implements ViewObserver {
 
     @Override
     public void update(NetMessage message) throws IOException {
+        // TODO: If corner null does not remove already existing button
+        // Does not generate errors nor position card in it
         switch (message) {
             case CardPlacedOnFieldMessage m -> {
                 if (m.getCard() instanceof StarterCard) return;
-                if(m.getNickname().equals(view.getNickname())) {
-                    int x = 4 + m.getCoords().getX() - m.getCoords().getY();
-                    int y = 4 - m.getCoords().getX() - m.getCoords().getY();
+                if (m.getNickname().equals(view.getNickname())) {
                     Platform.runLater(() -> {
-                        try {
-                            view.getMyField().checkIfPlaceable(new Coords(m.getCoords().getX(), m.getCoords().getY() + 1));
-                            Button button = createButton();
-                            button.setOnAction(event -> {
-                                playCard(m.getCoords().getX(), m.getCoords().getY() + 1);
-                            });
-                            if(getNodeByRowColumnIndex(x - 1,y - 1)==null) fieldGrid.add(button, x - 1, y - 1);
-                        } catch (IllegalCoordsException ignored) {
-                            if(view.getMyField().getMatrix().get(new Coords(m.getCoords().getX(), m.getCoords().getY() + 1)).getClass() == CardBlock.class)
-                                fieldGrid.getChildren().remove(getNodeByRowColumnIndex(x-1,y-1));
+                        int x = starterX + m.getCoords().getX() - m.getCoords().getY();
+                        int y = starterY - m.getCoords().getX() - m.getCoords().getY();
+
+                        if (x == 0) {
+                            shiftColumns();
+                            fieldGrid.addColumn(0);
+                            starterX++;
+                            x = 1;
                         }
 
-                        try {
-                            view.getMyField().checkIfPlaceable(new Coords(m.getCoords().getX(), m.getCoords().getY() - 1));
-                            Button button = createButton();
-                            button.setOnAction(event -> {
-                                playCard(m.getCoords().getX(), m.getCoords().getY() - 1);
-                            });
-                            fieldGrid.add(button, x + 1, y + 1);
-                        } catch (IllegalCoordsException ignored) {
-                            if(view.getMyField().getMatrix().get(new Coords(m.getCoords().getX(), m.getCoords().getY() - 1)).getClass() == CardBlock.class)
-                                fieldGrid.getChildren().remove(getNodeByRowColumnIndex(x+1,y+1));
+                        if (y == 0) {
+                            shiftRows();
+                            fieldGrid.addRow(0);
+                            starterY++;
+                            y = 1;
                         }
-                        try {
-                            view.getMyField().checkIfPlaceable(new Coords(m.getCoords().getX() + 1, m.getCoords().getY()));
-                            Button button = createButton();
-                            button.setOnAction(event -> {
-                                playCard(m.getCoords().getX() + 1, m.getCoords().getY());
-                            });
-                            fieldGrid.add(button, x + 1, y - 1);
-                        } catch (IllegalCoordsException ignored) {
-                            if(view.getMyField().getMatrix().get(new Coords(m.getCoords().getX() + 1, m.getCoords().getY())).getClass() == CardBlock.class)
-                                fieldGrid.getChildren().remove(getNodeByRowColumnIndex(x+1,y-1));
+
+                        for (Coords c : getNeighbors(m.getCoords())) {
+                            try {
+                                view.getMyField().checkIfPlaceable(c);
+                                Button button = createButton();
+                                button.setOnAction(event -> playCard(c.getX(), c.getY()));
+                                if (getNodeByRowColumnIndex(starterX + c.getX() - c.getY(), starterY - c.getX() - c.getY()) == null) fieldGrid.add(button, starterX + c.getX() - c.getY(), starterY - c.getX() - c.getY());
+                                // TODO: fix "Exception in thread "JavaFX Application Thread" java.lang.NullPointerException: Cannot invoke "Object.getClass()" because the return value of "java.util.HashMap.get(Object)" is null"
+                            } catch (IllegalCoordsException e) {
+                                if (view.getMyField().getMatrix().get(c) instanceof CardBlock && getNodeByRowColumnIndex(starterX + c.getX() - c.getY(), starterY - c.getX() - c.getY()) != null) {
+                                    fieldGrid.getChildren().remove(getNodeByRowColumnIndex(starterX + c.getX() - c.getY(), starterY - c.getX() - c.getY()));
+                                }
+                            }
                         }
-                        try {
-                            view.getMyField().checkIfPlaceable(new Coords(m.getCoords().getX() - 1, m.getCoords().getY()));
-                            Button button = createButton();
-                            button.setOnAction(event -> {
-                                playCard(m.getCoords().getX() - 1, m.getCoords().getY());
-                            });
-                            fieldGrid.add(button, x - 1, y + 1);
-                        } catch (IllegalCoordsException ignored) {
-                            if(view.getMyField().getMatrix().get(new Coords(m.getCoords().getX()-1, m.getCoords().getY())).getClass() == CardBlock.class)
-                                fieldGrid.getChildren().remove(getNodeByRowColumnIndex(x-1,y+1));
-                        }
-                        fieldGrid.getChildren().remove(getNodeByRowColumnIndex(x,y));
+
+                        fieldGrid.getChildren().remove(getNodeByRowColumnIndex(x, y));
                         fieldGrid.add(new CardBuilder(m.getCard()).getCardImage(), x, y);
                     });
                 }
             }
+            case LobbyLeftMessage ignored -> view.removeObserver(this);
+            case GameWinnersAnnouncedMessage ignored -> view.removeObserver(this);
             default -> {}
         }
     }
@@ -176,6 +137,32 @@ public class FieldController implements ViewObserver {
         return null;
     }
 
+    private void shiftRows() {
+        fieldGrid.getChildren().forEach(node -> {
+            Integer row = GridPane.getRowIndex(node);
+            if (row != null) {
+                GridPane.setRowIndex(node, row + 1);
+            }
+        });
+    }
 
+    private void shiftColumns() {
+        fieldGrid.getChildren().forEach(node -> {
+            Integer column = GridPane.getColumnIndex(node);
+            if (column != null) {
+                GridPane.setColumnIndex(node, column + 1);
+            }
+        });
+    }
+
+    private ArrayList<Coords> getNeighbors(Coords coords) {
+        ArrayList<Coords> neighbors = new ArrayList<>();
+        neighbors.add(new Coords(coords.getX() + 1, coords.getY()));
+        neighbors.add(new Coords(coords.getX() - 1, coords.getY()));
+        neighbors.add(new Coords(coords.getX(), coords.getY() + 1));
+        neighbors.add(new Coords(coords.getX(), coords.getY() - 1));
+
+        return neighbors;
+    }
 }
 
