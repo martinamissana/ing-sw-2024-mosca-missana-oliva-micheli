@@ -14,7 +14,6 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.scene.input.MouseEvent;
 
 import java.io.IOException;
 import java.net.URL;
@@ -54,12 +53,8 @@ public class LobbyInstanceController implements ViewObserver, Initializable {
             sem.acquire();
             viewSingleton.getView().removeObserver(this);
 
-        } catch (LobbyDoesNotExistsException ignored) {}
-        catch (FullLobbyException e) {
-            System.out.println("Full lobby");
-        } catch (CannotJoinMultipleLobbiesException e) {
-            System.out.println("Multiple lobbies");
-        } catch (IOException | ClassNotFoundException | UnexistentUserException | NicknameAlreadyTakenException |
+        } catch (LobbyDoesNotExistsException | CannotJoinMultipleLobbiesException | FullLobbyException ignored) {}
+        catch (IOException | ClassNotFoundException | UnexistentUserException | NicknameAlreadyTakenException |
                  InterruptedException e) {
             throw new RuntimeException(e);
         }

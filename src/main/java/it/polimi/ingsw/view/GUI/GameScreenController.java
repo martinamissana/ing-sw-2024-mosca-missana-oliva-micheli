@@ -98,8 +98,6 @@ public class GameScreenController implements ViewObserver {
                 throw new RuntimeException(e);
             }
             field.getChildren().add(chooseStarterCenter);
-            ChooseStarterCardController chooseStarterController = chooseStarterLoader.getController();
-            chooseStarterController.setView(viewSingleton.getView());
 
 
             FXMLLoader chatLoader = new FXMLLoader(getClass().getResource("/fxml/Chat.fxml"));
@@ -133,7 +131,7 @@ public class GameScreenController implements ViewObserver {
                             field.getChildren().removeAll();
                             field.getChildren().add(fieldCenter);
                             FieldController fieldController = fieldLoader.getController();
-                            fieldController.setView(viewSingleton.getView(), viewSingleton.getViewController());
+                            fieldController.setView(viewSingleton.getView());
                             fieldController.setHand(handController);
                         });
                     }
@@ -165,16 +163,17 @@ public class GameScreenController implements ViewObserver {
                 }
             }
             case SecretGoalAssignedMessage ignored -> Platform.runLater(()-> chooseGoal.setVisible(false));
-            case TurnChangedMessage m -> {
+            case TurnChangedMessage ignored -> {
                 if (!viewSingleton.getView().isYourTurn()) informations.setText("Wait for your turn...");
                 else informations.setText("It's your turn!");
             }
+            case LobbyLeftMessage ignored -> viewSingleton.getView().removeObserver(this);
+            case GameWinnersAnnouncedMessage ignored -> viewSingleton.getView().removeObserver(this);
             default -> {}
         }
     }
 
     public void toggleChats() {
         chats.setVisible(!chats.isVisible());
-
     }
 }

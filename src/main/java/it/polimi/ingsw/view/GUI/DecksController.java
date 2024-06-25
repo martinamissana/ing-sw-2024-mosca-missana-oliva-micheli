@@ -13,6 +13,8 @@ import it.polimi.ingsw.model.game.Action;
 import it.polimi.ingsw.model.game.GamePhase;
 import it.polimi.ingsw.network.netMessage.NetMessage;
 import it.polimi.ingsw.network.netMessage.s2c.CardDrawnFromSourceMessage;
+import it.polimi.ingsw.network.netMessage.s2c.GameWinnersAnnouncedMessage;
+import it.polimi.ingsw.network.netMessage.s2c.LobbyLeftMessage;
 import it.polimi.ingsw.view.View;
 import it.polimi.ingsw.view.ViewObserver;
 import javafx.application.Platform;
@@ -132,17 +134,16 @@ public class DecksController implements ViewObserver {
 
     @Override
     public void update(NetMessage message) throws IOException {
-        switch (message){
-            case CardDrawnFromSourceMessage m ->{
-                refresh(m.getType());
-            }
-            default -> {
-            }
+        switch (message) {
+            case CardDrawnFromSourceMessage m -> refresh(m.getType());
+            case LobbyLeftMessage ignored -> view.removeObserver(this);
+            case GameWinnersAnnouncedMessage ignored -> view.removeObserver(this);
+            default -> {}
         }
     }
 
-    private void refresh(DeckTypeBox deck) {
-        Platform.runLater(()->{
+    private void refresh(DeckTypeBox deck) {        // TODO: Clean ???
+        Platform.runLater(()-> {
         switch (deck){
             case DeckType.RESOURCE -> {
                 Card topResDeck = view.getTopResourceCard();
