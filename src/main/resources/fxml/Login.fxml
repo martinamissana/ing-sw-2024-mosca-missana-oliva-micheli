@@ -3,6 +3,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.shape.*?>
 
 <AnchorPane prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.ingsw.view.GUI.LoginController">
    <children>
@@ -21,9 +22,27 @@
          </image></ImageView>
       <Pane fx:id="connectionPane" layoutX="325.0" layoutY="400.0" prefHeight="150.0" prefWidth="250.0">
          <children>
-            <TextField fx:id="IP" alignment="CENTER" layoutX="40.0" layoutY="40.0" onKeyTyped="#modifyTags" prefHeight="25.0" prefWidth="170.0" promptText="Insert IP address" />
-            <TextField fx:id="port" alignment="CENTER" layoutX="40.0" layoutY="85.0" onKeyTyped="#modifyTags" prefHeight="25.0" prefWidth="170.0" promptText="Insert port" />
+            <TextField fx:id="IP" alignment="CENTER" layoutX="25.0" layoutY="40.0" onKeyTyped="#modifyTags" prefHeight="25.0" prefWidth="170.0" promptText="Insert IP address" />
+            <TextField fx:id="port" alignment="CENTER" layoutX="25.0" layoutY="85.0" onKeyTyped="#modifyTags" prefHeight="25.0" prefWidth="170.0" promptText="Insert port" />
             <Label fx:id="connectionError" alignment="CENTER" layoutX="50.0" layoutY="120.0" prefWidth="150.0" textFill="RED" />
+            <StackPane fx:id="infoIP" layoutX="205.0" layoutY="42.5">
+               <children>
+                  <Circle fill="WHITE" radius="10.0" stroke="WHITE" strokeType="INSIDE" />
+                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../images/infoImage.png" />
+                     </image></ImageView>
+               </children>
+            </StackPane>
+            <StackPane fx:id="infoPort" layoutX="205.0" layoutY="87.5">
+               <children>
+                  <Circle fill="WHITE" radius="10.0" stroke="WHITE" strokeType="INSIDE" />
+                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../images/infoImage.png" />
+                     </image></ImageView>
+               </children>
+            </StackPane>
          </children></Pane>
    </children>
 </AnchorPane>
