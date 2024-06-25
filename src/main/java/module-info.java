@@ -21,6 +21,7 @@ module PSP001 {
     exports it.polimi.ingsw.model.chat;
     exports it.polimi.ingsw.model.deck;
     exports it.polimi.ingsw.model.card;
+    exports it.polimi.ingsw.model.commonItem;
     exports it.polimi.ingsw.model.player;
     exports it.polimi.ingsw.view;
     exports it.polimi.ingsw.network.netMessage;

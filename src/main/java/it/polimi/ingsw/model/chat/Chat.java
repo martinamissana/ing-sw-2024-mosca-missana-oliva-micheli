@@ -5,7 +5,6 @@ import it.polimi.ingsw.model.player.Player;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.List;
 
 /**
  * Class Chat<br>

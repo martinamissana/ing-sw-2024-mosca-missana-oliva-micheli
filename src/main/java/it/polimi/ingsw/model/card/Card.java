@@ -84,8 +84,7 @@ public abstract class Card implements Serializable {
     }
 
     /**
-     * sets the card's side to the specified one
-     * @param side
+     * @param side side to set the card to
      */
     public void setSide(CardSide side) {
         this.side = side;
