@@ -129,4 +129,8 @@ public class Player implements Serializable {
         return Objects.equals(nickname, player.nickname);
     }
 
+    @Override
+    public int hashCode() {
+        return Objects.hash(nickname);
+    }
 }
