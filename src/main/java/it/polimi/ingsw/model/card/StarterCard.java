@@ -5,30 +5,28 @@ import it.polimi.ingsw.model.commonItem.Kingdom;
 import java.util.HashMap;
 
 /**
- * Class StarterCard
- * extends Card, adding the attribute for permanent resources
+ * Class StarterCard<br>
+ * extends Card, adding an attribute for the permanent resources on the back of starter cards
  */
 public class StarterCard extends Card {
     private final HashMap<Kingdom, Integer> permanentRes;
 
     /**
      * Class constructor
-     *
-     * @param cardID       the card ID
-     * @param side         the side of the card that is visible
-     * @param frontCorner  the list of corners in the front
-     * @param backCorner   the list of corners in the back
-     * @param permanentRes the list of all the resources associated with the card (not counting the corners)
+     * @param ID           the card's ID
+     * @param side         indicates which side the card is currently on
+     * @param frontCorners list of corners on the front side
+     * @param backCorners  list of corners on the back side
+     * @param permanentRes list of resources at the center of the starter card's back
+     *                     (they can't be covered by other corners, so they're permanent)
      */
-    public StarterCard(int cardID, CardSide side, HashMap<CornerType, Corner> frontCorner, HashMap<CornerType, Corner> backCorner, HashMap<Kingdom, Integer> permanentRes) {
-        super(cardID, side, frontCorner, backCorner);
+    public StarterCard(int ID, CardSide side, HashMap<CornerType, Corner> frontCorners, HashMap<CornerType, Corner> backCorners, HashMap<Kingdom, Integer> permanentRes) {
+        super(ID, side, frontCorners, backCorners);
         this.permanentRes = permanentRes;
     }
 
     /**
-     * gets the permanent resources
-     *
-     * @return the card permanentRes
+     * @return the card's permanent resources
      */
     public HashMap<Kingdom, Integer> getPermanentRes() {
         return this.permanentRes;

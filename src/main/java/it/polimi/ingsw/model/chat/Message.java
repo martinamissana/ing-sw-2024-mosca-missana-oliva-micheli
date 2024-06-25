@@ -5,8 +5,8 @@ import it.polimi.ingsw.model.player.Player;
 import java.io.Serializable;
 
 /**
- * Class Message
- * contains all the attributes associated to a message and the method to send it
+ * Class Message<br>
+ * contains all attributes associated to a message and the method to send it
  */
 public class Message implements Serializable {
     private final String text;
@@ -17,90 +17,57 @@ public class Message implements Serializable {
     private static int counter;
 
     /**
-     * CLass constructor
-     *
-     * @param text     the text of the message
-     * @param sender   the sender of the message
-     * @param receiver the receiver of the message
-     * @param global    indicates if the message is global
+     * Class constructor
+     * @param text     text contained in message
+     * @param sender   sender of the message
+     * @param receiver receiver of the message
+     * @param global   indicates whether the message is global ({@code true}) or not ({@code false})
      */
     public Message(String text, Player sender, Player receiver, boolean global) {
-        this.sender = sender;
         this.text = text;
-        this.receiver = receiver; //null if global message
+        this.sender = sender;
+        this.receiver = receiver; // null if global
         this.isGlobal = global;
         this.order = counter;
     }
 
     /**
-     * getter
-     *
-     * @return String the message text
+     * @return the text contained in message
      */
-    public String getText() {
-        return text;
-    }
+    public String getText() { return text; }
 
     /**
-     * getter
-     *
-     * @return Player the message sender
+     * @return the sender of the message
      */
-    public Player getSender() {
-        return sender;
-    }
+    public Player getSender() { return sender; }
 
     /**
-     * getter
-     *
-     * @return Player the message receiver
+     * @return the receiver of the message
      */
-    public Player getReceiver() {
-        return receiver;
-    }
+    public Player getReceiver() { return receiver; }
 
     /**
-     * tells if a message is global
-     *
-     * @return message isGlobal
+     * @return {@code true} if the message is global, {@code false} if it isn't
      */
-    public boolean isGlobal() {
-        return isGlobal;
-    }
+    public boolean isGlobal() { return isGlobal; }
 
     /**
-     * getter
-     *
-     * @return int the order assigned to the message
+     * @return the order assigned to the message
      */
-    public int getOrder() {
-        return order;
-    }
+    public int getOrder() { return order; }
 
     /**
-     * getter
-     *
-     * @return int the counter used to order the messages in the order they are sent
+     * @return the counter used to order the messages in the order they are sent
      */
-    public static int getCounter() {
-        return counter;
-    }
+    public static int getCounter() { return counter; }
 
     /**
-     * setter
-     *
-     * @param counter the counter used to order the messages in the order they are sent
-     */
-    public static void setCounter(int counter) {
-        Message.counter = counter;
-    }
-
-    /**
-     * setter
-     *
      * @param order the order assigned to the message
      */
-    public void setOrder(int order) {
-        this.order = order;
-    }
+    public void setOrder(int order) { this.order = order; }
+
+    /**
+     * @param counter the counter used to order the messages in the order they are sent
+     */
+    public static void setCounter(int counter) { Message.counter = counter; }
 }

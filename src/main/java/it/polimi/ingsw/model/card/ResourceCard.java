@@ -6,43 +6,34 @@ import java.util.HashMap;
 
 /**
  * Class ResourceCard
- * extends Card, adding the attributes for points and kingdom
+ * extends Card, adding attributes for direct points and kingdom
  */
 public class ResourceCard extends Card {
-    private final int points;
+    private final int directPoints;
     private final Kingdom kingdom;
 
     /**
      * Class constructor
-     *
-     * @param cardID      the card ID
-     * @param side        the side of the card that is visible
-     * @param frontCorner the list of corners in the front
-     * @param backCorner  the list of corners in the back
-     * @param points      the points associated with the card
-     * @param kingdom     the kingdom associated with the card
+     * @param ID           the card's ID
+     * @param side         indicates which side the card is currently on
+     * @param frontCorners list of corners on the front side
+     * @param backCorners  list of corners on the back side
+     * @param directPoints points to be added to the player's score when playing the card to the field
+     * @param kingdom      the card's kingdom
      */
-    public ResourceCard(int cardID, CardSide side, HashMap<CornerType, Corner> frontCorner, HashMap<CornerType, Corner> backCorner, int points, Kingdom kingdom) {
-        super(cardID, side, frontCorner, backCorner);
-        this.points = points;
+    public ResourceCard(int ID, CardSide side, HashMap<CornerType, Corner> frontCorners, HashMap<CornerType, Corner> backCorners, int directPoints, Kingdom kingdom) {
+        super(ID, side, frontCorners, backCorners);
+        this.directPoints = directPoints;
         this.kingdom = kingdom;
     }
 
     /**
-     * gets the points
-     *
-     * @return card points
+     * @return int
      */
-    public int getPoints() {
-        return this.points;
-    }
+    public int getDirectPoints() { return this.directPoints; }
 
     /**
-     * gets the kingdom
-     *
-     * @return card kingdom
+     * @return Kingdom
      */
-    public Kingdom getKingdom() {
-        return this.kingdom;
-    }
+    public Kingdom getKingdom() { return this.kingdom; }
 }

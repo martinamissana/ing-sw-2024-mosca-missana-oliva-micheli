@@ -3,7 +3,7 @@ package it.polimi.ingsw.model.card;
 import java.io.Serializable;
 
 /**
- * Enumeration to indicate on which side a card is set
+ * Enumeration used to indicate which side a card is on
  */
 public enum CardSide implements Serializable {
     FRONT,

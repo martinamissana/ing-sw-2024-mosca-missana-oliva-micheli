@@ -5,42 +5,39 @@ import it.polimi.ingsw.model.commonItem.ItemBox;
 import java.io.Serializable;
 
 /**
- * Class Corner
- * instantiated when the corner is actually present on the card
+ * Class Corner<br>
+ * instantiated only when the corner is actually present on the card, meaning it's not a blocking corner
  */
 public class Corner implements Serializable {
     private final ItemBox item;
     private boolean covered = false;
 
     /**
-     * Class constructor
-     *
-     * @param item the item that is stored in the corner
+     * Class constructor<br>
+     * @param item the item to be stored in the corner
      */
     public Corner(ItemBox item) {
         this.item = item;
     }
 
     /**
-     * getter
-     *
-     * @return ItemBox item associated with the corner
+     * returns the item contained by the corner, {@code null} if it's empty
+     * @return ItemBox
      */
     public ItemBox getItem() {
         return this.item;
     }
 
     /**
-     * returns if the corner is covered by another card
-     *
-     * @return covered if the corner is covered or not
+     * returns {@code true} if the corner is covered by another card's corner, {@code false} otherwise
+     * @return boolean
      */
     public boolean isCovered() {
         return covered;
     }
 
     /**
-     * sets corner covered
+     * marks the corner as covered
      */
     public void cover() {
         this.covered = true;
