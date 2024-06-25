@@ -640,7 +640,7 @@ public class Printer {
             int directPoints;
             if (card.getClass().equals(StarterCard.class)) {
                 directPoints = 0;
-            } else directPoints = ((ResourceCard) card).getPoints();
+            } else directPoints = ((ResourceCard) card).getDirectPoints();
 
             // Setting string of points for cards:
             if (directPoints != 0) {
@@ -654,7 +654,7 @@ public class Printer {
 
                         // Generating gold resources points string:
                     else if (((GoldenCard) card).getType() == GoldenCardType.RESOURCE) {
-                        points = Color.gold.label + directPoints + "x" + switch (((GoldenCard) card).getPointResource()) {
+                        points = Color.gold.label + directPoints + "x" + switch (((GoldenCard) card).getResourceToCount()) {
                             case INKWELL -> "I";
                             case MANUSCRIPT -> "M";
                             case QUILL -> "Q";

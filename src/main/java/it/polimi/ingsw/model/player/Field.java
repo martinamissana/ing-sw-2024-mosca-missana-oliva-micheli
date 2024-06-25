@@ -240,17 +240,17 @@ public class Field implements Serializable {
         }
         // read direct points from ResourceCard
         if (card.getClass() == ResourceCard.class)
-            return card.getPoints();
+            return card.getDirectPoints();
 
         GoldenCard goldenCard = (GoldenCard) card;
 
         // read direct points from GoldenCard
         if (goldenCard.getType() == GoldenCardType.DIRECT)
-            return goldenCard.getPoints();
+            return goldenCard.getDirectPoints();
 
         // one point for each unit of specified resource
         if (goldenCard.getType() == GoldenCardType.RESOURCE)
-            return totalResources.get(goldenCard.getPointResource()); // read total count of the corresponding resource
+            return totalResources.get(goldenCard.getResourceToCount()); // read total count of the corresponding resource
 
         // two points for each neighboring card
         if (goldenCard.getType() == GoldenCardType.CORNER)
