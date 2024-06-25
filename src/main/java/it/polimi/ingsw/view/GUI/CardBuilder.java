@@ -23,11 +23,11 @@ public class CardBuilder {
         String pathgenerale = getClass().getResource(PATH).toExternalForm();
         if (card.getSide() == CardSide.BACK) {
             if (card instanceof ResourceCard)
-                pathgenerale = pathgenerale + "/backs/" + (card.getCardID() - 1) / 10 + ".png";
-            else if (card instanceof StarterCard) pathgenerale = pathgenerale + "/backs/" + card.getCardID() + ".png";
+                pathgenerale = pathgenerale + "/backs/" + (card.getID() - 1) / 10 + ".png";
+            else if (card instanceof StarterCard) pathgenerale = pathgenerale + "/backs/" + card.getID() + ".png";
         }
         else {
-            if (!(card instanceof CardBlock)) pathgenerale = pathgenerale + "/fronts/" + card.getCardID() + ".png";
+            if (!(card instanceof CardBlock)) pathgenerale = pathgenerale + "/fronts/" + card.getID() + ".png";
         }
         Image image = new Image(pathgenerale);
         cardImage.setFitWidth(100);
