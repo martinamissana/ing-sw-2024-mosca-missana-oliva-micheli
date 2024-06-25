@@ -11,13 +11,16 @@ import it.polimi.ingsw.network.netMessage.NetMessage;
 import it.polimi.ingsw.network.netMessage.c2s.LobbyJoinedMessage;
 import it.polimi.ingsw.network.netMessage.s2c.ChatMessageAddedMessage;
 import it.polimi.ingsw.network.netMessage.s2c.GameCreatedMessage;
+import it.polimi.ingsw.network.netMessage.s2c.GameWinnersAnnouncedMessage;
 import it.polimi.ingsw.network.netMessage.s2c.LobbyLeftMessage;
 import it.polimi.ingsw.view.ViewObserver;
 import javafx.application.Platform;
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.shape.Circle;
 
 import java.io.IOException;
 import java.net.URL;
@@ -31,6 +34,8 @@ public class ChatController implements ViewObserver, Initializable {
     @FXML
     private TabPane chats;
     @FXML
+    private Tab global;
+    @FXML
     private Tab p1;
     @FXML
     private Tab p2;
@@ -39,24 +44,39 @@ public class ChatController implements ViewObserver, Initializable {
     @FXML
     private Button globalSendButton;
     @FXML
-    private ListView<TextField> globalMessages;
+    private Circle newGlobalMessage;
+    @FXML
+    private ListView<Label> globalMessages;
     @FXML
     private TextField globalText;
     @FXML
-    private ListView<TextField> p1Messages;
+    private Circle newMessage1;
+    @FXML
+    private ListView<Label> p1Messages;
     @FXML
     private TextField p1Text;
     @FXML
-    private ListView<TextField> p2Messages;
+    private Circle newMessage2;
+    @FXML
+    private ListView<Label> p2Messages;
     @FXML
     private TextField p2Text;
     @FXML
-    private ListView<TextField> p3Messages;
+    private Circle newMessage3;
+    @FXML
+    private ListView<Label> p3Messages;
     @FXML
     private TextField p3Text;
 
     private final ViewSingleton viewSingleton = ViewSingleton.getInstance();
     private Lobby lobby;
+
+    @Override
+    public void initialize(URL url, ResourceBundle resourceBundle) {
+        viewSingleton.getView().addObserver(this);
+        this.lobby = viewSingleton.getView().getLobbies().get(viewSingleton.getView().getID());
+        setChats();
+    }
 
     public void setChats()  {
         Platform.runLater(() -> {
@@ -69,7 +89,10 @@ public class ChatController implements ViewObserver, Initializable {
                 }
             }
             while (index < chats.getTabs().size()) {
-                chats.getTabs().get(index).setText("p" + index);
+                chats.getTabs().get(index).setText("");
+                if (index == 1) p1Messages.getItems().clear();
+                else if (index == 2) p2Messages.getItems().clear();
+                else if (index == 3) p3Messages.getItems().clear();
                 chats.getTabs().get(index).setDisable(true);
                 index++;
             }
@@ -110,22 +133,27 @@ public class ChatController implements ViewObserver, Initializable {
             }
         } catch (IOException | UnexistentUserException e) {
             throw new RuntimeException(e);
-        } catch (LobbyDoesNotExistsException | GameDoesNotExistException ignored) {}
-        catch (PlayerChatMismatchException e) {
-            System.out.println("Cannot send message");
-        }
+        } catch (LobbyDoesNotExistsException | GameDoesNotExistException | PlayerChatMismatchException ignored) {}
     }
 
     @Override
-    public void update(NetMessage message) throws IOException {
+    public void update(NetMessage message) throws IOException {     // TODO: Default button + slider to 100% + Colors on tabs
         switch (message) {
-            case LobbyJoinedMessage ignored -> setChats();
-            case LobbyLeftMessage ignored -> setChats();
+            case LobbyJoinedMessage m -> {
+                setChats();
+                Platform.runLater(() -> globalMessages.getItems().add(new Label(m.getPlayer().getNickname() + " joined the lobby")));
+            }
+            case LobbyLeftMessage m -> {
+                setChats();
+                Platform.runLater(() -> globalMessages.getItems().add(new Label(m.getPlayer().getNickname() + " left the lobby")));
+            }
             case ChatMessageAddedMessage m -> Platform.runLater(() -> {
-                TextField text = new TextField(m.getM().getSender().getNickname() + ": " + m.getM().getText());
-                text.setEditable(false);
+                Label text = new Label(m.getM().getSender().getNickname() + ": " + m.getM().getText());
 
-                if (m.getM().isGlobal()) globalMessages.getItems().add(text);
+                if (m.getM().isGlobal()) {
+                    globalMessages.getItems().add(text);
+                    if (!global.isSelected()) newGlobalMessage.setVisible(true);
+                }
                 else {
                     if (viewSingleton.getView().getPlayer().equals(m.getM().getSender())) {
                         for (Tab t : chats.getTabs()) {
@@ -139,23 +167,33 @@ public class ChatController implements ViewObserver, Initializable {
                     else if (viewSingleton.getView().getPlayer().equals(m.getM().getReceiver())) {
                         for (Tab t : chats.getTabs()) {
                             if (m.getM().getSender().getNickname().equals(t.getText())) {
-                                if (t.equals(p1)) p1Messages.getItems().add(text);
-                                else if (t.equals(p2)) p2Messages.getItems().add(text);
-                                else p3Messages.getItems().add(text);
+                                if (t.equals(p1)) {
+                                    p1Messages.getItems().add(text);
+                                    if (!p1.isSelected()) newMessage1.setVisible(true);
+                                }
+                                else if (t.equals(p2)) {
+                                    p2Messages.getItems().add(text);
+                                    if (!p2.isSelected()) newMessage2.setVisible(true);
+                                }
+                                else {
+                                    p3Messages.getItems().add(text);
+                                    if (!p3.isSelected()) newMessage3.setVisible(true);
+                                }
                             }
                         }
                     }
                 }
             });
             case GameCreatedMessage ignored -> viewSingleton.getView().removeObserver(this);
+            case GameWinnersAnnouncedMessage ignored -> viewSingleton.getView().removeObserver(this);
             default -> {}
         }
     }
 
-    @Override
-    public void initialize(URL url, ResourceBundle resourceBundle) {
-        viewSingleton.getView().addObserver(this);
-        this.lobby = viewSingleton.getView().getLobbies().get(viewSingleton.getView().getID());
-        setChats();
+    public void readMessage(Event event) {
+        if (event.getSource().equals(global) && newGlobalMessage.isVisible()) newGlobalMessage.setVisible(false);
+        if (event.getSource().equals(p1) && newMessage1.isVisible()) newMessage1.setVisible(false);
+        if (event.getSource().equals(p2) && newMessage2.isVisible()) newMessage2.setVisible(false);
+        if (event.getSource().equals(p3) && newMessage3.isVisible()) newMessage2.setVisible(false);
     }
 }
