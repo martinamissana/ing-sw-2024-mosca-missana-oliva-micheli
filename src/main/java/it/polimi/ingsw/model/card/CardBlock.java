@@ -3,13 +3,13 @@ package it.polimi.ingsw.model.card;
 import java.io.Serializable;
 
 /**
- * Class BlockedCard
- * instantiated in the field where it is not possible to place other cards due to the absence of one or more corner in the adjacent spots
+ * Class CardBlock<br>
+ * instantiated in the field map whenever a position gets blocked by a blocking corner (its key will be that position)
  */
 public class CardBlock extends Card implements Serializable {
 
     /**
-     * Class constructor
+     * Class constructor<br>
      * sets all the attributes to default values as they are not relevant
      */
     public CardBlock() {
