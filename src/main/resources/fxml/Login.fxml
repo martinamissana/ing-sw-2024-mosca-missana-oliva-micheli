@@ -8,10 +8,10 @@
 <AnchorPane prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.ingsw.view.GUI.LoginController">
    <children>
       <MenuButton fx:id="connectionMenu" layoutX="455.0" layoutY="340.0" mnemonicParsing="false" onMouseClicked="#menuOptions" text="TCP">
-        <items>
-          <MenuItem fx:id="TCP" onAction="#chooseConnection" text="TCP" />
-          <MenuItem fx:id="RMI" onAction="#chooseConnection" text="RMI" />
-        </items>
+         <items>
+            <MenuItem fx:id="TCP" onAction="#chooseConnection" text="TCP" />
+            <MenuItem fx:id="RMI" onAction="#chooseConnection" text="RMI" />
+         </items>
       </MenuButton>
       <TextField fx:id="nicknameField" alignment="CENTER" layoutX="340.0" layoutY="288.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" onKeyTyped="#modifyTags" prefWidth="220.0" promptText="Insert username" />
       <Button layoutX="385.0" layoutY="340.0" mnemonicParsing="false" onMouseClicked="#login" prefWidth="55.0" text="Login" />

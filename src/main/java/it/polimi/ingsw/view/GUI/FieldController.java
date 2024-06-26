@@ -4,6 +4,7 @@ import it.polimi.ingsw.controller.exceptions.IllegalActionException;
 import it.polimi.ingsw.controller.exceptions.NotYourTurnException;
 import it.polimi.ingsw.controller.exceptions.UnexistentUserException;
 import it.polimi.ingsw.model.card.CardBlock;
+import it.polimi.ingsw.model.card.CornerType;
 import it.polimi.ingsw.model.card.StarterCard;
 import it.polimi.ingsw.model.exceptions.*;
 import it.polimi.ingsw.model.game.Action;
@@ -23,6 +24,7 @@ import javafx.scene.layout.GridPane;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class FieldController implements ViewObserver {
     private View view;
@@ -70,7 +72,7 @@ public class FieldController implements ViewObserver {
         try {
             view.playCard(hand.getCardPlacedPos(),new Coords(x,y),view.getHand().getCard(hand.getCardPlacedPos()).getSide());
         } catch (IllegalActionException | NotYourTurnException | IllegalMoveException | GameDoesNotExistException |
-                 LobbyDoesNotExistException | UnexistentUserException | IOException e) {
+                 LobbyDoesNotExistsException | UnexistentUserException | IOException e) {
             throw new RuntimeException(e);
         }
     }

@@ -34,11 +34,11 @@ public class ChooseStarterCardController {
             if(mouseEvent.getSource().equals(front)) {
                 viewSingleton.getView().chooseCardSide(CardSide.FRONT);
                 return;
-        }
-        viewSingleton.getView().chooseCardSide(CardSide.BACK);
+            }
+            viewSingleton.getView().chooseCardSide(CardSide.BACK);
         }
         catch (IOException | EmptyDeckException | GameDoesNotExistException | HandIsFullException | UnexistentUserException | WrongGamePhaseException e) {
-        throw new RuntimeException(e);
+            throw new RuntimeException(e);
         }
     }
 }
