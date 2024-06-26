@@ -24,7 +24,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
- * View class, it contains what the client can see and the methods the client can call to play
+ * View class
+ * contains what the client can see and the methods the client can use to make moves during the game
  */
 public abstract class View extends ViewObservable {
     private String nickname;
@@ -53,17 +54,13 @@ public abstract class View extends ViewObservable {
 
 
     /**
-     * gets the nickname
-     *
-     * @return String nickname
+     * @return String
      */
     public String getNickname() {
         return nickname;
     }
 
     /**
-     * gets the deckBuffers
-     *
      * @return HashMap <DeckBufferType, DeckBuffer>
      */
     public HashMap<DeckBufferType, DeckBuffer> getDeckBuffers() {
@@ -71,8 +68,6 @@ public abstract class View extends ViewObservable {
     }
 
     /**
-     * gets the top card of the resource deck
-     *
      * @return Card
      */
     public Card getTopResourceCard() {
@@ -80,8 +75,6 @@ public abstract class View extends ViewObservable {
     }
 
     /**
-     * gets the lobbies
-     *
      * @return HashMap <Integer, Lobby>
      */
     public HashMap<Integer, Lobby> getLobbies() {
@@ -89,8 +82,6 @@ public abstract class View extends ViewObservable {
     }
 
     /**
-     * gets the player
-     *
      * @return Player
      */
     public Player getPlayer() {
@@ -98,8 +89,6 @@ public abstract class View extends ViewObservable {
     }
 
     /**
-     * gets the ID of the lobby/game
-     *
      * @return Integer
      */
     public Integer getID() {
@@ -107,8 +96,6 @@ public abstract class View extends ViewObservable {
     }
 
     /**
-     * gets the hand of the player
-     *
      * @return Hand
      */
     public Hand getHand() {
@@ -116,8 +103,6 @@ public abstract class View extends ViewObservable {
     }
 
     /**
-     * gets the player field
-     *
      * @return Field
      */
     public Field getMyField() {
@@ -125,8 +110,6 @@ public abstract class View extends ViewObservable {
     }
 
     /**
-     * gets the other players' fields
-     *
      * @return HashMap <Player, Field>
      */
     public HashMap<Player, Field> getFields() {
@@ -143,8 +126,6 @@ public abstract class View extends ViewObservable {
     }
 
     /**
-     * gets the action [PLAY - DRAW]
-     *
      * @return Action
      */
     public Action getAction() {
@@ -152,8 +133,6 @@ public abstract class View extends ViewObservable {
     }
 
     /**
-     * gets the chat
-     *
      * @return Chat
      */
     public Chat getChat() {
@@ -161,8 +140,6 @@ public abstract class View extends ViewObservable {
     }
 
     /**
-     * gets the player's secret goal
-     *
      * @return Goal
      */
     public Goal getSecretGoal() {
@@ -171,8 +148,6 @@ public abstract class View extends ViewObservable {
 
 
     /**
-     * gets the player's pawn
-     *
      * @return Pawn
      */
     public Pawn getPawn() {
@@ -199,8 +174,6 @@ public abstract class View extends ViewObservable {
     }
 
     /**
-     * gets the player's scoreboard
-     *
      * @return Hashmap <Player, Integer>
      */
     public HashMap<Player, Integer> getScoreboard() {
@@ -208,8 +181,6 @@ public abstract class View extends ViewObservable {
     }
 
     /**
-     * gets the game phase
-     *
      * @return GamePhase
      */
     public GamePhase getGamePhase() {
@@ -217,8 +188,6 @@ public abstract class View extends ViewObservable {
     }
 
     /**
-     * gets the top card of the golden deck
-     *
      * @return Card
      */
     public Card getTopGoldenCard() {
@@ -226,8 +195,6 @@ public abstract class View extends ViewObservable {
     }
 
     /**
-     * gets the first common goal of the game
-     *
      * @return Goal
      */
     public Goal getCommonGoal1() {
@@ -235,8 +202,6 @@ public abstract class View extends ViewObservable {
     }
 
     /**
-     * gets the second common goal of the game
-     *
      * @return Goal
      */
     public Goal getCommonGoal2() {
@@ -248,8 +213,6 @@ public abstract class View extends ViewObservable {
     }
 
     /**
-     * sets the player
-     *
      * @param player user
      */
     public void setPlayer(Player player) {
@@ -257,45 +220,43 @@ public abstract class View extends ViewObservable {
     }
 
     /**
-     * sets the ID of the lobby/game
-     *
      * @param ID lobby/game
      */
     public void setID(Integer ID) {
         this.ID = ID;
     }
 
+    /**
+     * @param hand the hand of the player
+     */
     public void setHand(Hand hand) {
         this.hand = hand;
     }
 
 
+    /**
+     * @param lobbies the active lobbies
+     */
     public void setLobbies(HashMap<Integer, Lobby> lobbies) {
         this.lobbies = lobbies;
     }
 
 
     /**
-     * sets the Action [PLAY - DRAW]
-     *
-     * @param action which action the player should perform
+     * @param action the action the player should perform
      */
     public void setAction(Action action) {
         this.action = action;
     }
 
     /**
-     * sets the chat
-     *
-     * @param chat chat
+     * @param chat the chat
      */
     public void setChat(Chat chat) {
         this.chat = chat;
     }
 
     /**
-     * sets the pawn color
-     *
      * @param pawn color of the pawn
      */
     public void setPawn(Pawn pawn) {
@@ -303,43 +264,166 @@ public abstract class View extends ViewObservable {
     }
 
 
+    /**
+     * @param scoreboard points of each player
+     */
     public void setScoreboard(HashMap<Player, Integer> scoreboard) {
         this.scoreboard = scoreboard;
     }
 
     /**
-     * sets the nickname
-     *
      * @param nickname name of the player
      */
     public void setNickname(String nickname) {
         this.nickname = nickname;
     }
 
+    /**
+     * logs in a player
+     * @param nickname the name of the player
+     * @throws NicknameAlreadyTakenException thrown when a user tries to log in with another user's nickname
+     * @throws IOException general class of exceptions produced by failed or interrupted I/O operations
+     * @throws FullLobbyException thrown when a user tries to join a lobby that's already at its declared maximum capacity of players
+     * @throws ClassNotFoundException thrown when an attempt to load a class is made using its fully-qualified name but cannot find its definition on the classpath
+     */
     public abstract void login(String nickname) throws NicknameAlreadyTakenException, IOException, FullLobbyException, ClassNotFoundException;
 
+    /**
+     * used to create a lobby
+     * @param numOfPlayers number of players of the lobby
+     * @throws LobbyDoesNotExistException thrown when trying to interact with a lobby that doesn't exist
+     * @throws IOException general class of exceptions produced by failed or interrupted I/O operations
+     * @throws FullLobbyException thrown when a user tries to join a lobby that's already at its declared maximum capacity of players
+     * @throws NicknameAlreadyTakenException thrown when a user tries to log in with another user's nickname
+     * @throws ClassNotFoundException thrown when an attempt to load a class is made using its fully-qualified name but cannot find its definition on the classpath
+     * @throws CannotJoinMultipleLobbiesException thrown when a player tries to join a lobby while he is already in another lobby
+     * @throws UnexistentUserException thrown if the user does not exist
+     */
     public abstract void createLobby(int numOfPlayers) throws LobbyDoesNotExistException, IOException, FullLobbyException, NicknameAlreadyTakenException, ClassNotFoundException, CannotJoinMultipleLobbiesException, UnexistentUserException;
 
+    /**
+     * used to join an existent lobby
+     * @param lobbyID lobby ID
+     * @throws FullLobbyException thrown when a user tries to join a lobby that's already at its declared maximum capacity of players
+     * @throws NicknameAlreadyTakenException thrown when a user tries to log in with another user's nickname
+     * @throws LobbyDoesNotExistException thrown when trying to interact with a lobby that doesn't exist
+     * @throws IOException general class of exceptions produced by failed or interrupted I/O operations
+     * @throws ClassNotFoundException thrown when an attempt to load a class is made using its fully-qualified name but cannot find its definition on the classpath
+     * @throws CannotJoinMultipleLobbiesException thrown when a player tries to join a lobby while he is already in another lobby
+     * @throws UnexistentUserException thrown if the user does not exist
+     */
     public abstract void joinLobby(int lobbyID) throws FullLobbyException, NicknameAlreadyTakenException, LobbyDoesNotExistException, IOException, ClassNotFoundException, CannotJoinMultipleLobbiesException, UnexistentUserException;
 
+    /**
+     * used to leave a lobby
+     * @throws GameAlreadyStartedException thrown when a user tries to perform lobby actions while the game is already started
+     * @throws LobbyDoesNotExistException thrown when trying to interact with a lobby that doesn't exist
+     * @throws IOException general class of exceptions produced by failed or interrupted I/O operations
+     * @throws FullLobbyException thrown when a user tries to join a lobby that's already at its declared maximum capacity of players
+     * @throws NicknameAlreadyTakenException thrown when a user tries to log in with another user's nickname
+     * @throws ClassNotFoundException thrown when an attempt to load a class is made using its fully-qualified name but cannot find its definition on the classpath
+     * @throws GameDoesNotExistException thrown when trying to perform an action in a game that does not exist
+     * @throws UnexistentUserException thrown if the user does not exist
+     */
     public abstract void leaveLobby() throws GameAlreadyStartedException, LobbyDoesNotExistException, IOException, FullLobbyException, NicknameAlreadyTakenException, ClassNotFoundException, GameDoesNotExistException, UnexistentUserException;
 
+    /**
+     * used to send a message in chat
+     * @param message the message sent
+     * @throws IOException general class of exceptions produced by failed or interrupted I/O operations
+     * @throws LobbyDoesNotExistException thrown when trying to interact with a lobby that doesn't exist
+     * @throws GameDoesNotExistException thrown when trying to perform an action in a game that does not exist
+     * @throws UnexistentUserException thrown if the user does not exist
+     * @throws PlayerChatMismatchException thrown if the sender and the receiver aren't in the same lobby
+     */
     public abstract void sendMessage(Message message) throws IOException, LobbyDoesNotExistException, GameDoesNotExistException, UnexistentUserException, PlayerChatMismatchException;
 
+    /**
+     * used to choose the color of the pawn
+     * @param color the chosen color
+     * @throws PawnAlreadyTakenException thrown when the user selects a pawn that has already been chosen by another user in the lobby
+     * @throws IOException general class of exceptions produced by failed or interrupted I/O operations
+     * @throws LobbyDoesNotExistException thrown when trying to interact with a lobby that doesn't exist
+     * @throws GameAlreadyStartedException thrown when a user tries to perform lobby actions while the game is already started
+     * @throws GameDoesNotExistException thrown when trying to perform an action in a game that does not exist
+     * @throws UnexistentUserException thrown if the user does not exist
+     */
     public abstract void choosePawn(Pawn color) throws PawnAlreadyTakenException, IOException, LobbyDoesNotExistException, GameAlreadyStartedException, GameDoesNotExistException, UnexistentUserException;
 
+    /**
+     * used to choose the secret goal
+     * @param goalID the ID of the chosen goal
+     * @throws IOException general class of exceptions produced by failed or interrupted I/O operations
+     * @throws IllegalGoalChosenException thrown when a user tries to choose a goal that is not one of the options
+     * @throws WrongGamePhaseException thrown if the user tries to perform an action while the game phase is not correct
+     * @throws GameDoesNotExistException thrown when trying to perform an action in a game that does not exist
+     * @throws UnexistentUserException thrown if the user does not exist
+     */
     public abstract void chooseSecretGoal(int goalID) throws IOException, IllegalGoalChosenException, WrongGamePhaseException, GameDoesNotExistException, UnexistentUserException;
 
+    /**
+     * used to choose the side of the starter card
+     * @param side the side chosen
+     * @throws IOException general class of exceptions produced by failed or interrupted I/O operations
+     * @throws EmptyDeckException thrown when trying to draw a card from a deck that contains none
+     * @throws GameDoesNotExistException thrown when trying to perform an action in a game that does not exist
+     * @throws HandIsFullException thrown when a user tries to draw a card when their hand already contains three cards
+     * @throws UnexistentUserException thrown if the user does not exist
+     * @throws WrongGamePhaseException thrown if the user tries to perform an action while the game phase is not correct
+     */
     public abstract void chooseCardSide(CardSide side) throws IOException, EmptyDeckException, GameDoesNotExistException, HandIsFullException, UnexistentUserException, WrongGamePhaseException;
 
+    /**
+     * used to play a card
+     * @param handPos the position of the card in the hand
+     * @param coords the coordinates where to put the card
+     * @param side the side chosen
+     * @throws IllegalActionException  thrown when either playCard or drawCard are called when the game's Action state isn't set to PLAY or DRAW respectively
+     * @throws NotYourTurnException thrown when a player tries to perform an action when it's not their turn
+     * @throws IllegalMoveException thrown when violating the game's rules when placing a card
+     * @throws GameDoesNotExistException thrown when trying to perform an action in a game that does not exist
+     * @throws LobbyDoesNotExistException thrown when trying to interact with a lobby that doesn't exist
+     * @throws UnexistentUserException thrown if the user does not exist
+     * @throws IOException general class of exceptions produced by failed or interrupted I/O operations
+     */
     public abstract void playCard(int handPos, Coords coords, CardSide side) throws IllegalActionException, NotYourTurnException, IllegalMoveException, GameDoesNotExistException, LobbyDoesNotExistException, UnexistentUserException, IOException;
 
+    /**
+     * used to draw a card from a deck/deckBuffer
+     * @param deckTypeBox the deck/deckBuffer
+     * @throws IllegalActionException  thrown when either playCard or drawCard are called when the game's Action state isn't set to PLAY or DRAW respectively
+     * @throws EmptyBufferException  thrown when trying to draw a card from a deck buffer that couldn't refill because the corresponding deck is empty
+     * @throws NotYourTurnException thrown when a player tries to perform an action when it's not their turn
+     * @throws EmptyDeckException thrown when trying to draw a card from a deck that contains none
+     * @throws GameDoesNotExistException thrown when trying to perform an action in a game that does not exist
+     * @throws HandIsFullException thrown when a user tries to draw a card when their hand already contains three cards
+     * @throws LobbyDoesNotExistException thrown when trying to interact with a lobby that doesn't exist
+     * @throws IOException general class of exceptions produced by failed or interrupted I/O operations
+     * @throws UnexistentUserException thrown if the user does not exist
+     */
     public abstract void drawCard(DeckTypeBox deckTypeBox) throws IllegalActionException, EmptyBufferException, NotYourTurnException, EmptyDeckException, GameDoesNotExistException, HandIsFullException, LobbyDoesNotExistException, IOException, UnexistentUserException;
 
+    /**
+     * used to get all the active lobbies created before the login
+     * @throws IOException general class of exceptions produced by failed or interrupted I/O operations
+     * @throws FullLobbyException thrown when a user tries to join a lobby that's already at its declared maximum capacity of players
+     * @throws NicknameAlreadyTakenException thrown when a user tries to log in with another user's nickname
+     * @throws ClassNotFoundException thrown when an attempt to load a class is made using its fully-qualified name but cannot find its definition on the classpath
+     */
     public abstract void getCurrentStatus() throws IOException, FullLobbyException, NicknameAlreadyTakenException, ClassNotFoundException;
 
+    /**
+     * used to check if the server is still active
+     * @throws IOException general class of exceptions produced by failed or interrupted I/O operations
+     * @throws ClassNotFoundException thrown when an attempt to load a class is made using its fully-qualified name but cannot find its definition on the classpath
+     */
     public abstract void heartbeat() throws IOException, ClassNotFoundException;
 
+    /**
+     * used to disconnect
+     * @param nickname name of the player
+     * @throws IOException general class of exceptions produced by failed or interrupted I/O operations
+     */
     public abstract void disconnect(String nickname) throws IOException;
 
     /**
