@@ -405,13 +405,6 @@ public class TCPVirtualView implements Runnable, Observer {
                     out.writeObject(failMessage);
                 }
             }
-            case FlipCardMessage m -> {
-                try {
-                    c.flipCard(m.getGameID(), m.getNickname(), m.getHandPos());
-                } catch (GameDoesNotExistException | UnexistentUserException e) {
-                    e.printStackTrace();
-                }
-            }
             case HeartBeatMessage m -> {
             }
             default -> {}
