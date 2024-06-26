@@ -47,7 +47,7 @@ public class DecksController implements ViewObserver {
             try {
                 view.drawCard(DeckType.RESOURCE);
             } catch (IllegalActionException | NotYourTurnException | EmptyBufferException | GameDoesNotExistException |
-                     HandIsFullException | LobbyDoesNotExistsException | EmptyDeckException ignored) {
+                     HandIsFullException | LobbyDoesNotExistException | EmptyDeckException ignored) {
             } catch (IOException | UnexistentUserException e) {
                 throw new RuntimeException(e);
             }
@@ -58,7 +58,7 @@ public class DecksController implements ViewObserver {
             try {
                 view.drawCard(DeckType.GOLDEN);
             } catch (IllegalActionException | NotYourTurnException | EmptyBufferException | GameDoesNotExistException |
-                     HandIsFullException | LobbyDoesNotExistsException | EmptyDeckException ignored) {
+                     HandIsFullException | LobbyDoesNotExistException | EmptyDeckException ignored) {
             } catch (IOException | UnexistentUserException e) {
                 throw new RuntimeException(e);
             }
@@ -69,7 +69,7 @@ public class DecksController implements ViewObserver {
             try {
                 view.drawCard(DeckBufferType.RES1);
             } catch (IllegalActionException | NotYourTurnException | EmptyBufferException | GameDoesNotExistException |
-                     HandIsFullException | LobbyDoesNotExistsException | EmptyDeckException ignored) {
+                     HandIsFullException | LobbyDoesNotExistException | EmptyDeckException ignored) {
             } catch (IOException | UnexistentUserException e) {
                 throw new RuntimeException(e);
             }
@@ -80,7 +80,7 @@ public class DecksController implements ViewObserver {
             try {
                 view.drawCard(DeckBufferType.RES2);
             } catch (IllegalActionException | NotYourTurnException | EmptyBufferException | GameDoesNotExistException |
-                     HandIsFullException | LobbyDoesNotExistsException | EmptyDeckException ignored) {
+                     HandIsFullException | LobbyDoesNotExistException | EmptyDeckException ignored) {
             } catch (IOException | UnexistentUserException e) {
                 throw new RuntimeException(e);
             }
@@ -91,7 +91,7 @@ public class DecksController implements ViewObserver {
             try {
                 view.drawCard(DeckBufferType.GOLD1);
             } catch (IllegalActionException | NotYourTurnException | EmptyBufferException | GameDoesNotExistException |
-                     HandIsFullException | LobbyDoesNotExistsException | EmptyDeckException ignored) {
+                     HandIsFullException | LobbyDoesNotExistException | EmptyDeckException ignored) {
             } catch (IOException | UnexistentUserException e) {
                 throw new RuntimeException(e);
             }
@@ -102,7 +102,7 @@ public class DecksController implements ViewObserver {
             try {
                 view.drawCard(DeckBufferType.GOLD2);
             } catch (IllegalActionException | NotYourTurnException | EmptyBufferException | GameDoesNotExistException |
-                     HandIsFullException | LobbyDoesNotExistsException | EmptyDeckException ignored) {
+                     HandIsFullException | LobbyDoesNotExistException | EmptyDeckException ignored) {
             } catch (IOException | UnexistentUserException e) {
                 throw new RuntimeException(e);
             }

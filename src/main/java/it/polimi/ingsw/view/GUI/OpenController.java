@@ -3,7 +3,7 @@ package it.polimi.ingsw.view.GUI;
 import it.polimi.ingsw.controller.exceptions.CannotJoinMultipleLobbiesException;
 import it.polimi.ingsw.controller.exceptions.UnexistentUserException;
 import it.polimi.ingsw.model.exceptions.FullLobbyException;
-import it.polimi.ingsw.model.exceptions.LobbyDoesNotExistsException;
+import it.polimi.ingsw.model.exceptions.LobbyDoesNotExistException;
 import it.polimi.ingsw.model.exceptions.NicknameAlreadyTakenException;
 import it.polimi.ingsw.model.game.Lobby;
 import it.polimi.ingsw.network.netMessage.NetMessage;
@@ -89,7 +89,7 @@ public class OpenController implements ViewObserver, Initializable {
             viewSingleton.getView().createLobby(Integer.parseInt(playersNumber.getText()));
             sem.acquire();
 
-        } catch (CannotJoinMultipleLobbiesException | FullLobbyException | LobbyDoesNotExistsException |
+        } catch (CannotJoinMultipleLobbiesException | FullLobbyException | LobbyDoesNotExistException |
                  NicknameAlreadyTakenException ignored) {
         } catch (IOException | ClassNotFoundException | UnexistentUserException | InterruptedException e) {
             throw new RuntimeException(e);

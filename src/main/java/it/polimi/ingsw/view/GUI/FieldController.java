@@ -72,7 +72,7 @@ public class FieldController implements ViewObserver {
         try {
             view.playCard(hand.getCardPlacedPos(),new Coords(x,y),view.getHand().getCard(hand.getCardPlacedPos()).getSide());
         } catch (IllegalActionException | NotYourTurnException | IllegalMoveException | GameDoesNotExistException |
-                 LobbyDoesNotExistsException | UnexistentUserException | IOException e) {
+                 LobbyDoesNotExistException | UnexistentUserException | IOException e) {
             throw new RuntimeException(e);
         }
     }
