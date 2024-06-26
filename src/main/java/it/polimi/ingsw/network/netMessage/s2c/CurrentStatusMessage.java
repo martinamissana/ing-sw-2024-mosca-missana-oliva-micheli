@@ -4,17 +4,25 @@ import it.polimi.ingsw.model.game.Lobby;
 import it.polimi.ingsw.network.netMessage.NetMessage;
 
 import java.util.HashMap;
-import java.util.Scanner;
 
+/**
+ * Class CurrentStatusMessage
+ * used to send to the views all the active lobbies created before their login
+ */
 public class CurrentStatusMessage extends NetMessage {
     private final HashMap<Integer, Lobby> lobbies;
-    private final String nickname;
 
-    public CurrentStatusMessage(HashMap<Integer, Lobby> lobbies, String nickname) {
+    /**
+     * Class constructor
+     * @param lobbies the active lobbies
+     */
+    public CurrentStatusMessage(HashMap<Integer, Lobby> lobbies) {
         this.lobbies= new HashMap<>(lobbies);
-        this.nickname = nickname;
     }
 
+    /**
+     * @return HashMap<Integer, Lobby>
+     */
     public HashMap<Integer, Lobby> getLobbies() {
         return lobbies;
     }

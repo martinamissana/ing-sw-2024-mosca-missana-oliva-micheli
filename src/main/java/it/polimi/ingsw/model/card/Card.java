@@ -21,8 +21,8 @@ public abstract class Card implements Serializable {
      * Class constructor
      * @param ID           the card's ID
      * @param side         indicates which side the card is currently on
-     * @param frontCorner  list of corners on the front side
-     * @param backCorner   list of corners on the back side
+     * @param frontCorner list of corners on the front side
+     * @param backCorner  list of corners on the back side
      */
     public Card(int ID, CardSide side, HashMap<CornerType, Corner> frontCorner, HashMap<CornerType, Corner> backCorner) {
         this.ID = ID;
@@ -116,6 +116,11 @@ public abstract class Card implements Serializable {
         return ID == card.ID;
     }
 
+
+    /**
+     * Hashcode for this object
+     * @return int
+     */
     @Override
     public int hashCode() {
         return Objects.hash(ID);

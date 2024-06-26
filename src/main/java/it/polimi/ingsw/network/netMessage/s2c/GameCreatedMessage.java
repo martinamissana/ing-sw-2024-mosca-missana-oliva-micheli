@@ -11,6 +11,10 @@ import it.polimi.ingsw.network.netMessage.NetMessage;
 
 import java.util.HashMap;
 
+/**
+ * Class GameCreatedMessage
+ * used to inform the views that the game has been created
+ */
 public class GameCreatedMessage extends NetMessage {
     private final Integer ID;
     private final Player firstPlayer;
@@ -24,6 +28,21 @@ public class GameCreatedMessage extends NetMessage {
     private final Action action;
 
 
+    /**
+     * Class constructor
+     * @param ID the game ID
+     * @param firstPlayer the player who plays first
+     * @param scoreboard the points of each player
+     * @param topResourceCard the top card of the resource deck
+     * @param topGoldenCard the top card of the golden deck
+     * @param commonGoal1 the first common goal
+     * @param commonGoal2 the second common goal
+     * @param gamePhase the starting phase of the game
+     * @param d1 the first resource deckBuffer
+     * @param d2 the second resource deckBuffer
+     * @param d3 the first golden deckBuffer
+     * @param d4 the second golden deckBuffer
+     */
     public GameCreatedMessage(Integer ID, Player firstPlayer, HashMap<Player, Integer> scoreboard, Card topResourceCard, Card topGoldenCard, Goal commonGoal1, Goal commonGoal2, GamePhase gamePhase,DeckBuffer d1,DeckBuffer d2,DeckBuffer d3,DeckBuffer d4) {
         this.ID=ID;
         this.firstPlayer = firstPlayer;
@@ -40,40 +59,70 @@ public class GameCreatedMessage extends NetMessage {
         this.action=Action.PLAY;
     }
 
+    /**
+     * @return Integer
+     */
     public Integer getID() {return ID;}
 
+    /**
+     * @return Player
+     */
     public Player getFirstPlayer() {
         return firstPlayer;
     }
 
+    /**
+     * @return HashMap<Player, Integer>
+     */
     public HashMap<Player, Integer> getScoreboard() {
         return scoreboard;
     }
 
+    /**
+     * @return HashMap<DeckBufferType, DeckBuffer>
+     */
     public HashMap<DeckBufferType, DeckBuffer> getDeckBuffers() {
         return deckBuffers;
     }
 
+    /**
+     * @return Card
+     */
     public Card getTopResourceCard() {
         return topResourceCard;
     }
 
+    /**
+     * @return Card
+     */
     public Card getTopGoldenCard() {
         return topGoldenCard;
     }
 
+    /**
+     * @return Goal
+     */
     public Goal getCommonGoal1() {
         return commonGoal1;
     }
 
+    /**
+     * @return Goal
+     */
     public Goal getCommonGoal2() {
         return commonGoal2;
     }
 
+    /**
+     * @return GamePhase
+     */
     public GamePhase getGamePhase() {
         return gamePhase;
     }
 
+    /**
+     * @return Action
+     */
     public Action getAction() {
         return action;
     }

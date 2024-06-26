@@ -34,8 +34,6 @@ public interface RemoteInterface extends Remote {
 
     void chooseCardSide(Integer gameID,String nickname, CardSide side) throws IOException, EmptyDeckException, GameDoesNotExistException, HandIsFullException, UnexistentUserException, WrongGamePhaseException;
 
-    void flipCard(Integer gameID,String nickname, int handPos) throws GameDoesNotExistException,RemoteException,UnexistentUserException;
-
     void getCurrentStatus(String nickname) throws IOException;
 
     void disconnect(String nickname) throws RemoteException;

@@ -268,7 +268,7 @@ public class RMIVirtualView implements Observer {
             case CurrentStatusEvent e -> {
                 if (nickname != null && Objects.equals(nickname, e.getNickname())) {
                     try {
-                        view.elaborate(new CurrentStatusMessage(e.getLobbies(), e.getNickname()));
+                        view.elaborate(new CurrentStatusMessage(e.getLobbies()));
                     } catch (FullLobbyException | NicknameAlreadyTakenException | HandIsFullException |
                              IllegalMoveException ex) {
                         throw new RuntimeException(ex);

@@ -221,20 +221,6 @@ public class RMIServer extends UnicastRemoteObject implements RemoteInterface {
     }
 
     /**
-     * method used to flip a card, it calls the controller method
-     * @param gameID ID of the game
-     * @param nickname name of the user
-     * @param handPos position in the hand of the card to flip
-     * @throws GameDoesNotExistException thrown if the game does not exist
-     * @throws RemoteException thrown if the server crashes
-     * @throws UnexistentUserException thrown if the user does not exist
-     */
-    @Override
-    public void flipCard(Integer gameID,String nickname, int handPos) throws GameDoesNotExistException, RemoteException, UnexistentUserException {
-        c.flipCard(gameID,nickname,handPos);
-    }
-
-    /**
      * method used to inform the client on the present lobbies
      * @param nickname name of the user
      * @throws IOException general class of exceptions produced by failed or interrupted I/ O operations.
