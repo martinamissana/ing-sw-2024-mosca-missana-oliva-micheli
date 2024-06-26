@@ -217,18 +217,6 @@ public class RMIVirtualView implements Observer {
                     }
                 }
             }
-            case LastRoundStartedEvent e -> {
-                if(e.getID().equals(ID)) {
-                    try {
-                        view.elaborate(new LastRoundStartedMessage(e.getID()));
-                    } catch (FullLobbyException | NicknameAlreadyTakenException | HandIsFullException |
-                             IllegalMoveException ex) {
-                        throw new RuntimeException(ex);
-                    }catch (RemoteException exc){
-                        c.getGh().removeObserver(this);
-                    }
-                }
-            }
             case TurnChangedEvent e -> {
                 if(e.getID().equals(ID)) {
                     try {

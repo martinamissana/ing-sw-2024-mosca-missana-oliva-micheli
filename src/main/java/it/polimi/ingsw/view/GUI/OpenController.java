@@ -53,21 +53,25 @@ public class OpenController implements ViewObserver, Initializable {
         updateLobbies();
     }
 
-    public void updateLobbies() {       // TODO: Fix bug
+    public void updateLobbies() {
         Platform.runLater(() -> {
             lobbies.getItems().clear();
             HashMap<Integer, Lobby> lobbiesMap = viewSingleton.getView().getLobbies();
 
             for (Integer i : lobbiesMap.keySet()) {
-                try {
-                    FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/LobbyInstance.fxml"));
-                    AnchorPane lobbyPane = loader.load();
-                    LobbyInstanceController controller = loader.getController();
-                    controller.setLobby(lobbiesMap.get(i));
+                if (!lobbiesMap.get(i).getPlayers().isEmpty() && lobbiesMap.get(i).getPlayers().size() < lobbiesMap.get(i).getNumOfPlayers()) {
+                    try {
+                        FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/LobbyInstance.fxml"));
+                        AnchorPane lobbyPane = loader.load();
+                        LobbyInstanceController controller = loader.getController();
 
-                    lobbies.getItems().add(lobbyPane);
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
+                        if (lobbiesMap.get(i) != null) {
+                            controller.setLobby(lobbiesMap.get(i));
+                            lobbies.getItems().add(lobbyPane);
+                        }
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
                 }
             }
         });
@@ -85,10 +89,9 @@ public class OpenController implements ViewObserver, Initializable {
             viewSingleton.getView().createLobby(Integer.parseInt(playersNumber.getText()));
             sem.acquire();
 
-        } catch (CannotJoinMultipleLobbiesException e) {
-            System.out.println("Multiple lobbies");
-        } catch (FullLobbyException | LobbyDoesNotExistsException | NicknameAlreadyTakenException ignored) {}
-        catch (IOException | ClassNotFoundException | UnexistentUserException | InterruptedException e) {
+        } catch (CannotJoinMultipleLobbiesException | FullLobbyException | LobbyDoesNotExistsException |
+                 NicknameAlreadyTakenException ignored) {
+        } catch (IOException | ClassNotFoundException | UnexistentUserException | InterruptedException e) {
             throw new RuntimeException(e);
         }
     }

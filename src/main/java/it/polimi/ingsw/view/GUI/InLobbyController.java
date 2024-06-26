@@ -43,7 +43,8 @@ public class InLobbyController implements ViewObserver, Initializable {
     private Button greenPawn;
     @FXML
     private Button bluePawn;
-
+    @FXML
+    private Label lobbyID;
 
     private final ViewSingleton viewSingleton = ViewSingleton.getInstance();
     private Lobby lobby;
@@ -53,17 +54,9 @@ public class InLobbyController implements ViewObserver, Initializable {
     public void initialize(URL url, ResourceBundle resourceBundle) {
         viewSingleton.getView().addObserver(this);
         this.lobby = viewSingleton.getView().getLobbies().get(viewSingleton.getView().getID());
+        lobbyID.setText("Entered lobby #" + lobby.getID());
         updatePlayers();
-
-        for (Player p : lobby.getPlayers()) {
-            switch (p.getPawn()) {
-                case RED -> redPawn.setVisible(false);
-                case YELLOW -> yellowPawn.setVisible(false);
-                case GREEN -> greenPawn.setVisible(false);
-                case BLUE -> bluePawn.setVisible(false);
-                case null -> {}
-            }
-        }
+        checkTakenPawns();
 
         Platform.runLater(() -> {
             try {
@@ -108,6 +101,23 @@ public class InLobbyController implements ViewObserver, Initializable {
         });
     }
 
+    public void checkTakenPawns() {
+        redPawn.setVisible(true);
+        yellowPawn.setVisible(true);
+        greenPawn.setVisible(true);
+        bluePawn.setVisible(true);
+
+        for (Player p : lobby.getPlayers()) {
+            switch (p.getPawn()) {
+                case RED -> redPawn.setVisible(false);
+                case YELLOW -> yellowPawn.setVisible(false);
+                case GREEN -> greenPawn.setVisible(false);
+                case BLUE -> bluePawn.setVisible(false);
+                case null -> {}
+            }
+        }
+    }
+
     public void setPawn(MouseEvent mouseEvent) {
         try {
             if (mouseEvent.getSource().equals(redPawn)) viewSingleton.getView().choosePawn(Pawn.RED);
@@ -129,7 +139,10 @@ public class InLobbyController implements ViewObserver, Initializable {
         switch (message) {
             case LobbyLeftMessage m -> {
                 if (m.getPlayer().equals(viewSingleton.getView().getPlayer())) sem.release();
-                else updatePlayers();
+                else {
+                    updatePlayers();
+                    checkTakenPawns();
+                }
             }
             case LobbyJoinedMessage ignored -> updatePlayers();
             case PawnAssignedMessage m -> {

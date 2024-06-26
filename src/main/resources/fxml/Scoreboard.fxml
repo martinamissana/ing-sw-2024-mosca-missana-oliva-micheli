@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.shape.*?>
 
 <AnchorPane fx:id="scoreboard" maxHeight="170.0" minHeight="170.0" prefHeight="170.0" prefWidth="235.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.ingsw.view.GUI.ScoreboardController">
    <children>
@@ -18,5 +20,14 @@
       <Button fx:id="pawn2" layoutX="205.0" layoutY="65.0" mnemonicParsing="false" onMouseClicked="#showField" prefWidth="20.0" />
       <Button fx:id="pawn3" layoutX="205.0" layoutY="100.0" mnemonicParsing="false" onMouseClicked="#showField" prefWidth="20.0" />
       <Button fx:id="pawn4" layoutX="205.0" layoutY="135.0" mnemonicParsing="false" onMouseClicked="#showField" prefWidth="20.0" />
+      <StackPane fx:id="infoField" layoutX="205.0" layoutY="5.0" visible="false">
+         <children>
+            <Circle fill="WHITE" radius="10.0" stroke="WHITE" strokeType="INSIDE" />
+            <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../images/infoImage.png" />
+               </image></ImageView>
+         </children>
+      </StackPane>
    </children>
 </AnchorPane>

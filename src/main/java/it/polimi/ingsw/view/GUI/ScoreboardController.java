@@ -7,6 +7,8 @@ import it.polimi.ingsw.model.player.Player;
 
 import it.polimi.ingsw.network.netMessage.NetMessage;
 import it.polimi.ingsw.network.netMessage.s2c.GamePhaseChangedMessage;
+import it.polimi.ingsw.network.netMessage.s2c.GameWinnersAnnouncedMessage;
+import it.polimi.ingsw.network.netMessage.s2c.LobbyLeftMessage;
 import it.polimi.ingsw.network.netMessage.s2c.ScoreIncrementedMessage;
 import it.polimi.ingsw.view.View;
 import it.polimi.ingsw.view.ViewObserver;
@@ -16,8 +18,11 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Button;
 
+import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
+import javafx.util.Duration;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -57,30 +62,32 @@ public class ScoreboardController implements ViewObserver {
     private Button pawn3;
     @FXML
     private Button pawn4;
+    @FXML
+    private StackPane infoField;
 
     @FXML
-    public void showField(MouseEvent mouseEvent){
-        if(!(view.getGamePhase().equals(GamePhase.PLAYING_GAME))) return;
-        if(mouseEvent.getSource().equals(pawn1)){
-            if(view.getNickname().equals(lobby.getPlayers().getFirst().getNickname())) return;
+    public void showField(MouseEvent mouseEvent) {
+        if (!(view.getGamePhase().equals(GamePhase.PLAYING_GAME))) return;
+        if (mouseEvent.getSource().equals(pawn1)) {
+            if (view.getNickname().equals(lobby.getPlayers().getFirst().getNickname())) return;
             otherField.getChildren().clear();
             otherField.getChildren().add(field1);
             otherField.setVisible(true);
         }
-        if(mouseEvent.getSource().equals(pawn2)){
-            if(view.getNickname().equals(lobby.getPlayers().get(1).getNickname())) return;
+        if (mouseEvent.getSource().equals(pawn2)) {
+            if (view.getNickname().equals(lobby.getPlayers().get(1).getNickname())) return;
             otherField.getChildren().clear();
             otherField.getChildren().add(field2);
             otherField.setVisible(true);
         }
-        if(mouseEvent.getSource().equals(pawn3)){
-            if(view.getNickname().equals(lobby.getPlayers().get(2).getNickname())) return;
+        if (mouseEvent.getSource().equals(pawn3)) {
+            if (view.getNickname().equals(lobby.getPlayers().get(2).getNickname())) return;
             otherField.getChildren().clear();
             otherField.getChildren().add(field3);
             otherField.setVisible(true);
         }
-        if(mouseEvent.getSource().equals(pawn4)){
-            if(view.getNickname().equals(lobby.getPlayers().get(3).getNickname())) return;
+        if (mouseEvent.getSource().equals(pawn4)) {
+            if (view.getNickname().equals(lobby.getPlayers().get(3).getNickname())) return;
             otherField.getChildren().clear();
             otherField.getChildren().add(field4);
             otherField.setVisible(true);
@@ -99,17 +106,20 @@ public class ScoreboardController implements ViewObserver {
         if (lobby.getPlayers().size() < 4) {
             player4.setVisible(false);
             pawn4.setVisible(false);
-            pawn3.setOnMouseClicked(mouseEvent -> {});
+            pawn3.setOnMouseClicked(mouseEvent -> {
+            });
         }
         if (lobby.getPlayers().size() < 3) {
             player3.setVisible(false);
             pawn3.setVisible(false);
-            pawn2.setOnMouseClicked(mouseEvent -> {});
+            pawn2.setOnMouseClicked(mouseEvent -> {
+            });
         }
         if (lobby.getPlayers().size() < 2) {
             player2.setVisible(false);
             pawn2.setVisible(false);
-            pawn1.setOnMouseClicked(mouseEvent -> {});
+            pawn1.setOnMouseClicked(mouseEvent -> {
+            });
         }
         score1.setVisible(false);
         score2.setVisible(false);
@@ -117,15 +127,21 @@ public class ScoreboardController implements ViewObserver {
         score4.setVisible(false);
     }
 
-    public void setView (View view){
+    public void setView(View view) {
         this.view = view;
         view.addObserver(this);
     }
 
 
     public void setScoreboard(Lobby lobby) {
-        this.lobby=lobby;
+        this.lobby = lobby;
         this.title.setText("SCOREBOARD");
+
+        infoField.setVisible(true);
+        Tooltip tooltipFields = new Tooltip("Click a pawn to see other players' fields");
+        Tooltip.install(infoField, tooltipFields);
+        tooltipFields.setShowDelay(new Duration(0.2));
+
         setPlayersAndPawns(0, player1, pawn1);
         score1.setText(view.getScoreboard().get(lobby.getPlayers().getFirst()).toString());
         setPlayersAndPawns(1, player2, pawn2);
@@ -156,7 +172,8 @@ public class ScoreboardController implements ViewObserver {
     public void setPlayersAndPawns(int index, TextField player, Button pawn) {
         player.setText(lobby.getPlayers().get(index).getNickname());
         setBgColor(pawn, lobby.getPlayers().get(index).getPawn());
-        pawn.setOnAction(actionEvent -> {});
+        pawn.setOnAction(actionEvent -> {
+        });
     }
 
     public void refresh() {
@@ -172,20 +189,18 @@ public class ScoreboardController implements ViewObserver {
         else if (pawn != null) button.setStyle("-fx-background-color: " + pawn.toString().toLowerCase());
     }
 
-    public void setOtherField(Pane otherField){
-        this.otherField=otherField;
+    public void setOtherField(Pane otherField) {
+        this.otherField = otherField;
         otherField.setVisible(false);
     }
 
     @Override
     public void update(NetMessage message) throws IOException {
-        switch (message){
-            case ScoreIncrementedMessage ignored -> {
-                refresh();
-            }
-            case GamePhaseChangedMessage m -> {
-                if(view.getGamePhase().equals(GamePhase.PLAYING_GAME)){
-                    if(!lobby.getPlayers().get(0).getNickname().equals(view.getNickname())) {
+        switch (message) {
+            case ScoreIncrementedMessage ignored -> refresh();
+            case GamePhaseChangedMessage ignored -> {
+                if (view.getGamePhase().equals(GamePhase.PLAYING_GAME)) {
+                    if (!lobby.getPlayers().get(0).getNickname().equals(view.getNickname())) {
                         Platform.runLater(() -> {
                             FXMLLoader field1Loader = new FXMLLoader(getClass().getResource("/fxml/OtherPlayersField.fxml"));
                             try {
@@ -195,11 +210,11 @@ public class ScoreboardController implements ViewObserver {
                             }
                             OtherPlayersController field1Controller = field1Loader.getController();
                             field1Controller.setView(view);
-                            field1Controller.setPlayer(lobby.getPlayers().getFirst().getNickname(),lobby);
+                            field1Controller.setPlayer(lobby.getPlayers().getFirst().getNickname(), lobby);
                             field1Controller.setVisible(otherField);
                         });
                     }
-                    if(!lobby.getPlayers().get(1).getNickname().equals(view.getNickname())) {
+                    if (!lobby.getPlayers().get(1).getNickname().equals(view.getNickname())) {
                         Platform.runLater(() -> {
                             FXMLLoader field2Loader = new FXMLLoader(getClass().getResource("/fxml/OtherPlayersField.fxml"));
                             try {
@@ -209,7 +224,7 @@ public class ScoreboardController implements ViewObserver {
                             }
                             OtherPlayersController field2Controller = field2Loader.getController();
                             field2Controller.setView(view);
-                            field2Controller.setPlayer(lobby.getPlayers().get(1).getNickname(),lobby);
+                            field2Controller.setPlayer(lobby.getPlayers().get(1).getNickname(), lobby);
                             field2Controller.setVisible(otherField);
                         });
                     }
@@ -224,13 +239,13 @@ public class ScoreboardController implements ViewObserver {
                                 }
                                 OtherPlayersController field3Controller = field3Loader.getController();
                                 field3Controller.setView(view);
-                                field3Controller.setPlayer(lobby.getPlayers().get(2).getNickname(),lobby);
+                                field3Controller.setPlayer(lobby.getPlayers().get(2).getNickname(), lobby);
                                 field3Controller.setVisible(otherField);
                             });
                         }
                     }
                     if (lobby.getPlayers().size() == 4) {
-                        if(!lobby.getPlayers().get(3).getNickname().equals(view.getNickname())) {
+                        if (!lobby.getPlayers().get(3).getNickname().equals(view.getNickname())) {
                             Platform.runLater(() -> {
                                 FXMLLoader field4Loader = new FXMLLoader(getClass().getResource("/fxml/OtherPlayersField.fxml"));
                                 try {
@@ -240,14 +255,15 @@ public class ScoreboardController implements ViewObserver {
                                 }
                                 OtherPlayersController field4Controller = field4Loader.getController();
                                 field4Controller.setView(view);
-                                field4Controller.setPlayer(lobby.getPlayers().get(3).getNickname(),lobby);
+                                field4Controller.setPlayer(lobby.getPlayers().get(3).getNickname(), lobby);
                                 field4Controller.setVisible(otherField);
                             });
                         }
+                    }
                 }
-                }
-
             }
+            case LobbyLeftMessage ignored -> view. removeObserver(this);
+            case GameWinnersAnnouncedMessage ignored -> view.removeObserver(this);
             default -> {}
         }
     }

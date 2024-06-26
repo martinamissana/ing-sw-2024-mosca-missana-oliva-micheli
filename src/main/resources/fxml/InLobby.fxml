@@ -21,5 +21,10 @@
          </font>
       </Label>
       <Pane fx:id="chats" layoutX="540.0" layoutY="350.0" prefHeight="240.0" prefWidth="350.0" />
+      <Label fx:id="lobbyID" alignment="CENTER" contentDisplay="CENTER" layoutX="300.0" layoutY="80.0" prefHeight="30.0" prefWidth="300.0" text="Entered Lobby #999" AnchorPane.leftAnchor="300.0" AnchorPane.rightAnchor="300.0">
+         <font>
+            <Font size="24.0" />
+         </font>
+      </Label>
    </children>
 </AnchorPane>

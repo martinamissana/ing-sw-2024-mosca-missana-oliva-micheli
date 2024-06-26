@@ -14,6 +14,8 @@ import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
+import javafx.util.Duration;
 
 import java.io.IOException;
 import java.util.concurrent.Semaphore;
@@ -36,13 +38,27 @@ public class LoginController implements ViewObserver {
     @FXML
     private TextField IP;
     @FXML
+    private StackPane infoIP;
+    @FXML
     private TextField port;
+    @FXML
+    private StackPane infoPort;
     @FXML
     private Label connectionError;
 
     private final ViewSingleton viewSing = ViewSingleton.getInstance();
     private final Semaphore sem = new Semaphore(0);
     private MainLayout mainLayout;
+
+    public void initialize() {
+        Tooltip tooltipIP = new Tooltip("If empty: Connection to local server");
+        Tooltip.install(infoIP, tooltipIP);
+        tooltipIP.setShowDelay(new Duration(0.2));
+
+        Tooltip tooltipPort = new Tooltip("If empty: 4321");
+        Tooltip.install(infoPort, tooltipPort);
+        tooltipPort.setShowDelay(new Duration(0.2));
+    }
 
     public void setMainLayout(MainLayout mainLayout) {
         this.mainLayout = mainLayout;

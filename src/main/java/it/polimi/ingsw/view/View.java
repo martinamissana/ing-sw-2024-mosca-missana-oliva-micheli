@@ -527,10 +527,6 @@ public abstract class View extends ViewObservable {
                     notify(m);
                 }
             }
-            case LastRoundStartedMessage m -> {
-                if (m.getID().equals(ID))
-                    lastRound = true;
-            }
             case TurnChangedMessage m -> {
                 if (m.getID().equals(ID) && m.getNickname().equals(nickname))
                     yourTurn = true;

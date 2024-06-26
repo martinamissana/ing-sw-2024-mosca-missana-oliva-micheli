@@ -11,7 +11,7 @@ public class CardBuilder {
     ImageView cardImage = new ImageView();
     @FXML
     private final Card card;
-    private String PATH = "/images/";
+    private String PATH = "/images";
 
     public CardBuilder(Card card) {
         this.card = card;
@@ -20,7 +20,7 @@ public class CardBuilder {
 
 
     public void initialize() {
-        String pathgenerale = getClass().getResource(PATH).toString();
+        String pathgenerale = getClass().getResource(PATH).toExternalForm();
         if (card.getSide() == CardSide.BACK) {
             if (card instanceof ResourceCard)
                 pathgenerale = pathgenerale + "/backs/" + (card.getID() - 1) / 10 + ".png";

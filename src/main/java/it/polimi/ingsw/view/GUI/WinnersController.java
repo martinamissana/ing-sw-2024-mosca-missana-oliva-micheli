@@ -59,13 +59,21 @@ public class WinnersController {
     private TextField goals4;
 
     private MainLayout mainLayout;
+    private HashMap<Player, Integer> scoreboard;
+    private HashMap<Player, Integer> goalsDone;
+    private ArrayList<Player> winners;
+    private HashMap<Player, Pawn> pawns;
 
     public void setMainLayout(MainLayout mainLayout) {
         this.mainLayout = mainLayout;
     }
 
     public void setWinners(HashMap<Player, Integer> scoreboard, HashMap<Player, Integer> goalsDone, ArrayList<Player> winners) {
-        HashMap<Player, Pawn> pawns = new HashMap<>();
+        this.scoreboard = scoreboard;
+        this.goalsDone = goalsDone;
+        this.winners = winners;
+
+        pawns = new HashMap<>();
         for (Player p : scoreboard.keySet()) {
             pawns.put(p, p.getPawn());
         }
@@ -80,55 +88,10 @@ public class WinnersController {
             }
         });
 
-        switch (pawns.get(sortedPlayers.getFirst())) {
-            case RED -> pawn1.setFill(Color.RED);
-            case YELLOW -> pawn1.setFill(Color.GOLD);
-            case GREEN -> pawn1.setFill(Color.GREEN);
-            case BLUE -> pawn1.setFill(Color.BLUE);
-        }
-        player1.setText(sortedPlayers.getFirst().getNickname());
-        points1.setText(String.valueOf(scoreboard.get(sortedPlayers.getFirst())));
-        goals1.setText(String.valueOf(goalsDone.get(sortedPlayers.getFirst())));
-        if (winners.contains(sortedPlayers.getFirst())) crown1.setImage(new Image(getClass().getResource("/images/crown.png").toString()));
-
-        if (scoreboard.keySet().size() > 1) {
-            switch (pawns.get(sortedPlayers.get(1))) {
-                case RED -> pawn2.setFill(Color.RED);
-                case YELLOW -> pawn2.setFill(Color.GOLD);
-                case GREEN -> pawn2.setFill(Color.GREEN);
-                case BLUE -> pawn2.setFill(Color.BLUE);
-            }
-            player2.setText(sortedPlayers.get(1).getNickname());
-            points2.setText(String.valueOf(scoreboard.get(sortedPlayers.get(1))));
-            goals2.setText(String.valueOf(goalsDone.get(sortedPlayers.get(1))));
-            if (winners.contains(sortedPlayers.get(1))) crown2.setImage(new Image(getClass().getResource("/images/crown.png").toString()));
-        }
-
-        if (scoreboard.keySet().size() > 2) {
-            switch (pawns.get(sortedPlayers.get(2))) {
-                case RED -> pawn3.setFill(Color.RED);
-                case YELLOW -> pawn3.setFill(Color.GOLD);
-                case GREEN -> pawn3.setFill(Color.GREEN);
-                case BLUE -> pawn3.setFill(Color.BLUE);
-            }
-            player3.setText(sortedPlayers.get(2).getNickname());
-            points3.setText(String.valueOf(scoreboard.get(sortedPlayers.get(2))));
-            goals3.setText(String.valueOf(goalsDone.get(sortedPlayers.get(2))));
-            if (winners.contains(sortedPlayers.get(2))) crown3.setImage(new Image(getClass().getResource("/images/crown.png").toString()));
-        }
-
-        if (scoreboard.keySet().size() > 3) {
-            switch (pawns.get(sortedPlayers.get(3))) {
-                case RED -> pawn4.setFill(Color.RED);
-                case YELLOW -> pawn4.setFill(Color.GOLD);
-                case GREEN -> pawn4.setFill(Color.GREEN);
-                case BLUE -> pawn4.setFill(Color.BLUE);
-            }
-            player4.setText(sortedPlayers.get(3).getNickname());
-            points4.setText(String.valueOf(scoreboard.get(sortedPlayers.get(3))));
-            goals4.setText(String.valueOf(goalsDone.get(sortedPlayers.get(3))));
-            if (winners.contains(sortedPlayers.get(3))) crown4.setImage(new Image(getClass().getResource("/images/crown.png").toString()));
-        }
+        setPlayer(sortedPlayers, player1, pawn1, points1, goals1, crown1, 0);
+        if (scoreboard.keySet().size() > 1) setPlayer(sortedPlayers, player2, pawn2, points2, goals2, crown2, 1);
+        if (scoreboard.keySet().size() > 2) setPlayer(sortedPlayers, player3, pawn3, points3, goals3, crown3, 2);
+        if (scoreboard.keySet().size() > 3) setPlayer(sortedPlayers, player4, pawn4, points4, goals4, crown4, 3);
 
         if (scoreboard.keySet().size() < 4) {
             pawn4.setVisible(false);
@@ -153,6 +116,21 @@ public class WinnersController {
             points2.setVisible(false);
             goals2.setVisible(false);
         }
+    }
+
+    public void setPlayer(ArrayList<Player> sortedPlayers, TextField player, Circle pawn, TextField points, TextField goals, ImageView crown, int index) {
+        switch (pawns.get(sortedPlayers.get(index))) {
+            case RED -> pawn.setFill(Color.RED);
+            case YELLOW -> pawn.setFill(Color.GOLD);
+            case GREEN -> pawn.setFill(Color.GREEN);
+            case BLUE -> pawn.setFill(Color.BLUE);
+        }
+        player.setText(sortedPlayers.get(index).getNickname());
+        points.setText(String.valueOf(scoreboard.get(sortedPlayers.get(index))));
+        goals.setText(String.valueOf(goalsDone.get(sortedPlayers.get(index))));
+        if (winners.contains(sortedPlayers.get(index))) crown.setImage(new Image(getClass().getResource("/images/crown.png").toString()));
+        // TODO:    W - Missy - 26 - 4      fix problem with both winners and not sorted out
+        //          W - Susca - 31 - 2
     }
 
     public void returnToMainMenu() {
