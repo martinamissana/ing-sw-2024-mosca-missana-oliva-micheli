@@ -6,7 +6,6 @@ import it.polimi.ingsw.controller.exceptions.GameAlreadyStartedException;
 import it.polimi.ingsw.controller.exceptions.UnexistentUserException;
 import it.polimi.ingsw.controller.exceptions.WrongGamePhaseException;
 import it.polimi.ingsw.model.card.*;
-import it.polimi.ingsw.model.commonItem.Kingdom;
 import it.polimi.ingsw.model.exceptions.*;
 import it.polimi.ingsw.model.game.GameHandler;
 import org.junit.jupiter.api.BeforeEach;
@@ -27,7 +26,7 @@ class HandTest {
     Controller c=new Controller(gameHandler);
 
     @BeforeEach
-    void setUp() throws CannotJoinMultipleLobbiesException, LobbyDoesNotExistsException, UnexistentUserException, FullLobbyException, IOException, GameAlreadyStartedException, PawnAlreadyTakenException, GameDoesNotExistException, WrongGamePhaseException, EmptyDeckException, HandIsFullException {
+    void setUp() throws CannotJoinMultipleLobbiesException, LobbyDoesNotExistException, UnexistentUserException, FullLobbyException, IOException, GameAlreadyStartedException, PawnAlreadyTakenException, GameDoesNotExistException, WrongGamePhaseException, EmptyDeckException, HandIsFullException {
         anna=new Player("anna");
         eric=new Player("eric");
         giorgio=new Player("giorgio");

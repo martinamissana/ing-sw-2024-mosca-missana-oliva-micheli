@@ -1,7 +1,7 @@
 package it.polimi.ingsw.model.game;
 
 import it.polimi.ingsw.model.exceptions.GameDoesNotExistException;
-import it.polimi.ingsw.model.exceptions.LobbyDoesNotExistsException;
+import it.polimi.ingsw.model.exceptions.LobbyDoesNotExistException;
 import it.polimi.ingsw.model.exceptions.NicknameAlreadyTakenException;
 import it.polimi.ingsw.model.observer.Observable;
 import it.polimi.ingsw.model.observer.events.LoginEvent;
@@ -86,13 +86,13 @@ public class GameHandler extends Observable implements Serializable {
      *
      * @param ID of the lobby you want to get from the list of lobbies
      * @return the specified lobby
-     * @throws LobbyDoesNotExistsException if the lobby doesn't exist
+     * @throws LobbyDoesNotExistException if the lobby doesn't exist
      */
-    public synchronized Lobby getLobby(Integer ID) throws LobbyDoesNotExistsException {
+    public synchronized Lobby getLobby(Integer ID) throws LobbyDoesNotExistException {
         if (lobbies.containsKey(ID)) {
             return lobbies.get(ID);
         } else {
-            throw new LobbyDoesNotExistsException();
+            throw new LobbyDoesNotExistException();
         }
     }
 

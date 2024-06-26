@@ -2,7 +2,6 @@ package it.polimi.ingsw.model.chat;
 
 import it.polimi.ingsw.controller.Controller;
 import it.polimi.ingsw.controller.exceptions.CannotJoinMultipleLobbiesException;
-import it.polimi.ingsw.controller.exceptions.GameAlreadyStartedException;
 import it.polimi.ingsw.controller.exceptions.PlayerChatMismatchException;
 import it.polimi.ingsw.controller.exceptions.UnexistentUserException;
 import it.polimi.ingsw.model.exceptions.*;
@@ -22,7 +21,7 @@ public class ChatTest {
     Controller c;
 
     @BeforeEach
-    public void setUp() throws GameDoesNotExistException, IOException, FullLobbyException, LobbyDoesNotExistsException, CannotJoinMultipleLobbiesException, PlayerChatMismatchException, UnexistentUserException {
+    public void setUp() throws GameDoesNotExistException, IOException, FullLobbyException, LobbyDoesNotExistException, CannotJoinMultipleLobbiesException, PlayerChatMismatchException, UnexistentUserException {
         gameHandler = new GameHandler();
         c = new Controller(gameHandler);
         anna = new Player("anna");

@@ -602,7 +602,7 @@ public class TUI implements Runnable, ViewObserver {
             check.checkCreateLobby(numOfPlayers);
             view.createLobby(numOfPlayers);
             semaphore.acquire();
-        } catch (LobbyDoesNotExistsException | NicknameAlreadyTakenException | FullLobbyException |
+        } catch (LobbyDoesNotExistException | NicknameAlreadyTakenException | FullLobbyException |
                  CannotJoinMultipleLobbiesException ignored) {
         } catch (ClassNotFoundException | UnexistentUserException | IOException e) {
             view.removeObserver(this);
@@ -648,7 +648,7 @@ public class TUI implements Runnable, ViewObserver {
             System.out.println(Color.warning + "Lobby #" + ID + " is full. Cannot join!!" + Color.reset);
             printStatus();
 
-        } catch (LobbyDoesNotExistsException e) {
+        } catch (LobbyDoesNotExistException e) {
             System.out.println(Color.warning + "Lobby #" + ID + " does not exist!!" + Color.reset);
             printStatus();
 
@@ -687,7 +687,7 @@ public class TUI implements Runnable, ViewObserver {
                 view.choosePawn(pawn);
                 semaphore.acquire();
 
-            } catch (GameAlreadyStartedException | LobbyDoesNotExistsException | GameDoesNotExistException ignored) {
+            } catch (GameAlreadyStartedException | LobbyDoesNotExistException | GameDoesNotExistException ignored) {
             } catch (PawnAlreadyTakenException e) {
                 System.out.print(cli + "Pawn already taken!\n");
                 printStatus();
@@ -788,7 +788,7 @@ public class TUI implements Runnable, ViewObserver {
                         msg = new Message(in, view.getPlayer(), player, false);
                         view.sendMessage(msg);
                     }
-                } catch (LobbyDoesNotExistsException | GameDoesNotExistException ignored) {
+                } catch (LobbyDoesNotExistException | GameDoesNotExistException ignored) {
                 } catch (IOException | UnexistentUserException | PlayerChatMismatchException e) {
                     view.removeObserver(this);
                     Thread.currentThread().interrupt();
@@ -815,7 +815,7 @@ public class TUI implements Runnable, ViewObserver {
         } catch (GameAlreadyStartedException e) {
             System.out.print(cli + "The game is already started! Cannot leave the lobby!");
             printStatus();
-        } catch (LobbyDoesNotExistsException | NicknameAlreadyTakenException | GameDoesNotExistException ignored) {
+        } catch (LobbyDoesNotExistException | NicknameAlreadyTakenException | GameDoesNotExistException ignored) {
         } catch (IOException | FullLobbyException | ClassNotFoundException | UnexistentUserException e) {
             view.removeObserver(this);
             Thread.currentThread().interrupt();
@@ -998,7 +998,7 @@ public class TUI implements Runnable, ViewObserver {
                     }
                     side=CardSide.FRONT;
 
-                } catch (IllegalActionException | NotYourTurnException | LobbyDoesNotExistsException |
+                } catch (IllegalActionException | NotYourTurnException | LobbyDoesNotExistException |
                          GameDoesNotExistException ignored) {
                 } catch (IllegalMoveException e) {
                     if (e instanceof OccupiedCoordsException) {
@@ -1060,7 +1060,7 @@ public class TUI implements Runnable, ViewObserver {
             semaphore.acquire();
             actionState = ActionState.PLAY_SELECT_CARD;
         } catch (IllegalActionException | HandIsFullException | EmptyBufferException | NotYourTurnException |
-                 LobbyDoesNotExistsException | GameDoesNotExistException ignored) {
+                 LobbyDoesNotExistException | GameDoesNotExistException ignored) {
         } catch (EmptyDeckException e) {
             System.out.println(Color.warning + "Cannot draw from this deck. Reason: empty!!" + Color.reset);
             printStatus();
