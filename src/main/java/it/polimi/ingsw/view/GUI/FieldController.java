@@ -4,7 +4,6 @@ import it.polimi.ingsw.controller.exceptions.IllegalActionException;
 import it.polimi.ingsw.controller.exceptions.NotYourTurnException;
 import it.polimi.ingsw.controller.exceptions.UnexistentUserException;
 import it.polimi.ingsw.model.card.CardBlock;
-import it.polimi.ingsw.model.card.CornerType;
 import it.polimi.ingsw.model.card.StarterCard;
 import it.polimi.ingsw.model.exceptions.*;
 import it.polimi.ingsw.model.game.Action;
@@ -12,6 +11,7 @@ import it.polimi.ingsw.model.game.GamePhase;
 import it.polimi.ingsw.model.player.Coords;
 import it.polimi.ingsw.network.netMessage.NetMessage;
 import it.polimi.ingsw.network.netMessage.s2c.CardPlacedOnFieldMessage;
+import it.polimi.ingsw.network.netMessage.s2c.FailMessage;
 import it.polimi.ingsw.network.netMessage.s2c.GameWinnersAnnouncedMessage;
 import it.polimi.ingsw.network.netMessage.s2c.LobbyLeftMessage;
 import it.polimi.ingsw.view.View;
@@ -20,11 +20,11 @@ import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 
 public class FieldController implements ViewObserver {
     private View view;
@@ -32,6 +32,9 @@ public class FieldController implements ViewObserver {
 
     @FXML
     private GridPane fieldGrid;
+    @FXML
+    private Label errorMessage;
+
     private int starterX = 4;
     private int starterY = 4;
 
@@ -71,16 +74,18 @@ public class FieldController implements ViewObserver {
         if(!view.isYourTurn()||!view.getGamePhase().equals(GamePhase.PLAYING_GAME)||!view.getAction().equals(Action.PLAY)) return;
         try {
             view.playCard(hand.getCardPlacedPos(),new Coords(x,y),view.getHand().getCard(hand.getCardPlacedPos()).getSide());
-        } catch (IllegalActionException | NotYourTurnException | IllegalMoveException | GameDoesNotExistException |
-                 LobbyDoesNotExistException | UnexistentUserException | IOException e) {
+        } catch (IllegalActionException | IllegalMoveException | NotYourTurnException ignored) {
+        } catch (GameDoesNotExistException | LobbyDoesNotExistException | UnexistentUserException | IOException e) {
             throw new RuntimeException(e);
         }
     }
 
+    public void hideLabel() {
+        errorMessage.setVisible(false);
+    }
+
     @Override
     public void update(NetMessage message) throws IOException {
-        // TODO: If corner null does not remove already existing button
-        // Does not generate errors nor position card in it
         switch (message) {
             case CardPlacedOnFieldMessage m -> {
                 if (m.getCard() instanceof StarterCard) return;
@@ -122,6 +127,12 @@ public class FieldController implements ViewObserver {
                     });
                 }
             }
+            case FailMessage m -> Platform.runLater(() -> {
+                if (m.getMessage().equals("Requirements not satisfied to place the card")) {
+                    errorMessage.setVisible(true);
+                    errorMessage.setText("Cannot play card: Requirements not satisfied");
+                }
+            });
             case LobbyLeftMessage ignored -> view.removeObserver(this);
             case GameWinnersAnnouncedMessage ignored -> view.removeObserver(this);
             default -> {}

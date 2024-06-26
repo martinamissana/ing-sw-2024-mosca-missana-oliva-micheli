@@ -2,12 +2,13 @@
 
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 
 <AnchorPane prefHeight="400.0" prefWidth="635.0" style="-fx-background-color: #935F2F;" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.ingsw.view.GUI.FieldController">
     <children>
         <ScrollPane hvalue="0.5" prefHeight="400.0" prefWidth="635.0" style="-fx-background-color: #935F2F;">
             <content>
-                <GridPane fx:id="fieldGrid" style="-fx-background-color: #935F2F;" hgap="-22.2" vgap="-26.6">
+                <GridPane fx:id="fieldGrid" hgap="-22.2" onMouseClicked="#hideLabel" style="-fx-background-color: #935F2F;" vgap="-26.6">
                     <columnConstraints>
                         <ColumnConstraints hgrow="SOMETIMES" maxWidth="100" minWidth="100" prefWidth="100" />
                         <ColumnConstraints hgrow="SOMETIMES" maxWidth="100" minWidth="100" prefWidth="100" />
@@ -33,5 +34,10 @@
                 </GridPane>
             </content>
         </ScrollPane>
+      <Label fx:id="errorMessage" alignment="CENTER" layoutX="185.0" layoutY="170.0" opacity="0.9" prefHeight="50.0" prefWidth="245.0" style="-fx-background-color: F2DEBD;" visible="false" wrapText="true" AnchorPane.leftAnchor="195.0" AnchorPane.rightAnchor="195.0">
+         <font>
+            <Font size="18.0" />
+         </font>
+      </Label>
     </children>
 </AnchorPane>
