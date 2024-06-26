@@ -1,6 +1,7 @@
 package it.polimi.ingsw.model.exceptions;
 
-import java.io.Serializable;
-
+/**
+ * Thrown when a user tries to draw a card when their hand already contains three cards.
+ */
 public class HandIsFullException extends Exception {
 }

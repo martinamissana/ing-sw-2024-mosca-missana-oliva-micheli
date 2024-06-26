@@ -4,7 +4,7 @@ import it.polimi.ingsw.controller.exceptions.PlayerChatMismatchException;
 import it.polimi.ingsw.controller.exceptions.UnexistentUserException;
 import it.polimi.ingsw.model.chat.Message;
 import it.polimi.ingsw.model.exceptions.GameDoesNotExistException;
-import it.polimi.ingsw.model.exceptions.LobbyDoesNotExistsException;
+import it.polimi.ingsw.model.exceptions.LobbyDoesNotExistException;
 import it.polimi.ingsw.model.game.Lobby;
 import it.polimi.ingsw.model.player.Player;
 import it.polimi.ingsw.network.netMessage.NetMessage;
@@ -133,7 +133,7 @@ public class ChatController implements ViewObserver, Initializable {
             }
         } catch (IOException | UnexistentUserException e) {
             throw new RuntimeException(e);
-        } catch (LobbyDoesNotExistsException | GameDoesNotExistException | PlayerChatMismatchException ignored) {}
+        } catch (LobbyDoesNotExistException | GameDoesNotExistException | PlayerChatMismatchException ignored) {}
     }
 
     @Override

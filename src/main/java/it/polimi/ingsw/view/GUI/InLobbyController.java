@@ -80,7 +80,7 @@ public class InLobbyController implements ViewObserver, Initializable {
             System.out.println("Not in lobby");
         } catch (GameAlreadyStartedException e) {
             System.out.println("Game started");
-        } catch (FullLobbyException | LobbyDoesNotExistsException | NicknameAlreadyTakenException |
+        } catch (FullLobbyException | LobbyDoesNotExistException | NicknameAlreadyTakenException |
                  GameDoesNotExistException ignored) {}
         catch (IOException | ClassNotFoundException | UnexistentUserException | InterruptedException e) {
             throw new RuntimeException(e);
@@ -131,7 +131,7 @@ public class InLobbyController implements ViewObserver, Initializable {
             System.out.println("Pawn taken");
         } catch (IOException | UnexistentUserException e) {
             throw new RuntimeException(e);
-        } catch (LobbyDoesNotExistsException | GameAlreadyStartedException | GameDoesNotExistException ignored) {}
+        } catch (LobbyDoesNotExistException | GameAlreadyStartedException | GameDoesNotExistException ignored) {}
     }
 
     @Override

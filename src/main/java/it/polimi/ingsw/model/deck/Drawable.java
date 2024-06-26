@@ -8,7 +8,7 @@ import it.polimi.ingsw.model.exceptions.*;
 public interface Drawable {
     /**
      * Method for drawing cards
-     * @return a card drawn from where specified
+     * @return a card that was drawn from any drawable source
      */
     ResourceCard draw() throws EmptyDeckException, EmptyBufferException;
 }

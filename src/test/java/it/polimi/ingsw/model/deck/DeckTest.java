@@ -14,11 +14,11 @@ public class DeckTest {
     @Test
     public void ShuffleAndDrawTest() throws IOException, EmptyDeckException {
         Deck ResourceDeck = new Deck(DeckType.RESOURCE);
-        assertFalse(ResourceDeck.getCards().isEmpty());
+        assertFalse(ResourceDeck.isEmpty());
         ResourceDeck.shuffle();
 
         Deck GoldenDeck = new Deck(DeckType.GOLDEN);
-        assertFalse(GoldenDeck.getCards().isEmpty());
+        assertFalse(GoldenDeck.isEmpty());
         GoldenDeck.shuffle();
 
         Card card1 = ResourceDeck.draw();

@@ -9,7 +9,6 @@ import it.polimi.ingsw.model.deck.DeckTypeBox;
 import it.polimi.ingsw.model.exceptions.*;
 import it.polimi.ingsw.model.game.Action;
 import it.polimi.ingsw.model.game.GamePhase;
-import it.polimi.ingsw.model.game.Lobby;
 import it.polimi.ingsw.model.goal.Goal;
 import it.polimi.ingsw.model.player.Coords;
 import it.polimi.ingsw.model.player.Pawn;
@@ -57,15 +56,15 @@ public class ViewController {
     /**
      * checks whether the joinLobby method can be called
      * @param lobbyID ID of the lobby to join
-     * @throws LobbyDoesNotExistsException thrown if the specified ID doesn't correspond to any existing lobby
+     * @throws LobbyDoesNotExistException thrown if the specified ID doesn't correspond to any existing lobby
      * @throws FullLobbyException thrown if the selected lobby is already full
      * @throws CannotJoinMultipleLobbiesException thrown if the user is already connected to a lobby
      */
-    public void checkJoinLobby(int lobbyID) throws LobbyDoesNotExistsException, FullLobbyException, CannotJoinMultipleLobbiesException {
+    public void checkJoinLobby(int lobbyID) throws LobbyDoesNotExistException, FullLobbyException, CannotJoinMultipleLobbiesException {
 
         // if the lobby doesn't exist
         if (!view.getLobbies().containsKey(lobbyID))
-            throw new LobbyDoesNotExistsException();
+            throw new LobbyDoesNotExistException();
 
         // if the lobby is full
         if (view.getLobbies().get(lobbyID).getNumOfPlayers() ==

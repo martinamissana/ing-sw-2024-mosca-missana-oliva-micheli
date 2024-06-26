@@ -32,7 +32,7 @@ public class ControllerTest {
     Controller c=new Controller(gameHandler);
 
     @BeforeEach
-    public void setUp() throws IOException, FullLobbyException, LobbyDoesNotExistsException, HandIsFullException, CannotJoinMultipleLobbiesException, GameAlreadyStartedException, PawnAlreadyTakenException, GameDoesNotExistException, UnexistentUserException {
+    public void setUp() throws IOException, FullLobbyException, LobbyDoesNotExistException, HandIsFullException, CannotJoinMultipleLobbiesException, GameAlreadyStartedException, PawnAlreadyTakenException, GameDoesNotExistException, UnexistentUserException {
         anna=new Player("anna");
         eric=new Player("eric");
         giorgio=new Player("giorgio");
@@ -53,7 +53,7 @@ public class ControllerTest {
     }
 
     @Test
-    public void testGamePhase() throws LobbyDoesNotExistsException, GameDoesNotExistException, FullLobbyException, IOException, EmptyDeckException, HandIsFullException, IllegalGoalChosenException, WrongGamePhaseException, GameAlreadyStartedException, PawnAlreadyTakenException, CannotJoinMultipleLobbiesException, UnexistentUserException {
+    public void testGamePhase() throws LobbyDoesNotExistException, GameDoesNotExistException, FullLobbyException, IOException, EmptyDeckException, HandIsFullException, IllegalGoalChosenException, WrongGamePhaseException, GameAlreadyStartedException, PawnAlreadyTakenException, CannotJoinMultipleLobbiesException, UnexistentUserException {
         anna1=new Player("anna1");
         eric1=new Player("eric1");
         giorgio1=new Player("giorgio1");
@@ -89,7 +89,7 @@ public class ControllerTest {
     }
 
     @Test
-    public void testCreateGameAndTerminateGame() throws GameDoesNotExistException, LobbyDoesNotExistsException, IOException, UnexistentUserException {
+    public void testCreateGameAndTerminateGame() throws GameDoesNotExistException, LobbyDoesNotExistException, IOException, UnexistentUserException {
         assertTrue(gameHandler.getGame(0).getPlayers().contains(anna));
         assertTrue(gameHandler.getGame(0).getPlayers().contains(eric));
         assertTrue(gameHandler.getGame(0).getPlayers().contains(giorgio));
@@ -97,19 +97,19 @@ public class ControllerTest {
         assertThrows(GameDoesNotExistException.class, () -> gameHandler.getGame(0));
     }
     @Test
-    public void testJoinLobbyButLobbyIsFull() throws LobbyDoesNotExistsException, GameDoesNotExistException {
+    public void testJoinLobbyButLobbyIsFull() throws LobbyDoesNotExistException, GameDoesNotExistException {
         assertThrows(FullLobbyException.class, () -> c.joinLobby(sara.getNickname(), 0));
         assertFalse(gameHandler.getLobby(0).getPlayers().contains(sara));
         assertFalse(gameHandler.getGame(0).getPlayers().contains(sara));
     }
     @Test
-    public void testJoinLobbyButLobbyDoesNotExist() throws LobbyDoesNotExistsException, GameDoesNotExistException {
-        assertThrows(LobbyDoesNotExistsException.class, () -> c.joinLobby(sara.getNickname(), 1));
+    public void testJoinLobbyButLobbyDoesNotExist() throws LobbyDoesNotExistException, GameDoesNotExistException {
+        assertThrows(LobbyDoesNotExistException.class, () -> c.joinLobby(sara.getNickname(), 1));
         assertFalse(gameHandler.getLobby(0).getPlayers().contains(sara));
         assertFalse(gameHandler.getGame(0).getPlayers().contains(sara));
     }
     @Test
-    public void testLeaveLobby() throws FullLobbyException, LobbyDoesNotExistsException, IOException, CannotJoinMultipleLobbiesException, GameDoesNotExistException, UnexistentUserException {
+    public void testLeaveLobby() throws FullLobbyException, LobbyDoesNotExistException, IOException, CannotJoinMultipleLobbiesException, GameDoesNotExistException, UnexistentUserException {
         c.createLobby(3, sara.getNickname());
         c.joinLobby(paola.getNickname(),1);
         c.leaveLobby(sara.getNickname(), 1);
@@ -118,7 +118,7 @@ public class ControllerTest {
         assertFalse(gameHandler.getLobbies().containsKey(1));
     }
     @Test
-    public void setGameAreaTest() throws IOException, HandIsFullException, FullLobbyException, LobbyDoesNotExistsException, NicknameAlreadyTakenException, GameDoesNotExistException, EmptyDeckException, PawnAlreadyTakenException, IllegalGoalChosenException, WrongGamePhaseException, GameAlreadyStartedException, CannotJoinMultipleLobbiesException, UnexistentUserException {
+    public void setGameAreaTest() throws IOException, HandIsFullException, FullLobbyException, LobbyDoesNotExistException, NicknameAlreadyTakenException, GameDoesNotExistException, EmptyDeckException, PawnAlreadyTakenException, IllegalGoalChosenException, WrongGamePhaseException, GameAlreadyStartedException, CannotJoinMultipleLobbiesException, UnexistentUserException {
         GameHandler gh = new GameHandler();
         Controller c = new Controller(gh);
 
@@ -167,7 +167,7 @@ public class ControllerTest {
     }
 
     @Test
-    public void FlipCardTest() throws IOException, FullLobbyException, LobbyDoesNotExistsException, NicknameAlreadyTakenException, GameDoesNotExistException, HandIsFullException, CannotJoinMultipleLobbiesException, UnexistentUserException, GameAlreadyStartedException, PawnAlreadyTakenException, WrongGamePhaseException, EmptyDeckException, IllegalGoalChosenException {
+    public void FlipCardTest() throws IOException, FullLobbyException, LobbyDoesNotExistException, NicknameAlreadyTakenException, GameDoesNotExistException, HandIsFullException, CannotJoinMultipleLobbiesException, UnexistentUserException, GameAlreadyStartedException, PawnAlreadyTakenException, WrongGamePhaseException, EmptyDeckException, IllegalGoalChosenException {
         GameHandler gh = new GameHandler();
         Controller con = new Controller(gh);
 
@@ -208,7 +208,7 @@ public class ControllerTest {
     }
 
     @Test
-    public void PlayDrawTurnTest() throws NicknameAlreadyTakenException, IOException, CannotJoinMultipleLobbiesException, LobbyDoesNotExistsException, UnexistentUserException, FullLobbyException, GameAlreadyStartedException, PawnAlreadyTakenException, GameDoesNotExistException, HandIsFullException, WrongGamePhaseException, EmptyDeckException, IllegalActionException, NotYourTurnException, IllegalMoveException, EmptyBufferException {
+    public void PlayDrawTurnTest() throws NicknameAlreadyTakenException, IOException, CannotJoinMultipleLobbiesException, LobbyDoesNotExistException, UnexistentUserException, FullLobbyException, GameAlreadyStartedException, PawnAlreadyTakenException, GameDoesNotExistException, HandIsFullException, WrongGamePhaseException, EmptyDeckException, IllegalActionException, NotYourTurnException, IllegalMoveException, EmptyBufferException {
         GameHandler gh = new GameHandler();
         Controller con = new Controller(gh);
 
@@ -302,7 +302,7 @@ public class ControllerTest {
     }
 
     @Test
-    public void winnerTest() throws FullLobbyException, LobbyDoesNotExistsException, GameDoesNotExistException, IOException, IllegalMoveException, EmptyDeckException, HandIsFullException, CannotJoinMultipleLobbiesException, UnexistentUserException, WrongGamePhaseException, GameAlreadyStartedException, PawnAlreadyTakenException {
+    public void winnerTest() throws FullLobbyException, LobbyDoesNotExistException, GameDoesNotExistException, IOException, IllegalMoveException, EmptyDeckException, HandIsFullException, CannotJoinMultipleLobbiesException, UnexistentUserException, WrongGamePhaseException, GameAlreadyStartedException, PawnAlreadyTakenException {
         GameHandler gh = new GameHandler();
         Controller c = new Controller(gh);
 

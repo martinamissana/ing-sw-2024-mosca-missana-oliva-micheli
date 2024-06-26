@@ -82,11 +82,11 @@ public class RMIServer extends UnicastRemoteObject implements RemoteInterface {
      * @throws IllegalMoveException  thrown when violating the game's rules when placing a card
      * @throws GameDoesNotExistException thrown when the game does not exist
      * @throws IOException general class of exceptions produced by failed or interrupted I/ O operations.
-     * @throws LobbyDoesNotExistsException thrown if the lobby does not exist
+     * @throws LobbyDoesNotExistException thrown if the lobby does not exist
      * @throws UnexistentUserException thrown if the user does not exist
      */
     @Override
-    public void playCard(Integer GameID, String nickname, int handPos, Coords coords, CardSide side) throws IllegalActionException, NotYourTurnException, IllegalMoveException, GameDoesNotExistException, IOException, LobbyDoesNotExistsException, UnexistentUserException {
+    public void playCard(Integer GameID, String nickname, int handPos, Coords coords, CardSide side) throws IllegalActionException, NotYourTurnException, IllegalMoveException, GameDoesNotExistException, IOException, LobbyDoesNotExistException, UnexistentUserException {
         c.playCard(GameID,nickname,handPos,coords,side);
     }
 
@@ -94,13 +94,13 @@ public class RMIServer extends UnicastRemoteObject implements RemoteInterface {
      * method used to create a lobby, it calls the controller method
      * @param numOfPlayers number of players in the lobby
      * @param nickname name of the user
-     * @throws LobbyDoesNotExistsException thrown if the lobby does not exist
+     * @throws LobbyDoesNotExistException thrown if the lobby does not exist
      * @throws RemoteException thrown if the server crashes
      * @throws UnexistentUserException thrown if the user does not exist
      * @throws CannotJoinMultipleLobbiesException thrown if the user is already in another lobby
      */
     @Override
-    public void createLobby(int numOfPlayers,String nickname) throws LobbyDoesNotExistsException, RemoteException, UnexistentUserException, CannotJoinMultipleLobbiesException {
+    public void createLobby(int numOfPlayers,String nickname) throws LobbyDoesNotExistException, RemoteException, UnexistentUserException, CannotJoinMultipleLobbiesException {
         c.createLobby(numOfPlayers,nickname);
     }
 
@@ -109,13 +109,13 @@ public class RMIServer extends UnicastRemoteObject implements RemoteInterface {
      * @param lobbyID ID of the lobby to join
      * @param nickname name of the user
      * @throws FullLobbyException thrown if the lobby is already full
-     * @throws LobbyDoesNotExistsException thrown if the lobby does not exist
+     * @throws LobbyDoesNotExistException thrown if the lobby does not exist
      * @throws IOException general class of exceptions produced by failed or interrupted I/ O operations.
      * @throws CannotJoinMultipleLobbiesException thrown if the user is already in another lobby
      * @throws UnexistentUserException thrown if the lobby does not exist
      */
     @Override
-    public void joinLobby(int lobbyID,String nickname) throws FullLobbyException, LobbyDoesNotExistsException, IOException, CannotJoinMultipleLobbiesException, UnexistentUserException {
+    public void joinLobby(int lobbyID,String nickname) throws FullLobbyException, LobbyDoesNotExistException, IOException, CannotJoinMultipleLobbiesException, UnexistentUserException {
         c.joinLobby(nickname,lobbyID);
     }
 
@@ -124,13 +124,13 @@ public class RMIServer extends UnicastRemoteObject implements RemoteInterface {
      * @param lobbyID ID of the lobby
      * @param nickname name of the user
      * @throws GameAlreadyStartedException thrown if the game is already started
-     * @throws LobbyDoesNotExistsException thrown if the lobby does not exist
+     * @throws LobbyDoesNotExistException thrown if the lobby does not exist
      * @throws IOException general class of exceptions produced by failed or interrupted I/ O operations.
      * @throws GameDoesNotExistException thrown if the game does not exist
      * @throws UnexistentUserException thrown if the user does not exist
      */
     @Override
-    public void leaveLobby(int lobbyID,String nickname) throws GameAlreadyStartedException, LobbyDoesNotExistsException, IOException, GameDoesNotExistException, UnexistentUserException {
+    public void leaveLobby(int lobbyID,String nickname) throws GameAlreadyStartedException, LobbyDoesNotExistException, IOException, GameDoesNotExistException, UnexistentUserException {
         c.leaveLobby(nickname,lobbyID);
     }
 
@@ -139,7 +139,7 @@ public class RMIServer extends UnicastRemoteObject implements RemoteInterface {
      * @param lobbyID ID of the lobby
      * @param nickname name of te user
      * @param color color chosen
-     * @throws LobbyDoesNotExistsException thrown if the lobby does not exist
+     * @throws LobbyDoesNotExistException thrown if the lobby does not exist
      * @throws PawnAlreadyTakenException thrown if the pawn color is already chosen by someone else
      * @throws GameAlreadyStartedException thrown if the game is already started
      * @throws IOException general class of exceptions produced by failed or interrupted I/ O operations.
@@ -147,7 +147,7 @@ public class RMIServer extends UnicastRemoteObject implements RemoteInterface {
      * @throws UnexistentUserException thrown if the user does not exist
      */
     @Override
-    public void choosePawn(Integer lobbyID,String nickname,Pawn color) throws LobbyDoesNotExistsException, PawnAlreadyTakenException, GameAlreadyStartedException, IOException, GameDoesNotExistException, UnexistentUserException {
+    public void choosePawn(Integer lobbyID,String nickname,Pawn color) throws LobbyDoesNotExistException, PawnAlreadyTakenException, GameAlreadyStartedException, IOException, GameDoesNotExistException, UnexistentUserException {
         c.choosePawn(lobbyID,nickname,color);
     }
 
@@ -155,14 +155,14 @@ public class RMIServer extends UnicastRemoteObject implements RemoteInterface {
      * method used to send a message in chat, it calls the controller method
      * @param message it contains sender-receiver-text of the message
      * @param ID ID  of the lobby/game
-     * @throws LobbyDoesNotExistsException thrown if the lobby does not exist
+     * @throws LobbyDoesNotExistException thrown if the lobby does not exist
      * @throws GameDoesNotExistException thrown if the game does not exist
      * @throws RemoteException thrown if the server crashes
      * @throws PlayerChatMismatchException thrown if the chat is global but the receiver isn't null
      * @throws UnexistentUserException thrown if the user does not exist
      */
     @Override
-    public void sendMessage(Message message, int ID) throws LobbyDoesNotExistsException, GameDoesNotExistException, RemoteException, PlayerChatMismatchException, UnexistentUserException {
+    public void sendMessage(Message message, int ID) throws LobbyDoesNotExistException, GameDoesNotExistException, RemoteException, PlayerChatMismatchException, UnexistentUserException {
         c.send(message,ID);
     }
 
@@ -195,11 +195,11 @@ public class RMIServer extends UnicastRemoteObject implements RemoteInterface {
      * @throws GameDoesNotExistException thrown if the game does not exist
      * @throws HandIsFullException thrown if the hand is full
      * @throws IOException general class of exceptions produced by failed or interrupted I/ O operations.
-     * @throws LobbyDoesNotExistsException thrown if the lobby does not exist
+     * @throws LobbyDoesNotExistException thrown if the lobby does not exist
      * @throws UnexistentUserException thrown if the user does not exist
      */
     @Override
-    public void drawCard(Integer gameID,String nickname, DeckTypeBox deckTypeBox) throws IllegalActionException, EmptyBufferException, NotYourTurnException, EmptyDeckException, GameDoesNotExistException, HandIsFullException, IOException, LobbyDoesNotExistsException, UnexistentUserException {
+    public void drawCard(Integer gameID,String nickname, DeckTypeBox deckTypeBox) throws IllegalActionException, EmptyBufferException, NotYourTurnException, EmptyDeckException, GameDoesNotExistException, HandIsFullException, IOException, LobbyDoesNotExistException, UnexistentUserException {
         c.drawCard(gameID,nickname,deckTypeBox);
     }
 
@@ -263,7 +263,7 @@ public class RMIServer extends UnicastRemoteObject implements RemoteInterface {
             if (ID != null) {
                 c.leaveLobby(nickname, ID);
             }
-        } catch (LobbyDoesNotExistsException | GameDoesNotExistException | IOException |
+        } catch (LobbyDoesNotExistException | GameDoesNotExistException | IOException |
                  UnexistentUserException ignored) {
         }
         c.getGh().removeUser(nickname);
