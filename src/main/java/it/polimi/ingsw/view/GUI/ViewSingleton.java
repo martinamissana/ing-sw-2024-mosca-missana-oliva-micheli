@@ -28,7 +28,7 @@ public class ViewSingleton {
     public void initialize(String connection, String IP, String port) {
         if (connection.equalsIgnoreCase("RMI")) {
             try {
-                Registry registry = LocateRegistry.getRegistry();
+                Registry registry = LocateRegistry.getRegistry(IP, 0);
                 String remoteObjectName = "RMIServer";
                 RemoteInterface RMIServer;
                 RMIServer = (RemoteInterface) registry.lookup(remoteObjectName);

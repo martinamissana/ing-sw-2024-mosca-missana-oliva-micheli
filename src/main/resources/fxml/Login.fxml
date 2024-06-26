@@ -20,21 +20,22 @@
          <image>
             <Image url="@../images/logo.png" />
          </image></ImageView>
-      <Pane fx:id="connectionPane" layoutX="325.0" layoutY="400.0" prefHeight="150.0" prefWidth="250.0">
+      <TextField fx:id="IP" alignment="CENTER" layoutX="350.0" layoutY="460.0" onKeyTyped="#modifyTags" prefHeight="25.0" prefWidth="170.0" promptText="Insert IP address" />
+      <Label fx:id="connectionError" alignment="CENTER" layoutX="375.0" layoutY="430.0" prefWidth="150.0" textFill="RED" />
+      <StackPane fx:id="infoIP" layoutX="530.0" layoutY="462.5">
          <children>
-            <TextField fx:id="IP" alignment="CENTER" layoutX="25.0" layoutY="40.0" onKeyTyped="#modifyTags" prefHeight="25.0" prefWidth="170.0" promptText="Insert IP address" />
-            <TextField fx:id="port" alignment="CENTER" layoutX="25.0" layoutY="85.0" onKeyTyped="#modifyTags" prefHeight="25.0" prefWidth="170.0" promptText="Insert port" />
-            <Label fx:id="connectionError" alignment="CENTER" layoutX="50.0" layoutY="120.0" prefWidth="150.0" textFill="RED" />
-            <StackPane fx:id="infoIP" layoutX="205.0" layoutY="42.5">
-               <children>
-                  <Circle fill="WHITE" radius="10.0" stroke="WHITE" strokeType="INSIDE" />
-                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../images/infoImage.png" />
-                     </image></ImageView>
-               </children>
-            </StackPane>
-            <StackPane fx:id="infoPort" layoutX="205.0" layoutY="87.5">
+            <Circle fill="WHITE" radius="10.0" stroke="WHITE" strokeType="INSIDE" />
+            <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../images/infoImage.png" />
+               </image>
+            </ImageView>
+         </children>
+      </StackPane>
+      <Pane fx:id="connectionPane" layoutX="325.0" layoutY="500.0" prefHeight="75.0" prefWidth="250.0">
+         <children>
+            <TextField fx:id="port" alignment="CENTER" layoutX="25.0" layoutY="5.0" onKeyTyped="#modifyTags" prefHeight="25.0" prefWidth="170.0" promptText="Insert port" />
+            <StackPane fx:id="infoPort" layoutX="205.0" layoutY="7.5">
                <children>
                   <Circle fill="WHITE" radius="10.0" stroke="WHITE" strokeType="INSIDE" />
                   <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">

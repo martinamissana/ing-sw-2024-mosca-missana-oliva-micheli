@@ -4,6 +4,7 @@ import it.polimi.ingsw.view.TUI.TUI;
 
 public class ClientTUI {
     public static void main(String[] args) {
+        System.setProperty("java.rmi.server.hostname", args[0]);
         new Thread(() -> {
             try {
                 TUI tui = new TUI();
