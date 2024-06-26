@@ -13,7 +13,7 @@ public class DeckBufferTest {
     public void DrawTest() throws IOException, EmptyDeckException, EmptyBufferException {
         Deck deck = new Deck(DeckType.RESOURCE);
         DeckBuffer db = new DeckBuffer(deck);
-        while(!deck.getCards().isEmpty()) deck.draw();
+        while(!deck.isEmpty()) deck.draw();
         db.refill();
         assertThrows(EmptyBufferException.class, () -> db.draw());
     }

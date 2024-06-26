@@ -8,9 +8,10 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.*;
 
-
 /**
- * List of cards of type RESOURCE or GOLDEN
+ * Class Deck<br>
+ * Each game instantiates a resource deck and a golden deck.<br>
+ * Cards are stored in reverse drawing order, meaning that the first one to leave the deck is the last in the {@code cards} list.
  */
 public class Deck implements Drawable, Serializable {
     private final DeckType type;
@@ -18,50 +19,43 @@ public class Deck implements Drawable, Serializable {
 
     /**
      * Class constructor
-     *
-     * @param type type of the deck (RESOURCE / GOLDEN)
-     * @throws IOException for building the decks
+     * @param type type of cards in the deck ({@code RESOURCE} or {@code GOLDEN})
+     * @throws IOException thrown when an error occurs in reading the json file
      */
     public Deck(DeckType type) throws IOException {
         this.type = type;
         this.cards = new ArrayList<>();
 
-        if (type == DeckType.RESOURCE) {
+        if (type == DeckType.RESOURCE)
             this.cards.addAll(CardsPreset.getResourceCards());
-        } else {
+        else
             this.cards.addAll(CardsPreset.getGoldenCards());
-        }
     }
 
     /**
-     * Gets the list of cards in the deck
-     *
-     * @return cards
+     * @return the type of cards in the deck
      */
-    public ArrayList<ResourceCard> getCards() {
-        return this.cards;
-    }
+    public DeckType getType() { return this.type; }
 
     /**
-     * Gets the type of the deck
-     *
-     * @return type
+     * @return the last card in the deck, which is the first one to be drawn from the deck
      */
-    public DeckType getType() {
-        return this.type;
-    }
+    public ResourceCard getLast() { return this.cards.getLast(); }
+
+
+    /**
+     * @return {@code true} if the deck is empty, {@code false} if there's at least one card
+     */
+    public boolean isEmpty() { return this.cards.isEmpty(); }
 
     /**
      * Shuffles the deck
      */
-    public void shuffle() {
-        Collections.shuffle(cards);
-    }
+    public void shuffle() { Collections.shuffle(cards); }
 
     /**
-     * Draws the last card from the deck list
-     *
-     * @return last card from cards ArrayList
+     * Draws a card from the deck by removing and returning the last one in the {@code cards} list
+     * @return last card from {@code cards} list
      */
     @Override
     public ResourceCard draw() throws EmptyDeckException {

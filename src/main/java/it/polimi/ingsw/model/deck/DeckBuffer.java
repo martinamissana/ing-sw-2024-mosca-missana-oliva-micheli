@@ -29,9 +29,7 @@ public class DeckBuffer implements Drawable, Serializable {
      *
      * @return card
      */
-    public ResourceCard getCard() {
-        return card;
-    }
+    public ResourceCard getCard() { return card; }
 
     public void setCard(ResourceCard card) { this.card = card; }
 
@@ -39,7 +37,7 @@ public class DeckBuffer implements Drawable, Serializable {
      * Put a card in the deck buffer (if empty)
      */
     public void refill() {
-        if (!deck.getCards().isEmpty() && card == null)
+        if (!deck.isEmpty() && card == null)
             try {
                 this.card = this.deck.draw();
                 if (this.card.getSide().equals(CardSide.BACK)) card.flip();

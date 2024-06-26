@@ -187,7 +187,7 @@ public class Controller implements Serializable {
         gh.getActiveGames().put(lobbyID, new Game(lobbyID, lobby.getNumOfPlayers(), players, scoreboard));
         setGameArea(lobbyID);
         Game g = gh.getGame(lobbyID);
-        gh.notify(new GameCreatedEvent(lobbyID, g.getPlayers().getFirst(), g.getScoreboard(), g.getResourceDeck().getCards().getLast(), g.getGoldenDeck().getCards().getLast(), g.getCommonGoal1(), g.getCommonGoal2(), g.getGamePhase(), g.getDeckBuffer(DeckBufferType.RES1), g.getDeckBuffer(DeckBufferType.RES2), g.getDeckBuffer(DeckBufferType.GOLD1), g.getDeckBuffer(DeckBufferType.GOLD2)));
+        gh.notify(new GameCreatedEvent(lobbyID, g.getPlayers().getFirst(), g.getScoreboard(), g.getResourceDeck().getLast(), g.getGoldenDeck().getLast(), g.getCommonGoal1(), g.getCommonGoal2(), g.getGamePhase(), g.getDeckBuffer(DeckBufferType.RES1), g.getDeckBuffer(DeckBufferType.RES2), g.getDeckBuffer(DeckBufferType.GOLD1), g.getDeckBuffer(DeckBufferType.GOLD2)));
     }
 
     /**
@@ -412,8 +412,8 @@ public class Controller implements Serializable {
             p.getHand().addCard(game.getGoldenDeck().draw());
         }
 
-        gh.notify(new CardDrawnFromSourceEvent(gameID, DeckType.RESOURCE, game.getDeck(DeckType.RESOURCE).getCards().getLast()));
-        gh.notify(new CardDrawnFromSourceEvent(gameID, DeckType.GOLDEN, game.getDeck(DeckType.GOLDEN).getCards().getLast()));
+        gh.notify(new CardDrawnFromSourceEvent(gameID, DeckType.RESOURCE, game.getDeck(DeckType.RESOURCE).getLast()));
+        gh.notify(new CardDrawnFromSourceEvent(gameID, DeckType.GOLDEN, game.getDeck(DeckType.GOLDEN).getLast()));
 
         for (Player p : game.getPlayers()) {
             gh.notify(new CardAddedToHandEvent(p, p.getHand().getCard(0), gameID));
@@ -593,10 +593,10 @@ public class Controller implements Serializable {
         gh.notify(new CardAddedToHandEvent(player, newCard, gameID));
 
         if (deckTypeBox.equals(DeckType.RESOURCE) || deckTypeBox.equals(DeckBufferType.RES1) || deckTypeBox.equals(DeckBufferType.RES2)) {
-            if (!game.getDeck(DeckType.RESOURCE).getCards().isEmpty()) gh.notify(new CardDrawnFromSourceEvent(gameID, deckTypeBox, game.getDeck(DeckType.RESOURCE).getCards().getLast()));
+            if (!game.getDeck(DeckType.RESOURCE).isEmpty()) gh.notify(new CardDrawnFromSourceEvent(gameID, deckTypeBox, game.getDeck(DeckType.RESOURCE).getLast()));
             else gh.notify(new CardDrawnFromSourceEvent(gameID, deckTypeBox, null));
         } else if (deckTypeBox.equals(DeckType.GOLDEN) || deckTypeBox.equals(DeckBufferType.GOLD1) || deckTypeBox.equals(DeckBufferType.GOLD2)) {
-            if (!game.getDeck(DeckType.GOLDEN).getCards().isEmpty()) gh.notify(new CardDrawnFromSourceEvent(gameID, deckTypeBox, game.getDeck(DeckType.GOLDEN).getCards().getLast()));
+            if (!game.getDeck(DeckType.GOLDEN).isEmpty()) gh.notify(new CardDrawnFromSourceEvent(gameID, deckTypeBox, game.getDeck(DeckType.GOLDEN).getLast()));
             else gh.notify(new CardDrawnFromSourceEvent(gameID, deckTypeBox, null));
         }
 
@@ -651,7 +651,7 @@ public class Controller implements Serializable {
         if (game.isLastRound()) return;
 
         // if both decks are empty
-        if (game.getResourceDeck().getCards().isEmpty() && game.getGoldenDeck().getCards().isEmpty()) {
+        if (game.getResourceDeck().isEmpty() && game.getGoldenDeck().isEmpty()) {
             game.setLastRound(true);
         }
 
