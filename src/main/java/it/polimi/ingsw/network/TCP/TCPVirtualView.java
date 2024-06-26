@@ -217,18 +217,6 @@ public class TCPVirtualView implements Runnable, Observer {
                         out.writeObject(m);
                     }
                 }
-                case LastRoundStartedEvent e -> {
-                    if (e.getID().equals(ID)) {
-                        LastRoundStartedMessage m = new LastRoundStartedMessage(e.getID());
-                        out.writeObject(m);
-                    }
-                }
-                case TurnChangedEvent e -> {
-                    if (e.getID().equals(ID)) {
-                        TurnChangedMessage m = new TurnChangedMessage(e.getID(), e.getNickname(), e.isLastRound());
-                        out.writeObject(m);
-                    }
-                }
                 case GameWinnersAnnouncedEvent e -> {
                     if (e.getID().equals(ID)) {
                         GameWinnersAnnouncedMessage m = new GameWinnersAnnouncedMessage(e.getID(), e.getWinners(), e.getGoalsDone());
