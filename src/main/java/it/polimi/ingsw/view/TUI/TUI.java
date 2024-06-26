@@ -510,7 +510,14 @@ public class TUI implements Runnable, ViewObserver {
                 port = "0";
                 Registry registry;
                 try {
-                    registry = LocateRegistry.getRegistry();
+                    System.out.print(cli + "Insert your IP" + user);
+                    String yourIP = scanner.nextLine();
+
+                    System.out.print(cli + "Insert the server IP" + user);
+                    String IP = scanner.nextLine();
+
+                    System.setProperty("java.rmi.server.hostname",yourIP);
+                    registry = LocateRegistry.getRegistry(IP,Integer.parseInt(port));
 
                     String remoteObjectName = "RMIServer";
                     RemoteInterface RMIServer;

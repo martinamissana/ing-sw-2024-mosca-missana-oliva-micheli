@@ -25,7 +25,7 @@ public class Server {
         String RMI_Port = args[1];
         //String RMI_Port="1099";
 
-
+        System.setProperty("java.rmi.server.hostname",args[2]);
         new Thread(() -> {
 
             try {

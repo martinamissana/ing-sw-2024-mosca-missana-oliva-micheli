@@ -248,10 +248,9 @@ public class TCPVirtualView implements Runnable, Observer {
                         out.writeObject(m);
                     }
                 }
-                default -> throw new IllegalStateException("Unexpected value: " + event);
+                default -> {}
             }
         }
-
     }
 
     /**
@@ -415,7 +414,7 @@ public class TCPVirtualView implements Runnable, Observer {
             }
             case HeartBeatMessage m -> {
             }
-            default -> throw new IllegalStateException("Unexpected value: " + message);
+            default -> {}
         }
     }
 
