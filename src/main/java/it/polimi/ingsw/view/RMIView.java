@@ -14,6 +14,7 @@ import it.polimi.ingsw.network.netMessage.c2s.DisconnectMessage;
 import it.polimi.ingsw.network.netMessage.s2c.LoginFail_NicknameAlreadyTaken;
 
 import java.io.Serializable;
+import java.rmi.ConnectIOException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.io.IOException;
@@ -214,7 +215,12 @@ public class RMIView extends View implements ClientRemoteInterface , Serializabl
      */
     @Override
     public void playCard(int handPos, Coords coords, CardSide side) throws IllegalActionException, NotYourTurnException, IllegalMoveException, GameDoesNotExistException, LobbyDoesNotExistException, UnexistentUserException, IOException {
-        RMIServer.playCard(super.getID(), super.getPlayer().getNickname(), handPos, coords, side);
+        try{
+            RMIServer.playCard(super.getID(), super.getPlayer().getNickname(), handPos, coords, side);
+        }
+        catch (RemoteException e){
+            disconnect(super.getNickname());
+        }
     }
 
     /**
@@ -232,7 +238,11 @@ public class RMIView extends View implements ClientRemoteInterface , Serializabl
      */
     @Override
     public void drawCard(DeckTypeBox deckTypeBox) throws IllegalActionException, EmptyBufferException, NotYourTurnException, EmptyDeckException, HandIsFullException, IOException, UnexistentUserException, LobbyDoesNotExistException, GameDoesNotExistException {
-        RMIServer.drawCard(super.getID(), super.getPlayer().getNickname(), deckTypeBox);
+        try {
+            RMIServer.drawCard(super.getID(), super.getPlayer().getNickname(), deckTypeBox);
+        } catch (RemoteException e) {
+            disconnect(super.getNickname());
+        }
     }
 
 
