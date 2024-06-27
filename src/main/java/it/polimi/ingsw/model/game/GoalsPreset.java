@@ -23,7 +23,7 @@ public class GoalsPreset {
 
     /**
      * Gets a list of all diagonal goals
-     * @return ArrayList<DiagonalGoal>
+     * @return ArrayList of diagonal goals
      * @throws IOException thrown if I/O operations are interrupted or failed
      */
     public static ArrayList<DiagonalGoal> getDiagonalGoals() throws IOException {
@@ -49,7 +49,7 @@ public class GoalsPreset {
 
     /**
      * Gets a list of all L_shape goals
-     * @return ArrayList<L_ShapeGoal>
+     * @return ArrayList of L_ShapeGoals
      * @throws IOException thrown if I/O operations are interrupted or failed
      */
     public static ArrayList<L_ShapeGoal> getLShapeGoals() throws IOException {
@@ -75,7 +75,7 @@ public class GoalsPreset {
 
     /**
      * Gets a list of all resource goals
-     * @return ArrayList<ResourceGoal>
+     * @return ArrayList of Resource Goals
      * @throws IOException thrown if I/O operations are interrupted or failed
      */
     public static ArrayList<ResourceGoal> getResourceGoals() throws IOException {

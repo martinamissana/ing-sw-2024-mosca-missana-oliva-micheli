@@ -14,7 +14,6 @@ import it.polimi.ingsw.network.netMessage.c2s.DisconnectMessage;
 import it.polimi.ingsw.network.netMessage.s2c.LoginFail_NicknameAlreadyTaken;
 
 import java.io.Serializable;
-import java.rmi.ConnectIOException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.io.IOException;
@@ -50,11 +49,6 @@ public class RMIView extends View implements ClientRemoteInterface , Serializabl
         }).start();
     }
 
-    /**
-     * Sets nickname in the view and calls the method login of the server
-     * @param nickname name of the player
-     * @throws IOException general class of exceptions produced by failed or interrupted I/O operations
-     */
     @Override
     public void login(String nickname) throws IOException {
         super.setPlayer(new Player(nickname));
@@ -68,17 +62,6 @@ public class RMIView extends View implements ClientRemoteInterface , Serializabl
         }
     }
 
-    /**
-     * calls the method createLobby of the server
-     * @param  numOfPlayers players of the lobby
-     * @throws LobbyDoesNotExistException thrown if the lobby doesn't exist
-     * @throws IOException general class of exceptions produced by failed or interrupted I/O operations
-     * @throws CannotJoinMultipleLobbiesException thrown if the player tries to join multiple lobbies
-     * @throws UnexistentUserException thrown if the player doesn't exist
-     * @throws FullLobbyException thrown if the lobby is full
-     * @throws NicknameAlreadyTakenException thrown if the nickname is already taken
-     * @throws ClassNotFoundException thrown if the class is not found
-     */
     @Override
     public void createLobby(int numOfPlayers) throws LobbyDoesNotExistException, IOException, CannotJoinMultipleLobbiesException, UnexistentUserException, FullLobbyException, NicknameAlreadyTakenException, ClassNotFoundException {
         try {
@@ -88,15 +71,6 @@ public class RMIView extends View implements ClientRemoteInterface , Serializabl
         }
     }
 
-    /**
-     * calls the method joinLobby of the server
-     * @param lobbyID ID of the lobby to join
-     * @throws FullLobbyException thrown if the lobby is full
-     * @throws LobbyDoesNotExistException thrown if the lobby does not exist
-     * @throws IOException general class of exceptions produced by failed or interrupted I/O operations
-     * @throws CannotJoinMultipleLobbiesException thrown if the player tries to join multiple lobbies
-     * @throws UnexistentUserException thrown if the player doesn't exist
-     */
     @Override
     public void joinLobby(int lobbyID) throws FullLobbyException, LobbyDoesNotExistException, IOException, CannotJoinMultipleLobbiesException, UnexistentUserException {
         try {
@@ -106,14 +80,6 @@ public class RMIView extends View implements ClientRemoteInterface , Serializabl
         }
     }
 
-    /**
-     * calls the method leaveLobby of the server
-     * @throws GameAlreadyStartedException thrown if the game is already started (the client can't leave the lobby)
-     * @throws LobbyDoesNotExistException thrown if the lobby doesn't exist
-     * @throws IOException general class of exceptions produced by failed or interrupted I/O operations
-     * @throws GameDoesNotExistException thrown if the game doesn't exist
-     * @throws UnexistentUserException thrown if the player doesn't exist
-     */
     @Override
     public void leaveLobby() throws GameAlreadyStartedException, LobbyDoesNotExistException, IOException, GameDoesNotExistException, UnexistentUserException {
         try {
@@ -123,15 +89,6 @@ public class RMIView extends View implements ClientRemoteInterface , Serializabl
         }
     }
 
-    /**
-     * called if the player wants to send a message to someone (or everyone) in chat. It calls the method sendMessage of the server
-     * @param message instance of Message class that contains sender, receiver and text of the message sent in chat
-     * @throws LobbyDoesNotExistException thrown if the lobby does not exist
-     * @throws GameDoesNotExistException thrown if the game does not exist
-     * @throws UnexistentUserException thrown if the player does not exist
-     * @throws RemoteException Exception thrown by every RMI method
-     * @throws PlayerChatMismatchException thrown if sender or receiver
-     */
     @Override
     public void sendMessage(Message message) throws LobbyDoesNotExistException, GameDoesNotExistException, UnexistentUserException, IOException, PlayerChatMismatchException {
         try{
@@ -142,16 +99,6 @@ public class RMIView extends View implements ClientRemoteInterface , Serializabl
         }
     }
 
-    /**
-     * called to select pawn color in the lobby. It calls the method of the server
-     * @param color pawn color
-     * @throws LobbyDoesNotExistException thrown if the lobby does not exist
-     * @throws PawnAlreadyTakenException thrown if the color is already assigned to another user
-     * @throws IOException general class of exceptions produced by failed or interrupted I/O operations
-     * @throws GameAlreadyStartedException thrown if the game is already started
-     * @throws GameDoesNotExistException thrown if the game does not exist
-     * @throws UnexistentUserException thrown if the user does not exist
-     */
     @Override
     public void choosePawn(Pawn color) throws LobbyDoesNotExistException, PawnAlreadyTakenException, IOException, GameAlreadyStartedException, GameDoesNotExistException, UnexistentUserException {
         try{
@@ -162,15 +109,6 @@ public class RMIView extends View implements ClientRemoteInterface , Serializabl
         }
     }
 
-    /**
-     * called to select the secret goal from the two given goals. It calls the method of the server
-     * @param goalID ID of the selected secret goal
-     * @throws IOException general class of exceptions produced by failed or interrupted I/O operations
-     * @throws IllegalGoalChosenException thrown if the chosen goal isn't one of the two given goals
-     * @throws WrongGamePhaseException thrown if the phase of the game is wrong
-     * @throws GameDoesNotExistException thrown if the game does not exist
-     * @throws UnexistentUserException thrown if the user does not exist
-     */
     @Override
     public void chooseSecretGoal(int goalID) throws IOException, IllegalGoalChosenException, WrongGamePhaseException, GameDoesNotExistException, UnexistentUserException {
         try{
@@ -181,16 +119,6 @@ public class RMIView extends View implements ClientRemoteInterface , Serializabl
         }
     }
 
-    /**
-     * choose the side of the starter card to add it to the field, it calls the method of the server
-     * @param side [FRONT-BACK] chosen side
-     * @throws EmptyDeckException thrown if the deck is empty
-     * @throws GameDoesNotExistException thrown if the game does not exist
-     * @throws HandIsFullException thrown if the hand is full
-     * @throws UnexistentUserException thrown if the user does not exist
-     * @throws IOException general class of exceptions produced by failed or interrupted I/O operations
-     * @throws WrongGamePhaseException thrown if the phase of the game is wrong
-     */
     @Override
     public void chooseCardSide(CardSide side) throws EmptyDeckException, GameDoesNotExistException, HandIsFullException, UnexistentUserException, IOException, WrongGamePhaseException {
         try{
@@ -201,18 +129,6 @@ public class RMIView extends View implements ClientRemoteInterface , Serializabl
         }
     }
 
-    /**
-     * called to add a card to the field, it calls the method of the server
-     * @param handPos [0,1,2] the position in the hand of the card to be placed
-     * @param coords coordinates where the card has to be placed
-     * @throws IllegalActionException thrown when the method is called when the game's Action state isn't set to PLAY
-     * @throws NotYourTurnException thrown when a player tries to perform an action when it's not their turn
-     * @throws IllegalMoveException thrown when violating the game's rules when placing a card
-     * @throws GameDoesNotExistException thrown when the game does not exist
-     * @throws LobbyDoesNotExistException thrown when the lobby does not exist
-     * @throws UnexistentUserException thrown when the user does not exist
-     * @throws IOException general class of exceptions produced by failed or interrupted I/O operations
-     */
     @Override
     public void playCard(int handPos, Coords coords, CardSide side) throws IllegalActionException, NotYourTurnException, IllegalMoveException, GameDoesNotExistException, LobbyDoesNotExistException, UnexistentUserException, IOException {
         try{
@@ -223,19 +139,6 @@ public class RMIView extends View implements ClientRemoteInterface , Serializabl
         }
     }
 
-    /**
-     * called to draw a card from a deckTypeBox, it calls the method of the server
-     * @param deckTypeBox deck or deckBuffer where to draw
-     * @throws IllegalActionException thrown when the method is called when the game's Action state isn't set to DRAW
-     * @throws EmptyBufferException thrown where the deckBuffer is empty
-     * @throws NotYourTurnException thrown if it is not the player turn
-     * @throws EmptyDeckException thrown if the deck is empty
-     * @throws HandIsFullException thrown if the hand is full
-     * @throws IOException general class of exceptions produced by failed or interrupted I/O operations
-     * @throws UnexistentUserException thrown if the user does not exist
-     * @throws LobbyDoesNotExistException thrown if the lobby does not exist
-     * @throws GameDoesNotExistException thrown if the game does not exist
-     */
     @Override
     public void drawCard(DeckTypeBox deckTypeBox) throws IllegalActionException, EmptyBufferException, NotYourTurnException, EmptyDeckException, HandIsFullException, IOException, UnexistentUserException, LobbyDoesNotExistException, GameDoesNotExistException {
         try {
@@ -245,11 +148,6 @@ public class RMIView extends View implements ClientRemoteInterface , Serializabl
         }
     }
 
-
-    /**
-     * used to update a new client on the current status of the lobbies, it calls the method of the server
-     * @throws IOException general class of exceptions produced by failed or interrupted I/O operations
-     */
     @Override
     public void getCurrentStatus() throws IOException {
         try{

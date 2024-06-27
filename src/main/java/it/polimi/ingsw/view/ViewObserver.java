@@ -14,6 +14,6 @@ public interface ViewObserver{
      * @param m the message that they have to handle
      * @throws IOException produced by failed or interrupted I/O operations
      */
-public void update(NetMessage m) throws IOException;
+     void update(NetMessage m) throws IOException;
 
 }

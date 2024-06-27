@@ -21,7 +21,7 @@ public class CurrentStatusMessage extends NetMessage {
     }
 
     /**
-     * @return HashMap<Integer, Lobby>
+     * @return map of the active lobbies
      */
     public HashMap<Integer, Lobby> getLobbies() {
         return lobbies;

@@ -45,11 +45,6 @@ public class DeckBuffer implements Drawable, Serializable {
             }
     }
 
-    /**
-     * Draws the card on the deck buffer
-     *
-     * @return drawn
-     */
     @Override
     public ResourceCard draw() throws EmptyBufferException {
         if (card != null) {

@@ -24,7 +24,7 @@ public class ResourceGoal extends Goal {
 
     /**
      * Gets the resource list of the goal
-     * @return list<ItemBox>
+     * @return list of ItemBox
      */
     public ArrayList<ItemBox> getResourceList() { return resourceList; }
 }

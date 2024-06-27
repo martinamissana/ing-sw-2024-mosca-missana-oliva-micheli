@@ -23,7 +23,7 @@ public class CardsPreset {
 
     /**
      * Gets a list of all resource cards
-     * @return list<ResourceCard>
+     * @return list of Resource cards
      * @throws IOException thrown if I/O operations are interrupted or failed
      */
     public static ArrayList<ResourceCard> getResourceCards() throws IOException {
@@ -47,7 +47,7 @@ public class CardsPreset {
 
     /**
      * Gets a list of all golden cards
-     * @return list<GoldenCard>
+     * @return list of golden cards
      * @throws IOException thrown if I/O operations are interrupted or failed
      */
     public static ArrayList<GoldenCard> getGoldenCards() throws IOException {
@@ -70,7 +70,7 @@ public class CardsPreset {
 
     /**
      * Gets a list of all starter cards
-     * @return list<StarterCard>
+     * @return list of starter cards
      * @throws IOException thrown if I/O operations are interrupted or failed
      */
     public static ArrayList<StarterCard> getStarterCards() throws IOException {

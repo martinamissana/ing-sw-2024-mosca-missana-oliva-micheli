@@ -53,10 +53,6 @@ public class Deck implements Drawable, Serializable {
      */
     public void shuffle() { Collections.shuffle(cards); }
 
-    /**
-     * Draws a card from the deck by removing and returning the last one in the {@code cards} list
-     * @return last card from {@code cards} list
-     */
     @Override
     public ResourceCard draw() throws EmptyDeckException {
         if (!cards.isEmpty()) return cards.removeLast();

@@ -252,7 +252,7 @@ public class Field implements Serializable {
      * More formally, it returns a {@code CornerType} (meaning direction) to {@code Coords} map,
      * containing all coordinates with a {@code Card} in them ({@code CardBlock} cards are <strong>not</strong> included)
      * @param coords position of which to look for adjacent cards of
-     * @return HashMap<CornerType, Coords>
+     * @return adjacent coordinates
      */
     private HashMap<CornerType, Coords> getAdjacentCards(Coords coords) {
         if (coords == null) throw new NullPointerException();
@@ -285,7 +285,7 @@ public class Field implements Serializable {
      * containing all coordinates without <strong>any</strong> {@code Card} in them (CardBlock cards are excluded too)
      *
      * @param coords position of which to look for free adjacent coordinates of
-     * @return HashMap<CornerType, Coords>
+     * @return adjacent free coordinates
      */
     private HashMap<CornerType, Coords> getFreeAdjacentCoords(Coords coords) {
         if (coords == null) throw new NullPointerException();

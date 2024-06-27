@@ -2,6 +2,10 @@ package it.polimi.ingsw.network;
 
 import it.polimi.ingsw.view.TUI.TUI;
 
+/**
+ * Class ClientTUI
+ * starts the TUI
+ */
 public class ClientTUI {
     public static void main(String[] args) {
         System.setProperty("java.rmi.server.hostname", args[0]);

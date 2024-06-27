@@ -25,7 +25,7 @@ public class SecretGoalsListAssignedMessage extends NetMessage {
     }
 
     /**
-     * @return ArrayList<Goal>
+     * @return ArrayList of choosable goals
      */
     public ArrayList<Goal> getList() {
         return list;

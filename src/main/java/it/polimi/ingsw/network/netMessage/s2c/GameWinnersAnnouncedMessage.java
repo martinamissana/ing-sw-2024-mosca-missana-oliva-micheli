@@ -28,7 +28,7 @@ public class GameWinnersAnnouncedMessage extends NetMessage {
     }
 
     /**
-     * @return HashMap<Player,Integer>
+     * @return HashMap with goals done for each player
      */
     public HashMap<Player, Integer> getGoalsDone() {
         return goalsDone;
@@ -42,7 +42,7 @@ public class GameWinnersAnnouncedMessage extends NetMessage {
     }
 
     /**
-     * @return ArrayList<Player>
+     * @return ArrayList of winners
      */
     public ArrayList<Player> getWinners() {
         return winners;

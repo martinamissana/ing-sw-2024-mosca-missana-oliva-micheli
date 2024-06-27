@@ -35,12 +35,7 @@ public class Coords implements Serializable {
      */
     public int getY() { return y; }
 
-    /**
-     * Pairs of coordinates are equal to each other if and only if both
-     * the {@code X} and {@code Y} values of the first pair are equal to the second pair's
-     * @param o object to compare with the caller
-     * @return boolean
-     */
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

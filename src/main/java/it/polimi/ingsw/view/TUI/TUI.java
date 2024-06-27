@@ -30,6 +30,10 @@ import java.util.concurrent.Semaphore;
 
 import static java.lang.System.exit;
 
+/**
+ * Class TUI
+ * handles all TUI states
+ */
 public class TUI implements Runnable, ViewObserver {
     private View view;
     private ViewController check;
@@ -57,12 +61,8 @@ public class TUI implements Runnable, ViewObserver {
         return s.matches("-?\\d+");
     }
 
-    /**
-     * Main method
-     */
     @Override
     public void run() {
-        // printer.printLogo();
         chooseConnectionType();
 
         this.check = new ViewController(view);
@@ -77,7 +77,6 @@ public class TUI implements Runnable, ViewObserver {
                 semaphore.acquire();
 
                 while (true) {
-                    //System.out.println(cli + state);
                     in = scanner.nextLine();
                     switch (state) {
                         case MENU -> {
@@ -105,28 +104,21 @@ public class TUI implements Runnable, ViewObserver {
                                     } else {
                                         if (chatState == null) chooseInGameAction(in);
                                         else chat(in);
-                                        // not your turn
                                     }
                                 }
                             }
                         }
                     }
                 }
-            } catch (InterruptedException | IOException | ClassNotFoundException ignored) {
-               // throw new RuntimeException(e);
-            } catch (FullLobbyException | NicknameAlreadyTakenException ignored) {}
+            } catch (InterruptedException | IOException | ClassNotFoundException | FullLobbyException |
+                     NicknameAlreadyTakenException ignored) {
+            }
         }).start();
 
     }
 
-    /**
-     * Update main method when receiving a message
-     * @param message       the message that they have to handle
-     * @throws IOException  produced by failed or interrupted I/O operations
-     */
     @Override
     public synchronized void update(NetMessage message) throws IOException {
-        // System.out.println(message.getClass().getName());
         switch (message) {
 
             // Login messages ·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~·~
@@ -252,7 +244,6 @@ public class TUI implements Runnable, ViewObserver {
 
             case TurnChangedMessage ignored -> {
                 if (view.isLastRound()) actionState = ActionState.PLAY_SELECT_CARD;
-                // System.out.println(cli + "new turn");
                 if (view.isLastRound()) System.out.println(cli + "Last round started");
                 semaphore.release();
                 printStatus();
@@ -296,7 +287,6 @@ public class TUI implements Runnable, ViewObserver {
 
             default -> {}
         }
-        //if (!message.getClass().equals(HeartBeatMessage.class)) System.out.println(message.toString());
 
     }
 
@@ -305,7 +295,6 @@ public class TUI implements Runnable, ViewObserver {
      */
     public void printStatus() {
         switch (state) {
-            // print status: prints what the player is supposed to see
             case MENU -> System.out.print(cli + "What would you like to do?"
                     + cli + "1. Create a new lobby"
                     + cli + "2. Join an open lobby"
@@ -409,7 +398,6 @@ public class TUI implements Runnable, ViewObserver {
                                 }
                             }
                         } else {
-                            //not your turn
                             switch (chatState) {
                                 case null -> {
                                     printer.printScoreboard();
@@ -484,7 +472,6 @@ public class TUI implements Runnable, ViewObserver {
 
                 System.out.print(cli + "Insert the server IP" + user);
                 String IP = scanner.nextLine();
-                // IP = "127.0.0.1";
 
                 System.out.print(cli + "Insert the server port" + user);
                 port = scanner.nextLine();

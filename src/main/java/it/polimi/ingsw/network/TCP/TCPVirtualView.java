@@ -17,6 +17,7 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 
 /**
+ * Class TCPVirtualView
  * The virtual view on the server associated with a view on the client side
  */
 public class TCPVirtualView implements Runnable, Observer {
@@ -31,7 +32,6 @@ public class TCPVirtualView implements Runnable, Observer {
 
     /**
      * Class constructor
-     *
      * @param socket the socket to communicate trough TCP
      * @param c      the linked Controller
      * @throws IOException produced by failed or interrupted I/O operations
@@ -54,8 +54,6 @@ public class TCPVirtualView implements Runnable, Observer {
     }
 
     /**
-     * getter
-     *
      * @return the object input stream used to receive the messages
      */
     public ObjectInputStream getIn() {
@@ -63,8 +61,6 @@ public class TCPVirtualView implements Runnable, Observer {
     }
 
     /**
-     * getter
-     *
      * @return the object output stream used to send the messages
      */
     public ObjectOutputStream getOut() {
@@ -72,8 +68,6 @@ public class TCPVirtualView implements Runnable, Observer {
     }
 
     /**
-     * getter
-     *
      * @return the nickname linked to the virtual view
      */
     public String getNickname() {
@@ -81,8 +75,6 @@ public class TCPVirtualView implements Runnable, Observer {
     }
 
     /**
-     * getter
-     *
      * @return the lobby/game ID linked to the virtual view
      */
     public Integer getID() {
@@ -90,8 +82,6 @@ public class TCPVirtualView implements Runnable, Observer {
     }
 
     /**
-     * setter
-     *
      * @param ID the lobby/game ID assigned to the virtual view
      */
     public void setID(Integer ID) {
@@ -99,8 +89,6 @@ public class TCPVirtualView implements Runnable, Observer {
     }
 
     /**
-     * setter
-     *
      * @param nickname the nickname assigned to the virtual view
      */
     public void setNickname(String nickname) {

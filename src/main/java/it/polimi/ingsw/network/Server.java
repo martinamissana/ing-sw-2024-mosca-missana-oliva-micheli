@@ -12,6 +12,7 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 
 /**
+ * Class Server
  * The main class that starts a thread both for the TCP server and the RMI server
  */
 public class Server {

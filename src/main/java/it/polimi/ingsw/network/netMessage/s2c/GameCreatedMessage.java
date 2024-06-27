@@ -72,14 +72,14 @@ public class GameCreatedMessage extends NetMessage {
     }
 
     /**
-     * @return HashMap<Player, Integer>
+     * @return HashMap with score of each player
      */
     public HashMap<Player, Integer> getScoreboard() {
         return scoreboard;
     }
 
     /**
-     * @return HashMap<DeckBufferType, DeckBuffer>
+     * @return HashMap of deckBuffers
      */
     public HashMap<DeckBufferType, DeckBuffer> getDeckBuffers() {
         return deckBuffers;

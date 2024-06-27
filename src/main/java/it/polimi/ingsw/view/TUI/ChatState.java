@@ -1,6 +1,7 @@
 package it.polimi.ingsw.view.TUI;
 
 /**
+ * Class ChatState
  * States of chat actions used in TUI
  */
 public enum ChatState {
@@ -17,7 +18,6 @@ public enum ChatState {
     }
 
     /**
-     * Setter
      * @param num used to save integers without creating global variables in TUI
      */
     public void setNum(int num) {
@@ -25,7 +25,6 @@ public enum ChatState {
     }
 
     /**
-     * Getter
      * @return stored integer
      */
     public int getNum() {

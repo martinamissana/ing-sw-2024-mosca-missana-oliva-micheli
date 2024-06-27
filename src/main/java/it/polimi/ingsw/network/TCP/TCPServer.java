@@ -10,7 +10,8 @@ import java.util.concurrent.Executors;
 
 
 /**
- * Class of the server that handles all the TCP connections
+ * Class TCPServer
+ * Server that handles all the TCP connections
  */
 public class TCPServer {
     private final int port;
