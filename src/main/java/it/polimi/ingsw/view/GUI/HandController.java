@@ -2,6 +2,7 @@ package it.polimi.ingsw.view.GUI;
 
 import it.polimi.ingsw.model.card.CardSide;
 import it.polimi.ingsw.model.card.StarterCard;
+import it.polimi.ingsw.model.game.Action;
 import it.polimi.ingsw.model.game.GamePhase;
 import it.polimi.ingsw.network.netMessage.NetMessage;
 import it.polimi.ingsw.network.netMessage.s2c.*;
@@ -23,6 +24,8 @@ import java.io.IOException;
 public class HandController implements ViewObserver {
     private View view;
     private Integer cardPlacedPos = null;
+    private Double yLayout;
+
 
     @FXML
     private Pane card0;
@@ -57,6 +60,10 @@ public class HandController implements ViewObserver {
                 if (m.getNickname().equals(view.getNickname())) {
                     if (!(m.getCard() instanceof StarterCard)) {
                         Platform.runLater(() -> {
+                            card0.setLayoutY(yLayout);
+                            card1.setLayoutY(yLayout);
+                            card2.setLayoutY(yLayout);
+                            cardPlacedPos = null;
                             card0.getChildren().clear();
                             card1.getChildren().clear();
                             card2.getChildren().clear();
@@ -91,6 +98,7 @@ public class HandController implements ViewObserver {
                         flip0.setVisible(true);
                         flip1.setVisible(true);
                         flip2.setVisible(true);
+                        yLayout=card0.getLayoutY();
                     });
                 }
             }
@@ -103,9 +111,9 @@ public class HandController implements ViewObserver {
 
     /**
      * gets the selected card
-     * @return int
+     * @return Integer
      */
-    public int getCardPlacedPos() {
+    public Integer getCardPlacedPos() {
         return cardPlacedPos;
     }
 
@@ -115,16 +123,32 @@ public class HandController implements ViewObserver {
      * @param mouseEvent identifies the clicked card
      */
     public void playCard(MouseEvent mouseEvent) {
+        if(!view.getGamePhase().equals(GamePhase.PLAYING_GAME) || !view.isYourTurn() || !view.getAction().equals(Action.PLAY)) return;
         if (mouseEvent.getSource().equals(card0)) {
-            cardPlacedPos = 0;
+            if(card0.getLayoutY()==yLayout){
+                cardPlacedPos=0;
+                card0.setLayoutY(yLayout-10);
+                card1.setLayoutY(yLayout);
+                card2.setLayoutY(yLayout);
+            }
             return;
         }
         if (mouseEvent.getSource().equals(card1)) {
-            cardPlacedPos = 1;
+            if(card1.getLayoutY()==yLayout){
+                cardPlacedPos = 1;
+                card0.setLayoutY(yLayout);
+                card1.setLayoutY(yLayout-10);
+                card2.setLayoutY(yLayout);
+            }
             return;
         }
         if (mouseEvent.getSource().equals(card2)) {
-            cardPlacedPos = 2;
+            if(card2.getLayoutY()==yLayout){
+                cardPlacedPos = 2;
+                card0.setLayoutY(yLayout);
+                card1.setLayoutY(yLayout);
+                card2.setLayoutY(yLayout-10);
+            }
         }
 
     }

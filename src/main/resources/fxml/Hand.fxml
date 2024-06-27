@@ -11,6 +11,6 @@
       <Button fx:id="flip1" layoutX="200.0" layoutY="96.0" mnemonicParsing="false" onMouseClicked="#flip" text="Flip" />
       <Button fx:id="flip0" layoutX="42.0" layoutY="96.0" mnemonicParsing="false" onMouseClicked="#flip" text="Flip" />
       <Button fx:id="flip2" layoutX="357.0" layoutY="96.0" mnemonicParsing="false" onMouseClicked="#flip" text="Flip" />
-      <Label layoutX="200.0" layoutY="5.0" text="HAND" />
+      <Label layoutX="200.0" layoutY="-9.0" text="HAND" />
    </children>
 </AnchorPane>
