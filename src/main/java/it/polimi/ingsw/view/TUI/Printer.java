@@ -8,10 +8,7 @@ import it.polimi.ingsw.model.commonItem.Resource;
 import it.polimi.ingsw.model.deck.DeckBuffer;
 import it.polimi.ingsw.model.deck.DeckBufferType;
 import it.polimi.ingsw.model.game.Lobby;
-import it.polimi.ingsw.model.goal.DiagonalGoal;
-import it.polimi.ingsw.model.goal.Goal;
-import it.polimi.ingsw.model.goal.L_ShapeGoal;
-import it.polimi.ingsw.model.goal.ResourceGoal;
+import it.polimi.ingsw.model.goal.*;
 import it.polimi.ingsw.model.player.*;
 import it.polimi.ingsw.view.View;
 
@@ -187,7 +184,7 @@ public class Printer {
             
             Insect and Inkwell are distinguished by the background (Inkwell has a gold background)
             
-            GOALS:
+            GOLDEN POINTS:
              2xC - 2 points for each corner covered by the card when is placed
              1xI / 1xM / 1xQ - 1 point for each gold resource you have on field after positioning the card
             
@@ -785,16 +782,74 @@ public class Printer {
      * Prints a string representing the goal
      * @param goal goal to be printed
      */
-    public void printGoal(Goal goal) {          // TODO: L-Shape and Diagonal as a mini printField?
+    public void printGoal(Goal goal) {
         if (goal.getClass().equals(L_ShapeGoal.class)) {
-            System.out.print(cli + "L-Shape Goal " + goal.getGoalID() + ": " + ((L_ShapeGoal) goal).getType() + " with two " + ((L_ShapeGoal) goal).getMainColor() + " and " + ((L_ShapeGoal) goal).getSecondaryColor() + ". Points = " + goal.getPoints());
-        } else if (goal.getClass().equals(DiagonalGoal.class)) {
-            System.out.print(cli + "Diagonal Goal " + goal.getGoalID() + ": " + ((DiagonalGoal) goal).getType() + " of " + ((DiagonalGoal) goal).getColor() + ". Points = " + goal.getPoints());
-        } else {
-            System.out.print(cli + "Resource Goal " + goal.getGoalID() + ": " + goal.getPoints() + " points if you have:");
-            for (ItemBox item : ((ResourceGoal) goal).getResourceList()) {
-                System.out.print(" " + item);
+            System.out.print(cli + "#" + goal.getGoalID() + ": " + goal.getPoints() + " points for each of these patterns:");
+
+            switch (((L_ShapeGoal) goal).getType()) {
+                case UP_RIGHT -> System.out.println(cli + "     " + ItemsToColor(((L_ShapeGoal) goal).getSecondaryColor()) + "       " + Color.reset +
+                                                    cli + ItemsToColor(((L_ShapeGoal) goal).getMainColor()) + "     " + ItemsToColor(((L_ShapeGoal) goal).getSecondaryColor()) + "       " + Color.reset +
+                                                    cli + ItemsToColor(((L_ShapeGoal) goal).getMainColor()) + "       " + Color.reset +
+                                                    cli +
+                                                    cli + ItemsToColor(((L_ShapeGoal) goal).getMainColor()) + "       " + Color.reset +
+                                                    cli + ItemsToColor(((L_ShapeGoal) goal).getMainColor()) + "       " + Color.reset
+                );
+
+                case UP_LEFT -> System.out.println(cli + ItemsToColor(((L_ShapeGoal) goal).getSecondaryColor()) + "       " + Color.reset +
+                        cli + ItemsToColor(((L_ShapeGoal) goal).getSecondaryColor()) + "       " + ItemsToColor(((L_ShapeGoal) goal).getMainColor()) + "     " + Color.reset +
+                        cli + "     " + ItemsToColor(((L_ShapeGoal) goal).getMainColor()) + "       " + Color.reset +
+                        cli +
+                        cli + "     " + ItemsToColor(((L_ShapeGoal) goal).getMainColor()) + "       " + Color.reset +
+                        cli + "     " + ItemsToColor(((L_ShapeGoal) goal).getMainColor()) + "       " + Color.reset
+                );
+
+                case DOWN_RIGHT -> System.out.println(  cli + ItemsToColor(((L_ShapeGoal) goal).getMainColor()) + "       " + Color.reset +
+                                                        cli + ItemsToColor(((L_ShapeGoal) goal).getMainColor()) + "       " + Color.reset +
+                                                        cli +
+                                                        cli + ItemsToColor(((L_ShapeGoal) goal).getMainColor()) + "       " + Color.reset +
+                                                        cli + ItemsToColor(((L_ShapeGoal) goal).getMainColor()) + "     " + ItemsToColor(((L_ShapeGoal) goal).getSecondaryColor()) + "       " + Color.reset +
+                                                        cli + "     " + ItemsToColor(((L_ShapeGoal) goal).getSecondaryColor()) + "       " + Color.reset
+                );
+
+                case DOWN_LEFT -> System.out.println(   cli + "     " + ItemsToColor(((L_ShapeGoal) goal).getMainColor()) + "       " + Color.reset +
+                                                        cli + "     " + ItemsToColor(((L_ShapeGoal) goal).getMainColor()) + "       " + Color.reset +
+                                                        cli +
+                                                        cli + "     " + ItemsToColor(((L_ShapeGoal) goal).getMainColor()) + "       " + Color.reset +
+                                                        cli + ItemsToColor(((L_ShapeGoal) goal).getSecondaryColor()) + "       " + ItemsToColor(((L_ShapeGoal) goal).getMainColor()) + "     " + Color.reset +
+                                                        cli + ItemsToColor(((L_ShapeGoal) goal).getSecondaryColor()) + "       " + Color.reset
+                );
             }
+
+        } else if (goal.getClass().equals(DiagonalGoal.class)) {
+            System.out.print(cli + "#" + goal.getGoalID() + ": " + goal.getPoints() + " points for each of these patterns:");
+
+            if (((DiagonalGoal) goal).getType() == DiagonalGoalType.UPWARD) {
+                System.out.println( cli + "          " + ItemsToColor(((DiagonalGoal) goal).getColor()) + "       " + Color.reset +
+                                    cli + "     " + ItemsToColor(((DiagonalGoal) goal).getColor()) + "            " + Color.reset +
+                                    cli + ItemsToColor(((DiagonalGoal) goal).getColor()) + "            " + Color.reset +
+                                    cli + ItemsToColor(((DiagonalGoal) goal).getColor()) + "       " + Color.reset
+                );
+            }
+            else System.out.println(cli + ItemsToColor(((DiagonalGoal) goal).getColor()) + "       " + Color.reset +
+                                    cli + ItemsToColor(((DiagonalGoal) goal).getColor()) + "            " + Color.reset +
+                                    cli + "     " + ItemsToColor(((DiagonalGoal) goal).getColor()) + "            " + Color.reset +
+                                    cli + "          " + ItemsToColor(((DiagonalGoal) goal).getColor()) + "       " + Color.reset
+            );
+        } else {
+            System.out.print(cli + "#" + goal.getGoalID() + ": " + goal.getPoints() + " points if you have: ");
+            for (ItemBox item : ((ResourceGoal) goal).getResourceList()) {
+                System.out.print(ItemsToColor(item) + switch (item) {
+                    case Resource.INKWELL, Kingdom.INSECT -> " I ";
+                    case Resource.QUILL -> " Q ";
+                    case Resource.MANUSCRIPT -> " M ";
+                    case Kingdom.ANIMAL -> " A ";
+                    case Kingdom.FUNGI -> " F ";
+                    case Kingdom.PLANT -> " P ";
+                    case null -> throw new NullPointerException();
+                    default -> "";
+                } + Color.reset);
+            }
+            System.out.println();
         }
     }
 }

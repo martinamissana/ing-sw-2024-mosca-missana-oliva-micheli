@@ -15,7 +15,7 @@
             "SOUTH": "EMPTY"
         },
         "kingdom": "FUNGI",
-        "points": 1,
+        "directPoints": 1,
         "requirements": {
             "ANIMAL": 1,
             "FUNGI": 2
@@ -39,7 +39,7 @@
             "SOUTH": "EMPTY"
         },
         "kingdom": "FUNGI",
-        "points": 1,
+        "directPoints": 1,
         "requirements": {
             "PLANT": 1,
             "FUNGI": 2
@@ -63,7 +63,7 @@
             "SOUTH": "EMPTY"
         },
         "kingdom": "FUNGI",
-        "points": 1,
+        "directPoints": 1,
         "requirements": {
             "INSECT": 1,
             "FUNGI": 2
@@ -87,7 +87,7 @@
             "SOUTH": "EMPTY"
         },
         "kingdom": "FUNGI",
-        "points": 2,
+        "directPoints": 2,
         "requirements": {
             "ANIMAL": 1,
             "FUNGI": 3
@@ -110,7 +110,7 @@
             "SOUTH": "EMPTY"
         },
         "kingdom": "FUNGI",
-        "points": 2,
+        "directPoints": 2,
         "requirements": {
             "PLANT": 1,
             "FUNGI": 3
@@ -133,7 +133,7 @@
             "SOUTH": "EMPTY"
         },
         "kingdom": "FUNGI",
-        "points": 2,
+        "directPoints": 2,
         "requirements": {
             "INSECT": 1,
             "FUNGI": 3
@@ -156,7 +156,7 @@
             "SOUTH": "EMPTY"
         },
         "kingdom": "FUNGI",
-        "points": 3,
+        "directPoints": 3,
         "requirements": {
             "FUNGI": 3
         },
@@ -178,7 +178,7 @@
             "SOUTH": "EMPTY"
         },
         "kingdom": "FUNGI",
-        "points": 3,
+        "directPoints": 3,
         "requirements": {
             "FUNGI": 3
         },
@@ -200,7 +200,7 @@
             "SOUTH": "EMPTY"
         },
         "kingdom": "FUNGI",
-        "points": 3,
+        "directPoints": 3,
         "requirements": {
             "FUNGI": 3
         },
@@ -222,7 +222,7 @@
             "SOUTH": "EMPTY"
         },
         "kingdom": "FUNGI",
-        "points": 5,
+        "directPoints": 5,
         "requirements": {
             "FUNGI": 5
         },
@@ -244,7 +244,7 @@
             "SOUTH": "EMPTY"
         },
         "kingdom": "PLANT",
-        "points": 1,
+        "directPoints": 1,
         "requirements": {
             "PLANT": 2,
             "INSECT": 1
@@ -268,7 +268,7 @@
             "SOUTH": "EMPTY"
         },
         "kingdom": "PLANT",
-        "points": 1,
+        "directPoints": 1,
         "requirements": {
             "PLANT": 2,
             "FUNGI": 1
@@ -292,7 +292,7 @@
             "SOUTH": "EMPTY"
         },
         "kingdom": "PLANT",
-        "points": 1,
+        "directPoints": 1,
         "requirements": {
             "PLANT": 2,
             "ANIMAL": 1
@@ -316,7 +316,7 @@
             "SOUTH": "EMPTY"
         },
         "kingdom": "PLANT",
-        "points": 2,
+        "directPoints": 2,
         "requirements": {
             "PLANT": 3,
             "INSECT": 1
@@ -339,7 +339,7 @@
             "SOUTH": "EMPTY"
         },
         "kingdom": "PLANT",
-        "points": 2,
+        "directPoints": 2,
         "requirements": {
             "PLANT": 3,
             "ANIMAL": 1
@@ -362,7 +362,7 @@
             "SOUTH": "EMPTY"
         },
         "kingdom": "PLANT",
-        "points": 2,
+        "directPoints": 2,
         "requirements": {
             "PLANT": 3,
             "FUNGI": 1
@@ -385,7 +385,7 @@
             "SOUTH": "EMPTY"
         },
         "kingdom": "PLANT",
-        "points": 3,
+        "directPoints": 3,
         "requirements": {
             "PLANT": 3
         },
@@ -407,7 +407,7 @@
             "SOUTH": "EMPTY"
         },
         "kingdom": "PLANT",
-        "points": 3,
+        "directPoints": 3,
         "requirements": {
             "PLANT": 3
         },
@@ -429,7 +429,7 @@
             "SOUTH": "EMPTY"
         },
         "kingdom": "PLANT",
-        "points": 3,
+        "directPoints": 3,
         "requirements": {
             "PLANT": 3
         },
@@ -451,7 +451,7 @@
             "SOUTH": "EMPTY"
         },
         "kingdom": "PLANT",
-        "points": 5,
+        "directPoints": 5,
         "requirements": {
             "PLANT": 5
         },
@@ -473,7 +473,7 @@
             "SOUTH": "EMPTY"
         },
         "kingdom": "ANIMAL",
-        "points": 1,
+        "directPoints": 1,
         "requirements": {
             "ANIMAL": 2,
             "INSECT": 1
@@ -497,7 +497,7 @@
             "SOUTH": "EMPTY"
         },
         "kingdom": "ANIMAL",
-        "points": 1,
+        "directPoints": 1,
         "requirements": {
             "PLANT": 1,
             "ANIMAL": 2
@@ -521,7 +521,7 @@
             "SOUTH": "EMPTY"
         },
         "kingdom": "ANIMAL",
-        "points": 1,
+        "directPoints": 1,
         "requirements": {
             "ANIMAL": 2,
             "FUNGI": 1
@@ -545,7 +545,7 @@
             "SOUTH": "EMPTY"
         },
         "kingdom": "ANIMAL",
-        "points": 2,
+        "directPoints": 2,
         "requirements": {
             "ANIMAL": 3,
             "INSECT": 1
@@ -568,7 +568,7 @@
             "SOUTH": "EMPTY"
         },
         "kingdom": "ANIMAL",
-        "points": 2,
+        "directPoints": 2,
         "requirements": {
             "ANIMAL": 3,
             "FUNGI": 1
@@ -591,7 +591,7 @@
             "SOUTH": "EMPTY"
         },
         "kingdom": "ANIMAL",
-        "points": 2,
+        "directPoints": 2,
         "requirements": {
             "PLANT": 1,
             "ANIMAL": 3
@@ -614,7 +614,7 @@
             "SOUTH": "EMPTY"
         },
         "kingdom": "ANIMAL",
-        "points": 3,
+        "directPoints": 3,
         "requirements": {
             "ANIMAL": 3
         },
@@ -636,7 +636,7 @@
             "SOUTH": "EMPTY"
         },
         "kingdom": "ANIMAL",
-        "points": 3,
+        "directPoints": 3,
         "requirements": {
             "ANIMAL": 3
         },
@@ -658,7 +658,7 @@
             "SOUTH": "EMPTY"
         },
         "kingdom": "ANIMAL",
-        "points": 3,
+        "directPoints": 3,
         "requirements": {
             "ANIMAL": 3
         },
@@ -680,7 +680,7 @@
             "SOUTH": "EMPTY"
         },
         "kingdom": "ANIMAL",
-        "points": 5,
+        "directPoints": 5,
         "requirements": {
             "ANIMAL": 5
         },
@@ -702,7 +702,7 @@
             "SOUTH": "EMPTY"
         },
         "kingdom": "INSECT",
-        "points": 1,
+        "directPoints": 1,
         "requirements": {
             "PLANT": 1,
             "INSECT": 2
@@ -726,7 +726,7 @@
             "SOUTH": "EMPTY"
         },
         "kingdom": "INSECT",
-        "points": 1,
+        "directPoints": 1,
         "requirements": {
             "ANIMAL": 1,
             "INSECT": 2
@@ -750,7 +750,7 @@
             "SOUTH": "EMPTY"
         },
         "kingdom": "INSECT",
-        "points": 1,
+        "directPoints": 1,
         "requirements": {
             "INSECT": 2,
             "FUNGI": 1
@@ -774,7 +774,7 @@
             "SOUTH": "EMPTY"
         },
         "kingdom": "INSECT",
-        "points": 2,
+        "directPoints": 2,
         "requirements": {
             "ANIMAL": 1,
             "INSECT": 3
@@ -797,7 +797,7 @@
             "SOUTH": "EMPTY"
         },
         "kingdom": "INSECT",
-        "points": 2,
+        "directPoints": 2,
         "requirements": {
             "PLANT": 1,
             "INSECT": 3
@@ -820,7 +820,7 @@
             "SOUTH": "EMPTY"
         },
         "kingdom": "INSECT",
-        "points": 2,
+        "directPoints": 2,
         "requirements": {
             "INSECT": 3,
             "FUNGI": 1
@@ -843,7 +843,7 @@
             "SOUTH": "EMPTY"
         },
         "kingdom": "INSECT",
-        "points": 3,
+        "directPoints": 3,
         "requirements": {
             "INSECT": 3
         },
@@ -865,7 +865,7 @@
             "SOUTH": "EMPTY"
         },
         "kingdom": "INSECT",
-        "points": 3,
+        "directPoints": 3,
         "requirements": {
             "INSECT": 3
         },
@@ -887,7 +887,7 @@
             "SOUTH": "EMPTY"
         },
         "kingdom": "INSECT",
-        "points": 3,
+        "directPoints": 3,
         "requirements": {
             "INSECT": 3
         },
@@ -909,7 +909,7 @@
             "SOUTH": "EMPTY"
         },
         "kingdom": "INSECT",
-        "points": 5,
+        "directPoints": 5,
         "requirements": {
             "INSECT": 5
         },
