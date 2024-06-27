@@ -15,7 +15,7 @@
                             <children>
                                 <ListView fx:id="globalMessages" prefHeight="150.0" prefWidth="350.0" />
                                 <TextField fx:id="globalText" layoutX="2.0" layoutY="152.0" prefHeight="25.0" prefWidth="320.0" promptText="Write a message" />
-                                <Button fx:id="globalSendButton" defaultButton="true" layoutX="324.0" layoutY="152.0" maxWidth="25.0" minWidth="25.0" mnemonicParsing="false" onMouseClicked="#sendMessage" prefHeight="25.0" prefWidth="25.0">
+                                <Button fx:id="globalSendButton" layoutX="324.0" layoutY="152.0" maxWidth="25.0" minWidth="25.0" mnemonicParsing="false" onMouseClicked="#sendMessage" prefHeight="25.0" prefWidth="25.0">
                                     <graphic>
                                         <ImageView fitHeight="15.0" fitWidth="15.0" layoutX="5.0" layoutY="5.0" pickOnBounds="true" preserveRatio="true">
                                             <image>
@@ -37,7 +37,7 @@
                             <children>
                                 <ListView fx:id="p1Messages" prefHeight="150.0" prefWidth="350.0" />
                                 <TextField fx:id="p1Text" layoutX="2.0" layoutY="152.0" prefHeight="25.0" prefWidth="320.0" promptText="Write a message" />
-                                <Button fx:id="p1SendButton" defaultButton="true" layoutX="324.0" layoutY="152.0" maxWidth="25.0" minWidth="25.0" mnemonicParsing="false" onMouseClicked="#sendMessage" prefHeight="25.0" prefWidth="25.0">
+                                <Button fx:id="p1SendButton" layoutX="324.0" layoutY="152.0" maxWidth="25.0" minWidth="25.0" mnemonicParsing="false" onMouseClicked="#sendMessage" prefHeight="25.0" prefWidth="25.0">
                                     <graphic>
                                         <ImageView fitHeight="15.0" fitWidth="15.0" layoutX="5.0" layoutY="5.0" pickOnBounds="true" preserveRatio="true">
                                             <image>
@@ -59,7 +59,7 @@
                             <children>
                                 <ListView fx:id="p2Messages" prefHeight="150.0" prefWidth="350.0" />
                                 <TextField fx:id="p2Text" layoutX="2.0" layoutY="152.0" prefHeight="25.0" prefWidth="320.0" promptText="Write a message" />
-                                <Button fx:id="p2SendButton" defaultButton="true" layoutX="324.0" layoutY="152.0" maxWidth="25.0" minWidth="25.0" mnemonicParsing="false" onMouseClicked="#sendMessage" prefHeight="25.0" prefWidth="25.0">
+                                <Button fx:id="p2SendButton" layoutX="324.0" layoutY="152.0" maxWidth="25.0" minWidth="25.0" mnemonicParsing="false" onMouseClicked="#sendMessage" prefHeight="25.0" prefWidth="25.0">
                                     <graphic>
                                         <ImageView fitHeight="15.0" fitWidth="15.0" layoutX="5.0" layoutY="5.0" pickOnBounds="true" preserveRatio="true">
                                             <image>
@@ -81,7 +81,7 @@
                             <children>
                                 <ListView fx:id="p3Messages" prefHeight="150.0" prefWidth="350.0" />
                                 <TextField fx:id="p3Text" layoutX="2.0" layoutY="152.0" prefHeight="25.0" prefWidth="320.0" promptText="Write a message" />
-                                <Button defaultButton="true" layoutX="324.0" layoutY="152.0" maxWidth="25.0" minWidth="25.0" mnemonicParsing="false" onMouseClicked="#sendMessage" prefHeight="25.0" prefWidth="25.0">
+                                <Button layoutX="324.0" layoutY="152.0" maxWidth="25.0" minWidth="25.0" mnemonicParsing="false" onMouseClicked="#sendMessage" prefHeight="25.0" prefWidth="25.0">
                                     <graphic>
                                         <ImageView fitHeight="15.0" fitWidth="15.0" layoutX="5.0" layoutY="5.0" pickOnBounds="true" preserveRatio="true">
                                             <image>

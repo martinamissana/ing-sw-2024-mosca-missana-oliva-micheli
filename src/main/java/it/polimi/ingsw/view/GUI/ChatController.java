@@ -6,6 +6,7 @@ import it.polimi.ingsw.model.chat.Message;
 import it.polimi.ingsw.model.exceptions.GameDoesNotExistException;
 import it.polimi.ingsw.model.exceptions.LobbyDoesNotExistException;
 import it.polimi.ingsw.model.game.Lobby;
+import it.polimi.ingsw.model.player.Pawn;
 import it.polimi.ingsw.model.player.Player;
 import it.polimi.ingsw.network.netMessage.NetMessage;
 import it.polimi.ingsw.network.netMessage.c2s.LobbyJoinedMessage;
@@ -20,6 +21,8 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.shape.Circle;
+import javafx.scene.text.Text;
+import javafx.scene.text.TextFlow;
 
 import java.io.IOException;
 
@@ -47,25 +50,25 @@ public class ChatController implements ViewObserver{
     @FXML
     private Circle newGlobalMessage;
     @FXML
-    private ListView<Label> globalMessages;
+    private ListView<TextFlow> globalMessages;
     @FXML
     private TextField globalText;
     @FXML
     private Circle newMessage1;
     @FXML
-    private ListView<Label> p1Messages;
+    private ListView<TextFlow> p1Messages;
     @FXML
     private TextField p1Text;
     @FXML
     private Circle newMessage2;
     @FXML
-    private ListView<Label> p2Messages;
+    private ListView<TextFlow> p2Messages;
     @FXML
     private TextField p2Text;
     @FXML
     private Circle newMessage3;
     @FXML
-    private ListView<Label> p3Messages;
+    private ListView<TextFlow> p3Messages;
     @FXML
     private TextField p3Text;
 
@@ -147,30 +150,44 @@ public class ChatController implements ViewObserver{
     }
 
     @Override
-    public void update(NetMessage message) throws IOException {     // TODO: Default button + slider to 100% + Colors on tabs
+    public void update(NetMessage message) throws IOException {
         switch (message) {
             case LobbyJoinedMessage m -> {
                 setChats();
-                Platform.runLater(() -> globalMessages.getItems().add(new Label(m.getPlayer().getNickname() + " joined the lobby")));
+                TextFlow text = new TextFlow();
+                text.getChildren().add(new Text(m.getPlayer().getNickname() + " joined the lobby"));
+                Platform.runLater(() -> globalMessages.getItems().add(text));
             }
             case LobbyLeftMessage m -> {
                 setChats();
-                Platform.runLater(() -> globalMessages.getItems().add(new Label(m.getPlayer().getNickname() + " left the lobby")));
+                TextFlow text = new TextFlow();
+                text.getChildren().add(new Text(m.getPlayer().getNickname() + " left the lobby"));
+                Platform.runLater(() -> globalMessages.getItems().add(text));
             }
             case ChatMessageAddedMessage m -> Platform.runLater(() -> {
-                Label text = new Label(m.getM().getSender().getNickname() + ": " + m.getM().getText());
+                TextFlow text = generateText(m.getM());
 
                 if (m.getM().isGlobal()) {
                     globalMessages.getItems().add(text);
                     if (!global.isSelected()) newGlobalMessage.setVisible(true);
+                    globalMessages.scrollTo(text);
                 }
                 else {
                     if (viewSingleton.getView().getPlayer().equals(m.getM().getSender())) {
                         for (Tab t : chats.getTabs()) {
                             if (m.getM().getReceiver().getNickname().equals(t.getText())) {
-                                if (t.equals(p1)) p1Messages.getItems().add(text);
-                                else if (t.equals(p2)) p2Messages.getItems().add(text);
-                                else p3Messages.getItems().add(text);
+                                if (t.equals(p1)) {
+                                    p1Messages.getItems().add(text);
+                                    p1Messages.scrollTo(text);
+                                }
+                                else if (t.equals(p2)) {
+                                    p2Messages.getItems().add(text);
+                                    p2Messages.scrollTo(text);
+                                }
+                                else {
+                                    p3Messages.getItems().add(text);
+                                    p3Messages.scrollTo(text);
+                                }
                             }
                         }
                     }
@@ -179,14 +196,17 @@ public class ChatController implements ViewObserver{
                             if (m.getM().getSender().getNickname().equals(t.getText())) {
                                 if (t.equals(p1)) {
                                     p1Messages.getItems().add(text);
+                                    p1Messages.scrollTo(text);
                                     if (!p1.isSelected()) newMessage1.setVisible(true);
                                 }
                                 else if (t.equals(p2)) {
                                     p2Messages.getItems().add(text);
+                                    p2Messages.scrollTo(text);
                                     if (!p2.isSelected()) newMessage2.setVisible(true);
                                 }
                                 else {
                                     p3Messages.getItems().add(text);
+                                    p3Messages.scrollTo(text);
                                     if (!p3.isSelected()) newMessage3.setVisible(true);
                                 }
                             }
@@ -209,5 +229,29 @@ public class ChatController implements ViewObserver{
         if (event.getSource().equals(p1) && newMessage1.isVisible()) newMessage1.setVisible(false);
         if (event.getSource().equals(p2) && newMessage2.isVisible()) newMessage2.setVisible(false);
         if (event.getSource().equals(p3) && newMessage3.isVisible()) newMessage2.setVisible(false);
+    }
+
+    /**
+     * Generate text with colored player's name
+     * @param m message sent by player
+     * @return TextFlow of colored message
+     */
+    public TextFlow generateText(Message m) {
+        TextFlow textFlow = new TextFlow();
+        Text nickname = new Text(m.getSender().getNickname() + ": ");
+
+        Pawn pawn = null;
+        for (Player p : lobby.getPlayers()) {
+            if (p.equals(m.getSender())) pawn = p.getPawn();
+        }
+
+        switch (pawn) {
+            case YELLOW -> nickname.setStyle("-fx-fill: gold;");
+            case null -> {}
+            default -> nickname.setStyle("-fx-fill: " + pawn.toString().toLowerCase() + ";");
+        }
+
+        textFlow.getChildren().addAll(nickname, new Text(m.getText()));
+        return textFlow;
     }
 }
