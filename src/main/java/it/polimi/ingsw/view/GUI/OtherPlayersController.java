@@ -16,6 +16,10 @@ import javafx.scene.layout.Pane;
 
 import java.io.IOException;
 
+/**
+ * Class OtherPlayersController
+ * allows the player to visualize other players' field
+ */
 public class OtherPlayersController implements ViewObserver {
 
     private String nickname;
@@ -27,6 +31,11 @@ public class OtherPlayersController implements ViewObserver {
     private int starterX = 4;
     private int starterY = 4;
 
+    /**
+     * links player and field
+     * @param nickname name of the player
+     * @param lobby the lobby the player is in
+     */
     public void setPlayer(String nickname, Lobby lobby) {
         this.nickname = nickname;
         for(Player p : lobby.getPlayers()) {
@@ -36,15 +45,25 @@ public class OtherPlayersController implements ViewObserver {
         }
     }
 
+    /**
+     * @param view the view to observe
+     */
     public void setView(View view) {
         this.view = view;
         this.view.addObserver(this);
     }
 
+    /**
+     * allows scoreboard buttons to set the pane as visible
+     * @param visible the pane used to visualize the fields
+     */
     public void setVisible(Pane visible) {
         this.visible = visible;
     }
 
+    /**
+     * Method used to add a row at the top in the grid pane when the field gets bigger
+     */
     private void shiftRows() {
         fieldGrid.getChildren().forEach(node -> {
             Integer row = GridPane.getRowIndex(node);
@@ -54,6 +73,9 @@ public class OtherPlayersController implements ViewObserver {
         });
     }
 
+    /**
+     * Method used to add a column to the left in the grid pane when the field gets bigger
+     */
     private void shiftColumns() {
         fieldGrid.getChildren().forEach(node -> {
             Integer column = GridPane.getColumnIndex(node);
@@ -96,6 +118,9 @@ public class OtherPlayersController implements ViewObserver {
         }
     }
 
+    /**
+     * sets the pane as not visible
+     */
     public void close() {
         visible.getChildren().clear();
         visible.setVisible(false);

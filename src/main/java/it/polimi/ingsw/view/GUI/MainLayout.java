@@ -17,6 +17,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+/**
+ * Class MainLayout
+ * handles the scene shown based on the game phase
+ */
 public class MainLayout implements ViewObserver {
     @FXML
     private BorderPane layout;
@@ -26,10 +30,17 @@ public class MainLayout implements ViewObserver {
     private HashMap<Player, Integer> goalsDone;
     private final ArrayList<Player> winners = new ArrayList<>();
 
+    /**
+     * @param stage the main stage
+     */
     public void setStage(Stage stage) {
         this.stage = stage;
     }
 
+    /**
+     * handles the scene changing
+     * @param fxmlPath fxml file to load
+     */
     public void setScene(String fxmlPath) {
         Platform.runLater(() -> {
             try {
@@ -51,6 +62,9 @@ public class MainLayout implements ViewObserver {
         });
     }
 
+    /**
+     * adds top bar and sets background color
+     */
     public void setStyle() {
         stage.initStyle(StageStyle.UNDECORATED);
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/TopBar.fxml"));

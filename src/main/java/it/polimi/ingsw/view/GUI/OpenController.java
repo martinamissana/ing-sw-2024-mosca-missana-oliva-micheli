@@ -16,19 +16,19 @@ import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.fxml.Initializable;
 import javafx.scene.control.*;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 
 import java.io.IOException;
-import java.net.URL;
 import java.util.HashMap;
-import java.util.ResourceBundle;
 import java.util.concurrent.Semaphore;
 
-public class OpenController implements ViewObserver, Initializable {
+/**
+ * Class OpenController
+ * handles main menu screen
+ */
+public class OpenController implements ViewObserver {
     @FXML
     private MenuButton playersNumber;
     @FXML
@@ -46,13 +46,18 @@ public class OpenController implements ViewObserver, Initializable {
     private final ViewSingleton viewSingleton = ViewSingleton.getInstance();
     private final Semaphore sem = new Semaphore(0);
 
-    @Override
-    public void initialize(URL url, ResourceBundle resourceBundle) {
+    /**
+     * sets the menu screen
+     */
+    public void initialize() {
         viewSingleton.getView().addObserver(this);
         helloLabel.setText("Hello " + viewSingleton.getView().getNickname() + "!!");
         updateLobbies();
     }
 
+    /**
+     * adds and removes lobbies from list
+     */
     public void updateLobbies() {
         Platform.runLater(() -> {
             lobbies.getItems().clear();
@@ -77,12 +82,19 @@ public class OpenController implements ViewObserver, Initializable {
         });
     }
 
+    /**
+     * allows the creator of a lobby to choose the number of players
+     * @param actionEvent number selected
+     */
     public void choosePlayers(ActionEvent actionEvent) {
         if (actionEvent.getSource().equals(two)) playersNumber.setText(two.getText());
         else if (actionEvent.getSource().equals(three)) playersNumber.setText(three.getText());
         else playersNumber.setText(four.getText());
     }
 
+    /**
+     * handles lobby creation button
+     */
     public void createLobby() {
         try {
             viewSingleton.getViewController().checkCreateLobby(Integer.parseInt(playersNumber.getText()));
@@ -94,10 +106,6 @@ public class OpenController implements ViewObserver, Initializable {
         } catch (IOException | ClassNotFoundException | UnexistentUserException | InterruptedException e) {
             throw new RuntimeException(e);
         }
-    }
-
-    public void menuOptions(MouseEvent ignored) {
-        playersNumber.fire();
     }
 
     @Override

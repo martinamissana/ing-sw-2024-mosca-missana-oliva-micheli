@@ -9,8 +9,13 @@ import javafx.fxml.FXML;
 import javafx.scene.layout.Pane;
 
 import java.io.IOException;
+import java.util.Objects;
 
 
+/**
+ * Class GoalsController
+ * used to visualize the goals that the player should complete
+ */
 public class GoalsController implements ViewObserver {
 
     private View view;
@@ -22,12 +27,19 @@ public class GoalsController implements ViewObserver {
     @FXML
     private Pane secretGoal;
 
+    /**
+     * sets the observable view and initializes the common goals
+     * @param view the observable view
+     */
     public void setView(View view) {
         this.view = view;
         view.addObserver(this);
         setCommonGoals();
     }
 
+    /**
+     * loads the images of the common goals
+     */
     private void setCommonGoals(){
         commonGoal1.getChildren().add(new GoalBuilder(view.getCommonGoal1()).getGoalImage());
         commonGoal2.getChildren().add(new GoalBuilder(view.getCommonGoal2()).getGoalImage());
@@ -35,14 +47,10 @@ public class GoalsController implements ViewObserver {
 
     @Override
     public void update(NetMessage message) throws IOException {
-        switch (message) {
-            case SecretGoalAssignedMessage m -> {
-                Platform.runLater(() -> {
-                    secretGoal.getChildren().add(new GoalBuilder(m.getGoal()).getGoalImage());
-                });
-            }
-            default -> {
-            }
+        if (Objects.requireNonNull(message) instanceof SecretGoalAssignedMessage m) {
+            Platform.runLater(() -> {
+                secretGoal.getChildren().add(new GoalBuilder(m.getGoal()).getGoalImage());
+            });
         }
     }
 }

@@ -15,6 +15,10 @@ import javafx.scene.layout.Pane;
 
 import java.io.IOException;
 
+/**
+ * Class GameScreenController
+ * contains and loads all the various game related panes while playing the game
+ */
 public class GameScreenController implements ViewObserver {
 
     private final ViewSingleton viewSingleton = ViewSingleton.getInstance();
@@ -39,6 +43,9 @@ public class GameScreenController implements ViewObserver {
     @FXML
     private Pane otherField;
 
+    /**
+     * sets the initial panes when the game is started
+     */
     public void initialize() {
         viewSingleton.getView().addObserver(this);
         Platform.runLater(() -> {
@@ -131,7 +138,7 @@ public class GameScreenController implements ViewObserver {
                             field.getChildren().removeAll();
                             field.getChildren().add(fieldCenter);
                             FieldController fieldController = fieldLoader.getController();
-                            fieldController.setView(viewSingleton.getView());
+                            fieldController.setView(viewSingleton.getView(), viewSingleton.getViewController());
                             fieldController.setHand(handController);
                         });
                     }
@@ -173,6 +180,9 @@ public class GameScreenController implements ViewObserver {
         }
     }
 
+    /**
+     * used to open the chat while in game
+     */
     public void toggleChats() {
         chats.setVisible(!chats.isVisible());
     }

@@ -7,7 +7,7 @@
 
 <AnchorPane prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.ingsw.view.GUI.LoginController">
    <children>
-      <MenuButton fx:id="connectionMenu" layoutX="455.0" layoutY="340.0" mnemonicParsing="false" onMouseClicked="#menuOptions" text="TCP">
+      <MenuButton fx:id="connectionMenu" layoutX="455.0" layoutY="340.0" mnemonicParsing="false" text="TCP">
          <items>
             <MenuItem fx:id="TCP" onAction="#chooseConnection" text="TCP" />
             <MenuItem fx:id="RMI" onAction="#chooseConnection" text="RMI" />

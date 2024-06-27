@@ -15,6 +15,7 @@ import it.polimi.ingsw.network.netMessage.s2c.FailMessage;
 import it.polimi.ingsw.network.netMessage.s2c.GameWinnersAnnouncedMessage;
 import it.polimi.ingsw.network.netMessage.s2c.LobbyLeftMessage;
 import it.polimi.ingsw.view.View;
+import it.polimi.ingsw.view.ViewController;
 import it.polimi.ingsw.view.ViewObserver;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -26,8 +27,13 @@ import javafx.scene.layout.GridPane;
 import java.io.IOException;
 import java.util.ArrayList;
 
+/**
+ * Class FieldController
+ * allows the player to visualize their field
+ */
 public class FieldController implements ViewObserver {
     private View view;
+    private ViewController check;
     private HandController hand;
 
     @FXML
@@ -39,6 +45,10 @@ public class FieldController implements ViewObserver {
     private int starterY = 4;
 
 
+    /**
+     * creates a button where you can play a card
+     * @return Button
+     */
     private Button createButton(){
         Button button = new Button();
         button.setStyle("-fx-background-radius: 5; -fx-background-color: #F2DEBD;");
@@ -49,8 +59,13 @@ public class FieldController implements ViewObserver {
         return button;
     }
 
-    public void setView(View view) {
+    /**
+     * sets the view and adds the starter card
+     * @param view the observable view
+     */
+    public void setView(View view, ViewController check) {
         this.view = view;
+        this.check = check;
         view.addObserver(this);
         Platform.runLater(()-> {
             for (Coords c : getNeighbors(new Coords(0, 0))) {
@@ -66,22 +81,40 @@ public class FieldController implements ViewObserver {
         });
     }
 
+    /**
+     * @param hand the hand of the player
+     */
     public void setHand(HandController hand) {
         this.hand = hand;
     }
 
+    /**
+     * Method for selecting and playing card from hand to field
+     * @param x the x coords
+     * @param y the y coords
+     */
     public void playCard(int x,int y) {
-        if(!view.isYourTurn()||!view.getGamePhase().equals(GamePhase.PLAYING_GAME)||!view.getAction().equals(Action.PLAY)) return;
+        if (!view.isYourTurn() || !view.getGamePhase().equals(GamePhase.PLAYING_GAME) || !view.getAction().equals(Action.PLAY))
+            return;
         try {
-            view.playCard(hand.getCardPlacedPos(),new Coords(x,y),view.getHand().getCard(hand.getCardPlacedPos()).getSide());
-        } catch (IllegalActionException | IllegalMoveException | NotYourTurnException ignored) {
+            check.checkPlayCard(hand.getCardPlacedPos(), new Coords(x, y));
+            view.playCard(hand.getCardPlacedPos(), new Coords(x, y), view.getHand().getCard(hand.getCardPlacedPos()).getSide());
+        } catch (IllegalMoveException e) {
+            if (e instanceof RequirementsNotSatisfiedException) {
+                errorMessage.setVisible(true);
+                errorMessage.setText("Cannot play card: Requirements not satisfied");
+            }
+        } catch (IllegalActionException | NotYourTurnException ignored) {
         } catch (GameDoesNotExistException | LobbyDoesNotExistException | UnexistentUserException | IOException e) {
             throw new RuntimeException(e);
         }
     }
 
+    /**
+     * method to hide the error message label
+     */
     public void hideLabel() {
-        errorMessage.setVisible(false);
+        if (errorMessage.isVisible()) errorMessage.setVisible(false);
     }
 
     @Override
@@ -127,18 +160,18 @@ public class FieldController implements ViewObserver {
                     });
                 }
             }
-            case FailMessage m -> Platform.runLater(() -> {
-                if (m.getMessage().equals("Requirements not satisfied to place the card")) {
-                    errorMessage.setVisible(true);
-                    errorMessage.setText("Cannot play card: Requirements not satisfied");
-                }
-            });
             case LobbyLeftMessage ignored -> view.removeObserver(this);
             case GameWinnersAnnouncedMessage ignored -> view.removeObserver(this);
             default -> {}
         }
     }
 
+    /**
+     * method to get the node in the grid pane
+     * @param column the column index
+     * @param row the row index
+     * @return Node
+     */
     private Node getNodeByRowColumnIndex(final int column, final int row) {
         for (Node node : fieldGrid.getChildren()) {
             if (GridPane.getRowIndex(node) == row && GridPane.getColumnIndex(node) == column) {
@@ -148,6 +181,9 @@ public class FieldController implements ViewObserver {
         return null;
     }
 
+    /**
+     * Method used to add a row at the top in the grid pane when the field gets bigger
+     */
     private void shiftRows() {
         fieldGrid.getChildren().forEach(node -> {
             Integer row = GridPane.getRowIndex(node);
@@ -157,6 +193,9 @@ public class FieldController implements ViewObserver {
         });
     }
 
+    /**
+     * Method used to add a column to the left in the grid pane when the field gets bigger
+     */
     private void shiftColumns() {
         fieldGrid.getChildren().forEach(node -> {
             Integer column = GridPane.getColumnIndex(node);
@@ -166,6 +205,11 @@ public class FieldController implements ViewObserver {
         });
     }
 
+    /**
+     * method to get the neighbors of a card
+     * @param coords coords of the card
+     * @return list of coords
+     */
     private ArrayList<Coords> getNeighbors(Coords coords) {
         ArrayList<Coords> neighbors = new ArrayList<>();
         neighbors.add(new Coords(coords.getX() + 1, coords.getY()));

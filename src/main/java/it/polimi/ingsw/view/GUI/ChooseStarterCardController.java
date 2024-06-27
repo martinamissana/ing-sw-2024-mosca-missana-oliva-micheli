@@ -13,6 +13,10 @@ import javafx.scene.input.MouseEvent;
 
 import java.io.IOException;
 
+/**
+ * Class ChooseStarterCardController
+ * allows the player to choose the side of the starter card
+ */
 public class ChooseStarterCardController {
     private final ViewSingleton viewSingleton = ViewSingleton.getInstance();
 
@@ -21,6 +25,9 @@ public class ChooseStarterCardController {
     @FXML
     private Button back;
 
+    /**
+     * sets the images of the started card sides
+     */
     public void initialize() {
         StarterCard card = (StarterCard) viewSingleton.getView().getHand().getCard(0);
         front.setGraphic(new CardBuilder(card).getCardImage());
@@ -29,6 +36,10 @@ public class ChooseStarterCardController {
         card.flip();
     }
 
+    /**
+     * chooses the side of the starter card
+     * @param mouseEvent identifies the card side chosen
+     */
     public void playStarterCard(MouseEvent mouseEvent) {
         try {
             if(mouseEvent.getSource().equals(front)) {

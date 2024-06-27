@@ -9,24 +9,26 @@ import it.polimi.ingsw.model.player.Pawn;
 import it.polimi.ingsw.model.player.Player;
 import it.polimi.ingsw.network.netMessage.NetMessage;
 import it.polimi.ingsw.network.netMessage.c2s.LobbyJoinedMessage;
+import it.polimi.ingsw.network.netMessage.s2c.GameCreatedMessage;
 import it.polimi.ingsw.network.netMessage.s2c.LobbyLeftMessage;
 import it.polimi.ingsw.network.netMessage.s2c.PawnAssignedMessage;
 import it.polimi.ingsw.view.ViewObserver;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 
 import java.io.IOException;
-import java.net.URL;
-import java.util.ResourceBundle;
 import java.util.concurrent.Semaphore;
 
-public class InLobbyController implements ViewObserver, Initializable {
+/**
+ * Class InLobbyController
+ * handles actions while the player is in a lobby
+ */
+public class InLobbyController implements ViewObserver {
     @FXML
     private Label pawnsLabel;
     @FXML
@@ -50,8 +52,10 @@ public class InLobbyController implements ViewObserver, Initializable {
     private Lobby lobby;
     private final Semaphore sem = new Semaphore(0);
 
-    @Override
-    public void initialize(URL url, ResourceBundle resourceBundle) {
+    /**
+     * sets the lobby
+     */
+    public void initialize() {
         viewSingleton.getView().addObserver(this);
         this.lobby = viewSingleton.getView().getLobbies().get(viewSingleton.getView().getID());
         lobbyID.setText("Entered lobby #" + lobby.getID());
@@ -68,6 +72,9 @@ public class InLobbyController implements ViewObserver, Initializable {
         });
     }
 
+    /**
+     * method to leave the lobby
+     */
     public void leaveLobby() {
         try {
             viewSingleton.getViewController().checkLeaveLobby();
@@ -87,6 +94,9 @@ public class InLobbyController implements ViewObserver, Initializable {
         }
     }
 
+    /**
+     * updates players in the lobby
+     */
     public void updatePlayers() {
         Platform.runLater(() -> {
             try {
@@ -101,6 +111,9 @@ public class InLobbyController implements ViewObserver, Initializable {
         });
     }
 
+    /**
+     * updates the available pawns
+     */
     public void checkTakenPawns() {
         redPawn.setVisible(true);
         yellowPawn.setVisible(true);
@@ -118,6 +131,10 @@ public class InLobbyController implements ViewObserver, Initializable {
         }
     }
 
+    /**
+     * chooses the pawn color
+     * @param mouseEvent identifies the color chosen
+     */
     public void setPawn(MouseEvent mouseEvent) {
         try {
             if (mouseEvent.getSource().equals(redPawn)) viewSingleton.getView().choosePawn(Pawn.RED);
@@ -153,20 +170,9 @@ public class InLobbyController implements ViewObserver, Initializable {
                     case YELLOW -> yellowPawn.setVisible(false);
                     case BLUE -> bluePawn.setVisible(false);
                 }
-                checkStartGame();
             }
+            case GameCreatedMessage ignored-> viewSingleton.getView().removeObserver(this);
             default -> {}
         }
-    }
-
-    private void checkStartGame() {
-        if (lobby.getPlayers().size() != lobby.getNumOfPlayers()) return;
-
-        for (Player p : lobby.getPlayers()) {
-            if (p.equals(viewSingleton.getView().getPlayer()) && viewSingleton.getView().getPawn() == null) return;
-            else if (p.getPawn() == null) return;
-        }
-
-        viewSingleton.getView().removeObserver(this);
     }
 }

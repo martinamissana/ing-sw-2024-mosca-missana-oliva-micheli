@@ -17,7 +17,7 @@
          <children>
             <Label layoutX="67.5" layoutY="100.0" prefHeight="15.0" prefWidth="165.0" text="Insert number of players" />
             <Button layoutX="140.0" layoutY="125.0" mnemonicParsing="false" onMouseClicked="#createLobby" prefHeight="25.0" prefWidth="70.0" text="Create" />
-            <MenuButton fx:id="playersNumber" layoutX="85.0" layoutY="125.0" mnemonicParsing="false" onMouseClicked="#menuOptions" prefHeight="25.0" prefWidth="45.0" text="2">
+            <MenuButton fx:id="playersNumber" layoutX="85.0" layoutY="125.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="45.0" text="2">
               <items>
                 <MenuItem fx:id="two" mnemonicParsing="false" onAction="#choosePlayers" text="2" />
                 <MenuItem fx:id="three" mnemonicParsing="false" onAction="#choosePlayers" text="3" />

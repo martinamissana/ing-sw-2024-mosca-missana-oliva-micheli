@@ -12,19 +12,31 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 
+/**
+ * Class ViewSingleton
+ * used to get instances of view and view controller
+ */
 public class ViewSingleton {
     private static ViewSingleton instance;
     private View view = null;
     private ViewController viewController = null;
 
-    private ViewSingleton() {}
-
+    /**
+     * gets an instance
+     * @return ViewSingleton
+     */
     public static ViewSingleton getInstance() {
         if (instance == null)
             instance = new ViewSingleton();
         return instance;
     }
 
+    /**
+     * creates the view based on the connection type
+     * @param connection connection chosen
+     * @param IP server IP
+     * @param port server port
+     */
     public void initialize(String connection, String IP, String port) {
         if (connection.equalsIgnoreCase("RMI")) {
             try {
@@ -35,7 +47,7 @@ public class ViewSingleton {
                 this.view = new RMIView(RMIServer);
 
             } catch (RemoteException | NotBoundException e) {
-                e.printStackTrace();
+                throw new RuntimeException(e);
             }
         } else {
             try {
@@ -55,13 +67,22 @@ public class ViewSingleton {
         viewController = new ViewController(view);
     }
 
+    /**
+     * @return true if the view is set
+     */
     public Boolean isInitialized() { return (view != null) && (viewController != null); }
 
+    /**
+     * @return view
+     */
     public View getView() {
         if (view != null) return view;
         else throw new NullPointerException("view is null");
     }
 
+    /**
+     * @return viewController
+     */
     public ViewController getViewController() {
         if (viewController != null) return viewController;
         else throw new NullPointerException("view controller is null");

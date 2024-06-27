@@ -7,7 +7,7 @@
 
 <AnchorPane fx:id="scoreboard" maxHeight="170.0" minHeight="170.0" prefHeight="170.0" prefWidth="235.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.ingsw.view.GUI.ScoreboardController">
    <children>
-      <TextField fx:id="title" alignment="CENTER" prefWidth="235.0" style="-fx-background-color: #00000000;" text="SCOREBOARD" />
+      <TextField fx:id="title" alignment="CENTER" editable="false" prefWidth="235.0" style="-fx-background-color: #00000000;" text="SCOREBOARD" />
       <TextField fx:id="player1" editable="false" layoutX="10.0" layoutY="30.0" prefWidth="160.0" />
       <TextField fx:id="player2" editable="false" layoutX="10.0" layoutY="65.0" prefWidth="160.0" />
       <TextField fx:id="player3" editable="false" layoutX="10.0" layoutY="100.0" prefWidth="160.0" />

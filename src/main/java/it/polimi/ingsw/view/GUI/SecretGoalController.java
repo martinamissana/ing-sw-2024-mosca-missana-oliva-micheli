@@ -12,6 +12,10 @@ import javafx.scene.layout.Pane;
 
 import java.io.IOException;
 
+/**
+ * Class SecretGoalController
+ * handles the choice of the secret goal
+ */
 public class SecretGoalController {
     private View view;
     private Goal first;
@@ -22,6 +26,10 @@ public class SecretGoalController {
     @FXML
     Pane secondGoal;
 
+    /**
+     * choose the secret goal based on the clicked image
+     * @param mouseEvent identifies the clicked image
+     */
     @FXML
     public void chooseGoal(MouseEvent mouseEvent){
         if(mouseEvent.getSource().equals(firstGoal)){
@@ -43,6 +51,10 @@ public class SecretGoalController {
         }
     }
 
+    /**
+     * sets the view and loads the images
+     * @param view the observable view
+     */
     public  void setView(View view){
         this.view=view;
         this.first = view.getSecretGoalChoices().getFirst();

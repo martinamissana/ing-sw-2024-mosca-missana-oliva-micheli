@@ -27,6 +27,10 @@ import javafx.util.Duration;
 import java.io.IOException;
 import java.util.HashMap;
 
+/**
+ * Class ScoreboardController
+ * used in lobby to visualize the players and in game to visualize the players and their points
+ */
 public class ScoreboardController implements ViewObserver {
     private View view;
     private Lobby lobby;
@@ -65,6 +69,10 @@ public class ScoreboardController implements ViewObserver {
     @FXML
     private StackPane infoField;
 
+    /**
+     * method to visualize other players' fields
+     * @param mouseEvent the player selected
+     */
     @FXML
     public void showField(MouseEvent mouseEvent) {
         if (!(view.getGamePhase().equals(GamePhase.PLAYING_GAME))) return;
@@ -94,6 +102,10 @@ public class ScoreboardController implements ViewObserver {
         }
     }
 
+    /**
+     * sets the scoreboard for players' visualization in lobby
+     * @param lobby the lobby
+     */
     public void setPlayers(Lobby lobby) {
         this.lobby = lobby;
         title.setText("PLAYERS");
@@ -127,12 +139,20 @@ public class ScoreboardController implements ViewObserver {
         score4.setVisible(false);
     }
 
+    /**
+     * adds the class as a view observer
+     * @param view the observable view
+     */
     public void setView(View view) {
         this.view = view;
         view.addObserver(this);
     }
 
 
+    /**
+     * sets the scoreboard when the game starts
+     * @param lobby lobby used to sets the players
+     */
     public void setScoreboard(Lobby lobby) {
         this.lobby = lobby;
         this.title.setText("SCOREBOARD");
@@ -169,6 +189,11 @@ public class ScoreboardController implements ViewObserver {
 
     }
 
+    /**
+     * @param index position of the player in the list
+     * @param player the player's name text field
+     * @param pawn the pawn button
+     */
     public void setPlayersAndPawns(int index, TextField player, Button pawn) {
         player.setText(lobby.getPlayers().get(index).getNickname());
         setBgColor(pawn, lobby.getPlayers().get(index).getPawn());
@@ -176,6 +201,9 @@ public class ScoreboardController implements ViewObserver {
         });
     }
 
+    /**
+     * updates the scores of the players
+     */
     public void refresh() {
         HashMap<Player, Integer> scoreboard = view.getScoreboard();
         score1.setText(scoreboard.get(lobby.getPlayers().get(0)).toString());
@@ -184,11 +212,19 @@ public class ScoreboardController implements ViewObserver {
         if (lobby.getNumOfPlayers() > 3) score4.setText(scoreboard.get(lobby.getPlayers().get(3)).toString());
     }
 
+    /**
+     * sets the color of the pawn button
+     * @param button pawn button
+     * @param pawn pawn
+     */
     private void setBgColor(Button button, Pawn pawn) {
         if (pawn == Pawn.YELLOW) button.setStyle("-fx-background-color: gold");
         else if (pawn != null) button.setStyle("-fx-background-color: " + pawn.toString().toLowerCase());
     }
 
+    /**
+     * @param otherField field of the selected player
+     */
     public void setOtherField(Pane otherField) {
         this.otherField = otherField;
         otherField.setVisible(false);

@@ -24,6 +24,10 @@ import javafx.scene.layout.Pane;
 
 import java.io.IOException;
 
+/**
+ * Class DecksController
+ * sets the decks/deckBuffers images and allows the player to draw from them
+ */
 public class DecksController implements ViewObserver {
     private View view;
     @FXML
@@ -39,6 +43,10 @@ public class DecksController implements ViewObserver {
     @FXML
     private Pane gold2;
 
+    /**
+     * draws the clicked card from the deck/deckBuffer
+     * @param mouseEvent identifies the deck/deckBuffer clicked
+     */
     @FXML
     public void drawCard(MouseEvent mouseEvent) {
         if (!view.isYourTurn() || !view.getAction().equals(Action.DRAW) || view.getGamePhase()!= GamePhase.PLAYING_GAME)
@@ -110,12 +118,18 @@ public class DecksController implements ViewObserver {
         }
     }
 
+    /**
+     * @param view the observable view
+     */
     public void setView(View view) {
         this.view = view;
         view.addObserver(this);
         setDecks();
     }
 
+    /**
+     * initialize decks and deckBuffers
+     */
     public void setDecks(){
         if(view.getTopResourceCard().getSide() == CardSide.FRONT) view.getTopResourceCard().flip();
         resDeck.getChildren().add(new CardBuilder(view.getTopResourceCard()).getCardImage());
@@ -142,6 +156,10 @@ public class DecksController implements ViewObserver {
         }
     }
 
+    /**
+     * changes the decks images when a card is drawn
+     * @param deck the deck/deckBuffer changed
+     */
     private void refresh(DeckTypeBox deck) {        // TODO: Clean ???
         Platform.runLater(()-> {
             switch (deck){

@@ -10,17 +10,19 @@ import it.polimi.ingsw.network.netMessage.NetMessage;
 import it.polimi.ingsw.network.netMessage.c2s.LobbyJoinedMessage;
 import it.polimi.ingsw.view.ViewObserver;
 import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 
 import java.io.IOException;
-import java.net.URL;
-import java.util.ResourceBundle;
+
 import java.util.concurrent.Semaphore;
 
-public class LobbyInstanceController implements ViewObserver, Initializable {
+/**
+ * Class LobbyInstanceController
+ * handles the lobby screen
+ */
+public class LobbyInstanceController implements ViewObserver {
     @FXML
     private Label players;
     @FXML
@@ -32,11 +34,17 @@ public class LobbyInstanceController implements ViewObserver, Initializable {
     private final ViewSingleton viewSingleton = ViewSingleton.getInstance();
     private final Semaphore sem = new Semaphore(0);
 
-    @Override
-    public void initialize(URL url, ResourceBundle resourceBundle) {
+    /**
+     * adds the class to the view observers
+     */
+    public void initialize() {
         viewSingleton.getView().addObserver(this);
     }
 
+    /**
+     * creates the lobby pane
+     * @param lobby the lobby instance
+     */
     public void setLobby(Lobby lobby) {
         this.lobby = lobby;
 
@@ -44,6 +52,9 @@ public class LobbyInstanceController implements ViewObserver, Initializable {
         players.setText(lobby.getPlayers().size() + " / " + lobby.getNumOfPlayers());
     }
 
+    /**
+     * joins the lobby when the button is clicked
+     */
     @FXML
     public void joinLobby() {
         joinButton.fire();

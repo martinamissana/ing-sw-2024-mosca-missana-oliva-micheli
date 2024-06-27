@@ -12,6 +12,10 @@ import javafx.scene.shape.Circle;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+/**
+ * Class WinnersController
+ * handles the final screen
+ */
 public class WinnersController {
     @FXML
     private Circle pawn1;
@@ -64,10 +68,19 @@ public class WinnersController {
     private ArrayList<Player> winners;
     private HashMap<Player, Pawn> pawns;
 
+    /**
+     * @param mainLayout the main layout, used to return to main menu
+     */
     public void setMainLayout(MainLayout mainLayout) {
         this.mainLayout = mainLayout;
     }
 
+    /**
+     * adds the winners to the screen
+     * @param scoreboard final scoreboard
+     * @param goalsDone number of goals done
+     * @param winners list of winners
+     */
     public void setWinners(HashMap<Player, Integer> scoreboard, HashMap<Player, Integer> goalsDone, ArrayList<Player> winners) {
         this.scoreboard = scoreboard;
         this.goalsDone = goalsDone;
@@ -118,6 +131,16 @@ public class WinnersController {
         }
     }
 
+    /**
+     * sets the players adding a crown to the winners
+     * @param sortedPlayers players sorted by points
+     * @param player player's text field
+     * @param pawn pawn shape
+     * @param points points of the player
+     * @param goals text field with goals done
+     * @param crown image of the crown
+     * @param index index of the player
+     */
     public void setPlayer(ArrayList<Player> sortedPlayers, TextField player, Circle pawn, TextField points, TextField goals, ImageView crown, int index) {
         switch (pawns.get(sortedPlayers.get(index))) {
             case RED -> pawn.setFill(Color.RED);
@@ -133,6 +156,9 @@ public class WinnersController {
         //          W - Susca - 31 - 2
     }
 
+    /**
+     * method to go back to main menu
+     */
     public void returnToMainMenu() {
         mainLayout.setScene("Open");
     }

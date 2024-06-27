@@ -7,6 +7,10 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
+/**
+ * Class GUI
+ * starts the GUI and sets the scene to login
+ */
 public class GUI extends Application {
     @Override
     public void start(Stage stage) throws Exception {
@@ -31,6 +35,10 @@ public class GUI extends Application {
         }
     }
 
+    /**
+     * launch the main application
+     * @param args the arguments required
+     */
     public static void main(String[] args) {
         launch(args);
     }

@@ -16,6 +16,10 @@ import javafx.scene.layout.Pane;
 import java.io.IOException;
 
 
+/**
+ * Class HandController
+ * allows the player to visualize their hand and choose the card to play
+ */
 public class HandController implements ViewObserver {
     private View view;
     private Integer cardPlacedPos = null;
@@ -33,6 +37,10 @@ public class HandController implements ViewObserver {
     @FXML
     private Button flip2;
 
+    /**
+     * adds the hand as a view observer
+     * @param view the observable view
+     */
     public void setView(View view) {
         this.view = view;
         view.addObserver(this);
@@ -93,11 +101,19 @@ public class HandController implements ViewObserver {
         }
     }
 
+    /**
+     * gets the selected card
+     * @return int
+     */
     public int getCardPlacedPos() {
         return cardPlacedPos;
     }
 
 
+    /**
+     * sets cardPlacedPos based on what card is clicked
+     * @param mouseEvent identifies the clicked card
+     */
     public void playCard(MouseEvent mouseEvent) {
         if (mouseEvent.getSource().equals(card0)) {
             cardPlacedPos = 0;
@@ -113,6 +129,10 @@ public class HandController implements ViewObserver {
 
     }
 
+    /**
+     * flips the cards in the hand
+     * @param mouseEvent identifies what card to flip
+     */
     public void flip(MouseEvent mouseEvent) {
         if (mouseEvent.getSource().equals(flip0)) {
             if (view.getHand().getSize() == 0 || view.getHand().getCard(0) instanceof StarterCard) return;

@@ -17,16 +17,17 @@ import it.polimi.ingsw.view.ViewObserver;
 import javafx.application.Platform;
 import javafx.event.Event;
 import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.shape.Circle;
 
 import java.io.IOException;
-import java.net.URL;
-import java.util.ResourceBundle;
 
-public class ChatController implements ViewObserver, Initializable {
+/**
+ * Class ChatController
+ * create a TabPane for global and private chats both in lobby and in game
+ */
+public class ChatController implements ViewObserver{
     @FXML
     private Button p1SendButton;
     @FXML
@@ -71,13 +72,18 @@ public class ChatController implements ViewObserver, Initializable {
     private final ViewSingleton viewSingleton = ViewSingleton.getInstance();
     private Lobby lobby;
 
-    @Override
-    public void initialize(URL url, ResourceBundle resourceBundle) {
+    /**
+     * adds the class as a view observer and initialize the chats
+     */
+    public void initialize() {
         viewSingleton.getView().addObserver(this);
         this.lobby = viewSingleton.getView().getLobbies().get(viewSingleton.getView().getID());
         setChats();
     }
 
+    /**
+     * creates the global and private chats
+     */
     public void setChats()  {
         Platform.runLater(() -> {
             int index = 1;
@@ -99,6 +105,10 @@ public class ChatController implements ViewObserver, Initializable {
         });
     }
 
+    /**
+     * sends a message in chat
+     * @param mouseEvent identifies the button clicked to recognize the receiver
+     */
     @FXML
     public void sendMessage(MouseEvent mouseEvent) {
         try {
@@ -190,6 +200,10 @@ public class ChatController implements ViewObserver, Initializable {
         }
     }
 
+    /**
+     * removes notification label
+     * @param event the visualization of the chat
+     */
     public void readMessage(Event event) {
         if (event.getSource().equals(global) && newGlobalMessage.isVisible()) newGlobalMessage.setVisible(false);
         if (event.getSource().equals(p1) && newMessage1.isVisible()) newMessage1.setVisible(false);

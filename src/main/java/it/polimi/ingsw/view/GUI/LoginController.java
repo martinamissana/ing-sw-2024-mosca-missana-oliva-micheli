@@ -22,6 +22,10 @@ import java.util.concurrent.Semaphore;
 
 import static java.lang.System.exit;
 
+/**
+ * Class LoginController
+ * allows the player to login
+ */
 public class LoginController implements ViewObserver {
     @FXML
     private TextField nicknameField;
@@ -50,6 +54,9 @@ public class LoginController implements ViewObserver {
     private final Semaphore sem = new Semaphore(0);
     private MainLayout mainLayout;
 
+    /**
+     * creates info tooltips
+     */
     public void initialize() {
         Tooltip tooltipIP = new Tooltip("If empty: Connection to local server");
         Tooltip.install(infoIP, tooltipIP);
@@ -60,13 +67,11 @@ public class LoginController implements ViewObserver {
         tooltipPort.setShowDelay(new Duration(0.2));
     }
 
+    /**
+     * @param mainLayout the main stage, used to switch the scene after login
+     */
     public void setMainLayout(MainLayout mainLayout) {
         this.mainLayout = mainLayout;
-    }
-
-    @FXML
-    public void menuOptions() {
-        connectionMenu.fire();
     }
 
     @FXML
@@ -84,6 +89,9 @@ public class LoginController implements ViewObserver {
         if (keyEvent.getCode() == KeyCode.ENTER) login();
     }
 
+    /**
+     * handle the login button
+     */
     @FXML
     public void login() {
         statusMessage.setText("");
@@ -139,6 +147,10 @@ public class LoginController implements ViewObserver {
         }
     }
 
+    /**
+     * allows the player to choose the connection type [RMI-TCP]
+     * @param actionEvent connection type selected
+     */
     public void chooseConnection(ActionEvent actionEvent) {
         if (actionEvent.getSource().equals(TCP)) {
             connectionMenu.setText(TCP.getText());

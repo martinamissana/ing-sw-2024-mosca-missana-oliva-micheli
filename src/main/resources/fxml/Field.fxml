@@ -36,7 +36,7 @@
         </ScrollPane>
       <Label fx:id="errorMessage" alignment="CENTER" layoutX="185.0" layoutY="170.0" opacity="0.9" prefHeight="50.0" prefWidth="245.0" style="-fx-background-color: F2DEBD;" visible="false" wrapText="true" AnchorPane.leftAnchor="195.0" AnchorPane.rightAnchor="195.0">
          <font>
-            <Font size="18.0" />
+            <Font size="14.0" />
          </font>
       </Label>
     </children>
