@@ -26,7 +26,7 @@ public class Printer {
     public Printer(View view) {
         this.view = view;
     }
-    
+
     public void printLogo() {
         System.out.println("                          .##.          .-.  ..#####-.    .-+..+..    .+.                       ");
         System.out.println("                  ...   .#####-.      .-#...-....-#####+. .... .#+.  .-#-                       ");
@@ -795,12 +795,12 @@ public class Printer {
                                                     cli + ItemsToColor(((L_ShapeGoal) goal).getMainColor()) + "       " + Color.reset
                 );
 
-                case UP_LEFT -> System.out.println(cli + ItemsToColor(((L_ShapeGoal) goal).getSecondaryColor()) + "       " + Color.reset +
-                        cli + ItemsToColor(((L_ShapeGoal) goal).getSecondaryColor()) + "       " + ItemsToColor(((L_ShapeGoal) goal).getMainColor()) + "     " + Color.reset +
-                        cli + "     " + ItemsToColor(((L_ShapeGoal) goal).getMainColor()) + "       " + Color.reset +
-                        cli +
-                        cli + "     " + ItemsToColor(((L_ShapeGoal) goal).getMainColor()) + "       " + Color.reset +
-                        cli + "     " + ItemsToColor(((L_ShapeGoal) goal).getMainColor()) + "       " + Color.reset
+                case UP_LEFT -> System.out.println( cli + ItemsToColor(((L_ShapeGoal) goal).getSecondaryColor()) + "       " + Color.reset +
+                                                    cli + ItemsToColor(((L_ShapeGoal) goal).getSecondaryColor()) + "       " + ItemsToColor(((L_ShapeGoal) goal).getMainColor()) + "     " + Color.reset +
+                                                    cli + "     " + ItemsToColor(((L_ShapeGoal) goal).getMainColor()) + "       " + Color.reset +
+                                                    cli +
+                                                    cli + "     " + ItemsToColor(((L_ShapeGoal) goal).getMainColor()) + "       " + Color.reset +
+                                                    cli + "     " + ItemsToColor(((L_ShapeGoal) goal).getMainColor()) + "       " + Color.reset
                 );
 
                 case DOWN_RIGHT -> System.out.println(  cli + ItemsToColor(((L_ShapeGoal) goal).getMainColor()) + "       " + Color.reset +

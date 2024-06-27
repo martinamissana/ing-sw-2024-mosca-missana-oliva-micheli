@@ -898,8 +898,7 @@
         "side": "FRONT",
         "frontCorner": {
             "NORTH": "EMPTY",
-            "EAST": "EMPTY",
-            "WEST": "EMPTY"
+            "EAST": "EMPTY"
 
         },
         "backCorner": {
