@@ -59,19 +59,19 @@ public class HandController implements ViewObserver {
             case CardPlacedOnFieldMessage m -> {
                 if (m.getNickname().equals(view.getNickname())) {
                     if (!(m.getCard() instanceof StarterCard)) {
-                        Platform.runLater(() -> {
-                            card0.setLayoutY(yLayout);
-                            card1.setLayoutY(yLayout);
-                            card2.setLayoutY(yLayout);
-                            cardPlacedPos = null;
-                            card0.getChildren().clear();
-                            card1.getChildren().clear();
-                            card2.getChildren().clear();
-                            card0.getChildren().add(new CardBuilder(view.getHand().getCard(0)).getCardImage());
-                            card1.getChildren().add(new CardBuilder(view.getHand().getCard(1)).getCardImage());
-                            // TODO: See if problem is fixed at end of the game by removing hand from observers:
-                            //  Exception in thread "JavaFX Application Thread" java.lang.IndexOutOfBoundsException: Index 1 out of bounds for length 0
-                        });
+                        try {
+                            Platform.runLater(() -> {
+                                card0.setLayoutY(yLayout);
+                                card1.setLayoutY(yLayout);
+                                card2.setLayoutY(yLayout);
+                                cardPlacedPos = null;
+                                card0.getChildren().clear();
+                                card1.getChildren().clear();
+                                card2.getChildren().clear();
+                                card0.getChildren().add(new CardBuilder(view.getHand().getCard(0)).getCardImage());
+                                card1.getChildren().add(new CardBuilder(view.getHand().getCard(1)).getCardImage());
+                            });
+                        } catch (Exception ignored) {}
                     }
                 }
             }

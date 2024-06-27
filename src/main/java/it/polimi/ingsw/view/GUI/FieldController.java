@@ -11,7 +11,6 @@ import it.polimi.ingsw.model.game.GamePhase;
 import it.polimi.ingsw.model.player.Coords;
 import it.polimi.ingsw.network.netMessage.NetMessage;
 import it.polimi.ingsw.network.netMessage.s2c.CardPlacedOnFieldMessage;
-import it.polimi.ingsw.network.netMessage.s2c.FailMessage;
 import it.polimi.ingsw.network.netMessage.s2c.GameWinnersAnnouncedMessage;
 import it.polimi.ingsw.network.netMessage.s2c.LobbyLeftMessage;
 import it.polimi.ingsw.view.View;
@@ -94,7 +93,7 @@ public class FieldController implements ViewObserver {
      * @param y the y coords
      */
     public void playCard(int x,int y) {
-        if (!view.isYourTurn() || !view.getGamePhase().equals(GamePhase.PLAYING_GAME) || !view.getAction().equals(Action.PLAY))
+        if (!view.isYourTurn() || !view.getGamePhase().equals(GamePhase.PLAYING_GAME) || !view.getAction().equals(Action.PLAY) || hand.getCardPlacedPos() == null)
             return;
         try {
             check.checkPlayCard(hand.getCardPlacedPos(), new Coords(x, y));
@@ -147,12 +146,12 @@ public class FieldController implements ViewObserver {
                                 Button button = createButton();
                                 button.setOnAction(event -> playCard(c.getX(), c.getY()));
                                 if (getNodeByRowColumnIndex(starterX + c.getX() - c.getY(), starterY - c.getX() - c.getY()) == null) fieldGrid.add(button, starterX + c.getX() - c.getY(), starterY - c.getX() - c.getY());
-                                // TODO: fix "Exception in thread "JavaFX Application Thread" java.lang.NullPointerException: Cannot invoke "Object.getClass()" because the return value of "java.util.HashMap.get(Object)" is null"
+
                             } catch (IllegalCoordsException e) {
                                 if (view.getMyField().getMatrix().get(c) instanceof CardBlock && getNodeByRowColumnIndex(starterX + c.getX() - c.getY(), starterY - c.getX() - c.getY()) != null) {
                                     fieldGrid.getChildren().remove(getNodeByRowColumnIndex(starterX + c.getX() - c.getY(), starterY - c.getX() - c.getY()));
                                 }
-                            }
+                            } catch (Exception ignored) {}
                         }
 
                         fieldGrid.getChildren().remove(getNodeByRowColumnIndex(x, y));
