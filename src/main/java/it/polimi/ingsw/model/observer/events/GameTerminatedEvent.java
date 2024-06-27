@@ -1,26 +1,21 @@
 package it.polimi.ingsw.model.observer.events;
 
 /**
- * GameTerminatedEvent class
- * Extends abstract class Event
+ * GameTerminatedEvent class<br>
+ * Extends abstract class Event<br>
  * Used to notify the virtual view of the clients that the game is finished
  */
 public class GameTerminatedEvent extends Event{
     private final Integer ID;
 
     /**
-     * class constructor
+     * Class constructor
      * @param ID gameID
      */
-    public GameTerminatedEvent(Integer ID) {
-        this.ID = ID;
-    }
+    public GameTerminatedEvent(Integer ID) { this.ID = ID; }
 
     /**
-     * getter
      * @return gameID
      */
-    public Integer getID() {
-        return ID;
-    }
+    public Integer getID() { return ID; }
 }

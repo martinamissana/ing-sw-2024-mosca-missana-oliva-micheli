@@ -3,8 +3,8 @@ package it.polimi.ingsw.model.observer.events;
 import it.polimi.ingsw.model.game.Action;
 
 /**
- * GameActionSwitchedEvent class
- * Extends abstract class Event
+ * GameActionSwitchedEvent class<br>
+ * Extends abstract class Event<br>
  * Used to notify the virtual view of the client when the action type is changed [draw-play]
  */
 public class GameActionSwitchedEvent  extends Event{
@@ -12,7 +12,7 @@ public class GameActionSwitchedEvent  extends Event{
     private final Action action;
 
     /**
-     * class constructor
+     * Class constructor
      * @param ID ID of the game/lobby
      * @param action new type of action
      */
@@ -22,18 +22,12 @@ public class GameActionSwitchedEvent  extends Event{
     }
 
     /**
-     * getter
      * @return ID of the game/lobby
      */
-    public Integer getID() {
-        return ID;
-    }
+    public Integer getID() { return ID; }
 
     /**
-     * getter
      * @return new type of action
      */
-    public Action getAction() {
-        return action;
-    }
+    public Action getAction() { return action; }
 }

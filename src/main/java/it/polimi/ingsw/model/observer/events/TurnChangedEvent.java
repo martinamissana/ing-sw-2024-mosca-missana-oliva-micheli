@@ -1,8 +1,8 @@
 package it.polimi.ingsw.model.observer.events;
 
 /**
- * TurnChangedEvent class
- * Extends abstract class Event
+ * TurnChangedEvent class<br>
+ * Extends abstract class Event<br>
  * Used to notify the virtual view when the turn is changed
  */
 public class TurnChangedEvent  extends Event{
@@ -23,26 +23,17 @@ public class TurnChangedEvent  extends Event{
     }
 
     /**
-     * getter
      * @return ID
      */
-    public Integer getID() {
-        return ID;
-    }
+    public Integer getID() { return ID; }
 
     /**
-     * getter
      * @return nickname
      */
-    public String getNickname() {
-        return nickname;
-    }
+    public String getNickname() { return nickname; }
 
     /**
-     * getter
      * @return boolean true if it's last round
      */
-    public boolean isLastRound() {
-        return lastRound;
-    }
+    public boolean isLastRound() { return lastRound; }
 }

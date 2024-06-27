@@ -4,8 +4,8 @@ import java.io.Serializable;
 import java.util.Objects;
 
 /**
- * Coordinates Class
- * used as key for the position of a card in the Field matrix map
+ * Coordinates Class<br>
+ * Used as key for the position of a card in the {@code Field} matrix map
  */
 public class Coords implements Serializable {
     private final int x;
@@ -13,9 +13,10 @@ public class Coords implements Serializable {
 
     /**
      * Class constructor
-     *
-     * @param x first coordinate of the matrix. positive and negative values correspond to positions to the east and west respectively
-     * @param y second coordinate of the matrix. positive and negative values correspond to positions to the north and south respectively
+     * @param x first coordinate of the matrix.<br> positive and negative values
+     *          correspond to positions to the {@code EAST} and {@code WEST} respectively
+     * @param y second coordinate of the matrix.<br> positive and negative values
+     *          correspond to positions to the {@code NORTH} and {@code SOUTH} respectively
      */
     public Coords(int x, int y) {
         this.x = x;
@@ -23,26 +24,20 @@ public class Coords implements Serializable {
     }
 
     /**
-     * gets X coordinate
-     *
+     * Gets the {@code X} coordinate
      * @return int
      */
-    public int getX() {
-        return x;
-    }
+    public int getX() { return x; }
 
     /**
-     * gets Y coordinate
-     *
+     * Gets the {@code Y} coordinate
      * @return int
      */
-    public int getY() {
-        return y;
-    }
+    public int getY() { return y; }
 
     /**
-     * pairs of coordinates are equal to each other if and only if both the x and y values of the first pair are equal to the second pair's
-     *
+     * Pairs of coordinates are equal to each other if and only if both
+     * the {@code X} and {@code Y} values of the first pair are equal to the second pair's
      * @param o object to compare with the caller
      * @return boolean
      */
@@ -58,7 +53,5 @@ public class Coords implements Serializable {
     public String toString() { return "(" + x + ", " + y + ")"; }
 
     @Override
-    public int hashCode() {
-        return Objects.hash(x, y);
-    }
+    public int hashCode() { return Objects.hash(x, y); }
 }

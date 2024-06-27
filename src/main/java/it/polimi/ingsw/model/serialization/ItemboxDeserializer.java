@@ -11,18 +11,17 @@ import it.polimi.ingsw.model.commonItem.Resource;
 import java.lang.reflect.Type;
 
 /**
- * Class ItemBoxDeserializer
- * used to help deserialize the json files
+ * Class ItemBoxDeserializer<br>
+ * Used as helper class for deserialization
  */
 public class ItemboxDeserializer implements JsonDeserializer<ItemBox> {
     /**
-     * method called in GoalsPreset to help with the deserialization and the instantiation of the Arraylist of resources in Resource Goals
-     *
+     * Method called in GoalsPreset to help with the deserialization and the instantiation of the Arraylist of resources in Resource Goals
      * @param jsonElement                the element that will be deserialized
      * @param type                       the type of the element that will be deserialized
      * @param jsonDeserializationContext the context in which the element is deserialized
      * @return item (Kingdom or Resource, depending on what type of ItemBox it is)
-     * @throws JsonParseException if there is an issue that occurs during the parsing of a Json string
+     * @throws JsonParseException thrown if there is an issue that occurs during the parsing of a Json string
      */
     @Override
     public ItemBox deserialize(JsonElement jsonElement, Type type, JsonDeserializationContext jsonDeserializationContext) throws JsonParseException {

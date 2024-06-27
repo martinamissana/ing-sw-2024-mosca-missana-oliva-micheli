@@ -4,8 +4,8 @@ import it.polimi.ingsw.model.game.Lobby;
 import it.polimi.ingsw.model.player.Player;
 
 /**
- * LobbyCreatedEvent class
- * Extends abstract class Event
+ * LobbyCreatedEvent class<br>
+ * Extends abstract class Event<br>
  * Used to notify the virtual view of the creation of a lobby
  */
 public class LobbyCreatedEvent extends Event{
@@ -14,7 +14,7 @@ public class LobbyCreatedEvent extends Event{
     private final Integer ID;
 
     /**
-     * class constructor
+     * Class constructor
      * @param creator who has created the lobby
      * @param lobby lobby created
      * @param ID lobby ID
@@ -26,26 +26,17 @@ public class LobbyCreatedEvent extends Event{
     }
 
     /**
-     * getter
      * @return player who has created the lobby
      */
-    public Player getCreator() {
-        return creator;
-    }
+    public Player getCreator() { return creator; }
 
     /**
-     * getter
      * @return lobby created
      */
-    public Lobby getLobby() {
-        return lobby;
-    }
+    public Lobby getLobby() { return lobby; }
 
     /**
-     * getter
      * @return lobbyID
      */
-    public Integer getID() {
-        return ID;
-    }
+    public Integer getID() { return ID; }
 }

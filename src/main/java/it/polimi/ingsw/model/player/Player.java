@@ -7,7 +7,12 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Objects;
 
+/**
+ * Player Class<br>
+ * Organizes all the data structures of a player in a lobby and match
+ */
 public class Player implements Serializable {
+
     private final String nickname;
     private final Hand hand;
     private Field field;
@@ -19,7 +24,6 @@ public class Player implements Serializable {
 
     /**
      * Class constructor
-     *
      * @param nickname player's nickname
      */
     public Player(String nickname) {
@@ -34,73 +38,65 @@ public class Player implements Serializable {
     }
 
     /**
-     * sets the player's secret goal
-     *
-     * @param goal goal to set as the player's private goal
-     */
-    public void setSecretGoal(Goal goal) { this.secretGoal = goal; }
-
-    /**
-     * sets the player's pawn
-     *
-     * @param pawn pawn to set
-     */
-    public void setPawn(Pawn pawn) { this.pawn = pawn; }
-
-    /**
-     * returns the player's nickname
-     *
+     * Returns the player's nickname
      * @return String
      */
     public String getNickname() { return nickname; }
 
     /**
-     * returns the player's hand
-     *
+     * Returns the player's hand
      * @return Hand
      */
     public Hand getHand() { return hand; }
 
     /**
-     * returns the player's field
-     *
+     * Returns the player's field
      * @return Field
      */
     public Field getField() { return field; }
 
     /**
-     * returns the player's chat
-     *
+     * Returns the player's chat
      * @return Chat
      */
     public Chat getChat() { return chat; }
 
     /**
-     * returns the player's secret goal
-     *
+     * Returns the player's secret goal
      * @return Goal
      */
-    public Goal getSecretGoal() {
-        return secretGoal;
-    }
-
-    public int getGoalsDone() {
-        return goalsDone;
-    }
-
-    public void addGoalDone() {
-        this.goalsDone++;
-    }
+    public Goal getSecretGoal() { return secretGoal; }
 
     /**
-     * returns the player's pawn
-     *
+     * Sets the player's secret goal
+     * @param goal goal to set as the player's private goal
+     */
+    public void setSecretGoal(Goal goal) { this.secretGoal = goal; }
+
+    /**
+     * @return the number of goals completed by the player
+     */
+    public int getGoalsDone() { return goalsDone; }
+
+    /**
+     * Increments the counter of completed goals by one
+     */
+    public void addGoalDone() { this.goalsDone++; }
+
+    /**
+     * Returns the player's pawn
      * @return Pawn
      */
     public Pawn getPawn() { return pawn; }
 
     /**
-     * initializes all the attributes related to a game, used when a players is no longer in a lobby or in a game
+     * Sets the player's pawn
+     * @param pawn pawn to set
+     */
+    public void setPawn(Pawn pawn) { this.pawn = pawn; }
+
+    /**
+     * Initializes all game-related attributes. Used when a player is no longer in a lobby or in a game.
      */
     public void initialize() {
         this.hand.removeAllCards();
@@ -113,9 +109,7 @@ public class Player implements Serializable {
     }
 
     /**
-     * getter
-     *
-     * @return the list of choosable goals
+     * @return the list of goals the player can choose from
      */
     public ArrayList<Goal> getChoosableGoals() {
         return choosableGoals;

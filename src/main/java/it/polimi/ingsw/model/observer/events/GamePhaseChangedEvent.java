@@ -3,8 +3,8 @@ package it.polimi.ingsw.model.observer.events;
 import it.polimi.ingsw.model.game.GamePhase;
 
 /**
- * GamePhaseChangedEvent class
- * Extends abstract class Event
+ * GamePhaseChangedEvent class<br>
+ * Extends abstract class Event<br>
  * Used to notify the virtual view of the clients that the game phase has been changed [draw - play]
  */
 public class GamePhaseChangedEvent  extends Event{
@@ -12,7 +12,7 @@ public class GamePhaseChangedEvent  extends Event{
     private final GamePhase gamePhase;
 
     /**
-     * class constructor
+     * Class constructor
      * @param ID gameID
      * @param gamePhase phase of the game
      */
@@ -22,18 +22,12 @@ public class GamePhaseChangedEvent  extends Event{
     }
 
     /**
-     * getter
      * @return gameID
      */
-    public Integer getID() {
-        return ID;
-    }
+    public Integer getID() { return ID; }
 
     /**
-     * getter
      * @return new phase of the game
      */
-    public GamePhase getGamePhase() {
-        return gamePhase;
-    }
+    public GamePhase getGamePhase() { return gamePhase; }
 }

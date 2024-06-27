@@ -4,8 +4,8 @@ import it.polimi.ingsw.model.card.Card;
 import it.polimi.ingsw.model.player.Player;
 
 /**
- * CardAddedToHandEvent class
- * Extends abstract class Event
+ * CardAddedToHandEvent class<br>
+ * Extends abstract class Event<br>
  * Used to notify the virtual view of the client when a card is added to the player hand
  */
 public class CardAddedToHandEvent extends Event {
@@ -25,23 +25,16 @@ public class CardAddedToHandEvent extends Event {
     }
 
     /**
-     * getter
      * @return Player whose hand the card is added to
      */
-    public Player getPlayer() {
-        return player;
-    }
+    public Player getPlayer() { return player; }
 
     /**
-     * getter
      * @return Card added to hand
      */
-    public Card getCard() {
-        return card;
-    }
+    public Card getCard() { return card; }
 
     /**
-     * getter
      * @return game ID
      */
     public Integer getID() { return ID; }

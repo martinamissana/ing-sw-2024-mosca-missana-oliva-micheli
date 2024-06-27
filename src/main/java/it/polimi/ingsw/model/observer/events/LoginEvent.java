@@ -1,26 +1,21 @@
 package it.polimi.ingsw.model.observer.events;
 
 /**
- * LoginEvent class
- * Extends abstract class Event
+ * LoginEvent class<br>
+ * Extends abstract class Event<br>
  * Used to notify the virtual view when a player logs in
  */
 public class LoginEvent extends Event {
     String nickname;
 
     /**
-     * class constructor
+     * Class constructor
      * @param nickname name of the user
      */
-    public LoginEvent(String nickname) {
-        this.nickname = nickname;
-    }
+    public LoginEvent(String nickname) { this.nickname = nickname; }
 
     /**
-     * getter
      * @return nickname of the user
      */
-    public String getNickname() {
-        return nickname;
-    }
+    public String getNickname() { return nickname; }
 }

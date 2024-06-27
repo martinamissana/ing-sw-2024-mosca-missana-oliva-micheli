@@ -4,8 +4,8 @@ import it.polimi.ingsw.model.game.Lobby;
 import it.polimi.ingsw.model.player.Player;
 
 /**
- * LobbyLeftEvent class
- * Extends abstract class Event
+ * LobbyLeftEvent class<br>
+ * Extends abstract class Event<br>
  * Used to notify the virtual view when a player lefts the lobby
  */
 public class LobbyLeftEvent extends Event{
@@ -14,7 +14,7 @@ public class LobbyLeftEvent extends Event{
     private final Integer ID;
 
     /**
-     * class constructor
+     * Class constructor
      * @param player who left
      * @param lobby lobby left
      * @param ID lobbyID
@@ -26,26 +26,17 @@ public class LobbyLeftEvent extends Event{
     }
 
     /**
-     * getter
      * @return player who left
      */
-    public Player getPlayer() {
-        return player;
-    }
+    public Player getPlayer() { return player; }
 
     /**
-     * getter
      * @return lobby left
      */
-    public Lobby getLobby() {
-        return lobby;
-    }
+    public Lobby getLobby() { return lobby; }
 
     /**
-     * getter
      * @return ID
      */
-    public Integer getID() {
-        return ID;
-    }
+    public Integer getID() { return ID; }
 }

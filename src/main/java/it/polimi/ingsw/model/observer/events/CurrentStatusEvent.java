@@ -5,8 +5,8 @@ import it.polimi.ingsw.model.game.Lobby;
 import java.util.HashMap;
 
 /**
- *  CurrentStatusEvent class
- *  Extends abstract class Event
+ *  CurrentStatusEvent class<br>
+ *  Extends abstract class Event<br>
  *  Used to notify the virtual view of the client on the active lobbies
  */
 public class CurrentStatusEvent extends Event{
@@ -25,18 +25,12 @@ public class CurrentStatusEvent extends Event{
     }
 
     /**
-     * getter
      * @return active lobbies
      */
-    public HashMap<Integer, Lobby> getLobbies() {
-        return lobbies;
-    }
+    public HashMap<Integer, Lobby> getLobbies() { return lobbies; }
 
     /**
-     * getter
      * @return nickname of who requested
      */
-    public String getNickname() {
-        return nickname;
-    }
+    public String getNickname() { return nickname; }
 }

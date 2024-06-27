@@ -4,8 +4,8 @@ import it.polimi.ingsw.model.goal.Goal;
 import it.polimi.ingsw.model.player.Player;
 
 /**
- * ScoreIncrementedEvent class
- * Extends abstract class Event
+ * ScoreIncrementedEvent class<br>
+ * Extends abstract class Event<br>
  * Used to notify the virtual view when the secret goal is assigned
  */
 public class SecretGoalAssignedEvent extends Event{
@@ -13,7 +13,7 @@ public class SecretGoalAssignedEvent extends Event{
     private final Goal goal;
 
     /**
-     * class constructor
+     * Class constructor
      * @param player who chose the goal
      * @param goal goal chosen
      */
@@ -23,18 +23,12 @@ public class SecretGoalAssignedEvent extends Event{
     }
 
     /**
-     * getter
      * @return player who chose the goal
      */
-    public Player getPlayer() {
-        return player;
-    }
+    public Player getPlayer() { return player; }
 
     /**
-     * getter
      * @return goal chosen
      */
-    public Goal getGoal() {
-        return goal;
-    }
+    public Goal getGoal() { return goal; }
 }

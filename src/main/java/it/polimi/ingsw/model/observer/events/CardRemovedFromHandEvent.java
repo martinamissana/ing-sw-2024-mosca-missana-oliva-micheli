@@ -4,8 +4,8 @@ import it.polimi.ingsw.model.card.Card;
 import it.polimi.ingsw.model.player.Player;
 
 /**
- *  CardRemovedFromHandEvent class
- *  Extends abstract class Event
+ *  CardRemovedFromHandEvent class<br>
+ *  Extends abstract class Event<br>
  *  Used to notify the virtual view of the client when a card is removed from the hand
  */
 public class CardRemovedFromHandEvent  extends Event{
@@ -13,7 +13,7 @@ public class CardRemovedFromHandEvent  extends Event{
     private final Card card;
 
     /**
-     * class constructor
+     * Class constructor
      * @param player player whose hand the card is removed from
      * @param card card removed
      */
@@ -23,18 +23,12 @@ public class CardRemovedFromHandEvent  extends Event{
     }
 
     /**
-     * getter
      * @return player whose hand the card is removed from
      */
-    public Player getPlayer() {
-        return player;
-    }
+    public Player getPlayer() { return player; }
 
     /**
-     * getter
      * @return card removed from the hand
      */
-    public Card getCard() {
-        return card;
-    }
+    public Card getCard() { return card; }
 }

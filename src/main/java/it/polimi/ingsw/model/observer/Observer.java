@@ -9,11 +9,9 @@ import java.io.IOException;
  */
 public interface Observer {
     /**
-     * receives an event and handles it
-     *
+     * Receives an event and handles it
      * @param event the event that they have to handle
-     * @throws IOException produced by failed or interrupted I/O operations
+     * @throws IOException thrown if I/O operations are interrupted or failed
      */
-    public void update(Event event) throws IOException;
-
+    void update(Event event) throws IOException;
 }

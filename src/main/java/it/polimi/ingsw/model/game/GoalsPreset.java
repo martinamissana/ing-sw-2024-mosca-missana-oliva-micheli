@@ -3,7 +3,9 @@ package it.polimi.ingsw.model.game;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import it.polimi.ingsw.model.commonItem.ItemBox;
-import it.polimi.ingsw.model.goal.*;
+import it.polimi.ingsw.model.goal.DiagonalGoal;
+import it.polimi.ingsw.model.goal.L_ShapeGoal;
+import it.polimi.ingsw.model.goal.ResourceGoal;
 import it.polimi.ingsw.model.serialization.ItemboxDeserializer;
 
 import java.io.BufferedReader;
@@ -14,16 +16,15 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 /**
- * Class GoalsPreset
- * defines the methods to obtain all type of goals in Codex Naturalis
+ * Class GoalsPreset<br>
+ * Defines methods to obtain all goals in Codex Naturalis
  */
 public class GoalsPreset {
 
     /**
-     * gets all the diagonal goals in a list
-     *
+     * Gets a list of all diagonal goals
      * @return ArrayList<DiagonalGoal>
-     * @throws IOException produced by failed or interrupted I/O operations
+     * @throws IOException thrown if I/O operations are interrupted or failed
      */
     public static ArrayList<DiagonalGoal> getDiagonalGoals() throws IOException {
 
@@ -47,10 +48,9 @@ public class GoalsPreset {
     }
 
     /**
-     * gets all the L_shape goals in a list
-     *
+     * Gets a list of all L_shape goals
      * @return ArrayList<L_ShapeGoal>
-     * @throws IOException
+     * @throws IOException thrown if I/O operations are interrupted or failed
      */
     public static ArrayList<L_ShapeGoal> getLShapeGoals() throws IOException {
 
@@ -74,10 +74,9 @@ public class GoalsPreset {
     }
 
     /**
-     * gets all the resource goals in a list
-     *
+     * Gets a list of all resource goals
      * @return ArrayList<ResourceGoal>
-     * @throws IOException
+     * @throws IOException thrown if I/O operations are interrupted or failed
      */
     public static ArrayList<ResourceGoal> getResourceGoals() throws IOException {
 

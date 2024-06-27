@@ -4,8 +4,8 @@ import it.polimi.ingsw.model.card.Card;
 import it.polimi.ingsw.model.deck.DeckTypeBox;
 
 /**
- *  CardDrawnFormSourceEvent class
- *  Extends abstract class Event
+ *  CardDrawnFormSourceEvent class<br>
+ *  Extends abstract class Event<br>
  *  Used to notify the virtual views of the clients in a game when a card is drawn from decks or deckbuffers
  */
 public class CardDrawnFromSourceEvent  extends Event{
@@ -26,26 +26,17 @@ public class CardDrawnFromSourceEvent  extends Event{
     }
 
     /**
-     * getter
      * @return ID of the game
      */
-    public Integer getID() {
-        return ID;
-    }
+    public Integer getID() { return ID; }
 
     /**
-     * getter
      * @return the source where te card is drawn
      */
-    public DeckTypeBox getType() {
-        return type;
-    }
+    public DeckTypeBox getType() { return type; }
 
     /**
-     * getter
      * @return the new card on top of the ResDeck [for ResDeck, Res1, Res2] or GoldDeck [for GoldDeck, Gold1, Gold2]
      */
-    public Card getCard() {
-        return card;
-    }
+    public Card getCard() { return card; }
 }

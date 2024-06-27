@@ -5,8 +5,8 @@ import it.polimi.ingsw.model.card.CardSide;
 import it.polimi.ingsw.model.player.Coords;
 
 /**
- *  CardPlacedOnFieldEvent class
- *  Extends abstract class Event
+ *  CardPlacedOnFieldEvent class<br>
+ *  Extends abstract class Event<br>
  *  Used to notify the virtual view of the client when a card is placed in field
  */
 public class CardPlacedOnFieldEvent  extends Event{
@@ -17,7 +17,7 @@ public class CardPlacedOnFieldEvent  extends Event{
     private final String nickname;
 
     /**
-     * class constructor
+     * Class constructor
      * @param coords coordinates where the card is put
      * @param ID ID of the game
      * @param card card placed in field
@@ -33,42 +33,27 @@ public class CardPlacedOnFieldEvent  extends Event{
     }
 
     /**
-     * getter
      * @return coordinates where the card is put
      */
-    public Coords getCoords() {
-        return coords;
-    }
+    public Coords getCoords() { return coords; }
 
     /**
-     * getter
      * @return Integer ID of the game
      */
-    public Integer getID() {
-        return ID;
-    }
+    public Integer getID() { return ID; }
 
     /**
-     * getter
      * @return String nickname of the player
      */
-    public String getNickname() {
-        return nickname;
-    }
+    public String getNickname() { return nickname; }
 
     /**
-     * getter
      * @return card placed of field
      */
-    public Card getCard() {
-        return card;
-    }
+    public Card getCard() { return card; }
 
     /**
-     * getter
      * @return card side
      */
-    public CardSide getSide() {
-        return side;
-    }
+    public CardSide getSide() { return side; }
 }

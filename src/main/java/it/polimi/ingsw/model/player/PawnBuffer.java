@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 /**
- * List of all the available pawns
+ * A list of all available pawns in a lobby
  */
 public class PawnBuffer implements Serializable {
     private final ArrayList<Pawn> pawnList = new ArrayList<>();
@@ -13,15 +13,10 @@ public class PawnBuffer implements Serializable {
     /**
      * Class constructor
      */
-    public PawnBuffer() {
-        Collections.addAll(pawnList, Pawn.values());
-    }
+    public PawnBuffer() { Collections.addAll(pawnList, Pawn.values()); }
 
     /**
-     * getter
-     * @return ArrayList<Pawn> - the list of available pawns
+     * @return the list of available pawns in the lobby
      */
-    public ArrayList<Pawn> getPawnList() {
-        return pawnList;
-    }
+    public ArrayList<Pawn> getPawnList() { return pawnList; }
 }

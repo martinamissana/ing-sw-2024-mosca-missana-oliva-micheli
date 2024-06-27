@@ -11,9 +11,8 @@ public class GoalContainer implements Serializable {
     private final ArrayList<Goal> goals = new ArrayList<>();
 
     /**
-     * class constructor
-     *
-     * @throws IOException produced by failed or interrupted I/O operations
+     * Class constructor
+     * @throws IOException thrown if I/O operations are interrupted or failed
      */
     public GoalContainer() throws IOException {
         goals.addAll(GoalsPreset.getDiagonalGoals());
@@ -22,18 +21,14 @@ public class GoalContainer implements Serializable {
     }
 
     /**
-     * method to pick a random goal from goalContainer
-     *
+     * Randomly extracts a goal from the list
      * @return Goal
      */
     public Goal getGoal() {
-        if (!goals.isEmpty()) {
-            Collections.shuffle(goals);
-            Goal goal = goals.getFirst();
-            goals.removeFirst();
-            return goal;
-        } else {
-            return null;
-        }
+        if (goals.isEmpty()) return null;
+        Collections.shuffle(goals);
+        Goal goal = goals.getFirst();
+        goals.removeFirst();
+        return goal;
     }
 }

@@ -3,8 +3,7 @@ package it.polimi.ingsw.model.player;
 import java.io.Serializable;
 
 /**
- * Pawn enumeration
- * used to keep track of a player's color
+ * Enumeration indicating all possible {@code Pawn} colors
  */
 public enum Pawn implements Serializable {
     RED,

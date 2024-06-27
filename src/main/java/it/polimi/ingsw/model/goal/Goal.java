@@ -3,8 +3,8 @@ package it.polimi.ingsw.model.goal;
 import java.io.Serializable;
 
 /**
- * Abstract Class Goal
- * defines all the basic attributes and methods common to all the goals
+ * Abstract Class Goal<br>
+ * Defines all the basic attributes and methods common to all goals in Codex Naturalis
  */
 public abstract class Goal implements Serializable {
     private final int GoalID;
@@ -12,9 +12,8 @@ public abstract class Goal implements Serializable {
 
     /**
      * Class constructor
-     *
-     * @param goalID - identifies univocally the goal
-     * @param points - points given from the goal
+     * @param goalID the goal's ID
+     * @param points points to be added to the player's score when they complete the goal
      */
     public Goal(int goalID, int points) {
         this.GoalID = goalID;
@@ -22,21 +21,14 @@ public abstract class Goal implements Serializable {
     }
 
     /**
-     * getter for the points of the goal
-     *
+     * Gets the goal's ID
      * @return int
      */
-    public int getPoints() {
-        return points;
-    }
+    public int getGoalID() { return GoalID; }
 
     /**
-     * getter for the ID of the goal
-     *
+     * Gets the goal's points
      * @return int
      */
-    public int getGoalID() {
-        return GoalID;
-    }
-
-   }
+    public int getPoints() { return points; }
+}

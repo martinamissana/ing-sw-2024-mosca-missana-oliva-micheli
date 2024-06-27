@@ -8,24 +8,20 @@ import java.util.ArrayList;
 import java.util.NoSuchElementException;
 
 /**
- * Hand Class
- * each player has an associated hand containing all their available cards
+ * Hand Class<br>
+ * Each player has an associated {@code Hand} containing all their available cards
  */
 public class Hand implements Serializable {
     private final ArrayList<Card> handList = new ArrayList<>();
 
     /**
-     * returns number of cards in hand
-     *
+     * Returns number of cards in hand
      * @return size
      */
-    public int getSize() {
-        return handList.size();
-    }
+    public int getSize() { return handList.size(); }
 
     /**
-     * returns the card at the specified position in the hand
-     *
+     * Returns the card at the specified position in the hand
      * @param pos position of the desired card
      * @return Card
      * @throws IndexOutOfBoundsException thrown if the position requested isn't in the list
@@ -33,8 +29,7 @@ public class Hand implements Serializable {
     public Card getCard(int pos) throws IndexOutOfBoundsException { return handList.get(pos); }
 
     /**
-     * adds a card to the hand
-     *
+     * Adds a card to the hand
      * @param card card to add to the hand
      * @throws HandIsFullException thrown if the hand already contains three (or more) cards
      */
@@ -45,9 +40,7 @@ public class Hand implements Serializable {
     }
 
     /**
-     * removes a card from the hand
-     * returns false if the specified card wasn't in the hand
-     *
+     * Removes a card from the hand
      * @param card card to remove from the hand
      */
     public void removeCard(Card card) {
@@ -56,10 +49,8 @@ public class Hand implements Serializable {
     }
 
     /**
-     * remove all the cards from the hand, used for the testing of this class
+     * <strong>For testing purposes only</strong><br>
+     * Removes all cards from the hand
      */
-    public void removeAllCards() {
-        handList.clear();
-
-    }
+    public void removeAllCards() { handList.clear(); }
 }

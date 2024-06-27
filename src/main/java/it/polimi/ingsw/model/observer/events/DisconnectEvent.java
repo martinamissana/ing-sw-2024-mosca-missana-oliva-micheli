@@ -3,8 +3,8 @@ package it.polimi.ingsw.model.observer.events;
 import it.polimi.ingsw.controller.Controller;
 
 /**
- *  DisconnectEvent class
- *  Extends abstract class Event
+ *  DisconnectEvent class<br>
+ *  Extends abstract class Event<br>
  *  Used to notify the RMIVirtualView if the client crashes
  */
 public class DisconnectEvent extends Event {
@@ -13,7 +13,7 @@ public class DisconnectEvent extends Event {
     Integer ID;
 
     /**
-     * class constructor
+     * Class constructor
      * @param c controller
      * @param nickname name of the player
      * @param ID ID of the game/lobby
@@ -25,26 +25,17 @@ public class DisconnectEvent extends Event {
     }
 
     /**
-     * getter
      * @return controller
      */
-    public Controller getC() {
-        return c;
-    }
+    public Controller getC() { return c; }
 
     /**
-     * getter
      * @return nickname
      */
-    public String getNickname() {
-        return nickname;
-    }
+    public String getNickname() { return nickname; }
 
     /**
-     * getter
      * @return ID of the game/lobby
      */
-    public Integer getID() {
-        return ID;
-    }
+    public Integer getID() { return ID; }
 }

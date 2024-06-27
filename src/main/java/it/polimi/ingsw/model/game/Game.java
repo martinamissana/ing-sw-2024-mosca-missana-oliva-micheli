@@ -14,7 +14,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
- * Game class, it represents a single instance of a match
+ * Class Game<br>
+ * It represents a single instance of a Codex Naturalis match.
  */
 public class Game implements Serializable {
 
@@ -23,7 +24,7 @@ public class Game implements Serializable {
     private final ArrayList<Player> players;
     private int whoseTurn;
     private Action action = Action.PLAY;
-    private boolean lastRound; // set to true afterward someone reached 20 points in a round and that same round has finished
+    private boolean lastRound; // set to true when, at the end of a round, a player has reached 20 points that round
     private final HashMap<Player, Integer> scoreboard;
     private Goal commonGoal1;
     private Goal commonGoal2;
@@ -36,259 +37,154 @@ public class Game implements Serializable {
 
 
     /**
-     * Class Constructor
-     *
-     * @param gameID       identifies univocally the game
+     * Class constructor
+     * @param gameID       the game's ID, which univocally identifies it
      * @param numOfPlayers number of players of the game
-     * @param players      HashMap<Integer, Player> maps PlayerID to Player
-     * @param scoreboard   HashMap<Player,Integer> maps the player to his points
-     * @throws IOException produced by failed or interrupted I/O operations
+     * @param players      HashMap<Integer, Player> maps playerID to Player
+     * @param scoreboard   HashMap<Player,Integer> maps each player to their score
+     * @throws IOException thrown if I/O operations are interrupted or failed
      */
     public Game(int gameID, int numOfPlayers, ArrayList<Player> players, HashMap<Player, Integer> scoreboard) throws IOException {
+        this.gameID = gameID;
         this.numOfPlayers = numOfPlayers;
         this.players = players;
-        this.gameID = gameID;
+        this.whoseTurn = 0;
+        this.goals = new GoalContainer();
         this.commonGoal1 = null;
         this.commonGoal2 = null;
-        this.whoseTurn = 0;
         this.scoreboard = scoreboard;
         this.deckBuffers.put(DeckBufferType.GOLD1, new DeckBuffer(this.GoldenDeck));
         this.deckBuffers.put(DeckBufferType.GOLD2, new DeckBuffer(this.GoldenDeck));
         this.deckBuffers.put(DeckBufferType.RES1, new DeckBuffer(this.ResourceDeck));
         this.deckBuffers.put(DeckBufferType.RES2, new DeckBuffer(this.ResourceDeck));
-        this.goals = new GoalContainer();
         this.gamePhase = GamePhase.PLACING_STARTER_CARD;
     }
 
     /**
-     * getter
-     *
-     * @return the list of winners of the game
+     * @return the game's ID
      */
-    public ArrayList<Player> getWinners() {
-        return winners;
-    }
-
+    public int getGameID() { return gameID; }
 
     /**
-     * setter
-     *
-     * @param winners list of the winners of the game
+     * @return the number of players in the match
      */
-    public void setWinners(ArrayList<Player> winners) {
-        this.winners.addAll(winners);
-    }
+    public int getNumOfPlayers() { return numOfPlayers; }
 
     /**
-     * getter
-     *
-     * @param type specifies the type of the deckbuffer needed (gold1,gold2,res1,res2)
-     * @return Deckbuffer
+     * @return the list of players ordered by turn in any round
      */
-    public DeckBuffer getDeckBuffer(DeckBufferType type) {
-        return deckBuffers.get(type);
-    }
+    public ArrayList<Player> getPlayers() { return players; }
 
     /**
-     * setter
-     *
+     * @return the player who is currently playing
+     */
+    public Player getCurrPlayer() { return players.get(whoseTurn); }
+
+    /**
+     * @return the index of the current player in the players list
+     */
+    public int getWhoseTurn() { return whoseTurn; }
+
+    /**
      * @param whoseTurn int, indicates the index in the ArrayList players of who is playing when the method is called
      */
-    public void setWhoseTurn(int whoseTurn) {
-        this.whoseTurn = whoseTurn;
-    }
+    public void setWhoseTurn(int whoseTurn) { this.whoseTurn = whoseTurn; }
 
     /**
-     * getter
-     *
-     * @return int, index in the ArrayList players of who is playing when the method is called
+     * @return the action the player is allowed to perform at the moment
      */
-    public int getWhoseTurn() {
-        return whoseTurn;
-    }
+    public Action getAction() { return action; }
 
     /**
-     * getter
-     *
-     * @return int GameID, identifies the match
+     * @param action the action the player is allowed to perform at the moment
      */
-    public int getGameID() {
-        return gameID;
-    }
+    public void setAction(Action action) { this.action = action; }
 
     /**
-     * getter
-     *
-     * @return int, NumOfPlayers
+     * @return {@code true} if the current round is the last in the match; meaning that,
+     * in the previous round, either at least one player has reached 20 points or
+     * both decks were emptied of their cards. {@code false} otherwise.
      */
-    public int getNumOfPlayers() {
-        return numOfPlayers;
-    }
+    public boolean isLastRound() { return lastRound; }
 
     /**
-     * getter
-     *
-     * @return HashMap<Integer, Player> players
+     * @param lastRound desired value
      */
-    public ArrayList<Player> getPlayers() {
-        return players;
-    }
+    public void setLastRound(boolean lastRound) { this.lastRound = lastRound; }
 
     /**
-     * getter
-     *
-     * @return the action the player is allowed to do at that moment
-     */
-    public Action getAction() {
-        return action;
-    }
-
-    /**
-     * getter
-     *
      * @return list of goals
      */
-    public GoalContainer getGoals() {
-        return this.goals;
-    }
+    public GoalContainer getGoals() { return this.goals; }
 
     /**
-     * setter
-     *
-     * @param action the action the player is allowed to do at that moment
+     * @return one of the two goals common to all players in the match
      */
-    public void setAction(Action action) {
-        this.action = action;
-    }
+    public Goal getCommonGoal1() { return commonGoal1; }
 
     /**
-     * getter
-     *
-     * @return boolean isLastRound, the boolean that specify if it is the last round of the game
+     * @return one of the two goals common to all players in the match
      */
-    public boolean isLastRound() {
-        return lastRound;
-    }
+    public Goal getCommonGoal2() { return commonGoal2; }
 
     /**
-     * setter
-     *
-     * @param lastRound, the boolean that specify if it is the last round of the game
+     * @param commonGoal1 one of the two common goals
      */
-    public void setLastRound(boolean lastRound) {
-        this.lastRound = lastRound;
-    }
+    public void setCommonGoal1(Goal commonGoal1) { this.commonGoal1 = commonGoal1; }
 
     /**
-     * getter
-     *
-     * @return Goal, one of the two common goals
+     * @param commonGoal2 one of the two common goals
      */
-    public Goal getCommonGoal1() {
-        return commonGoal1;
-    }
+    public void setCommonGoal2(Goal commonGoal2) { this.commonGoal2 = commonGoal2; }
 
     /**
-     * getter
-     *
-     * @return Goal, one of the two common goals
+     * @return the entire scoreboard
      */
-    public Goal getCommonGoal2() {
-        return commonGoal2;
-    }
+    public HashMap<Player, Integer> getScoreboard() { return scoreboard; }
 
     /**
-     * setter
-     *
-     * @param commonGoal1 Goal
+     * @param player desired player to get the score of
+     * @return the score of the specified player
      */
-    public void setCommonGoal1(Goal commonGoal1) {
-        this.commonGoal1 = commonGoal1;
-    }
+    public int getPlayerScore(Player player) { return scoreboard.get(player); }
 
     /**
-     * setter
-     *
-     * @param commonGoal2 Goal
+     * Increments a player's score by a set amount of points
+     * @param player the player that will have their score incremented
+     * @param points the amount of points to add to the player's score
      */
-    public void setCommonGoal2(Goal commonGoal2) {
-        this.commonGoal2 = commonGoal2;
-    }
+    public void addToScore(Player player, int points) { scoreboard.put(player, scoreboard.get(player) + points); }
 
     /**
-     * increments the points of a player
-     *
-     * @param player the player that will have their points incremented
-     * @param points the amount of points added to the player score
-     */
-    public void addToScore(Player player, int points) {
-        scoreboard.put(player, scoreboard.get(player) + points);
-    }
-
-    /**
-     * getter
-     *
-     * @param player the player that you want to get the points from
-     * @return int, the points of the specified player
-     */
-    public int getPlayerScore(Player player) {
-        return scoreboard.get(player);
-    }
-
-    /**
-     * getter
-     *
-     * @return Player, the player who is playing at the moment
-     */
-    public Player getCurrPlayer() {
-        return players.get(whoseTurn);
-    }
-
-    /**
-     * getter
-     *
-     * @return HashMap<Player, Integer> the entire scoreboard
-     */
-    public HashMap<Player, Integer> getScoreboard() {
-        return scoreboard;
-    }
-
-    /**
-     * getter
-     *
-     * @return Deck, ResourceDeck of the game
-     */
-    public Deck getResourceDeck() {
-        return ResourceDeck;
-    }
-
-    /**
-     * getter
-     *
-     * @return Deck, GoldenDeck of the game
-     */
-    public Deck getGoldenDeck() {
-        return GoldenDeck;
-    }
-
-    /**
-     * getter of a specific deck
-     *
-     * @param type defines the type of deck wanted
-     * @return Deck
+     * @param type the type of deck to return
+     * @return the game's deck of the specified type
      */
     public Deck getDeck(DeckType type) {
         if (type == DeckType.RESOURCE) return ResourceDeck;
         else return GoldenDeck;
     }
 
+    /**
+     * @return the game's resource deck
+     */
+    public Deck getResourceDeck() { return ResourceDeck; }
 
     /**
-     * draws a card from the specified source (Deck or DeckBuffer)
-     *
+     * @return the game's golden deck
+     */
+    public Deck getGoldenDeck() { return GoldenDeck; }
+
+    /**
+     * @param type specifies the type of the deck buffer needed
+     * @return a reference to the corresponding {@code DeckBuffer}
+     */
+    public DeckBuffer getDeckBuffer(DeckBufferType type) { return deckBuffers.get(type); }
+
+    /**
+     * Draws a card from the specified source ({@code Deck} or {@code DeckBuffer})
      * @param src source to draw the card from
-     * @return ResourceCard
-     * @throws EmptyDeckException thrown if the source has no cards
+     * @return a card drawn from the selected source
+     * @throws EmptyDeckException thrown if the selected source has no cards
      */
     public ResourceCard drawFromSource(DeckTypeBox src) throws EmptyDeckException, EmptyBufferException {
         switch (src) {
@@ -303,20 +199,22 @@ public class Game implements Serializable {
     }
 
     /**
-     * getter
-     *
-     * @return the phase the game is on
+     * @return the phase the game is currently in
      */
-    public GamePhase getGamePhase() {
-        return gamePhase;
-    }
+    public GamePhase getGamePhase() { return gamePhase; }
 
     /**
-     * setter
-     *
-     * @param gamePhase the phase the game is on
+     * @param gamePhase the phase the game will be in
      */
-    public void setGamePhase(GamePhase gamePhase) {
-        this.gamePhase = gamePhase;
-    }
+    public void setGamePhase(GamePhase gamePhase) { this.gamePhase = gamePhase; }
+
+    /**
+     * @return the list of winners of the game
+     */
+    public ArrayList<Player> getWinners() { return winners; }
+
+    /**
+     * @param winners list of the winners of the game
+     */
+    public void setWinners(ArrayList<Player> winners) { this.winners.addAll(winners); }
 }

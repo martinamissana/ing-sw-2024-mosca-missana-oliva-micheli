@@ -11,8 +11,8 @@ import it.polimi.ingsw.model.player.Player;
 import java.util.HashMap;
 
 /**
- * GameCreatedEvent class
- * Extends abstract class Event
+ * GameCreatedEvent class<br>
+ * Extends abstract class Event<br>
  * Used to notify the virtual view of the clients that the game has been created
  */
 public class GameCreatedEvent extends Event {
@@ -29,7 +29,7 @@ public class GameCreatedEvent extends Event {
 
 
     /**
-     * class constructor
+     * Class constructor
      * @param ID ID of the game
      * @param firstPlayer player who starts first
      * @param scoreboard scoreboard with the player points
@@ -60,79 +60,51 @@ public class GameCreatedEvent extends Event {
     }
 
     /**
-     * getter
      * @return Integer gameID
      */
-    public Integer getID() {
-        return ID;
-    }
+    public Integer getID() { return ID; }
 
     /**
-     * getter
      * @return player who's the first player
      */
-    public Player getFirstPlayer() {
-        return firstPlayer;
-    }
+    public Player getFirstPlayer() { return firstPlayer; }
 
     /**
-     * getter
      * @return scoreboard with the players' scores
      */
-    public HashMap<Player, Integer> getScoreboard() {
-        return scoreboard;
-    }
+    public HashMap<Player, Integer> getScoreboard() { return scoreboard; }
 
     /**
-     * getter
      * @return deckbuffers
      */
-    public HashMap<DeckBufferType, DeckBuffer> getDeckBuffers() {
-        return deckBuffers;
-    }
+    public HashMap<DeckBufferType, DeckBuffer> getDeckBuffers() { return deckBuffers; }
 
     /**
-     * getter
      * @return the top card of the resource card
      */
-    public Card getTopResourceCard() {
-        return topResourceCard;
-    }
+    public Card getTopResourceCard() { return topResourceCard; }
 
     /**
-     * getter
      * @return the top card of the golden card
      */
-    public Card getTopGoldenCard() {
-        return topGoldenCard;
-    }
+    public Card getTopGoldenCard() { return topGoldenCard; }
 
     /**
-     * getter
      * @return the fist common goal
      */
-    public Goal getCommonGoal1() {
-        return commonGoal1;
-    }
+    public Goal getCommonGoal1() { return commonGoal1; }
 
     /**
-     * getter
      * @return the second common goal
      */
-    public Goal getCommonGoal2() {
-        return commonGoal2;
-    }
+    public Goal getCommonGoal2() { return commonGoal2; }
 
     /**
-     * getter
      * @return the game phase
      */
-    public GamePhase getGamePhase() {
-        return gamePhase;
-    }
+    public GamePhase getGamePhase() { return gamePhase; }
 
     /**
-     * getter
      * @return the action [draw-play]
      */
     public Action getAction() { return action; }

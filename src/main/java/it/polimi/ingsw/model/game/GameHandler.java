@@ -7,122 +7,98 @@ import it.polimi.ingsw.model.observer.Observable;
 import it.polimi.ingsw.model.observer.events.LoginEvent;
 import it.polimi.ingsw.model.player.Player;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 
 /**
- * Class GameHandler
- * stores all the data about multiple games and lobbies hosted in a server
+ * Class GameHandler<br>
+ * Stores all the information on lobbies and games hosted in a server
  */
 public class GameHandler extends Observable implements Serializable {
-    private HashMap<Integer, Game> activeGames;
-    private HashMap<Integer, Lobby> lobbies;
     private int numOfLobbies = 0;
+    private final HashMap<Integer, Lobby> lobbies;
+    private final HashMap<Integer, Game> activeGames;
     private final ArrayList<Player> users;
 
     /**
      * Class constructor
      */
     public GameHandler() {
-        this.activeGames = new HashMap<>();
         this.lobbies = new HashMap<>();
+        this.activeGames = new HashMap<>();
         this.users = new ArrayList<>();
     }
 
     /**
-     * getter
-     *
-     * @return activeGames the HashMap with the active games
-     */
-    public synchronized HashMap<Integer, Game> getActiveGames() {
-        return activeGames;
-    }
-
-    /**
-     * getter
-     *
-     * @return lobbies the HashMap with the  current lobbies
-     */
-    public synchronized HashMap<Integer, Lobby> getLobbies() {
-        return lobbies;
-    }
-
-    /**
-     * getter
-     *
-     * @return users the list of users connected
-     */
-    public synchronized ArrayList<Player> getUsers() {
-        return users;
-    }
-
-    /**
-     * getter
-     *
-     * @return numOfLobbies the number of lobbies that have been created
+     * @return the number of existing lobbies
      */
     public synchronized int getNumOfLobbies() { return numOfLobbies; }
 
     /**
-     * used to get a specific game
-     *
-     * @param ID of the game you want to get from the list of active games
-     * @return the specified game
-     * @throws GameDoesNotExistException if the game doesn't exist
-     */
-    public synchronized Game getGame(Integer ID) throws GameDoesNotExistException {
-        if (activeGames.containsKey(ID)) {
-            return activeGames.get(ID);
-        } else {
-            throw new GameDoesNotExistException();
-        }
-    }
-
-    /**
-     * used to get a specific lobby
-     *
-     * @param ID of the lobby you want to get from the list of lobbies
-     * @return the specified lobby
-     * @throws LobbyDoesNotExistException if the lobby doesn't exist
-     */
-    public synchronized Lobby getLobby(Integer ID) throws LobbyDoesNotExistException {
-        if (lobbies.containsKey(ID)) {
-            return lobbies.get(ID);
-        } else {
-            throw new LobbyDoesNotExistException();
-        }
-    }
-
-    /**
-     * setter
-     *
-     * @param numOfLobbies the value you want to set for the number of lobbies
+     * @param numOfLobbies the current number of lobbies
      */
     public synchronized void setNumOfLobbies(int numOfLobbies) { this.numOfLobbies = numOfLobbies; }
 
     /**
-     * used to add users to user list
-     *
-     * @param user the user that will be added to the user list
-     * @throws NicknameAlreadyTakenException when in user list there is already a user with the same nickname
+     * @return the map containing all existing lobbies
+     */
+    public synchronized HashMap<Integer, Lobby> getLobbies() { return lobbies; }
+
+    /**
+     * @param ID of the desired lobby
+     * @return the lobby corresponding to the specified ID
+     * @throws LobbyDoesNotExistException thrown if no existing lobby has the specified ID
+     */
+    public synchronized Lobby getLobby(Integer ID) throws LobbyDoesNotExistException {
+        if (lobbies.containsKey(ID))
+            return lobbies.get(ID);
+        throw new LobbyDoesNotExistException();
+    }
+
+    /**
+     * @return the map containing all active games
+     */
+    public synchronized HashMap<Integer, Game> getActiveGames() { return activeGames; }
+
+    /**
+     * @param ID ID of the desired game
+     * @return the game corresponding to the specified ID
+     * @throws GameDoesNotExistException thrown if no active game has the specified ID
+     */
+    public synchronized Game getGame(Integer ID) throws GameDoesNotExistException {
+        if (activeGames.containsKey(ID))
+            return activeGames.get(ID);
+        throw new GameDoesNotExistException();
+    }
+
+    /**
+     * @return the list of all connected users
+     */
+    public synchronized ArrayList<Player> getUsers() { return users; }
+
+    /**
+     * @param user the user to add to the user list
+     * @throws NicknameAlreadyTakenException thrown when the user's nickname is equal to another user's
      */
     public synchronized void addUser(Player user) throws NicknameAlreadyTakenException, IOException {
-        for (Player u : this.users) {
-            if (u.getNickname().equals(user.getNickname())) throw new NicknameAlreadyTakenException();
-        }
+        for (Player u : this.users)
+            if (u.getNickname().equals(user.getNickname()))
+                throw new NicknameAlreadyTakenException();
         getUsers().add(user);
         notify(new LoginEvent(user.getNickname()));
     }
 
+    /**
+     * @param nickname nickname of the user to remove
+     */
     public synchronized void removeUser(String nickname) {
         List<Player> copiedUsers = new ArrayList<>(users);
-
-        for (Player p : copiedUsers) {
-            if (p.getNickname().equals(nickname)) users.remove(p);
-        }
+        for (Player p : copiedUsers)
+            if (p.getNickname().equals(nickname))
+                users.remove(p);
     }
-
 }

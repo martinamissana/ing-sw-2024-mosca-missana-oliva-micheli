@@ -3,8 +3,8 @@ package it.polimi.ingsw.model.observer.events;
 import it.polimi.ingsw.model.player.Player;
 
 /**
- * LobbyJoinedEvent class
- * Extends abstract class Event
+ * LobbyJoinedEvent class<br>
+ * Extends abstract class Event<br>
  * Used to notify the virtual view when a player joins the lobby
  */
 public class LobbyJoinedEvent extends Event{
@@ -12,7 +12,7 @@ public class LobbyJoinedEvent extends Event{
     private final Integer ID;
 
     /**
-     * class constructor
+     * Class constructor
      * @param player who joined the lobby
      * @param ID lobbyID
      */
@@ -22,13 +22,12 @@ public class LobbyJoinedEvent extends Event{
     }
 
     /**
-     * getter
      * @return player who joined the lobby
      */
-    public Player getPlayer() {
-        return player;
-    }
-    public Integer getID() {
-        return ID;
-    }
+    public Player getPlayer() { return player; }
+
+    /**
+     * @return ID
+     */
+    public Integer getID() { return ID; }
 }

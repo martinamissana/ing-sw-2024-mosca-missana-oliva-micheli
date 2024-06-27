@@ -8,21 +8,22 @@ import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
- * Lobby class, it represents a waiting room that players can join. When the number of players required is reached, the game is created
+ * Class Lobby<br>
+ * It represents a waiting room that players can join. When the required number of players
+ * is reached, and each one has chosen a pawn, a game with the corresponding lobby's ID is automatically created.
  */
 public class Lobby implements Serializable {
 
     private final int ID;
-    private final ArrayList<Player> players;
     private final int numOfPlayers;
+    private final ArrayList<Player> players;
     private final PawnBuffer pawnBuffer;
 
 
     /**
-     * Constructor
-     *
-     * @param id the id that identifies the lobby
-     * @param numOfPlayers number of players required
+     * Class constructor
+     * @param id the lobby's ID
+     * @param numOfPlayers number of players required to start the match
      */
     public Lobby(int id, int numOfPlayers) {
         ID = id;
@@ -32,67 +33,42 @@ public class Lobby implements Serializable {
     }
 
     /**
-     * getter
-     *
-     * @return int numOfPlayers
+     * @return the lobby's {@code ID}
      */
-    public int getNumOfPlayers() {
-        return numOfPlayers;
-    }
+    public int getID() { return ID; }
 
     /**
-     * getter
-     *
-     * @return ArrayList<Player> players
+     * @return the number of players required to start the match
      */
-    public ArrayList<Player> getPlayers() {
-        return players;
-    }
+    public int getNumOfPlayers() { return numOfPlayers; }
 
     /**
-     * getter
-     *
-     * @return PawnBuffer, the class where there are stored the available pawns
+     * @return the list of players who are currently in the lobby
      */
-    public PawnBuffer getPawnBuffer() {return pawnBuffer;}
+    public ArrayList<Player> getPlayers() { return players; }
 
     /**
-     * method to add players to the lobby
-     *
+     * @return the lobby's {@code PawnBuffer}
+     */
+    public PawnBuffer getPawnBuffer() { return pawnBuffer; }
+
+    /**
      * @param player player to add to the lobby
-     * @throws FullLobbyException the lobby is full
+     * @throws FullLobbyException thrown if the lobby is already full
      */
     public void addPlayer(Player player) throws FullLobbyException {
-        if (lobbyFull()) {
+        if (lobbyFull())
             throw new FullLobbyException();
-        }
         players.add(player);
     }
 
     /**
-     * method to remove players from the lobby
-     *
-     * @param player the player you wish to remove
+     * @param player the player to remove from the lobby
      */
-    public void removePlayer(Player player) {
-        players.remove(player);
-    }
+    public void removePlayer(Player player) { players.remove(player); }
 
     /**
-     * method that returns true if the lobby is full
-     *
-     * @return boolean
+     * @return {@code true} if the lobby is full, {@code false} otherwise.
      */
-    private boolean lobbyFull() {
-        return players.size() >= numOfPlayers;
-    }
-
-    /**
-     * returns the lobby ID
-     *
-     * @return int
-     */
-    public int getID() {
-        return ID;
-    }
+    private boolean lobbyFull() { return players.size() >= numOfPlayers; }
 }

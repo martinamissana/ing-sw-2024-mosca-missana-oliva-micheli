@@ -2,7 +2,10 @@ package it.polimi.ingsw.model.game;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import it.polimi.ingsw.model.card.*;
+import it.polimi.ingsw.model.card.Corner;
+import it.polimi.ingsw.model.card.GoldenCard;
+import it.polimi.ingsw.model.card.ResourceCard;
+import it.polimi.ingsw.model.card.StarterCard;
 import it.polimi.ingsw.model.serialization.CornerDeserializer;
 
 import java.io.BufferedReader;
@@ -13,16 +16,15 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 /**
- * Class CardPreset
- * defines the methods to obtain all type of cards in Codex Naturalis
+ * Class CardPreset<br>
+ * Defines methods to obtain all cards in Codex Naturalis
  */
 public class CardsPreset {
 
     /**
-     * gets all the resource cards in a list
-     *
+     * Gets a list of all resource cards
      * @return list<ResourceCard>
-     * @throws IOException produced by failed or interrupted I/O operations
+     * @throws IOException thrown if I/O operations are interrupted or failed
      */
     public static ArrayList<ResourceCard> getResourceCards() throws IOException {
         InputStream inputStream = CardsPreset.class.getClassLoader().getResourceAsStream("resource_cards.json");
@@ -44,10 +46,9 @@ public class CardsPreset {
 
 
     /**
-     * gets all the golden cards in a list
-     *
+     * Gets a list of all golden cards
      * @return list<GoldenCard>
-     * @throws IOException produced by failed or interrupted I/O operations
+     * @throws IOException thrown if I/O operations are interrupted or failed
      */
     public static ArrayList<GoldenCard> getGoldenCards() throws IOException {
         InputStream inputStream = CardsPreset.class.getClassLoader().getResourceAsStream("golden_cards.json");
@@ -68,10 +69,9 @@ public class CardsPreset {
     }
 
     /**
-     * gets all the starter cards in a list
-     *
+     * Gets a list of all starter cards
      * @return list<StarterCard>
-     * @throws IOException produced by failed or interrupted I/O operations
+     * @throws IOException thrown if I/O operations are interrupted or failed
      */
     public static ArrayList<StarterCard> getStarterCards() throws IOException {
         InputStream inputStream = CardsPreset.class.getClassLoader().getResourceAsStream("starter_cards.json");

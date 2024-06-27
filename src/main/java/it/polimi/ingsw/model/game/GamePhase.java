@@ -1,7 +1,7 @@
 package it.polimi.ingsw.model.game;
 
 /**
- * this enumeration defines the state of a game, and is used to determine whether a method can be called at a certain time
+ * Enumeration that defines the state of a game. It's used to synchronize player actions at the start of a match.
  */
 public enum GamePhase {
     PLACING_STARTER_CARD,

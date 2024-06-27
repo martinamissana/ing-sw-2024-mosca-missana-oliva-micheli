@@ -5,18 +5,17 @@ import it.polimi.ingsw.model.commonItem.ItemBox;
 import java.util.ArrayList;
 
 /**
- * class ResourceGoal
- * extends Goal, it contains the list of the resources needed to complete the goal
+ * Class ResourceGoal<br>
+ * Extends Goal, it contains the list of the resources needed to complete the goal
  */
 public class ResourceGoal extends Goal {
     private final ArrayList<ItemBox> resourceList;
 
     /**
-     * constructor
-     *
-     * @param goalID       identifies univocally the goal
+     * Class constructor
+     * @param goalID       the goal's ID
      * @param resourceList list that contains the resources needed to complete the goal
-     * @param points       points given from the goal
+     * @param points       points to be added to the player's score when they complete the goal
      */
     public ResourceGoal(int goalID, ArrayList<ItemBox> resourceList, int points) {
         super(goalID, points);
@@ -24,12 +23,9 @@ public class ResourceGoal extends Goal {
     }
 
     /**
-     * getter for the resource list of the goal
-     *
+     * Gets the resource list of the goal
      * @return list<ItemBox>
      */
-    public ArrayList<ItemBox> getResourceList() {
-        return resourceList;
-    }
+    public ArrayList<ItemBox> getResourceList() { return resourceList; }
 }
 

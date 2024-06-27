@@ -6,8 +6,8 @@ import it.polimi.ingsw.model.player.Player;
 import java.util.ArrayList;
 
 /**
- * ScoreIncrementedEvent class
- * Extends abstract class Event
+ * ScoreIncrementedEvent class<br>
+ * Extends abstract class Event<br>
  * Used to notify the virtual view when the secret goal list to choose the secret goal from is assigned
  */
 public class SecretGoalsListAssignedEvent extends Event{
@@ -15,7 +15,7 @@ public class SecretGoalsListAssignedEvent extends Event{
     private final Player player;
 
     /**
-     * class constructor
+     * Class constructor
      * @param list list of goals to choose the secret goal from
      * @param player player who has to choose
      */
@@ -25,18 +25,12 @@ public class SecretGoalsListAssignedEvent extends Event{
     }
 
     /**
-     * getter
      * @return list of goals to choose the secret goal from
      */
-    public ArrayList<Goal> getList() {
-        return list;
-    }
+    public ArrayList<Goal> getList() { return list; }
 
     /**
-     * getter
      * @return player who has to choose
      */
-    public Player getPlayer() {
-        return player;
-    }
+    public Player getPlayer() { return player; }
 }
