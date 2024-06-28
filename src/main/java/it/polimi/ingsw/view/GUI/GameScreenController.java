@@ -10,7 +10,9 @@ import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.TextField;
+import javafx.scene.control.ToggleButton;
 import javafx.scene.layout.Pane;
+import javafx.scene.shape.Circle;
 
 
 import java.io.IOException;
@@ -19,7 +21,7 @@ import java.io.IOException;
  * Class GameScreenController
  * contains and loads all the various game related panes while playing the game
  */
-public class GameScreenController implements ViewObserver {
+public class GameScreenController implements ViewObserver {     // TODO: Add chat notifier on button
 
     private final ViewSingleton viewSingleton = ViewSingleton.getInstance();
     private HandController handController;
@@ -40,6 +42,10 @@ public class GameScreenController implements ViewObserver {
     private Pane chooseGoal;
     @FXML
     private TextField informations;
+    @FXML
+    private ToggleButton chatButton;
+    @FXML
+    private Circle notification;
     @FXML
     private Pane otherField;
 
@@ -145,6 +151,9 @@ public class GameScreenController implements ViewObserver {
 
                 }
             }
+            case ChatMessageAddedMessage m -> {
+                if (!notification.isVisible() && !m.getM().getSender().equals(viewSingleton.getView().getPlayer()) && !chatButton.isSelected()) notification.setVisible(true);
+            }
             case GameActionSwitchedMessage m -> {
                 if(viewSingleton.getView().isYourTurn()&&m.getAction().equals(Action.DRAW)){
                     informations.setText("Draw a card!");
@@ -170,7 +179,9 @@ public class GameScreenController implements ViewObserver {
                 }
             }
             case SecretGoalAssignedMessage ignored -> Platform.runLater(()-> chooseGoal.setVisible(false));
-            case TurnChangedMessage ignored -> {
+            case TurnChangedMessage m -> {
+                if (m.isLastRound() && viewSingleton.getView().isYourTurn()) informations.setText("Last round started! It's your turn!");
+                else if (m.isLastRound()) informations.setText("Last round started!");
                 if (!viewSingleton.getView().isYourTurn()) informations.setText("Wait for your turn...");
                 else informations.setText("It's your turn!");
             }
@@ -185,5 +196,6 @@ public class GameScreenController implements ViewObserver {
      */
     public void toggleChats() {
         chats.setVisible(!chats.isVisible());
+        if (notification.isVisible()) notification.setVisible(false);
     }
 }
