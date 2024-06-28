@@ -162,7 +162,7 @@ public class DecksController implements ViewObserver {
      */
     private void refresh(DeckTypeBox deck) {
         Platform.runLater(()-> {
-            switch (deck){
+            switch (deck) {
                 case DeckType.RESOURCE -> refreshDeck(DeckType.RESOURCE);
                 case DeckType.GOLDEN -> refreshDeck(DeckType.GOLDEN);
                 case DeckBufferType.RES1 -> {
@@ -192,12 +192,14 @@ public class DecksController implements ViewObserver {
      */
     public void refreshDeck(DeckType type) {
         if (type.equals(DeckType.RESOURCE)) {
+            resDeck.getChildren().clear();
             Card card = view.getTopResourceCard();
             if (card != null) {
                 if (card.getSide().equals(CardSide.FRONT)) card.flip();
                 resDeck.getChildren().add(new CardBuilder(card).getCardImage());
             }
         } else {
+            goldDeck.getChildren().clear();
             Card card = view.getTopGoldenCard();
             if (card != null) {
                 if (card.getSide().equals(CardSide.FRONT)) card.flip();
@@ -212,6 +214,13 @@ public class DecksController implements ViewObserver {
      * @param type type of the deck buffer
      */
     public void refreshBuffer(Pane deckBuffer, DeckBufferType type) {
+        switch (type) {
+            case RES1 -> res1.getChildren().clear();
+            case RES2 -> res2.getChildren().clear();
+            case GOLD1 -> gold1.getChildren().clear();
+            case GOLD2 -> gold2.getChildren().clear();
+        }
+
         Card card = view.getDeckBuffers().get(type).getCard();
         if (card != null) {
             if (card.getSide().equals(CardSide.BACK)) card.flip();

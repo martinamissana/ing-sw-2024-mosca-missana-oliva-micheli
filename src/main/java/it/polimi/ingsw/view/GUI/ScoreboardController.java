@@ -265,7 +265,7 @@ public class ScoreboardController implements ViewObserver {
                         });
                     }
                     if (lobby.getPlayers().size() > 2) {
-                        if (!lobby.getPlayers().get(1).getNickname().equals(view.getNickname())) {
+                        if (!lobby.getPlayers().get(2).getNickname().equals(view.getNickname())) {
                             Platform.runLater(() -> {
                                 FXMLLoader field3Loader = new FXMLLoader(getClass().getResource("/fxml/OtherPlayersField.fxml"));
                                 try {

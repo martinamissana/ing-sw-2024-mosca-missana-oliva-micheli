@@ -180,9 +180,9 @@ public class GameScreenController implements ViewObserver {
             }
             case SecretGoalAssignedMessage ignored -> Platform.runLater(()-> chooseGoal.setVisible(false));
             case TurnChangedMessage m -> {
-                if (m.isLastRound() && viewSingleton.getView().isYourTurn()) informations.setText("Last round started! It's your turn!");
+                if (m.isLastRound() && viewSingleton.getView().isYourTurn()) informations.setText("Last round! Your turn now");
                 else if (m.isLastRound()) informations.setText("Last round started!");
-                if (!viewSingleton.getView().isYourTurn()) informations.setText("Wait for your turn...");
+                else if (!viewSingleton.getView().isYourTurn()) informations.setText("Wait for your turn...");
                 else informations.setText("It's your turn!");
             }
             case LobbyLeftMessage ignored -> viewSingleton.getView().removeObserver(this);
