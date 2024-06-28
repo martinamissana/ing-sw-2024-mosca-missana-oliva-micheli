@@ -19,6 +19,9 @@ import java.rmi.RemoteException;
 import java.io.IOException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.Objects;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 
 /**
@@ -39,13 +42,22 @@ public class RMIView extends View implements ClientRemoteInterface , Serializabl
         super();
         this.RMIServer=RMIServer;
         new Thread(() -> {
-            while (true) {
+            ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
+            Runnable task = () -> {
                 try {
-                    heartbeat();
+                    RMIServer.heartbeat();
                 } catch (RemoteException e) {
-                    throw new RuntimeException(e);
+                    Thread.currentThread().interrupt();
+                    try {
+                        disconnect(super.getNickname());
+                    } catch (IOException ex) {
+                        throw new RuntimeException(ex);
+                    }
+                    executor.shutdown();
                 }
-            }
+            };
+            executor.scheduleAtFixedRate(task, 0, 3, TimeUnit.SECONDS);
+
         }).start();
     }
 

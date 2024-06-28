@@ -260,4 +260,13 @@ public class RMIServer extends UnicastRemoteObject implements RemoteInterface {
         }
     }
 
+    /**
+     * method called to check if the server is still active
+     * @throws RemoteException thrown if the server crashes
+     */
+    @Override
+    public void heartbeat() throws RemoteException {
+
+    }
+
 }

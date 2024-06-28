@@ -163,4 +163,10 @@ public interface RemoteInterface extends Remote {
      */
     void disconnect(String nickname) throws RemoteException;
 
+    /**
+     * checks if the server is still active
+     * @throws RemoteException thrown if the server crashes
+     */
+    void heartbeat() throws RemoteException;
+
 }

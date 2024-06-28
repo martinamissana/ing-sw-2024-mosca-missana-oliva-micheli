@@ -37,7 +37,6 @@ public class RMIVirtualView implements Observer {
 
     @Override
     public void update(Event event) throws IOException {
-        // System.out.println(event.getClass());
         switch (event) {
             case LoginEvent e -> {
                 if (Objects.equals(nickname, e.getNickname())) {

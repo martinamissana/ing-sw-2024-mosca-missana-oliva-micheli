@@ -4,7 +4,7 @@ import it.polimi.ingsw.network.netMessage.NetMessage;
 
 /**
  * Class DisconnectMessage
- * used to disconnect from te server
+ * used to disconnect from the server
  */
 public class DisconnectMessage extends NetMessage {
 }
