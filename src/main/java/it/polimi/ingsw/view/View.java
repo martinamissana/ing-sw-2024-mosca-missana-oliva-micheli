@@ -61,7 +61,7 @@ public abstract class View extends ViewObservable {
     }
 
     /**
-     * @return HashMap <DeckBufferType, DeckBuffer>
+     * @return HashMap with the deckBuffers
      */
     public HashMap<DeckBufferType, DeckBuffer> getDeckBuffers() {
         return deckBuffers;
@@ -75,7 +75,7 @@ public abstract class View extends ViewObservable {
     }
 
     /**
-     * @return HashMap <Integer, Lobby>
+     * @return HashMap containing the lobbies
      */
     public HashMap<Integer, Lobby> getLobbies() {
         return lobbies;
@@ -110,7 +110,7 @@ public abstract class View extends ViewObservable {
     }
 
     /**
-     * @return HashMap <Player, Field>
+     * @return HashMap with the fields of each player
      */
     public HashMap<Player, Field> getFields() {
         return fields;
@@ -167,14 +167,14 @@ public abstract class View extends ViewObservable {
     /**
      * gets an Arraylist with the two possible choices of the secret goal
      *
-     * @return Arraylist <Goal>
+     * @return Arraylist with the choosable goals
      */
     public ArrayList<Goal> getSecretGoalChoices() {
         return secretGoalChoices;
     }
 
     /**
-     * @return Hashmap <Player, Integer>
+     * @return Hashmap with the players' scores
      */
     public HashMap<Player, Integer> getScoreboard() {
         return scoreboard;

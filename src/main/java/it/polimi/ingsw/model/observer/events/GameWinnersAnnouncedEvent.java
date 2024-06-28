@@ -27,7 +27,7 @@ public class GameWinnersAnnouncedEvent  extends Event {
     }
 
     /**
-     * @return Hashmap <Player, Integer>  how many goals every player completed
+     * @return Hashmap containing how many goals every player has completed
      */
     public HashMap<Player, Integer> getGoalsDone() { return goalsDone; }
 

@@ -40,8 +40,8 @@ public class Game implements Serializable {
      * Class constructor
      * @param gameID       the game's ID, which univocally identifies it
      * @param numOfPlayers number of players of the game
-     * @param players      HashMap<Integer, Player> maps playerID to Player
-     * @param scoreboard   HashMap<Player,Integer> maps each player to their score
+     * @param players      HashMap that maps playerID to Player
+     * @param scoreboard   HashMap that maps each player to their score
      * @throws IOException thrown if I/O operations are interrupted or failed
      */
     public Game(int gameID, int numOfPlayers, ArrayList<Player> players, HashMap<Player, Integer> scoreboard) throws IOException {
