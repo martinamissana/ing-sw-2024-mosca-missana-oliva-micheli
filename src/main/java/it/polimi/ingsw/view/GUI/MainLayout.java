@@ -96,7 +96,7 @@ public class MainLayout implements ViewObserver {
             }
             case LobbyLeftMessage m -> {
                 if (m.getPlayer().equals(viewSingleton.getView().getPlayer())) setScene("Open");
-                else if (viewSingleton.getView().getGamePhase().equals(GamePhase.PLACING_STARTER_CARD) || viewSingleton.getView().getGamePhase().equals(GamePhase.CHOOSING_SECRET_GOAL)) {
+                else if (viewSingleton.getView().getGamePhase() != null && (viewSingleton.getView().getGamePhase().equals(GamePhase.PLACING_STARTER_CARD) || viewSingleton.getView().getGamePhase().equals(GamePhase.CHOOSING_SECRET_GOAL))) {
                     this.lobby = viewSingleton.getView().getLobbies().get(viewSingleton.getView().getID());
                 }
             }
