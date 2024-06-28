@@ -48,7 +48,8 @@ public class ChooseStarterCardController {
             }
             viewSingleton.getView().chooseCardSide(CardSide.BACK);
         }
-        catch (IOException | EmptyDeckException | GameDoesNotExistException | HandIsFullException | UnexistentUserException | WrongGamePhaseException e) {
+        catch (WrongGamePhaseException | EmptyDeckException | HandIsFullException ignored) {}
+        catch (IOException | GameDoesNotExistException | UnexistentUserException e) {
             throw new RuntimeException(e);
         }
     }

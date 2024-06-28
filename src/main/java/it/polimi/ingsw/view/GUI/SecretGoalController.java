@@ -44,8 +44,8 @@ public class SecretGoalController {
         if(mouseEvent.getSource().equals(secondGoal)){
             try {
                 view.chooseSecretGoal(second.getGoalID());
-            } catch (IOException | IllegalGoalChosenException | WrongGamePhaseException | GameDoesNotExistException |
-                     UnexistentUserException e) {
+            } catch (IllegalGoalChosenException | WrongGamePhaseException ignored) {}
+            catch (IOException | GameDoesNotExistException | UnexistentUserException e) {
                 throw new RuntimeException(e);
             }
         }
