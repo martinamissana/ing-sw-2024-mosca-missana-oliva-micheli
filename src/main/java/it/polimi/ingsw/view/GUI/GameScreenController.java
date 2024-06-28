@@ -21,7 +21,7 @@ import java.io.IOException;
  * Class GameScreenController
  * contains and loads all the various game related panes while playing the game
  */
-public class GameScreenController implements ViewObserver {     // TODO: Add chat notifier on button
+public class GameScreenController implements ViewObserver {
 
     private final ViewSingleton viewSingleton = ViewSingleton.getInstance();
     private HandController handController;

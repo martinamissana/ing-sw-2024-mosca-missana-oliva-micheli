@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.shape.*?>
+<?import javafx.scene.text.*?>
+
+<AnchorPane fx:id="book" prefHeight="320.0" prefWidth="700.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.ingsw.view.GUI.RuleBookController">
+   <children>
+      <Button fx:id="previousPage" alignment="CENTER" contentDisplay="CENTER" layoutX="10.0" layoutY="150.0" mnemonicParsing="false" onMouseClicked="#goToPage" prefHeight="30.0" prefWidth="30.0" text="&lt;" textAlignment="CENTER">
+         <font>
+            <Font name="Fira Mono" size="13.0" />
+         </font></Button>
+      <Button fx:id="nextPage" alignment="CENTER" contentDisplay="CENTER" layoutX="660.0" layoutY="150.0" mnemonicParsing="false" onMouseClicked="#goToPage" prefHeight="30.0" prefWidth="30.0" text="&gt;" textAlignment="CENTER">
+         <font>
+            <Font name="Fira Mono" size="13.0" />
+         </font></Button>
+      <Circle fill="RED" layoutX="690.0" layoutY="10.0" onMouseClicked="#closeRules" radius="5.0" stroke="RED" strokeType="INSIDE" />
+      <ImageView fx:id="pageView" fitHeight="300.0" fitWidth="600.0" layoutX="50.0" layoutY="15.0" pickOnBounds="true" preserveRatio="true" />
+   </children>
+</AnchorPane>

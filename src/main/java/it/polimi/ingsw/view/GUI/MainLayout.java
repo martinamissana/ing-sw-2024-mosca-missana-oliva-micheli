@@ -1,5 +1,7 @@
 package it.polimi.ingsw.view.GUI;
 
+import it.polimi.ingsw.model.game.GamePhase;
+import it.polimi.ingsw.model.game.Lobby;
 import it.polimi.ingsw.model.player.Player;
 import it.polimi.ingsw.network.netMessage.NetMessage;
 import it.polimi.ingsw.network.netMessage.c2s.LobbyJoinedMessage;
@@ -26,6 +28,7 @@ public class MainLayout implements ViewObserver {
     private BorderPane layout;
     private Stage stage;
     protected ViewSingleton viewSingleton;      // protected because it's set after login (by LoginController)
+    private Lobby lobby;
     private HashMap<Player, Integer> scoreboard;
     private HashMap<Player, Integer> goalsDone;
     private final ArrayList<Player> winners = new ArrayList<>();
@@ -53,7 +56,9 @@ public class MainLayout implements ViewObserver {
                 } else if (fxmlPath.equals("Winners")) {
                     WinnersController controller = loader.getController();
                     controller.setMainLayout(this);
-                    controller.setWinners(this.scoreboard, this.goalsDone, this.winners);
+
+                    if (lobby != null) controller.setPlayersFromLobby(this.lobby);
+                    else controller.setWinners(this.scoreboard, this.goalsDone, this.winners);
                 }
 
             } catch (IOException e) {
@@ -91,6 +96,9 @@ public class MainLayout implements ViewObserver {
             }
             case LobbyLeftMessage m -> {
                 if (m.getPlayer().equals(viewSingleton.getView().getPlayer())) setScene("Open");
+                else if (viewSingleton.getView().getGamePhase().equals(GamePhase.PLACING_STARTER_CARD) || viewSingleton.getView().getGamePhase().equals(GamePhase.CHOOSING_SECRET_GOAL)) {
+                    this.lobby = viewSingleton.getView().getLobbies().get(viewSingleton.getView().getID());
+                }
             }
             case GameCreatedMessage m -> {
                 if (m.getID().equals(viewSingleton.getView().getID())) setScene("GameScreen");

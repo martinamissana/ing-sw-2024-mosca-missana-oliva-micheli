@@ -27,5 +27,7 @@
          </children>
       </Pane>
       <Label layoutX="500.0" layoutY="80.0" prefHeight="16.0" prefWidth="110.0" text="Lobby creation" />
+      <Button layoutX="740.0" layoutY="525.0" mnemonicParsing="false" onMouseClicked="#showRules" prefHeight="25.0" prefWidth="130.0" text="Show game rules" />
+      <Pane fx:id="ruleBook" layoutX="100.0" layoutY="140.0" prefHeight="320.0" prefWidth="700.0" style="-fx-background-color: #F2DEBD; -fx-border-color: #935F2F;" visible="false" />
    </children>
 </AnchorPane>

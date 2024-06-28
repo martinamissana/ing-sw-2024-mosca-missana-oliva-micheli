@@ -31,7 +31,7 @@ public class GUI extends Application {
             stage.show();
 
         } catch (Exception e) {
-            e.printStackTrace();
+            Thread.currentThread().interrupt();
         }
     }
 

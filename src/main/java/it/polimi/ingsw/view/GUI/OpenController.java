@@ -42,6 +42,8 @@ public class OpenController implements ViewObserver {
     private ListView<Pane> lobbies;
     @FXML
     private Label helloLabel;
+    @FXML
+    private Pane ruleBook;
 
     private final ViewSingleton viewSingleton = ViewSingleton.getInstance();
     private final Semaphore sem = new Semaphore(0);
@@ -123,5 +125,21 @@ public class OpenController implements ViewObserver {
 
             default -> {}
         }
+    }
+
+    public void showRules() {
+        Platform.runLater(() -> {
+            FXMLLoader ruleBookLoader = new FXMLLoader(getClass().getResource("/fxml/RuleBook.fxml"));
+            try {
+                ruleBook.getChildren().add(ruleBookLoader.load());
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+            RuleBookController ruleBookController = ruleBookLoader.getController();
+            ruleBookController.setVisible(ruleBook);
+            ruleBook.setVisible(true);
+
+        });
+        if (!ruleBook.isVisible()) ruleBook.setVisible(true);
     }
 }
