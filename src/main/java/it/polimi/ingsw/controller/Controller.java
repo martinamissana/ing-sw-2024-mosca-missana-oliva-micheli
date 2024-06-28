@@ -804,7 +804,8 @@ public class Controller implements Serializable {
     private synchronized void resourceEvaluator(Integer gameID, ResourceGoal goal, Player player) throws UnexistentUserException, IOException {
         if (player == null) throw new UnexistentUserException();
         Game game = gh.getActiveGames().get(gameID);
-        HashMap<ItemBox, Integer> totalResources = player.getField().getTotalResources();
+        HashMap<ItemBox, Integer> totalResources = new HashMap<>(player.getField().getTotalResources());
+
         while (true) {
             for (ItemBox item : goal.getResourceList()) {
                 if (totalResources.get(item) == 0) return;

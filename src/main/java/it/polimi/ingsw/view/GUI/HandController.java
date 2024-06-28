@@ -59,8 +59,8 @@ public class HandController implements ViewObserver {
             case CardPlacedOnFieldMessage m -> {
                 if (m.getNickname().equals(view.getNickname())) {
                     if (!(m.getCard() instanceof StarterCard)) {
-                        try {
-                            Platform.runLater(() -> {
+                        Platform.runLater(() -> {
+                            try {
                                 card0.setLayoutY(yLayout);
                                 card1.setLayoutY(yLayout);
                                 card2.setLayoutY(yLayout);
@@ -70,8 +70,8 @@ public class HandController implements ViewObserver {
                                 card2.getChildren().clear();
                                 card0.getChildren().add(new CardBuilder(view.getHand().getCard(0)).getCardImage());
                                 card1.getChildren().add(new CardBuilder(view.getHand().getCard(1)).getCardImage());
-                            });
-                        } catch (Exception ignored) {}
+                            } catch (IndexOutOfBoundsException ignored) {}
+                        });
                     }
                 }
             }
