@@ -127,6 +127,9 @@ public class OpenController implements ViewObserver {
         }
     }
 
+    /**
+     * Sets visible the pane to show the rule book
+     */
     public void showRules() {
         Platform.runLater(() -> {
             FXMLLoader ruleBookLoader = new FXMLLoader(getClass().getResource("/fxml/RuleBook.fxml"));

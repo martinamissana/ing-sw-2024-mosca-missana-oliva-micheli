@@ -6,7 +6,7 @@
 <?import javafx.scene.shape.*?>
 <?import javafx.scene.text.*?>
 
-<AnchorPane fx:id="book" prefHeight="320.0" prefWidth="700.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.ingsw.view.GUI.RuleBookController">
+<AnchorPane prefHeight="320.0" prefWidth="700.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.ingsw.view.GUI.RuleBookController">
    <children>
       <Button fx:id="previousPage" alignment="CENTER" contentDisplay="CENTER" layoutX="10.0" layoutY="150.0" mnemonicParsing="false" onMouseClicked="#goToPage" prefHeight="30.0" prefWidth="30.0" text="&lt;" textAlignment="CENTER">
          <font>

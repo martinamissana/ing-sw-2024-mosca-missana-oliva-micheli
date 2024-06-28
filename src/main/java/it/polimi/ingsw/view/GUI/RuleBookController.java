@@ -9,9 +9,11 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 
+/**
+ * Class RuleBookController
+ * handles the rule book
+ */
 public class RuleBookController {
-    @FXML
-    private AnchorPane book;
     @FXML
     private Button previousPage;
     @FXML
@@ -22,11 +24,19 @@ public class RuleBookController {
     private int page = 0;
     private Pane visible;
 
+    /**
+     * Allows the "Show rules button" in Open to set the rule book
+     * @param visible the pane used to visualize the rule book
+     */
     public void setVisible(Pane visible) {
         this.visible = visible;
         pageView.setImage(new Image(getClass().getResource("/images/ruleBook/ruleBook0.png").toExternalForm()));
     }
 
+    /**
+     * Handles pages scrolling
+     * @param mouseEvent identifies the button clicked to go to next or previous page
+     */
     public void goToPage(MouseEvent mouseEvent) {
         Platform.runLater(() -> {
             if (mouseEvent.getSource().equals(previousPage)) {
@@ -40,6 +50,9 @@ public class RuleBookController {
         });
     }
 
+    /**
+     * Sets the pane in Open as not visible
+     */
     public void closeRules() {
         visible.getChildren().clear();
         visible.setVisible(false);

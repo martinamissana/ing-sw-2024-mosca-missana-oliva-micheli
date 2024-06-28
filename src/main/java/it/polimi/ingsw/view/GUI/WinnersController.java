@@ -19,49 +19,48 @@ import java.util.HashMap;
  */
 public class WinnersController {
     @FXML
-    private Circle pawn1;
-    @FXML
-    private ImageView crown1;
-    @FXML
     private TextField player1;
+    @FXML
+    private Circle pawn1;
     @FXML
     private TextField points1;
     @FXML
     private TextField goals1;
+    @FXML
+    private ImageView crown1;
 
     @FXML
-    private Circle pawn2;
-    @FXML
-    private ImageView crown2;
-    @FXML
     private TextField player2;
+    @FXML
+    private Circle pawn2;
     @FXML
     private TextField points2;
     @FXML
     private TextField goals2;
+    @FXML
+    private ImageView crown2;
 
     @FXML
-    private Circle pawn3;
-    @FXML
-    private ImageView crown3;
-    @FXML
     private TextField player3;
+    @FXML
+    private Circle pawn3;
     @FXML
     private TextField points3;
     @FXML
     private TextField goals3;
-
-
     @FXML
-    private Circle pawn4;
-    @FXML
-    private ImageView crown4;
+    private ImageView crown3;
+
     @FXML
     private TextField player4;
+    @FXML
+    private Circle pawn4;
     @FXML
     private TextField points4;
     @FXML
     private TextField goals4;
+    @FXML
+    private ImageView crown4;
 
     private MainLayout mainLayout;
     private HashMap<Player, Integer> scoreboard;
@@ -123,6 +122,10 @@ public class WinnersController {
         }
     }
 
+    /**
+     * When game is not yet initialized, sets the winner's scene as a list of players in the lobby
+     * @param lobby lobby of the game not yet initialized
+     */
     public void setPlayersFromLobby(Lobby lobby) {
         pawns = new HashMap<>();
         for (Player p : lobby.getPlayers()) {
@@ -133,18 +136,6 @@ public class WinnersController {
         if (lobby.getPlayers().size() > 1) setPlayer(lobby.getPlayers(), player2, pawn2, null, null, null, 1);
         if (lobby.getPlayers().size() > 2) setPlayer(lobby.getPlayers(), player3, pawn3, null, null, null, 2);
         if (lobby.getPlayers().size() > 3) setPlayer(lobby.getPlayers(), player4, pawn4, null, null, null, 3);
-
-        crown2.setVisible(false);
-        points2.setVisible(false);
-        goals2.setVisible(false);
-
-        crown3.setVisible(false);
-        points3.setVisible(false);
-        goals3.setVisible(false);
-
-        crown4.setVisible(false);
-        points4.setVisible(false);
-        goals4.setVisible(false);
 
         if (lobby.getPlayers().size() < 4) {
             player4.setVisible(false);
@@ -160,6 +151,18 @@ public class WinnersController {
             player2.setVisible(false);
             pawn2.setVisible(false);
         }
+
+        crown2.setVisible(false);
+        points2.setVisible(false);
+        goals2.setVisible(false);
+
+        crown3.setVisible(false);
+        points3.setVisible(false);
+        goals3.setVisible(false);
+
+        crown4.setVisible(false);
+        points4.setVisible(false);
+        goals4.setVisible(false);
     }
 
     /**
